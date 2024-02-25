@@ -1,3 +1,4 @@
-django
+django~=5.0.2
 gunicorn
 psycopg2-binary
+djangorestframework~=3.14.0
