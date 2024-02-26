@@ -1,2 +1,4 @@
 node_modules
 projectenv
+venv
+.idea
