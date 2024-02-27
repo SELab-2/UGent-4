@@ -11,6 +11,10 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_auth_adfs',
     'api',
     'rest_framework'
 ]
@@ -128,5 +133,34 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-import os
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+
+CLIENT_ID = os.getenv('client_id')
+CLIENT_SECRET = os.getenv('client_secret')
+TENANT_ID = os.getenv('tenant_id')
+
+AD_URL = os.getenv('ad_url')
+
+
+AUTH_ADFS = {
+    'AUDIENCE': CLIENT_ID,
+    'CLIENT_ID': CLIENT_ID,
+    'CLIENT_SECRET': CLIENT_SECRET,
+    'CLAIM_MAPPING': {'first_name': 'given_name',
+                      'last_name': 'family_name',
+                      'email': 'upn'},
+    'GROUPS_CLAIM': 'roles',
+    'MIRROR_GROUPS': True,
+    'USERNAME_CLAIM': 'upn',
+    'TENANT_ID': TENANT_ID,
+    'RELYING_PARTY_ID': CLIENT_ID,
+}
+
+AUTHENTICATION_BACKENDS = [
+    'django_auth_adfs.backend.AdfsAuthCodeBackend',
+]
+
+LOGIN_URL = "django_auth_adfs:login"
+LOGIN_REDIRECT_URL = "/api/logged_in"
+
