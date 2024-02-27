@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-)dtlp_@zg++rb&xw+qsy^15k!&1%8(1*8m^*4x7&1rh1qya)@_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['sel2-4.ugent.be', 'localhost']
+ALLOWED_HOSTS = ['sel2-4.ugent.be', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_auth_adfs',
+    'api',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [
@@ -85,7 +87,7 @@ DATABASES = {
         'USER': 'myprojectuser',
         'PASSWORD': 'password',
         'HOST': 'localhost',
-        'PORT': '',
+        'PORT': '5432',
     }
 }
 
