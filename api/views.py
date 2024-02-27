@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from django.http import JsonResponse
-from utils import get_graph_token
+from .utils import get_graph_token
 
 
 def succesfully_logged_in(request):
