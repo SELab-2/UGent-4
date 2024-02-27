@@ -4,6 +4,7 @@ from django.db import models
 class Student(models.Model):
     student_id = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
+    email = models.EmailField()
     subjects = models.ManyToManyField('Vak', related_name='students_enrolled')
 
     def __str__(self):
@@ -12,6 +13,7 @@ class Student(models.Model):
 class Lesgever(models.Model):
     lesgever_id = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
+    email = models.EmailField()
     subjects = models.ManyToManyField('Vak', related_name='lesgevers_enrolled')
     is_admin = models.BooleanField(default=False)
 
