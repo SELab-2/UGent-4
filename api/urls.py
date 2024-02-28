@@ -17,13 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from .views import *
+from .views.views import microsoft_association, login_redirect
+from .views.student import student_list
 
 urlpatterns = [
     path('.well-known/microsoft-identity-association.json', microsoft_association),
-    path('api/', main),
     path('admin/', admin.site.urls),
-    path('student_list', student_list)
     path('oauth2/', include('django_auth_adfs.urls')),
-    path('api/logged_in', succesfully_logged_in)
+    path('login_redirect', login_redirect),
+    path('api/studenten', student_list)
 ]
