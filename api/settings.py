@@ -54,6 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'api.middleware.RedirectAnonymousUserMiddleware',
 ]
 
 ROOT_URLCONF = 'api.urls'
@@ -162,5 +163,5 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = "django_auth_adfs:login"
-LOGIN_REDIRECT_URL = "/api/logged_in"
+LOGIN_REDIRECT_URL = "/login_redirect"
 
