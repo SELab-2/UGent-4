@@ -2,3 +2,4 @@ node_modules
 projectenv
 /venv/
 __pycache__/*
+migrations
