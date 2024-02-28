@@ -16,6 +16,7 @@ def student_list(request):
         serializer = StudentSerializer(students, many=True)
         return JsonResponse({'studenten': serializer.data})
     elif request.method == 'POST':
+        print(request.data)
         serializer = StudentSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
