@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from .views import main, microsoft_association
+from .views import *
 
 urlpatterns = [
     path('.well-known/microsoft-identity-association.json', microsoft_association),
     path('api/', main),
     path('admin/', admin.site.urls),
+    path('student_list', student_list)
 ]
