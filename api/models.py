@@ -5,7 +5,7 @@ class Student(models.Model):
     student_id = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=100)
     email = models.EmailField()
-    subjects = models.ManyToManyField('Vak', related_name='students_enrolled')
+    subjects = models.ManyToManyField('Vak', related_name='students_enrolled', blank=True)
 
     def __str__(self):
         return self.name
