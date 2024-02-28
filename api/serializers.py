@@ -1,8 +1,8 @@
 from rest_framework import serializers
+from .models import *
 
-# class Serializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Model
-#         fields = '__all__'
 
-# probably better to make serializer file for each model and import them
+class StudentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Student
+        fields = ['user', 'subjects']
