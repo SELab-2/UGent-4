@@ -3,16 +3,16 @@ import { useTranslation } from "react-i18next";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import React from "react";
 import {AccountCircle} from "@mui/icons-material";
+import {useNavigate} from "react-router-dom";
 interface Props {
   variant: "variant-2" | "variant-3" | "default";
   username: string;
   title: string;
 }
 
+//TODO: add language switcher
 
-
-
-export const Header = ({ variant, username, title }: Props) => {
+export const Header = ({ variant, title }: Props) => {
   const { t } = useTranslation();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -22,6 +22,14 @@ export const Header = ({ variant, username, title }: Props) => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const navigate = useNavigate()
+
+    const logout = () => {
+        localStorage.removeItem("token");
+        navigate("/");
+    }
+
   return (
     <>
       <AppBar position="fixed" sx={{ margin: 0 }}>
@@ -85,7 +93,7 @@ export const Header = ({ variant, username, title }: Props) => {
                       onClose={handleClose}
                   >
                       <MenuItem onClick={handleClose}>Profile</MenuItem>
-                      <MenuItem onClick={handleClose}>My account</MenuItem>
+                      <MenuItem onClick={logout}>Logout</MenuItem>
                   </Menu>
               </div>
           </Toolbar>
