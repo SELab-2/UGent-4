@@ -15,12 +15,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
-from .views import main, microsoft_association
+from .views.views import microsoft_association, login_redirect
+from .views.student import student_list
 
 urlpatterns = [
     path('.well-known/microsoft-identity-association.json', microsoft_association),
-    path('api/', main),
     path('admin/', admin.site.urls),
+    path('oauth2/', include('django_auth_adfs.urls')),
+    path('login_redirect', login_redirect),
+    path('api/studenten', student_list)
 ]
