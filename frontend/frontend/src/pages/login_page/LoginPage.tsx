@@ -1,7 +1,21 @@
 import { Box, Button, Typography } from "@mui/material";
 import { t } from "i18next";
+import {useNavigate} from "react-router-dom";
+
+/*
+LoginPage component is a simple page with a logo and a login button.
+the button uses handleLogin function to handle authentication trough backend with Microsoft
+The page is styled with mui components
+ */
 
 export function LoginPage() {
+    const navigate = useNavigate()
+    const handleLogin = () => {
+        //TODO: implement authentication trough backend
+        navigate("/main") //absolute path, so it will redirect to localhost:3000/main
+        //navigate("main") //relative path, so it will redirect to localhost:3000/login/main
+    }
+
   return (
     <>
       <Box
@@ -89,6 +103,7 @@ export function LoginPage() {
             alignSelf={"stretch"}
           >
             <Button
+                onClick={handleLogin}
               variant="contained"
               sx={{
                 width: 150,
