@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-from ..models import Student
-from ..serializers import StudentSerializer
+from api.models import Student
+from api.serializers import StudentSerializer
 from ..utils import json_error
 
 
