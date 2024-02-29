@@ -2,8 +2,8 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Lesgever
-from ..serializers import LesgeverSerializer
+from api.models import Lesgever
+from api.serializers import LesgeverSerializer
 
 
 @api_view(['GET', 'POST'])
