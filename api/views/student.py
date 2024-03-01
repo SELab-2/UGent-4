@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import status
 
 
-from api.models import Student
-from api.serializers import StudentSerializer
+from api.models.student import Student
+from api.serializers.student import StudentSerializer
 from ..utils import json_error
 
 
@@ -26,6 +26,6 @@ def student_list(request):
         students = Student.objects.all()
         serializer = StudentSerializer(students, many=True)
         return JsonResponse({'studenten': serializer.data})
-    
+
     else:
         return json_error('no_perm')"""

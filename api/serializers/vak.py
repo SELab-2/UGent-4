@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Vak
+from api.models.vak import Vak
 
 
 class VakSerializer(serializers.ModelSerializer):
