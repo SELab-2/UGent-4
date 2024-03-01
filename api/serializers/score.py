@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Score
+from api.models.score import Score
 
 
 class ScoreSerializer(serializers.ModelSerializer):

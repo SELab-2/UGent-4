@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Lesgever
+from api.models.lesgever import Lesgever
 
 
 class LesgeverSerializer(serializers.ModelSerializer):

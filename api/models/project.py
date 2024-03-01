@@ -1,5 +1,5 @@
 from django.db import models
-from vak import Vak
+from .vak import Vak
 
 
 class Project(models.Model):
