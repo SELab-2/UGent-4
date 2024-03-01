@@ -26,7 +26,7 @@ export default function TabSwitcher( {titles, nodes}: TabSwitcherProps) {
     titles.length !== nodes.length && console.error("The number of titles and nodes should be the same");
 
     return (
-        <Tabs defaultValue={0}>
+        <Tabs defaultValue={0} color={"background.default"} >
             <TabsList>
                 {(titles).map((title, index) => (<Tab value={index}>{t(title)}</Tab>))}
             </TabsList>
