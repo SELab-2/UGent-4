@@ -6,11 +6,12 @@ import "./i18n/config.ts";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LoginPage } from "./pages/loginPage/LoginPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
+import {MainPage} from "./pages/mainPage/MainPage.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LoginPage />,
+    element: <MainPage />,
     errorElement: <ErrorPage />,
   },
 ]);
