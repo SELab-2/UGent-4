@@ -6,13 +6,17 @@ const english = {
     logo: "./src/assets/logo_UGent_EN_RGB_2400_white.png",
     logo_blue: "./src/assets/logo_UGent_EN_RGB_2400_color.png",
     login: "Log in with your UGent account",
-    back : "Back"
+    back : "Back",
+    current_courses: "Current courses",
+    archived: "Archived"
 };
 const dutch = {
     logo: "./src/assets/logo_UGent_NL_RGB_2400_wit.png",
     logo_blue: "./src/assets/logo_UGent_NL_RGB_2400_kleur.png",
     login: "Log in met je UGent account",
-    back : "Terug"
+    back : "Terug",
+    current_courses: "Huidige vakken",
+    archived: "Gearchiveerd"
 };
 
 i18n.use(initReactI18next).use(LanguageDetector).init({ fallbackLng: "en",
