@@ -3,3 +3,4 @@ projectenv
 /venv/
 __pycache__
 migrations
+htmlcov
