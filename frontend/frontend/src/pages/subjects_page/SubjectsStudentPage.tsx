@@ -1,3 +1,4 @@
+import { Header } from "../../components/Header";
 import { ItemList } from "../../components/ItemList";
 import { Box } from "@mui/material";
 
@@ -25,9 +26,9 @@ const items = [
 export function SubjectsStudentPage() {
     return (
         <>
-            {/* <Header variant={"variant-2"} username={"testuser"} title={"Naam vak"}/> */}
-            <Box sx={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                <Box sx={{ width: '80%'}}>
+            <Header variant={"variant-2"} username={"testuser"} title={"Naam vak"}/>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '300vh' }}>
+                <Box sx={{ width: '80%' }}>
                     <ItemList itemList={items} />
                 </Box>
             </Box>
