@@ -1,17 +1,20 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { ThemeProvider } from "@mui/material";
+import {ThemeProvider} from "@mui/material";
 import theme from "./Theme.ts";
 import "./i18n/config.ts";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { LoginPage } from "./pages/login_page/LoginPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
+
+import {MainPage} from "./pages/mainPage/MainPage.tsx";
+import {Helmet, HelmetProvider} from "react-helmet-async";
 import { SubjectsStudentPage } from "./pages/subjects_page/SubjectsStudentPage.tsx";
+
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <LoginPage />,
+    element: <MainPage />,
     errorElement: <ErrorPage />,
   },
   {
@@ -22,8 +25,16 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+      <HelmetProvider>
+      <Helmet>
+          <style>{`body { background-color: ${theme.palette.background.default}; }`}</style>
+      </Helmet>
+
+      <React.Suspense fallback={<div>Loading...</div>}>
+            <ThemeProvider theme={theme}>
+              <RouterProvider router={router} />
+            </ThemeProvider>
+        </React.Suspense>
+      </HelmetProvider>
   </React.StrictMode>
 );
