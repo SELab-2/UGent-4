@@ -1,12 +1,15 @@
 from django.test import TestCase
+from .models import Dummy
 
-class ModelTesting(TestCase):
+class TestModels(TestCase):
 
     def setUp(self):
-        pass
-        #bv: self.api = Score.objects.create(score=10, ...)
+        self.dummy1 = Dummy.objects.create(
+            name='Dummy 1',
+            budget=10000
+        )
     
-    def test_post_model(self):
-        #d = self.api
+    def test_dummy_model(self):
+        self.assertEquals(self.dummy1.slug, 'dummy-1')
         #self.assertTrue(isinstance(d, Score))
-        self.assertTrue(True)
+        #self.assertTrue(True)
