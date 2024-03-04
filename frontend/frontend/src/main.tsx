@@ -5,14 +5,21 @@ import theme from "./Theme.ts";
 import "./i18n/config.ts";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./pages/ErrorPage.tsx";
+
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
 import {Helmet, HelmetProvider} from "react-helmet-async";
+import { SubjectsStudentPage } from "./pages/subjects_page/SubjectsStudentPage.tsx";
+
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <MainPage />,
     errorElement: <ErrorPage />,
+  },
+  {
+    path: "/subjects_student",
+    element: <SubjectsStudentPage />,
   },
 ]);
 
