@@ -102,14 +102,14 @@ export const Header = ({ variant, title }: Props) => {
           </Typography>
           <div>
             <IconButton
-              size="large"
+              size="medium"
               aria-label="account of current user"
               aria-controls="menu-appbar"
               aria-haspopup="true"
               onClick={handleMenu}
               color="secondary"
             >
-              <AccountCircle />
+              <AccountCircle fontSize={"large"}/>
             </IconButton>
             <Menu
               id="menu-appbar"
