@@ -4,3 +4,5 @@ psycopg2-binary
 djangorestframework~=3.14.0
 django-auth-adfs
 python-dotenv
+coverage
+flake8
