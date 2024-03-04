@@ -4,4 +4,3 @@ projectenv
 __pycache__
 migrations
 htmlcov
-.env

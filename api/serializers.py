@@ -4,7 +4,17 @@ from rest_framework.renderers import JSONRenderer
 import io
 from rest_framework.parsers import JSONParser
 
-from .models import Student, Lesgever, Vak, Groep, Project, Indiening, Score
+from .models import Student, Lesgever, Vak, Groep, Project, Indiening, Score, Dummy
+
+
+
+class DummySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Dummy
+        fields = '__all__'
+
+    def create(self, validated_data):
+        return Dummy.objects.create(**validated_data)
 
 class StudentSerializer(serializers.ModelSerializer):
     class Meta:
