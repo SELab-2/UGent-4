@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 
 from .views.views import microsoft_association, login_redirect
-from .views.student import student_list
+from .views.student import student_list, student_detail
 
 urlpatterns = [
     path('.well-known/microsoft-identity-association.json', microsoft_association),
     path('admin/', admin.site.urls),
     path('oauth2/', include('django_auth_adfs.urls')),
     path('login_redirect', login_redirect),
-    path('api/studenten', student_list)
+    path('api/studenten', student_list),
+    path('api/studenten/<int:id>', student_detail)
 ]

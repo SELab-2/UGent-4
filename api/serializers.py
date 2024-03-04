@@ -15,9 +15,6 @@ class StudentSerializer(serializers.ModelSerializer):
         return Student.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        # Update the regular fields
-        instance.name = validated_data.get('name', instance.name)
-        instance.email = validated_data.get('email', instance.email)
         # Update the subjects list
         subjects_data = validated_data.pop('subjects', None)
         if subjects_data is not None:
