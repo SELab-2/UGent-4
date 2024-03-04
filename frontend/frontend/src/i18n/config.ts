@@ -8,7 +8,9 @@ const english = {
     login: "Log in with your UGent account",
     back : "Back",
     current_courses: "Current courses",
-    archived: "Archived"
+    archived: "Archived",
+    students: "Students: ",
+    no_deadline: "No deadline",
 };
 const dutch = {
     logo: "./src/assets/logo_UGent_NL_RGB_2400_wit.png",
@@ -16,7 +18,9 @@ const dutch = {
     login: "Log in met je UGent account",
     back : "Terug",
     current_courses: "Huidige vakken",
-    archived: "Gearchiveerd"
+    archived: "Gearchiveerd",
+    students: "Studenten: ",
+    no_deadline: "Geen deadline",
 };
 
 i18n.use(initReactI18next).use(LanguageDetector).init({ fallbackLng: "en",
