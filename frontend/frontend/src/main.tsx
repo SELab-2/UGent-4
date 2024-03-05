@@ -8,7 +8,7 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
 import {Helmet, HelmetProvider} from "react-helmet-async";
-import { SubjectsStudentPage } from "./pages/subjects_page/SubjectsStudentPage.tsx";
+import { SubjectsStudentPage } from "./pages/subjectsPage/SubjectsStudentPage.tsx";
 
 
 const router = createBrowserRouter([
