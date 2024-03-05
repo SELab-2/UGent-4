@@ -11,6 +11,7 @@ const english = {
     archived: "Archived",
     students: "Students: ",
     no_deadline: "No deadline",
+    current_projects: "Current projects",
 };
 const dutch = {
     logo: "./src/assets/logo_UGent_NL_RGB_2400_wit.png",
@@ -21,6 +22,7 @@ const dutch = {
     archived: "Gearchiveerd",
     students: "Studenten: ",
     no_deadline: "Geen deadline",
+    current_projects: "Huidige projecten",
 };
 
 i18n.use(initReactI18next).use(LanguageDetector).init({ fallbackLng: "en",
