@@ -1,6 +1,15 @@
 from django.conf import settings
-from django.http import JsonResponse
+from api.models.gebruiker import Gebruiker
+from api.serializers.gebruiker import GebruikerSerializer
 import requests
+
+
+API_URLS = {
+    'studenten': '/api/studenten',
+    'vakken': '/api/vakken',
+    'groepen': '/api/groepen',
+    'indieningen': '/api/indieningen',
+}
 
 
 def get_graph_token():
@@ -23,3 +32,9 @@ def get_graph_token():
         return response.json()
     except:
         return None
+
+
+def is_lesgever(id):
+    gebruiker = Gebruiker.objects.get(pk=id)
+    serializer = GebruikerSerializer(gebruiker)
+    return serializer.data['is_lesgever']
