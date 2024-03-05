@@ -9,7 +9,7 @@ interface AssignmentListItemSubjectsPageProps {
     dueDate?: Date;
     submissions: number;
     score: number;
-    isStudent:boolean;
+    isStudent: boolean;
 }
 
 /*
@@ -42,10 +42,20 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
                     paddingY: 3,
                     borderRadius:2,
                 }}>
-                    <ListItemText sx={{maxWidth:100}} primary={projectName}/>
-                    <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                    <ListItemText sx={{maxWidth:100}} primary={submissions + " indieningen"}/>
-                    <ListItemText sx={{maxWidth:50}} primary={score + "/20"}/>
+                    {isStudent?
+                        <>
+                            <ListItemText sx={{maxWidth:100}} primary={projectName}/>
+                            <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
+                            <ListItemText sx={{maxWidth:100}} primary={submissions + " indieningen"}/>
+                            <ListItemText sx={{maxWidth:50}} primary={score + "/20"}/>
+                        </>
+                        :
+                        <>
+                            <ListItemText sx={{maxWidth:100}} primary={projectName}/>
+                            <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
+                            <ListItemText sx={{maxWidth:100}} primary={"edit"}/>
+                        </>
+                    }
                 </ListItemButton>
             </ListItem>
             <Divider color={"text.main"}></Divider>

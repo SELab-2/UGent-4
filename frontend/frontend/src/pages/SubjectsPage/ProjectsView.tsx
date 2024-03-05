@@ -2,8 +2,9 @@ import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
 import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
 
-interface ProjectViewProps {
+interface ProjectsViewProps {
     courseId: string;
+    isStudent: boolean;
 }
 
 interface Course {
@@ -24,7 +25,7 @@ interface Assignment {
     score: number;
 }
 
-export function ProjectsView({courseId}: ProjectViewProps) {
+export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
     const course = getCourse(courseId)
     const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId))
 
@@ -39,10 +40,20 @@ export function ProjectsView({courseId}: ProjectViewProps) {
                     justifyContent: "space-between",
                     padding:3,
                 }}>
-                <Typography variant={"h4"}>Project</Typography>
-                <Typography variant={"h4"}>Deadline</Typography>
-                <Typography variant={"h4"}>Submissions</Typography>
-                <Typography variant={"h4"}>Score</Typography>
+                {isStudent?
+                    <>
+                        <Typography variant={"h4"}>Project</Typography>
+                        <Typography variant={"h4"}>Deadline</Typography>
+                        <Typography variant={"h4"}>Submissions</Typography>
+                        <Typography variant={"h4"}>Score</Typography>
+                    </>
+                    :
+                    <>
+                        <Typography variant={"h4"}>Project</Typography>
+                        <Typography variant={"h4"}>Deadline</Typography>
+                        <Typography variant={"h4"}>Edit</Typography>
+                    </>
+                }
             </Box>
             <Box aria-label={"assignmentList"}
                 sx={{backgroundColor: "background.default",
@@ -57,7 +68,7 @@ export function ProjectsView({courseId}: ProjectViewProps) {
                     <Box sx={{width:"100%", height: 380, overflow:"auto"}}>
                         <List disablePadding={true}>
                             {assignments.map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={true}/>
+                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent}/>
                             ))}
                         </List>
                     </Box>
