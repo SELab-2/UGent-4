@@ -164,4 +164,3 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_URL = "django_auth_adfs:login"
 LOGIN_REDIRECT_URL = "/login_redirect"
-
