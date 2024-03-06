@@ -1,9 +1,9 @@
-from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Indiening
-from ..serializers import IndieningSerializer
+
+from api.models.indiening import Indiening
+from api.serializers.indiening import IndieningSerializer
 
 
 @api_view(['GET', 'POST'])

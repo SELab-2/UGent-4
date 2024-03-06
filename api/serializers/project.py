@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models.project import Student, Lesgever, Vak, Groep, Project, Indiening, Score
+from api.models.project import Project
 
 
 class ProjectSerializer(serializers.ModelSerializer):

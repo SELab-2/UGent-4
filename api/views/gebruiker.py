@@ -42,17 +42,18 @@ def gebruiker_list(request):
 
 @api_view(['GET', 'PUT'])
 def gebruiker_detail(request, id):
-    try:
-        gebruiker = Gebruiker.objects.get(pk=id)
-    except Gebruiker.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    if request.user.id == id:
+        try:
+            gebruiker = Gebruiker.objects.get(pk=id)
+        except Gebruiker.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
-        serializer = GebruikerSerializer(gebruiker)
-        return Response(serializer.data)
-    elif request.method == 'PUT':
-        serializer = GebruikerSerializer(gebruiker, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
+        if request.method == 'GET':
+            serializer = GebruikerSerializer(gebruiker)
             return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        elif request.method == 'PUT':
+            serializer = GebruikerSerializer(gebruiker, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

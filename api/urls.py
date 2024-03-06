@@ -20,10 +20,11 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views.views import microsoft_association, login_redirect, home
 from .views.gebruiker import gebruiker_list, gebruiker_detail
-from .views.vak import *
-from .views.project import *
-from .views.indiening import * 
-from .views.score import *
+from .views.vak import vak_list, vak_detail
+from .views.project import project_list, project_detail
+from .views.indiening import indiening_list, indiening_detail
+from .views.score import score_list, score_detail
+from .views.groep import groep_list, groep_detail
 
 urlpatterns = [
     path('.well-known/microsoft-identity-association.json', microsoft_association),
@@ -31,8 +32,8 @@ urlpatterns = [
     path('oauth2/', include('django_auth_adfs.urls')),
     path('login_redirect/', login_redirect),
     path('api/', home),
-    path('api/studenten/', gebruiker_list),
-    path('api/studenten/<int:id>/', gebruiker_detail),
+    path('api/gebruikers/', gebruiker_list),
+    path('api/gebruikers/<int:id>/', gebruiker_detail),
     path('api/vakken/', vak_list),
     path('api/vakken/<int:id>', vak_detail),
     path('api/projecten', project_list),
@@ -40,7 +41,9 @@ urlpatterns = [
     path('api/indieningen', indiening_list),
     path('api/indieningen/<int:id>', indiening_detail),
     path('api/scores', score_list),
-    path('api/scores/<int:id>', score_detail)
+    path('api/scores/<int:id>', score_detail),
+    path('api/groepen', groep_list),
+    path('api/groepen/<int:id>', groep_detail)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
