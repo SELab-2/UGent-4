@@ -9,7 +9,3 @@ class IndieningSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Indiening.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        # Implement update method for Indiening model
-        pass

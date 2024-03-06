@@ -16,10 +16,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views.views import microsoft_association, login_redirect, home
 from .views.gebruiker import gebruiker_list, gebruiker_detail
-from .views.vak import vak_list
+from .views.vak import *
+from .views.project import *
+from .views.indiening import * 
+from .views.score import *
 
 urlpatterns = [
     path('.well-known/microsoft-identity-association.json', microsoft_association),
@@ -30,4 +34,13 @@ urlpatterns = [
     path('api/studenten/', gebruiker_list),
     path('api/studenten/<int:id>/', gebruiker_detail),
     path('api/vakken/', vak_list),
+    path('api/vakken/<int:id>', vak_detail),
+    path('api/projecten', project_list),
+    path('api/projecten/<int:id>', project_detail),
+    path('api/indieningen', indiening_list),
+    path('api/indieningen/<int:id>', indiening_detail),
+    path('api/scores', score_list),
+    path('api/scores/<int:id>', score_detail)
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
