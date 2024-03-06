@@ -10,6 +10,3 @@ class ProjectSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Project.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        # Implement update method for Project model
-        pass
