@@ -9,7 +9,3 @@ class GroepSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Groep.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        # Implement update method for Groep model
-        pass

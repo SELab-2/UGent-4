@@ -9,9 +9,3 @@ class LesgeverSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Lesgever.objects.create(**validated_data)
-
-    def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        # Update other fields similarly
-        instance.save()
-        return instance
