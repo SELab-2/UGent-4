@@ -1,8 +1,9 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Vak
-from ..serializers import VakSerializer
+
+from api.models.vak import Vak
+from api.serializers.vak import VakSerializer
 
 
 @api_view(['GET', 'POST'])

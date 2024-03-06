@@ -1,9 +1,9 @@
-from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from ..models import Score
-from ..serializers import ScoreSerializer
+
+from api.models.score import Score
+from api.serializers.score import ScoreSerializer
 
 
 @api_view(['GET', 'POST'])

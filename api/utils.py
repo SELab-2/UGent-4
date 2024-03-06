@@ -5,10 +5,11 @@ import requests
 
 
 API_URLS = {
-    'studenten': '/api/studenten',
+    'gebruikers': '/api/gebruikers',
     'vakken': '/api/vakken',
     'groepen': '/api/groepen',
     'indieningen': '/api/indieningen',
+    'scores': 'api/scores'
 }
 
 
