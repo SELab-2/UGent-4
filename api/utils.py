@@ -36,6 +36,9 @@ def get_graph_token():
 
 
 def is_lesgever(id):
-    gebruiker = Gebruiker.objects.get(pk=id)
-    serializer = GebruikerSerializer(gebruiker)
-    return serializer.data['is_lesgever']
+    try:
+        gebruiker = Gebruiker.objects.get(pk=id)
+        serializer = GebruikerSerializer(gebruiker)
+        return serializer.data['is_lesgever']
+    except Gebruiker.DoesNotExist:
+        return False

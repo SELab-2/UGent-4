@@ -35,15 +35,15 @@ urlpatterns = [
     path('api/gebruikers/', gebruiker_list),
     path('api/gebruikers/<int:id>/', gebruiker_detail),
     path('api/vakken/', vak_list),
-    path('api/vakken/<int:id>', vak_detail),
-    path('api/projecten', project_list),
-    path('api/projecten/<int:id>', project_detail),
-    path('api/indieningen', indiening_list),
-    path('api/indieningen/<int:id>', indiening_detail),
-    path('api/scores', score_list),
-    path('api/scores/<int:id>', score_detail),
-    path('api/groepen', groep_list),
-    path('api/groepen/<int:id>', groep_detail)
+    path('api/vakken/<int:id>/', vak_detail),
+    path('api/projecten/', project_list),
+    path('api/projecten/<int:id>/', project_detail),
+    path('api/indieningen/', indiening_list),
+    path('api/indieningen/<int:id>/', indiening_detail),
+    path('api/scores/', score_list),
+    path('api/scores/<int:id>/', score_detail),
+    path('api/groepen/', groep_list),
+    path('api/groepen/<int:id>/', groep_detail)
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

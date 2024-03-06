@@ -3,10 +3,14 @@ from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from api.serializers.gebruiker import GebruikerSerializer
-from api.utils import API_URLS
+from api.utils import API_URLS, get_graph_token
 
 
 def login_redirect(request):
+
+
+    print(get_graph_token())
+
     gebruiker_post_data = {
         'user': request.user.id,
         'subjects': [],
