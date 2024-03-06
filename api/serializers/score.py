@@ -10,6 +10,3 @@ class ScoreSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Score.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        # Implement update method for Score model
-        pass
