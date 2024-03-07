@@ -1,10 +1,13 @@
 from django.conf import settings
-from django.http import JsonResponse
 import requests
 
-ERRORS = {
-    'no_perm': 'You do not have permission to view this data',
-    'generic': 'There was an error'
+
+API_URLS = {
+    'gebruikers': '/api/gebruikers',
+    'vakken': '/api/vakken',
+    'groepen': '/api/groepen',
+    'indieningen': '/api/indieningen',
+    'scores': 'api/scores'
 }
 
 
@@ -28,8 +31,8 @@ def get_graph_token():
         return response.json()
     except:
         return None
+    
 
-
-
-def json_error(error_code):
-    return JsonResponse({'error': {'message': ERRORS.get(error_code, ERRORS['generic'])}})
+def clear(set):
+    for item in set.all(): 
+            set.remove(item)
