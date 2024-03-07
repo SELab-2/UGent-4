@@ -10,8 +10,16 @@ from api.serializers.project import ProjectSerializer
 def project_list(request, format=None):
 
     if request.method == 'GET':
-        lesgevers = Project.objects.all()
-        serializer = ProjectSerializer(lesgevers, many=True)
+        projects = Project.objects.all()
+
+        if 'vak' in request.GET:
+            try:
+                vak = eval(request.GET.get('vak'))
+                projects = projects.filter(vak=vak)
+            except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
     
     elif request.method == 'POST':
