@@ -1,18 +1,27 @@
 from django.http import JsonResponse
-from api.utils import get_graph_token
 from django.shortcuts import redirect
-from django.http import HttpResponse
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from api.serializers.gebruiker import GebruikerSerializer
+from api.utils import API_URLS, get_graph_token
 
 
 def login_redirect(request):
-    """
-        Get user details from microsoft graph apis.
-    """
-    graph_token = get_graph_token()
 
-    return HttpResponse(f"Logged in as {request.user.first_name} {request.user.last_name}, with email: {request.user.username} \nWith token: {graph_token['access_token']}")
+    gebruiker_post_data = {
+        'user': request.user.id,
+        'subjects': [],
+        'is_lesgever': False
+    }
+    serializer = GebruikerSerializer(data=gebruiker_post_data)
+    if serializer.is_valid():
+        serializer.save()
 
-    return redirect("https://sel2-4.ugent.be")
+    return redirect(home)
+
+@api_view(['GET'])
+def home(request):
+    return Response(data=API_URLS)
 
 def microsoft_association(request):
     return JsonResponse({"associatedApplications": [{ "applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5" }]})
