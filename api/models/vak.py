@@ -6,7 +6,6 @@ class Vak(models.Model):
     name = models.CharField(max_length=100)
     students = models.ManyToManyField('Gebruiker', related_name='vak_gebruikers', blank=True)
     teachers = models.ManyToManyField('Gebruiker', related_name='vak_lesgevers', blank=True)
-    projects = models.ManyToManyField('Project', related_name='vak_projecten', blank=True)
 
     def __str__(self):
         return self.name
