@@ -10,7 +10,6 @@ from api.serializers.gebruiker import GebruikerSerializer
 
 @api_view(['GET', 'POST'])
 def gebruiker_list(request):
-    print(request.META)
     if request.method == 'GET':
         gebruikers = Gebruiker.objects.all()
         

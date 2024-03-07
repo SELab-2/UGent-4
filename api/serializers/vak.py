@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models.vak import Vak
+from api.utils import clear
 
 
 class VakSerializer(serializers.ModelSerializer):
@@ -50,6 +51,3 @@ def validate_students_teachers(students_data, teachers_data):
         if not teacher.is_lesgever:
             raise serializers.ValidationError("Alle gebruikers in 'teachers' moeten lesgevers zijn")
 
-def clear(set):
-    for item in set.all(): 
-            set.remove(item)

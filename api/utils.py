@@ -1,6 +1,4 @@
 from django.conf import settings
-from api.models.gebruiker import Gebruiker
-from api.serializers.gebruiker import GebruikerSerializer
 import requests
 
 
@@ -33,12 +31,8 @@ def get_graph_token():
         return response.json()
     except:
         return None
+    
 
-
-def is_lesgever(id):
-    try:
-        gebruiker = Gebruiker.objects.get(pk=id)
-        serializer = GebruikerSerializer(gebruiker)
-        return serializer.data['is_lesgever']
-    except Gebruiker.DoesNotExist:
-        return False
+def clear(set):
+    for item in set.all(): 
+            set.remove(item)

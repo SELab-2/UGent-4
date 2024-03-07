@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models.gebruiker import Gebruiker
+from api.utils import clear
 
 
 class GebruikerSerializer(serializers.ModelSerializer):
@@ -16,9 +17,8 @@ class GebruikerSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         subjects_data = validated_data.pop('subjects', None)
         if subjects_data is not None:
-            instance.subjects.clear()
-            for subject_data in subjects_data:
-                instance.subjects.add(subject_data)
+            clear(instance.subjects)
+            instance.subjects.set(subjects_data)
 
         instance.save()
         return instance

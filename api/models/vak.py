@@ -1,7 +1,4 @@
 from django.db import models
-from django.db.models.signals import m2m_changed
-from django.dispatch import receiver
-from api.models.gebruiker import Gebruiker
 
 
 class Vak(models.Model):
@@ -15,14 +12,3 @@ class Vak(models.Model):
         return self.name
     
 
-@receiver(m2m_changed, sender=Vak.students.through)
-@receiver(m2m_changed, sender=Vak.teachers.through)
-def update_gebruiker_subjects(sender, instance, action, **kwargs):
-    if action == 'post_add':
-        for gebruiker_id in kwargs['pk_set']:
-            gebruiker = Gebruiker.objects.get(pk=gebruiker_id)
-            gebruiker.subjects.add(instance)
-    if action == 'post_remove':
-        for gebruiker_id in kwargs['pk_set']:
-            gebruiker = Gebruiker.objects.get(pk=gebruiker_id)
-            gebruiker.subjects.remove(instance)
