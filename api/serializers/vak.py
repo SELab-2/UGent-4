@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from api.models.vak import Vak
-from api.utils import clear
 
 
 class VakSerializer(serializers.ModelSerializer):
@@ -11,14 +10,17 @@ class VakSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         students_data = validated_data.pop('students')
         teachers_data = validated_data.pop('teachers')
+        projects_data = validated_data.pop('projects')
         
         validate_students_teachers(students_data, teachers_data)
 
-        projects_data = validated_data.pop('projects')
         vak = Vak.objects.create(**validated_data)
         vak.students.set(students_data)
         vak.teachers.set(teachers_data)
         vak.projects.set(projects_data)
+
+        populate_student_teacher_vakken(vak)
+
         return vak
 
     def update(self, instance, validated_data):
@@ -26,19 +28,23 @@ class VakSerializer(serializers.ModelSerializer):
 
         students_data = validated_data.pop('students', [])
         teachers_data = validated_data.pop('teachers', [])
+        projects_data = validated_data.pop('projects', [])
 
         validate_students_teachers(students_data, teachers_data)
 
-        projects_data = validated_data.pop('projects', [])
-        clear(instance.students)
-        clear(instance.teachers)
-        clear(instance.projects)
+        depopulate_student_teacher_vakken(instance)
+
+        instance.students.clear()
+        instance.teachers.clear()
+        instance.projects.clear()
 
         instance.students.set(students_data)
         instance.teachers.set(teachers_data)
         instance.projects.set(projects_data)
 
         instance.save()
+
+        populate_student_teacher_vakken(instance)
         
         return instance
     
@@ -51,3 +57,16 @@ def validate_students_teachers(students_data, teachers_data):
         if not teacher.is_lesgever:
             raise serializers.ValidationError("Alle gebruikers in 'teachers' moeten lesgevers zijn")
 
+def populate_student_teacher_vakken(vak):
+    for student in vak.students.all():
+        student.subjects.add(vak)
+
+    for teacher in vak.teachers.all():
+        teacher.subjects.add(vak)
+
+def depopulate_student_teacher_vakken(vak):
+    for student in vak.students.all():
+        student.subjects.remove(vak)
+
+    for teacher in vak.teachers.all():
+        teacher.subjects.remove(vak)

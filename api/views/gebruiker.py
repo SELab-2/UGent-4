@@ -15,12 +15,6 @@ def gebruiker_list(request):
         
         if 'is_lesgever' in request.GET and request.GET.get('is_lesgever').lower() in ['true', 'false']:
             gebruikers = gebruikers.filter(is_lesgever = (request.GET.get('is_lesgever').lower() == 'true'))
-        if 'heeft_vak' in request.GET:
-            try:
-                vak = eval(request.GET.get('heeft_vak'))
-                gebruikers = gebruikers.filter(subjects=vak)
-            except NameError:
-                pass
 
         serializer = GebruikerSerializer(gebruikers, many=True)
         return Response(serializer.data)

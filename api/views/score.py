@@ -10,8 +10,8 @@ from api.serializers.score import ScoreSerializer
 def score_list(request, format=None):
 
     if request.method == 'GET':
-        lesgevers = Score.objects.all()
-        serializer = ScoreSerializer(lesgevers, many=True)
+        scores = Score.objects.all()
+        serializer = ScoreSerializer(scores, many=True)
         return Response(serializer.data)
     
     elif request.method == 'POST':
