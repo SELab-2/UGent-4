@@ -26,8 +26,8 @@ interface Assignment {
 }
 
 export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
-    const course = getCourse(courseId)
-    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId))
+    const course = getCourse(courseId);
+    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
 
     return (
         <>
