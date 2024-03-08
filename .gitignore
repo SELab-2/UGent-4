@@ -5,3 +5,4 @@ projectenv
 migrations
 .env
 htmlcov
+data

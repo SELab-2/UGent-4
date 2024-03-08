@@ -31,8 +31,3 @@ def get_graph_token():
         return response.json()
     except:
         return None
-    
-
-def clear(set):
-    for item in set.all(): 
-            set.remove(item)
