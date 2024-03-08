@@ -3,12 +3,11 @@ import { Box, Stack } from "@mui/material";
 import TabSwitcher from "../../components/TabSwitcher.tsx";
 import {ArchivedProjectsView} from "./ArchivedProjectsView.tsx";
 import {ProjectsView} from "./ProjectsView.tsx";
+import { useParams } from "react-router-dom";
 
-interface SubjectsTeacherProps {
-    courseId: string;
-}
-
-export function SubjectsTeacherPage({courseId}: SubjectsTeacherProps) {
+export function SubjectsTeacherPage() {
+    let { courseId } = useParams();
+    courseId = String(courseId);
     return (
         <>
             <Stack direction={"column"} spacing={10} sx={{width:"100%" ,height:"100%", backgroundColor:"background.default"}}>
