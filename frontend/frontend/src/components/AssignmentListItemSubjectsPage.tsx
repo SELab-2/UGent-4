@@ -1,6 +1,4 @@
-import {ListItem, ListItemButton, ListItemIcon, ListItemText, Divider} from "@mui/material";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 interface AssignmentListItemSubjectsPageProps {
@@ -53,7 +51,7 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:100}} primary={"edit"}/>
+                            <ListItemText sx={{maxWidth:40}} primary={"edit"}/>
                         </>
                     }
                 </ListItemButton>

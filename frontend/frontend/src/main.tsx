@@ -19,11 +19,11 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/subjects_student",
+    path: "/subjects_student/:courseId",
     element: <SubjectsStudentPage />,
   },
   {
-    path: "/subjects_teacher",
+    path: "/subjects_teacher/:courseId",
     element: <SubjectsTeacherPage />,
   },
 ]);
