@@ -1,7 +1,7 @@
 import {Box, Card, CardActionArea, CardContent, Divider, IconButton, Typography} from "@mui/material";
 import {t} from "i18next";
 import List from '@mui/material/List';
-import { AssignmentListItem } from "./AssignmentListItem";
+import {AssignmentListItem} from "./AssignmentListItem";
 import {useNavigate} from "react-router-dom";
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 /*
@@ -53,106 +53,117 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
     return (
         <>
             <Card elevation={1}
-                 sx={{
-                     width:{xs:"100%",md:"60%"},
-                     minWidth: 300,
-                     maxWidth:450,
-                     backgroundColor: "background.default",
-                     borderRadius:5,
-                     padding:0,
-                     margin:2,
-                 }}
+                  sx={{
+                      width: {xs: "100%", md: "60%"},
+                      minWidth: 300,
+                      maxWidth: 420,
+                      backgroundColor: "background.default",
+                      borderRadius: 5,
+                      padding: 0,
+                      margin: 2,
+                  }}
             >
-                <CardContent sx={{margin:0,padding:0}}>
+                <CardContent sx={{margin: 0, padding: 0}}>
                     <CardActionArea onClick={handleCardClick}>
-                    <Box aria-label={"courseHeader"}
-                         sx={{backgroundColor: "secondary.main",
-                             margin:0,
-                             height: 50,
-                             display: "flex",
-                             flexDirection: "row",
-                             justifyContent: "space-between",
-                             padding:3,
-                         }}>
-                        <Box width={"50%"} height={"100%"} display={"flex"} flexDirection={"column"} justifyContent={"center"}>
-                            <Typography variant={"h4"}>{course.name}</Typography>
-                            <Typography variant={"subtitle1"}>{course.teacher}</Typography>
+                        <Box aria-label={"courseHeader"}
+                             sx={{
+                                 backgroundColor: "secondary.main",
+                                 margin: 0,
+                                 height: 50,
+                                 display: "flex",
+                                 flexDirection: "row",
+                                 justifyContent: "space-between",
+                                 padding: 3,
+                             }}>
+                            <Box width={"50%"} height={"100%"} display={"flex"} flexDirection={"column"}
+                                 justifyContent={"center"}>
+                                <Typography variant={"h4"}>{course.name}</Typography>
+                                <Typography variant={"subtitle1"}>{course.teacher}</Typography>
+                            </Box>
+                            <Box>
+                                <Typography variant={"subtitle1"}>{t("students")}{course.students.length}</Typography>
+                            </Box>
                         </Box>
-                        <Box>
-                            <Typography variant={"subtitle1"}>{t("students")}{course.students.length}</Typography>
-                        </Box>
-                    </Box>
                     </CardActionArea>
                     <Box aria-label={"assignmentList"}
-                         sx={{backgroundColor: "background.default",
+                         sx={{
+                             backgroundColor: "background.default",
                              height: 150,
                              display: "flex",
                              flexDirection: "column",
-                             padding:1,
-                             borderRadius:2,
-                             paddingBottom:0
+                             padding: 1,
+                             borderRadius: 2,
+                             paddingBottom: 0
                          }}>
-                        {isStudent?
-                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3} >
-                            <Typography width={30} >Project</Typography>
-                            <Typography width={30}>Deadline</Typography>
-                            <Typography width={30}>Status</Typography>
-                        </Box> :
+                        {isStudent ?
+                            <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
+                                <Typography width={30}>Project</Typography>
+                                <Typography width={30}>Deadline</Typography>
+                                <Typography width={30}>Status</Typography>
+                            </Box> :
                             <>
-                            {archived?
-                                <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3} width={{xs:"81%",sm:"85%"}}>
-                                    <Typography maxWidth={100} >Project</Typography>
-                                    <Typography minWidth={50}>Deadline</Typography>
-                                </Box>
+                                {archived ?
+                                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3}
+                                         pr={3} width={{xs: "81%", sm: "85%"}}>
+                                        <Typography maxWidth={100}>Project</Typography>
+                                        <Typography minWidth={50}>Deadline</Typography>
+                                    </Box>
                                     :
-                                <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3} width={{xs:"71%",sm:"75%"}}>
-                                    <Typography maxWidth={100} >Project</Typography>
-                                    <Typography minWidth={50}>Deadline</Typography>
-                                </Box>
-                            }</>
+                                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3}
+                                         pr={3} width={{xs: "71%", sm: "75%"}}>
+                                        <Typography maxWidth={100}>Project</Typography>
+                                        <Typography minWidth={50}>Deadline</Typography>
+                                    </Box>
+                                }</>
                         }
                         <Divider color={"text.main"}></Divider>
                         <Box display={"flex"} flexDirection={"row"}>
-                            {isStudent?
-                        <Box sx={{width:"100%", height: 130, overflow:"auto"}}>
-                            <List disablePadding={true}>
-                                {assignments.map((assignment) => (
-                                    <AssignmentListItem key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} status={assignment.id==="assignment1"} isStudent={isStudent}/>
-                                ))}
-                            </List>
-                        </Box> :
-                                <>{!archived?
-                                <Box sx={{width: "90%", height: 130}}>
+                            {isStudent ?
+                                <Box sx={{width: "100%", height: 130, overflow: "auto"}}>
                                     <List disablePadding={true}>
                                         {assignments.map((assignment) => (
-                                            <AssignmentListItem key={assignment.id} projectName={assignment.name}
+                                            <AssignmentListItem key={assignment.id} id={assignment.id}
+                                                                projectName={assignment.name}
                                                                 dueDate={assignment.deadline}
                                                                 status={assignment.id === "assignment1"}
                                                                 isStudent={isStudent}/>
                                         ))}
                                     </List>
                                 </Box> :
-                                <Box sx={{width: "100%", height: 130}}>
-                                    <List disablePadding={true}>
-                                        {assignments.map((assignment) => (
-                                            <AssignmentListItem key={assignment.id} projectName={assignment.name}
-                                                                dueDate={assignment.deadline}
-                                                                status={assignment.id === "assignment1"}
-                                                                isStudent={isStudent}/>
-                                        ))}
-                                    </List>
-                                </Box>
+                                <>{!archived ?
+                                    <Box sx={{width: "90%", height: 130}}>
+                                        <List disablePadding={true}>
+                                            {assignments.map((assignment) => (
+                                                <AssignmentListItem key={assignment.id} id={assignment.id}
+                                                                    projectName={assignment.name}
+                                                                    dueDate={assignment.deadline}
+                                                                    status={assignment.id === "assignment1"}
+                                                                    isStudent={isStudent}/>
+                                            ))}
+                                        </List>
+                                    </Box> :
+                                    <Box sx={{width: "100%", height: 130}}>
+                                        <List disablePadding={true}>
+                                            {assignments.map((assignment) => (
+                                                <AssignmentListItem key={assignment.id} id={assignment.id}
+                                                                    projectName={assignment.name}
+                                                                    dueDate={assignment.deadline}
+                                                                    status={assignment.id === "assignment1"}
+                                                                    isStudent={isStudent}/>
+                                            ))}
+                                        </List>
+                                    </Box>
                                 }
-                                {!archived &&
-                                    <Box display={"flex"} flexDirection={"column"} paddingRight={1}
-                                           sx={{flexGrow: 1, alignItems: "flex-end", alignSelf: "flex-end"}}>
-                                     <IconButton onClick={archive}
-                                        sx={{
-                                        backgroundColor: "secondary.main",
-                                        borderRadius: 2,
-                                        alignSelf: "flex-end"
-                                    }}><ArchiveOutlinedIcon/></IconButton>
-                                    </Box>}
+                                    {!archived &&
+                                        <Box display={"flex"} flexDirection={"column"} paddingRight={1}
+                                             sx={{flexGrow: 1, alignItems: "flex-end", alignSelf: "flex-end"}}>
+                                            <IconButton onClick={archive}
+                                                        sx={{
+                                                            backgroundColor: "secondary.main",
+                                                            borderRadius: 2,
+                                                            alignSelf: "flex-end"
+                                                        }}><ArchiveOutlinedIcon/></IconButton>
+                                        </Box>}
                                 </>
                             }
                         </Box>
