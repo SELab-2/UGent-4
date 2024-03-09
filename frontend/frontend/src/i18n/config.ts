@@ -6,25 +6,29 @@ const english = {
     logo: "./src/assets/logo_UGent_EN_RGB_2400_white.png",
     logo_blue: "./src/assets/logo_UGent_EN_RGB_2400_color.png",
     login: "Log in with your UGent account",
-    back : "Back",
+    back: "Back",
     current_courses: "Current courses",
     archived: "Archived",
     students: "Students: ",
     no_deadline: "No deadline",
+    add_admin: "Add admin",
 };
 const dutch = {
     logo: "./src/assets/logo_UGent_NL_RGB_2400_wit.png",
     logo_blue: "./src/assets/logo_UGent_NL_RGB_2400_kleur.png",
     login: "Log in met je UGent account",
-    back : "Terug",
+    back: "Terug",
     current_courses: "Huidige vakken",
     archived: "Gearchiveerd",
     students: "Studenten: ",
     no_deadline: "Geen deadline",
+    add_admin: "Voeg admin toe",
 };
 
-i18n.use(initReactI18next).use(LanguageDetector).init({ fallbackLng: "en",
-                                        debug:true, interpolation: {escapeValue: false},
-                    resources: {en: {translation: english}, nl: {translation: dutch}}});
+i18n.use(initReactI18next).use(LanguageDetector).init({
+    fallbackLng: "en",
+    debug: true, interpolation: {escapeValue: false},
+    resources: {en: {translation: english}, nl: {translation: dutch}}
+});
 
 export default i18n;
