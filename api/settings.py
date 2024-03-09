@@ -137,11 +137,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 
-CLIENT_ID = '239ce609-e362-4cf6-919f-97e6935ef5f5'
-CLIENT_SECRET = os.getenv('CLIENT_SCRET')
-TENANT_ID = os.getenv('TENANT_ID')
+CLIENT_ID = os.environ.get('CLIENT_ID')
+CLIENT_SECRET = os.environ.get('CLIENT_SECRET')
+TENANT_ID = os.environ.get('TENANT_ID')
 
-AD_URL = os.environ.get('AD_URL') #os.getenv('ad_url')
+AD_URL = os.environ.get('AD_URL')
 
 
 AUTH_ADFS = {
