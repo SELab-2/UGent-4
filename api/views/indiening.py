@@ -10,8 +10,23 @@ from api.serializers.indiening import IndieningSerializer
 def indiening_list(request, format=None):
 
     if request.method == 'GET':
-        lesgevers = Indiening.objects.all()
-        serializer = IndieningSerializer(lesgevers, many=True)
+        indieningen = Indiening.objects.all()
+
+        if "project" in request.GET:
+            try:
+                project = eval(request.GET.get('project'))
+                indieningen = indieningen.filter(project=project)
+            except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            
+        if "groep" in request.GET:
+            try:
+                groep = eval(request.GET.get('groep'))
+                indieningen = indieningen.filter(indiener=groep)
+            except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = IndieningSerializer(indieningen, many=True)
         return Response(serializer.data)
     
     elif request.method == 'POST':
@@ -19,6 +34,7 @@ def indiening_list(request, format=None):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 @api_view(['GET', 'PUT', 'DELETE'])
 def indiening_detail(request, id, format=None): 
