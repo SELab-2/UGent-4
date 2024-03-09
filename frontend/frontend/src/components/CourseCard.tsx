@@ -55,12 +55,12 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
             <Card elevation={1}
                   sx={{
                       width: {xs: "100%", md: "60%"},
-                      minWidth: 300,
+                      minWidth: 350,
                       maxWidth: 420,
                       backgroundColor: "background.default",
                       borderRadius: 5,
                       padding: 0,
-                      margin: 2,
+                      margin: 1,
                   }}
             >
                 <CardContent sx={{margin: 0, padding: 0}}>
