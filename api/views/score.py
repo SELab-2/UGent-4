@@ -11,6 +11,21 @@ def score_list(request, format=None):
 
     if request.method == 'GET':
         scores = Score.objects.all()
+
+        if "indiening" in request.GET:
+            try:
+                indiening = eval(request.GET.get('indiening'))
+                scores = scores.filter(indiening=indiening)
+            except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if "groep" in request.GET:
+            try:
+                groep = eval(request.GET.get('groep'))
+                scores = scores.filter(groep=groep)
+            except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
         serializer = ScoreSerializer(scores, many=True)
         return Response(serializer.data)
     
@@ -19,6 +34,7 @@ def score_list(request, format=None):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 @api_view(['GET', 'PUT', 'DELETE'])
 def score_detail(request, id, format=None): 
