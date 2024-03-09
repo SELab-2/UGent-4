@@ -19,7 +19,7 @@ class GebruikerSerializerTest(APITestCase):
         self.serializer_data = GebruikerSerializer().data
         self.gebruiker = Gebruiker.objects.create(**self.gebruiker_attributes)
 
-        subjects = ['Math', 'Science']
+        subjects = [1, 2]
         for subject in subjects:
             vak = Vak.objects.create(name=subject)
             self.gebruiker.subjects.add(vak)
