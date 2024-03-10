@@ -9,9 +9,9 @@ from api.utils import API_URLS, get_graph_token
 def login_redirect(request):
 
     gebruiker_post_data = {
-        'user': request.user.id,
-        'subjects': [],
-        'is_lesgever': False
+        "user": request.user.id,
+        "subjects": [],
+        "is_lesgever": False,
     }
     serializer = GebruikerSerializer(data=gebruiker_post_data)
     if serializer.is_valid():
@@ -19,9 +19,17 @@ def login_redirect(request):
 
     return redirect(home)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 def home(request):
     return Response(data=API_URLS)
 
+
 def microsoft_association(request):
-    return JsonResponse({"associatedApplications": [{ "applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5" }]})
+    return JsonResponse(
+        {
+            "associatedApplications": [
+                {"applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5"}
+            ]
+        }
+    )
