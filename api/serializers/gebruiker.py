@@ -5,10 +5,10 @@ from api.models.gebruiker import Gebruiker
 class GebruikerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Gebruiker
-        fields = '__all__'
+        fields = "__all__"
 
     def create(self, validated_data):
-        subjects_data = validated_data.pop('subjects')
+        subjects_data = validated_data.pop("subjects")
         instance = Gebruiker.objects.create(**validated_data)
         instance.subjects.set(subjects_data)
 
@@ -17,10 +17,9 @@ class GebruikerSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        instance.is_lesgever = validated_data.pop('is_lesgever', False)
+        instance.is_lesgever = validated_data.pop("is_lesgever", False)
 
-
-        subjects_data = validated_data.pop('subjects', [])
+        subjects_data = validated_data.pop("subjects", [])
 
         depopulate_subject_gebruikers(instance)
 
@@ -39,6 +38,7 @@ def populate_subject_gebruikers(gebruiker):
             subject.teachers.add(gebruiker)
         else:
             subject.students.add(gebruiker)
+
 
 def depopulate_subject_gebruikers(gebruiker):
     for subject in gebruiker.subjects.all():
