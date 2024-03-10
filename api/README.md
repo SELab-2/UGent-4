@@ -6,14 +6,14 @@ Deze folder bevat de code van de backend.
 ### Benodigdheden:
 - .env bestand: In deze folder moet je lokaal een .env bestand zetten. Het .env bestand bevat geheime variabelen en codes die je niet in deze repo zal vinden. Vraag het aan iemand van het backend team als je de file wilt krijgen.
 
-- postgres databank: Je zal zelf een postgres databank moeten opzetten. De naam van de databank, user, paswoord, ... Kan je lezen in het .env bestand.
+- postgres databank: Je zal zelf een postgres databank moeten opzetten. De naam van de databank, user, paswoord, ... Kan je vinden in het .env bestand.
 
 - virtual environment: Je zal ook een virtual environment moeten maken. Doe dit op linux met het commando: `python -m venv /path/to/new/virtual/environment`.
 Vervolgens activeer je de virtual environment als volgt: `source my_env/bin/activate`.
 Tenslotte installeer je alle dependencies: `pip install -r requirements.txt`.
 
 ### de api lokaal runnen:
-Om de api lokaal te runnen activeer je eerst de virtual environment. Daarna voer je volgende commando's uit vanaf de UGent-4 directory: 
+Om de api lokaal te runnen activeer je eerst de virtual environment. Daarna voer je volgende commando's uit in de UGent-4 directory: 
 ```sh
 ./manage.py makemigrations api
 ./manage.py migrate api
