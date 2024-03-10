@@ -9,7 +9,7 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import { SubjectsStudentPage } from "./pages/subjects_page/SubjectsStudentPage.tsx";
-
+import { AssignmentStudentPage } from "./pages/assignmentPage/assignmentStudentPage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +20,10 @@ const router = createBrowserRouter([
   {
     path: "/subjects_student",
     element: <SubjectsStudentPage />,
+  },
+  {
+    path: "/assignment_student",
+    element: <AssignmentStudentPage />,
   },
 ]);
 
