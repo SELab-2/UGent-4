@@ -1,5 +1,5 @@
-import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
-import {useNavigate} from "react-router-dom";
+import {ListItem, ListItemText, Divider, TextField, IconButton} from "@mui/material";
+import DownloadIcon from '@mui/icons-material/Download';
 import {t} from "i18next";
 
 interface StudentScoreListItemProps {
@@ -16,16 +16,10 @@ interface StudentScoreListItemProps {
 */
 
 export function StudentScoreListItem({key, studentName, submissionFiles}:StudentScoreListItemProps) {
-    const navigate = useNavigate();
-    const handleProjectClick = () => {
-        console.log("Project clicked");
-        navigate(`/${key}`)
-    }
-
     return (
         <>
             <ListItem key={studentName} sx={{margin:0}} disablePadding={true}>
-                <ListItemButton onClick={handleProjectClick} sx={{
+                <ListItem sx={{
                     width: "100%",
                     height: 30,
                     display: "flex",
@@ -38,10 +32,17 @@ export function StudentScoreListItem({key, studentName, submissionFiles}:Student
                     <>
                         <ListItemText sx={{maxWidth:100}} primary={studentName}/>
                         <ListItemText sx={{maxWidth:110}} primary={submissionFiles.length? submissionFiles.length + " indieningen" : "geen indieningen"}/>
-                        <ListItemText sx={{maxWidth:100}} primary={"0/20"}/>
-                        <ListItemText sx={{maxWidth:100}} primary={"download button"}/>
+                        <ListItem sx={{maxWidth:100}}>
+                            <TextField hiddenLabel defaultValue="0" variant="filled" size="small" />
+                            <ListItemText sx={{maxWidth:100}} primary="/20"/>
+                        </ListItem>
+                        <ListItem sx={{maxWidth:100}}>
+                            <IconButton edge="end" aria-label="download">
+                                <DownloadIcon />
+                            </IconButton>
+                        </ListItem>
                     </>
-                </ListItemButton>
+                </ListItem>
             </ListItem>
             <Divider color={"text.main"}></Divider>
         </>

@@ -55,7 +55,7 @@ export function StudentsView({projectId}: StudentsViewProps) {
             <Divider color={"text.main"}></Divider>
             <Box aria-label={"studentList"}
                 sx={{backgroundColor: "background.default",
-                    height: 500,
+                    height: 450,
                     display: "flex",
                     flexDirection: "column",
                     padding:1,
@@ -63,7 +63,7 @@ export function StudentsView({projectId}: StudentsViewProps) {
                     paddingBottom:0
                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 480, overflow:"auto"}}>
+                    <Box sx={{width:"100%", height: 430, overflow:"auto"}}>
                         <List disablePadding={true}>
                             {students.map((studentOnProject) => (
                                 <StudentScoreListItem key={studentOnProject.id} studentName={getStudent(studentOnProject.studentId).name} submissionFiles={studentOnProject.submissions.map((submissionId) => getSubmission(submissionId).file)}/>
