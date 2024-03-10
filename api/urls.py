@@ -33,7 +33,7 @@ urlpatterns = [
     path('login_redirect/', login_redirect),
     path('api/', home),
     path('api/gebruikers/', gebruiker_list),
-    path('api/gebruikers/<int:id>/', gebruiker_detail),
+    path('api/gebruikers/<int:id>/', gebruiker_detail, name='gebruiker_detail'),
     path('api/vakken/', vak_list),
     path('api/vakken/<int:id>/', vak_detail),
     path('api/projecten/', project_list),
