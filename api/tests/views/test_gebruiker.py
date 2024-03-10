@@ -6,7 +6,6 @@ from django.urls import reverse
 class GebruikerListViewTest(APITestCase):
     def setUp(self):
         self.client = APIClient()
-        self.gebruiker = GebruikerFactory.create()
 
     def test_get_gebruiker_list(self):
         response = self.client.get("/api/gebruikers/")
@@ -33,4 +32,5 @@ class GebruikerDetailViewTest(APITestCase):
         data = {"user": self.gebruiker.user.id, "is_lesgever": True, "subjects": []}
         response = self.client.put(self.url, data)
         self.assertEqual(response.status_code, 200)
+        # TODO
         # self.assertEqual(response.data['is_lesgever'], True)

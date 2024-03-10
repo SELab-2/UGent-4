@@ -1,29 +1,18 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework.exceptions import ValidationError
-from api.models.gebruiker import Gebruiker
 from api.serializers.gebruiker import GebruikerSerializer
-from django.contrib.auth.models import User
-from api.models.vak import Vak
-
+from api.tests.factories.gebruiker import UserFactory, GebruikerFactory
+from api.tests.factories.vak import VakFactory
 
 class GebruikerSerializerTest(APITestCase):
 
     def setUp(self):
-        # Create a User instance
-        self.user = User.objects.create_user(username="testuser")
+        self.user = UserFactory.create(username="testuser")
+        self.gebruiker = GebruikerFactory.create(user=self.user)
 
-        self.gebruiker_attributes = {
-            "user": self.user,
-        }
-
-        self.serializer_data = GebruikerSerializer().data
-        self.gebruiker = Gebruiker.objects.create(**self.gebruiker_attributes)
-
-        subjects = [1, 2]
-        for subject in subjects:
-            vak = Vak.objects.create(name=subject)
-            self.gebruiker.subjects.add(vak)
+        subjects = VakFactory.create_batch(2)
+        self.gebruiker.subjects.set(subjects)
 
         self.serializer = GebruikerSerializer(instance=self.gebruiker)
 
