@@ -6,3 +6,4 @@ django-auth-adfs
 python-dotenv
 coverage
 flake8
+factory_boy
