@@ -1,9 +1,9 @@
-from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework.exceptions import ValidationError
 from api.serializers.gebruiker import GebruikerSerializer
 from api.tests.factories.gebruiker import UserFactory, GebruikerFactory
 from api.tests.factories.vak import VakFactory
+
 
 class GebruikerSerializerTest(APITestCase):
 
