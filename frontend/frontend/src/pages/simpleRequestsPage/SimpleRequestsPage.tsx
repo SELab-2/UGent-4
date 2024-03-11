@@ -1,5 +1,5 @@
 import {Button, Stack, TextField, Typography} from "@mui/material";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
 import axios from "axios";
 
 export function SimpleRequestsPage() {
@@ -7,10 +7,11 @@ export function SimpleRequestsPage() {
     const [query, setQuery] = useState("");
     const [response, setResponse] = useState("");
 
-    const handleRequest = (e: React.FormEvent) => {
+    const handleRequest = (e: FormEvent) => {
         e.preventDefault();
         console.log("Requesting...");
-        axios.get(url, {params: query}).then((response) => {
+        const params = JSON.parse(query);
+        axios.get(url, {params: params}).then((response) => {
                 setResponse(response.data);
             }
         ).catch((error) => {
