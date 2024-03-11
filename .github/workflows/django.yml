@@ -2,9 +2,9 @@ name: Django CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "tests" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "tests" ]
 
 jobs:
   build:
@@ -35,6 +35,9 @@ jobs:
       run: |
         python3 -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: Linting API
+      run: |
+        flake8 ./api
     - name: Run Tests
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
