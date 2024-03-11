@@ -8,5 +8,11 @@ class ScoreSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        return Score.objects.create(**validated_data)
+        score =  Score.objects.create(**validated_data)
+        return score
+    
+    def update(self, instance, validated_data):
+        instance = Score.objects.create(**validated_data)
+        instance.save()
+        return instance
 
