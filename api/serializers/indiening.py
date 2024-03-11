@@ -8,4 +8,11 @@ class IndieningSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
-        return Indiening.objects.create(**validated_data)
+        # indiener is een groep, dus zeker student(en)
+        indiening = Indiening.objects.create(**validated_data)
+        return indiening
+    
+    def update(self, instance, validated_data):
+        instance = Indiening.objects.create(**validated_data)
+        instance.save()
+        return instance
