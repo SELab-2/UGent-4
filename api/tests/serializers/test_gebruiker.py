@@ -6,7 +6,6 @@ from api.tests.factories.vak import VakFactory
 
 
 class GebruikerSerializerTest(APITestCase):
-
     def setUp(self):
         self.user = UserFactory.create(username="testuser")
         self.gebruiker = GebruikerFactory.create(user=self.user)

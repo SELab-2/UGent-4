@@ -6,7 +6,6 @@ from dateutil.parser import parse
 
 
 class ProjectSerializerTest(APITestCase):
-
     def setUp(self):
         self.project = ProjectFactory.create()
         self.serializer = ProjectSerializer(instance=self.project)

@@ -24,7 +24,6 @@ class GroepListViewTest(APITestCase):
 
 
 class GroepDetailViewTest(APITestCase):
-
     def setUp(self):
         self.client = APIClient()
         self.groep = GroepFactory.create()

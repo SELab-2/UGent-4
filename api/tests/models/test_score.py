@@ -5,7 +5,6 @@ from api.tests.factories.indiening import IndieningFactory
 
 
 class ScoreModelTest(TestCase):
-
     def setUp(self):
         self.indiening = IndieningFactory.create()
         self.groep = GroepFactory.create()
