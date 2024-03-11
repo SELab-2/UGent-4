@@ -13,7 +13,6 @@ class GroepModelTest(TestCase):
         self.project = ProjectFactory.create(vak=self.vak)
         self.groep = GroepFactory.create(project=self.project)
 
-
     def test_groep_creation(self):
         self.assertIsInstance(self.groep, Groep)
         self.assertEqual(self.groep.__str__(), f"Group {self.groep.group_id}")

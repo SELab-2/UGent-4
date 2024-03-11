@@ -32,5 +32,5 @@ def get_graph_token():
 
         response = requests.post(url=url, headers=headers, data=data)
         return response.json()
-    except:
+    except Exception:
         return None

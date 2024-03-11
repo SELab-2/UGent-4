@@ -1,6 +1,5 @@
 import factory
 from api.models.groep import Groep
-from api.models.project import Project
 from api.tests.factories.gebruiker import GebruikerFactory
 from api.tests.factories.project import ProjectFactory
 

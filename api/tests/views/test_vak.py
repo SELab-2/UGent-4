@@ -3,7 +3,8 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from api.tests.factories.vak import VakFactory
 from api.tests.factories.gebruiker import GebruikerFactory
-from api.models.vak import Vak
+# from api.models.vak import Vak
+
 
 class VakViewsTest(APITestCase):
 
@@ -15,7 +16,7 @@ class VakViewsTest(APITestCase):
         self.vak.teachers.set(self.teachers)
 
     def test_vak_list_get(self):
-        response = self.client.get(reverse('vak_list'))
+        response = self.client.get(reverse("vak_list"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
@@ -33,9 +34,9 @@ class VakViewsTest(APITestCase):
     """
 
     def test_vak_detail_get(self):
-        response = self.client.get(reverse('vak_detail', args=[self.vak.pk]))
+        response = self.client.get(reverse("vak_detail", args=[self.vak.pk]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['vak_id'], self.vak.vak_id)
+        self.assertEqual(response.data["vak_id"], self.vak.vak_id)
 
     """" TODO: projecten bijhouden bij een vak ipv vakken bijhouden bij een project
     def test_vak_detail_put(self):
@@ -51,5 +52,5 @@ class VakViewsTest(APITestCase):
     """
 
     def test_vak_detail_delete(self):
-        response = self.client.delete(reverse('vak_detail', args=[self.vak.pk]))
+        response = self.client.delete(reverse("vak_detail", args=[self.vak.pk]))
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

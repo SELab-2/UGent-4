@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 from api.serializers.groep import GroepSerializer
 from api.tests.factories.groep import GroepFactory
 
+
 class GroepSerializerTest(APITestCase):
 
     def setUp(self):
@@ -15,7 +16,9 @@ class GroepSerializerTest(APITestCase):
 
     def test_project_field_content(self):
         data = self.serializer.data
-        self.assertEqual(data["project"], self.groep.project.pk)  # replace 'pk' with the correct primary key field of the Project model
+        self.assertEqual(
+            data["project"], self.groep.project.pk
+        )  # replace 'pk' with the correct primary key field of the Project model
 
     def test_students_field_content(self):
         data = self.serializer.data
