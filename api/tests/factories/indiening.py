@@ -1,15 +1,10 @@
 import factory
 from api.models.indiening import Indiening
-from api.models.groep import Groep
-from django.core.files.base import ContentFile
+from api.tests.factories.groep import GroepFactory
+from django.utils import timezone
+from faker import Faker
 
-
-class GroepFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Groep
-
-    # Add fields here. For example:
-    # field_name = factory.Faker('pystr')
+fake = Faker()
 
 
 class IndieningFactory(factory.django.DjangoModelFactory):
@@ -17,7 +12,9 @@ class IndieningFactory(factory.django.DjangoModelFactory):
         model = Indiening
 
     indiener = factory.SubFactory(GroepFactory)
-    indieningsbestanden = factory.django.FileField(
-        from_path=ContentFile(b"file content")
+    indieningsbestanden = factory.django.FileField(data=b"file content")
+    tijdstip = factory.LazyFunction(
+        lambda: timezone.make_aware(
+            fake.date_time_between(start_date="+1d", end_date="+30d")
+        )
     )
-    tijdstip = factory.Faker("date_time_this_year")
