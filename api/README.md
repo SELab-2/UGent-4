@@ -33,4 +33,4 @@ Run het commando `flake8 .`. De output vertelt je waar de codestijl fout is. Om 
 
 
 ### Testing:
-Run het commando `./manage.py test` uit in de ***UGENT-4*** directory.
+Run het commando `./manage.py test` in de ***UGENT-4*** directory.
