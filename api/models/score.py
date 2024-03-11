@@ -7,4 +7,4 @@ class Score(models.Model):
     groep = models.ForeignKey("Groep", on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.score
+        return str(self.score)

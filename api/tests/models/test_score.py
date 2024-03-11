@@ -1,12 +1,11 @@
 from django.test import TestCase
-# from api.tests.factories.score import ScoreFactory
-# from api.tests.factories.groep import GroepFactory
-# from api.tests.factories.indiening import IndieningFactory
+from api.tests.factories.score import ScoreFactory
+from api.tests.factories.groep import GroepFactory
+from api.tests.factories.indiening import IndieningFactory
 
 
 class ScoreModelTest(TestCase):
 
-    """ TODO
     def setUp(self):
         self.indiening = IndieningFactory.create()
         self.groep = GroepFactory.create()
@@ -23,4 +22,3 @@ class ScoreModelTest(TestCase):
 
     def test_str_method(self):
         self.assertEqual(str(self.score), str(self.score.score))
-    """
