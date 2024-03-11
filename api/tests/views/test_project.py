@@ -6,7 +6,6 @@ from api.tests.factories.vak import VakFactory
 
 
 class ProjectViewTest(APITestCase):
-
     def setUp(self):
         self.project = ProjectFactory.create()
         self.vak = VakFactory.create()

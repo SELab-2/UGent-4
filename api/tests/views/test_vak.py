@@ -3,11 +3,11 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from api.tests.factories.vak import VakFactory
 from api.tests.factories.gebruiker import GebruikerFactory
+
 # from api.models.vak import Vak
 
 
 class VakViewsTest(APITestCase):
-
     def setUp(self):
         self.students = GebruikerFactory.create_batch(3, is_lesgever=False)
         self.teachers = GebruikerFactory.create_batch(2, is_lesgever=True)

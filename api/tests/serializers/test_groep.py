@@ -5,7 +5,6 @@ from api.tests.factories.groep import GroepFactory
 
 
 class GroepSerializerTest(APITestCase):
-
     def setUp(self):
         self.groep = GroepFactory.create()
         self.serializer = GroepSerializer(instance=self.groep)
