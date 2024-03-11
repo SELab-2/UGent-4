@@ -1,0 +1,10 @@
+node_modules
+projectenv
+venv
+.idea
+/venv/
+**/__pycache__/
+migrations
+.env
+htmlcov
+data
