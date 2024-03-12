@@ -12,7 +12,7 @@ class ScoreSerializer(serializers.ModelSerializer):
         return score
     
     def update(self, instance, validated_data):
-        instance = Score.objects.create(**validated_data)
+        super().update(instance=instance, validated_data=validated_data)
         instance.save()
         return instance
 
