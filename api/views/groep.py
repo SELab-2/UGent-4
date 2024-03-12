@@ -22,7 +22,7 @@ def groep_list(request, format=None):
         if "student" in request.GET:
             try:
                 student = eval(request.GET.get('student'))
-                groepen = groepen.filter(students=student)
+                groepen = groepen.filter(studenten=student)
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
