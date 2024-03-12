@@ -96,7 +96,7 @@ export function SubmissionPage() {
                 name: "docker tests",
                 value: "filename",
                 artifact: "filename"
-            }]
+            }, {name: "max file size", value: "10MB"}, {name: "min file size", value: "1MB"}]
         });
     }, [project]);
 
@@ -170,8 +170,8 @@ export function SubmissionPage() {
                               height: "20vh",
                           }}>
                         <Typography variant={"h6"} fontWeight={"bold"}>{t("restrictions")}</Typography>
-                        <Box sx={{padding: 3, overflowY: "auto"}}>
-                            <List>
+                        <Box sx={{padding: 1}}>
+                            <List sx={{maxHeight: "13vh", overflowY: "auto"}}>
                                 {
                                     submission.restrictions.map((restriction, index) => {
                                         return (
