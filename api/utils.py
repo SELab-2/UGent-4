@@ -7,7 +7,8 @@ API_URLS = {
     'vakken': '/api/vakken',
     'groepen': '/api/groepen',
     'indieningen': '/api/indieningen',
-    'scores': 'api/scores'
+    'scores': 'api/scores',
+    'projecten': 'api/projecten'
 }
 
 
