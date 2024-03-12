@@ -19,13 +19,6 @@ def score_list(request, format=None):
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        if "groep" in request.GET:
-            try:
-                groep = eval(request.GET.get('groep'))
-                scores = scores.filter(groep=groep)
-            except NameError:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-
         serializer = ScoreSerializer(scores, many=True)
         return Response(serializer.data)
     
