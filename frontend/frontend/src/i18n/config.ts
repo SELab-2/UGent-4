@@ -14,6 +14,8 @@ const english = {
     submission: "Submission",
     error: "Something went wrong.",
     assignment: "Assignment:",
+    filename: "Submitted file:",
+    restrictions: "Restrictions:",
 };
 const dutch = {
     logo: "/assets/logo_UGent_NL_RGB_2400_wit.png",
@@ -27,6 +29,8 @@ const dutch = {
     submission: "Indiening",
     error: "Er is iets misgegaan.",
     assignment: "Opgave:",
+    filename: "Ingediend bestand:",
+    restrictions: "Restricties:",
 };
 
 i18n.use(initReactI18next).use(LanguageDetector).init({
