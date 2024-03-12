@@ -8,6 +8,6 @@ class Vak(models.Model):
     lesgevers = models.ManyToManyField('Gebruiker', related_name='vak_lesgevers', blank=True)
 
     def __str__(self):
-        return self.name
+        return self.naam
     
 
