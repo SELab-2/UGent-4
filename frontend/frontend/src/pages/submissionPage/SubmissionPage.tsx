@@ -42,6 +42,20 @@ export function SubmissionPage() {
             });
     }
 
+    const downloadSubmission = () => {
+        fetch(`/api/submissions/${project}`)
+            .then(res => res.blob())
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = project + "_submission.zip";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            });
+    }
+
     //TODO: fetch submission data from backend
     useEffect(() => {
         // fetch(`/api/submissions/${project}`)
@@ -144,7 +158,7 @@ export function SubmissionPage() {
                         <Typography variant={"h6"} fontWeight={"bold"} aria-label={"title"} margin={0}>
                             {t("filename")}
                         </Typography>
-                        <Button startIcon={<DownloadIcon/>}>
+                        <Button startIcon={<DownloadIcon/>} onClick={downloadSubmission}>
                             {submission.filename}
                         </Button>
                     </Box>
@@ -166,8 +180,9 @@ export function SubmissionPage() {
                                                     <Typography variant={"body1"}
                                                                 fontWeight={"bold"}>{restriction.name}</Typography>
                                                     {restriction.artifact &&
-                                                        <Button onClick={() => downloadArtifact(restriction.artifact)}
-                                                                startIcon={<DownloadIcon/>}>Download artifact</Button>}
+                                                        <Button
+                                                            onClick={() => downloadArtifact(restriction.artifact !== undefined ? restriction.artifact : "")}
+                                                            startIcon={<DownloadIcon/>}>Download artifact</Button>}
                                                     <Typography variant={"body1"}>{restriction.value}</Typography>
                                                 </ListItem>
                                                 <Divider/>
