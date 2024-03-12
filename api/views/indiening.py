@@ -12,13 +12,6 @@ def indiening_list(request, format=None):
     if request.method == 'GET':
         indieningen = Indiening.objects.all()
 
-        if "project" in request.GET:
-            try:
-                project = eval(request.GET.get('project'))
-                indieningen = indieningen.filter(project=project)
-            except NameError:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-            
         if "groep" in request.GET:
             try:
                 groep = eval(request.GET.get('groep'))

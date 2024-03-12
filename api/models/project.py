@@ -9,8 +9,8 @@ def upload_to(instance, filename):
 class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     titel = models.CharField(max_length=100)
-    description = models.TextField()
-    opgave_bestanden = models.FileField(upload_to=upload_to)
+    beschrijving = models.TextField()
+    opgave_bestand = models.FileField(upload_to=upload_to)
     vak = models.ForeignKey(Vak, on_delete=models.CASCADE)
     deadline = models.DateTimeField(null=True)
     max_score = models.IntegerField(default=20)
