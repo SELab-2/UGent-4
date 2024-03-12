@@ -22,7 +22,7 @@ from .views.views import microsoft_association, login_redirect, home
 from .views.gebruiker import gebruiker_list, gebruiker_detail
 from .views.vak import vak_list, vak_detail
 from .views.project import project_list, project_detail
-from .views.indiening import indiening_list, indiening_detail
+from .views.indiening import indiening_list, indiening_detail, indiening_bestand_list, indiening_bestand_detail
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
 
@@ -40,6 +40,8 @@ urlpatterns = [
     path('api/projecten/<int:id>/', project_detail),
     path('api/indieningen/', indiening_list),
     path('api/indieningen/<int:id>/', indiening_detail),
+    path('api/indiening_bestanden/', indiening_bestand_list),
+    path('api/indiening_bestanden/<int:id>/', indiening_bestand_detail),
     path('api/scores/', score_list),
     path('api/scores/<int:id>/', score_detail),
     path('api/groepen/', groep_list),
