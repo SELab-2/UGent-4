@@ -41,8 +41,6 @@ export function Restriction({type,details}:restrictionProps) {
 }
 
 
-
-
 export function AssignmentTeacherPage() {
     return (
         <>

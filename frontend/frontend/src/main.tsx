@@ -11,6 +11,7 @@ import {Helmet, HelmetProvider} from "react-helmet-async";
 import { SubjectsStudentPage } from "./pages/subjects_page/SubjectsStudentPage.tsx";
 import { AssignmentStudentPage } from "./pages/assignmentPage/assignmentStudentPage";
 import { AssignmentTeacherPage } from "./pages/assignmentPage/assignmentTeacherPage.tsx";
+import { GroupsPage } from "./pages/groupsPage/groupsPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
     path: "/assignment_teacher",
     element: <AssignmentTeacherPage/>,
   },
+  {
+    path: "/groups",
+    element: <GroupsPage/>,
+  },
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
