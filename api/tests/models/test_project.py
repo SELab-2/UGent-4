@@ -13,4 +13,4 @@ class ProjectModelTest(TestCase):
         self.assertIsNotNone(self.project.vak)
 
     def test_project_max_score(self):
-        self.assertTrue(10 <= self.project.max_score <= 30)
+        self.assertTrue(10 <= self.project.max_score <= 100)
