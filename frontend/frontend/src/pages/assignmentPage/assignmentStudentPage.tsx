@@ -98,14 +98,13 @@ export function AssignmentStudentPage() {
                     </Box>
                     <List disablePadding={true}>
                         {assignments.map((assignment) => (
-                            <>
+                            <Box key={assignment.id}>
                                 <Divider color={"text.main"}></Divider>
                                 <AssignmentListItem id={assignment.id} projectName={assignment.name}
                                                     dueDate={assignment.deadline}
                                                     status={assignment.id === "assignment1"}
                                                     isStudent={false}/>
-
-                            </>
+                            </Box>
                         ))}
                     </List>
                 </Card>
