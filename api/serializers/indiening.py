@@ -1,11 +1,14 @@
 from rest_framework import serializers
-from api.models.indiening import Indiening
+from api.models.indiening import Indiening, IndieningBestand
 
 
 class IndieningSerializer(serializers.ModelSerializer):
     class Meta:
         model = Indiening
-        fields = "__all__"
+        fields = ('__all__')
 
-    def create(self, validated_data):
-        return Indiening.objects.create(**validated_data)
+
+class IndieningBestandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = IndieningBestand
+        fields = ('__all__')
