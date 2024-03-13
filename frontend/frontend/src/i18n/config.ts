@@ -11,6 +11,7 @@ const english = {
     archived: "Archived",
     students: "Students: ",
     no_deadline: "No deadline",
+    add_admin: "Add admin",
     submission: "Submission",
     error: "Something went wrong.",
     assignment: "Assignment:",
@@ -27,7 +28,7 @@ const dutch = {
     archived: "Gearchiveerd",
     students: "Studenten: ",
     no_deadline: "Geen deadline",
-
+    add_admin: "Voeg admin toe",
     submission: "Indiening",
     error: "Er is iets misgegaan.",
     assignment: "Opgave:",

@@ -17,6 +17,9 @@ import { AssignmentStudentPage } from "./pages/assignmentPage/assignmentStudentP
 import { AssignmentTeacherPage } from "./pages/assignmentPage/assignmentTeacherPage.tsx";
 import { GroupsPage } from "./pages/groupsPage/groupsPage.tsx";
 import {SubjectsStudentPage} from "./pages/subjects_page/SubjectsStudentPage.tsx";
+import {LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs/AdapterDayjs';
+
 import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
 
@@ -56,6 +59,7 @@ const router = createBrowserRouter([
         path: "/subjects_student",
         element: <SubjectsStudentPage/>,
     },
+
     {
 
         path: "/submission/:project",
@@ -77,7 +81,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
             <React.Suspense fallback={<div>Loading...</div>}>
                 <ThemeProvider theme={theme}>
-                    <RouterProvider router={router}/>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <RouterProvider router={router}/>
+                    </LocalizationProvider>
                 </ThemeProvider>
             </React.Suspense>
         </HelmetProvider>
