@@ -69,7 +69,7 @@ class ProjectSerializerTest(APITestCase):
 
     def test_create(self):
         vak = VakFactory.create().vak_id
-        with open("api/tests/data/test.txt", "rb") as fp:
+        with open("api/tests/testdata/test.txt", "rb") as fp:
             data = {
                 "titel": "test project",
                 "beschrijving": "Dit is een test project.",
@@ -84,7 +84,7 @@ class ProjectSerializerTest(APITestCase):
             self.assertEqual(project.deadline, parse(data["deadline"]))
 
     def test_update(self):
-        with open("api/tests/data/test.txt", "rb") as fp:
+        with open("api/tests/testdata/test.txt", "rb") as fp:
             data = {
                 "titel": "test project",
                 "beschrijving": "Dit is een test project.",
