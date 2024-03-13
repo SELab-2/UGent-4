@@ -68,6 +68,7 @@ class ProjectSerializerTest(APITestCase):
         self.assertRaises(ValidationError, serializer.is_valid, raise_exception=True)
 
     def test_create(self):
+        print(self.serializer.data["deadline"])
         vak = VakFactory.create().vak_id
         with open("api/tests/testdata/test.txt", "rb") as fp:
             data = {

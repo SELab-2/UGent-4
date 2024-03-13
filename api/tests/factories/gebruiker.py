@@ -12,6 +12,7 @@ class UserFactory(DjangoModelFactory):
     first_name = Faker("first_name")
     last_name = Faker("last_name")
     email = Faker("email")
+    is_superuser = Faker("boolean")
 
 
 class GebruikerFactory(DjangoModelFactory):
