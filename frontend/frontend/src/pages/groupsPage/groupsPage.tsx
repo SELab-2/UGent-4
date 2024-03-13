@@ -1,5 +1,5 @@
 import {Header} from "../../components/Header.tsx";
-import {Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextField, Typography} from "@mui/material";
+import {Box, Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextField, Typography} from "@mui/material";
 import Switch from '@mui/material/Switch';
 
 
@@ -46,9 +46,10 @@ export function GroupListItem({name}: GroupListItemProps) {
         <>
             <Card elevation={1} sx={{
                 color: "text.primary",
-                padding: '0px',
+                padding: 0,
                 backgroundColor: "background.default",
                 borderRadius: 5,
+                margin: 1
             }}
             >
                 <ListItem>
@@ -65,8 +66,8 @@ export function GroupsPage() {
     return (
         <>
             <Header variant={"default"} title={"Project 1: groepen"}></Header>
-            <Stack marginTop={15} direction={"column"} spacing={4}
-                   sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
+            <Stack marginTop={12} direction={"column"} spacing={4}
+                   sx={{width: "100%", height: "70 %", backgroundColor: "background.default"}}>
                 <Typography variant="h6" sx={{textDecoration: 'underline'}} color="text.primary">
                     Groepen:
                 </Typography>
@@ -77,8 +78,8 @@ export function GroupsPage() {
                                 Leden per groep:
                             </Typography>
                         </Grid>
-                        <Grid item>
-                            <TextField variant="outlined" sx={{width: "50px"}}/>
+                        <Grid item minWidth={3}>
+                            <TextField variant="outlined" sx={{width: 60}}/>
                         </Grid>
                     </Grid>
                 </Stack>
@@ -93,19 +94,19 @@ export function GroupsPage() {
                     <Switch/>
                 </Stack>
 
+                <Box maxHeight={"65vh"} sx={{overflowY: "auto"}}>
+                    <List sx={{'& > :not(style)': {marginBottom: '8px', width: "100vh"}}}>
+                        <ListItem>
+                            <ListItemText><strong>Naam Student</strong></ListItemText>
+                            <ListItemText><strong>Ingeschreven groep</strong></ListItemText>
+                        </ListItem>
+                        <Divider/>
 
-                <List sx={{'& > :not(style)': {marginBottom: '8px', width: "100vh"}}}>
-                    <ListItem>
-                        <ListItemText><strong>Naam Student</strong></ListItemText>
-                        <ListItemText><strong>Ingeschreven groep</strong></ListItemText>
-                    </ListItem>
-                    <Divider/>
-
-                    {groups.map((res) =>
-                        <GroupListItem name={res.name}></GroupListItem>
-                    )}
-
-                </List>
+                        {groups.map((res) =>
+                            <GroupListItem name={res.name}></GroupListItem>
+                        )}
+                    </List>
+                </Box>
 
             </Stack>
         </>
