@@ -9,14 +9,12 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
 import {Helmet, HelmetProvider} from "react-helmet-async";
 
-import { SubjectsStudentPage } from "./pages/subjectsPage/SubjectsStudentPage.tsx";
-import { SubjectsTeacherPage } from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
-import { ProjectScoresPage } from "./pages/scoresPage/ProjectScoresPage.tsx";
-import { SubjectsStudentPage } from "./pages/subjects_page/SubjectsStudentPage.tsx";
-import { AssignmentStudentPage } from "./pages/assignmentPage/assignmentStudentPage";
-import { AssignmentTeacherPage } from "./pages/assignmentPage/assignmentTeacherPage.tsx";
-import { GroupsPage } from "./pages/groupsPage/groupsPage.tsx";
-import {SubjectsStudentPage} from "./pages/subjects_page/SubjectsStudentPage.tsx";
+import {SubjectsStudentPage} from "./pages/SubjectsPage/SubjectsStudentPage.tsx";
+import {SubjectsTeacherPage} from "./pages/SubjectsPage/SubjectsTeacherPage.tsx";
+import {ProjectScoresPage} from "./pages/scoresPage/ProjectScoresPage.tsx";
+import {AssignmentStudentPage} from "./pages/assignmentPage/assignmentStudentPage";
+import {AssignmentTeacherPage} from "./pages/assignmentPage/assignmentTeacherPage.tsx";
+import {GroupsPage} from "./pages/groupsPage/groupsPage.tsx";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs/AdapterDayjs';
 
@@ -25,37 +23,37 @@ import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.
 
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <MainPage />,
-    errorElement: <ErrorPage />,
-  },
-  {
-    path: "/subjects_student/:courseId",
-    element: <SubjectsStudentPage />,
-  },
-  {
+    {
+        path: "/",
+        element: <MainPage/>,
+        errorElement: <ErrorPage/>,
+    },
+    {
+        path: "/subjects_student/:courseId",
+        element: <SubjectsStudentPage/>,
+    },
+    {
 
-    path: "/subjects_teacher/:courseId",
-    element: <SubjectsTeacherPage />,
-  },
-  {
-    path: "/scores",
-    element: <ProjectScoresPage />,
-  },
-
-    path: "/assignment_student",
-    element: <AssignmentStudentPage />,
-  },
-  {
-    path: "/assignment_teacher",
-    element: <AssignmentTeacherPage/>,
-  },
-  {
-    path: "/groups",
-    element: <GroupsPage/>,
-  },
-   {
+        path: "/subjects_teacher/:courseId",
+        element: <SubjectsTeacherPage/>,
+    },
+    {
+        path: "/scores",
+        element: <ProjectScoresPage/>,
+    },
+    {
+        path: "/assignment_student",
+        element: <AssignmentStudentPage/>,
+    },
+    {
+        path: "/assignment_teacher",
+        element: <AssignmentTeacherPage/>,
+    },
+    {
+        path: "/groups",
+        element: <GroupsPage/>,
+    },
+    {
         path: "/subjects_student",
         element: <SubjectsStudentPage/>,
     },
@@ -65,7 +63,7 @@ const router = createBrowserRouter([
         path: "/submission/:project",
         element: <SubmissionPage/>,
     },
-  {
+    {
         path: "/test_requests",
         element: <SimpleRequestsPage/>,
     }
