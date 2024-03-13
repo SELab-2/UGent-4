@@ -9,7 +9,7 @@ class VakFactory(DjangoModelFactory):
     class Meta:
         model = Vak
 
-    naam = Faker('name')    
+    naam = Faker("name")
 
     @factory.post_generation
     def studenten(self, create, extracted, **kwargs):
@@ -21,7 +21,7 @@ class VakFactory(DjangoModelFactory):
                 self.studenten.add(gebruiker)
         else:
             self.studenten.add(GebruikerFactory())
-    
+
     @factory.post_generation
     def lesgevers(self, create, extracted, **kwargs):
         if not create:

@@ -12,9 +12,7 @@ class VakSerializerTest(APITestCase):
 
     def test_contains_expected_fields(self):
         data = self.serializer.data
-        self.assertCountEqual(
-            data.keys(), ["vak_id", "naam", "studenten", "lesgevers"]
-        )
+        self.assertCountEqual(data.keys(), ["vak_id", "naam", "studenten", "lesgevers"])
 
     def test_vak_id_field_content(self):
         data = self.serializer.data
@@ -27,13 +25,15 @@ class VakSerializerTest(APITestCase):
     def test_studenten_field_content(self):
         data = self.serializer.data
         self.assertEqual(
-            set(data["studenten"]), set([student.user.id for student in self.vak_data.studenten.all()])
+            set(data["studenten"]),
+            set([student.user.id for student in self.vak_data.studenten.all()]),
         )
 
     def test_lesgevers_field_content(self):
         data = self.serializer.data
         self.assertEqual(
-            set(data["lesgevers"]), set([teacher.user.id for teacher in self.vak_data.lesgevers.all()])
+            set(data["lesgevers"]),
+            set([teacher.user.id for teacher in self.vak_data.lesgevers.all()]),
         )
 
     def test_validation_for_blank_items(self):
@@ -48,31 +48,51 @@ class VakSerializerTest(APITestCase):
         self.assertRaises(ValidationError, serializer.is_valid, raise_exception=True)
 
     def test_create(self):
-        students_data = [GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)]
-        teachers_data = [GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)]
-        data = {'naam': 'test vak', 'studenten': students_data, 'lesgevers': teachers_data}
+        students_data = [
+            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+        ]
+        teachers_data = [
+            GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+        ]
+        data = {
+            "naam": "test vak",
+            "studenten": students_data,
+            "lesgevers": teachers_data,
+        }
         serializer = VakSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         vak = serializer.save()
         self.assertEqual(
-            set(students_data), set([student.user.id for student in vak.studenten.all()])
+            set(students_data),
+            set([student.user.id for student in vak.studenten.all()]),
         )
         self.assertEqual(
-            set(teachers_data), set([teacher.user.id for teacher in vak.lesgevers.all()])
+            set(teachers_data),
+            set([teacher.user.id for teacher in vak.lesgevers.all()]),
         )
-        self.assertEqual(vak.naam, 'test vak')
+        self.assertEqual(vak.naam, "test vak")
 
     def test_update(self):
-        students_data = [GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)]
-        teachers_data = [GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)]
-        data = {'naam': 'nieuw vak', 'studenten': students_data, 'lesgevers': teachers_data}
+        students_data = [
+            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+        ]
+        teachers_data = [
+            GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+        ]
+        data = {
+            "naam": "nieuw vak",
+            "studenten": students_data,
+            "lesgevers": teachers_data,
+        }
         serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
         vak = serializer.save()
         self.assertEqual(
-            set(students_data), set([student.user.id for student in vak.studenten.all()])
+            set(students_data),
+            set([student.user.id for student in vak.studenten.all()]),
         )
         self.assertEqual(
-            set(teachers_data), set([teacher.user.id for teacher in vak.lesgevers.all()])
+            set(teachers_data),
+            set([teacher.user.id for teacher in vak.lesgevers.all()]),
         )
-        self.assertEqual(vak.naam, 'nieuw vak')
+        self.assertEqual(vak.naam, "nieuw vak")

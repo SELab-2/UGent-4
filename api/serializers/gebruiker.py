@@ -12,6 +12,6 @@ class GebruikerSerializer(serializers.ModelSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        instance.is_lesgever = validated_data.pop('is_lesgever')
+        instance.is_lesgever = validated_data.pop("is_lesgever")
         instance.save()
         return instance

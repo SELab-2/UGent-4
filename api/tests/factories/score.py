@@ -10,5 +10,5 @@ class ScoreFactory(DjangoModelFactory):
         model = Score
 
     score_id = factory.Sequence(lambda n: n)
-    score = Faker('random_int', min=0, max=100)
+    score = Faker("random_int", min=0, max=100)
     indiening = SubFactory(IndieningFactory)
