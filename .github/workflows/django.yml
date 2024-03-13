@@ -37,7 +37,9 @@ jobs:
         pip install -r requirements.txt
     - name: Linting API
       run: |
-        flake8 ./api
+        cd api
+        flake8 .
+        cd ..
     - name: Run Tests
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}

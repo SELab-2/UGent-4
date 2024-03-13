@@ -14,5 +14,7 @@ class GebruikerModelTest(TestCase):
         self.assertEqual(self.gebruiker2.is_lesgever, True)
 
     def test_str_method(self):
-        expected_object_name = self.gebruiker1.user.first_name + " " + self.gebruiker1.user.last_name
+        expected_object_name = (
+            self.gebruiker1.user.first_name + " " + self.gebruiker1.user.last_name
+        )
         self.assertEqual(str(self.gebruiker1), expected_object_name)

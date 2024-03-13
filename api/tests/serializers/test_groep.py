@@ -17,9 +17,7 @@ class GroepSerializerTest(APITestCase):
 
     def test_project_field_content(self):
         data = self.serializer.data
-        self.assertEqual(
-            data["project"], self.groep.project.project_id
-        )
+        self.assertEqual(data["project"], self.groep.project.project_id)
 
     def test_studenten_field_content(self):
         data = self.serializer.data
@@ -27,12 +25,20 @@ class GroepSerializerTest(APITestCase):
         self.assertEqual(data["studenten"], students)
 
     def test_create(self):
-        data = {'project': self.groep.project.project_id, 'studenten': [GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)]}
+        data = {
+            "project": self.groep.project.project_id,
+            "studenten": [
+                GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+            ],
+        }
         serializer = GroepSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         groep = serializer.save()
-        self.assertEqual(groep.project.project_id, data['project'])
-        self.assertEqual(set([student.user.id for student in groep.studenten.all()]), set(data['studenten']))
+        self.assertEqual(groep.project.project_id, data["project"])
+        self.assertEqual(
+            set([student.user.id for student in groep.studenten.all()]),
+            set(data["studenten"]),
+        )
 
     def test_update(self):
         data = self.serializer.data
@@ -41,7 +47,9 @@ class GroepSerializerTest(APITestCase):
         serializer = GroepSerializer(instance=self.groep, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
         groep = serializer.save()
-        self.assertEqual([student.user.id for student in groep.studenten.all()], data['studenten'])
+        self.assertEqual(
+            [student.user.id for student in groep.studenten.all()], data["studenten"]
+        )
 
     def test_validation_for_blank_items(self):
         serializer = GroepSerializer(data={"project": "", "studenten": []})

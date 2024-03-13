@@ -1,9 +1,10 @@
 from django.db import models
 from .vak import Vak
 
+
 def upload_to(instance, filename):
     vak_id = instance.vak.vak_id
-    return f'data/opgaves/vak_{vak_id}/{filename}'
+    return f"data/opgaves/vak_{vak_id}/{filename}"
 
 
 class Project(models.Model):
