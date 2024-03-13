@@ -3,7 +3,6 @@ from rest_framework.exceptions import ValidationError
 from api.serializers.groep import GroepSerializer
 from api.tests.factories.groep import GroepFactory
 from api.tests.factories.gebruiker import GebruikerFactory
-from api.tests.factories.gebruiker import GebruikerFactory
 
 
 class GroepSerializerTest(APITestCase):

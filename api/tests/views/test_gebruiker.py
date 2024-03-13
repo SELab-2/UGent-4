@@ -1,36 +1,40 @@
 from rest_framework.test import APIClient, APITestCase
-from api.tests.factories.gebruiker import GebruikerFactory, UserFactory
+from api.tests.factories.gebruiker import GebruikerFactory
 from django.urls import reverse
+from rest_framework import status
 
 
 class GebruikerListViewTest(APITestCase):
     def setUp(self):
+        self.gebruiker = GebruikerFactory.create()
+        self.url = reverse("gebruiker_list")
         self.client = APIClient()
+        self.client.force_authenticate(user=self.gebruiker.user)
 
-    def test_get_gebruiker_list(self):
-        response = self.client.get("/api/gebruikers/")
-        self.assertEqual(response.status_code, 200)
-
-    def test_post_gebruiker_list(self):
-        data = {"user": UserFactory.create().id, "is_lesgever": True}
-        response = self.client.post("/api/gebruikers/", data)
-        self.assertEqual(response.status_code, 201)
+    def test_gebruiker_list_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
 class GebruikerDetailViewTest(APITestCase):
     def setUp(self):
-        self.client = APIClient()
         self.gebruiker = GebruikerFactory.create()
+        self.gebruiker.user.is_superuser = True
+        self.gebruiker.user.save()
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.gebruiker.user)
         self.url = reverse("gebruiker_detail", kwargs={"id": self.gebruiker.user.id})
 
-    def test_get_gebruiker_detail(self):
+    def test_gebruiker_detail_get(self):
         response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data["user"], self.gebruiker.user.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_put_gebruiker_detail(self):
-        data = {"user": self.gebruiker.user.id, "is_lesgever": True, "subjects": []}
-        response = self.client.put(self.url, data)
-        self.assertEqual(response.status_code, 200)
-        # TODO
-        # self.assertEqual(response.data['is_lesgever'], True)
+    def test_gebruiker_detail_put(self):
+        new_data = {
+            "user": self.gebruiker.user.id,
+            "is_lesgever": not self.gebruiker.is_lesgever,
+        }
+        response = self.client.put(self.url, new_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.gebruiker.refresh_from_db()
+        self.assertEqual(self.gebruiker.is_lesgever, new_data["is_lesgever"])

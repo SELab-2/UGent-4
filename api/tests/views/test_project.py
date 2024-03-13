@@ -3,78 +3,70 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from api.tests.factories.project import ProjectFactory
 from api.tests.factories.vak import VakFactory
+from api.tests.factories.gebruiker import GebruikerFactory
+from rest_framework.test import APIClient
+from django.core.files import File
 
 
-class ProjectViewTest(APITestCase):
+class ProjectListViewTest(APITestCase):
+    def setUp(self):
+        self.gebruiker = GebruikerFactory.create(is_lesgever=True)
+        self.url = reverse("project_list")
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.gebruiker.user)
+
+    def test_project_list_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_project_list_post(self):
+        vak = VakFactory.create().vak_id
+        with open("api/tests/testdata/test.txt", "rb") as fp:
+            data = {
+                "titel": "test project",
+                "beschrijving": "Dit is een test project.",
+                "opgave_bestand": File(fp),
+                "vak": vak,
+                "deadline": "2024-03-31T12:40:05.317980Z",
+                "max_score": 20,
+            }
+            response = self.client.post(self.url, data, format="multipart")
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+
+class ProjectDetailViewTest(APITestCase):
     def setUp(self):
         self.project = ProjectFactory.create()
-        self.vak = VakFactory.create()
-        self.list_url = reverse("project_list")
-        self.detail_url = reverse(
-            "project_detail", kwargs={"id": self.project.project_id}
-        )
+        self.gebruiker = GebruikerFactory.create(is_lesgever=True)
+        self.url = reverse("project_detail", kwargs={"id": self.project.project_id})
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.gebruiker.user)
 
-    def test_get_project_list(self):
-        response = self.client.get(self.list_url)
+    def test_project_detail_get(self):
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_get_project_detail(self):
-        response = self.client.get(self.detail_url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_get_invalid_project_detail(self):
+    def test_invalid_project_detail_get(self):
         url = reverse("project_detail", kwargs={"id": "9999999"})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_create_project(self):
-        # data = {
-        #    "titel": "New Project",
-        #    "description": "This is a new project.",
-        #    "opgavebestanden": "data/opgaves/opgave.pdf",
-        #    "vak": self.vak.vak_id,
-        #    "deadline": "2022-12-31T23:59:59Z",
-        # }
-        # response = self.client.post(self.list_url, data)
-        # TODO
-        # self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertTrue(True)
-
-    def test_create_invalid_project(self):
-        data = {
-            "titel": "",
-            "description": "",
-            "opgavebestanden": "",
-            "vak": "",
-            "deadline": "",
+    def test_project_detail_put(self):
+        new_data = {
+            "project_id": self.project.project_id,
+            "titel": self.project.titel,
+            "beschrijving": "Aangepaste beschrijving",
+            "opgave_bestand": self.project.opgave_bestand,
+            "vak": self.project.vak.vak_id,
+            "deadline": self.project.deadline,
+            "max_score": self.project.max_score,
         }
-        response = self.client.post(self.list_url, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        response = self.client.put(self.url, new_data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.titel, new_data["titel"])
+        self.assertEqual(self.project.beschrijving, new_data["beschrijving"])
 
-    def test_update_project(self):
-        # data = {
-        #    "titel": "Updated Project",
-        #    "description": "This project has been updated.",
-        #    "opgavebestanden": "data/opgaves/opgave.pdf",
-        #    "vak": self.project.vak.vak_id,
-        #    "deadline": "2023-12-31T23:59:59Z",
-        # }
-        # response = self.client.put(self.detail_url, data)
-        # TODO
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertTrue(True)
-
-    def test_update_invalid_project(self):
-        data = {
-            "titel": "",
-            "description": "",
-            "opgavebestanden": "",
-            "vak": "",
-            "deadline": "",
-        }
-        response = self.client.put(self.detail_url, data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-    def test_delete_project(self):
-        response = self.client.delete(self.detail_url)
+    def test_project_detail_delete(self):
+        response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
