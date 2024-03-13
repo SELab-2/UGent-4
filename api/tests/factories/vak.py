@@ -9,7 +9,6 @@ class VakFactory(DjangoModelFactory):
     class Meta:
         model = Vak
 
-    vak_id = factory.Sequence(lambda n: n)
     naam = Faker('name')    
 
     @factory.post_generation

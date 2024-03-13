@@ -15,9 +15,9 @@ class GroepListViewTest(APITestCase):
     def test_post_groep_list(self):
         groep = GroepFactory.create()
         data = {
-            "groep": groep.group_id,
+            "groep": groep.groep_id,
             "project": groep.project.project_id,
-            "students": [],
+            "studenten": [],
         }
         response = self.client.post("/api/groepen/", data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -27,7 +27,7 @@ class GroepDetailViewTest(APITestCase):
     def setUp(self):
         self.client = APIClient()
         self.groep = GroepFactory.create()
-        self.url = reverse("groep_detail", kwargs={"id": self.groep.group_id})
+        self.url = reverse("groep_detail", kwargs={"id": self.groep.groep_id})
 
     def test_get_groep_detail(self):
         response = self.client.get(self.url)

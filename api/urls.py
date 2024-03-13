@@ -46,7 +46,7 @@ urlpatterns = [
     path('api/scores/', score_list),
     path('api/scores/<int:id>/', score_detail),
     path('api/groepen/', groep_list),
-    path('api/groepen/<int:id>/', groep_detail)
+    path('api/groepen/<int:id>/', groep_detail, name='groep_detail')
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

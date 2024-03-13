@@ -10,7 +10,6 @@ class GroepFactory(DjangoModelFactory):
     class Meta:
         model = Groep
 
-    groep_id = factory.Sequence(lambda n: n)
     project = SubFactory(ProjectFactory)
 
     @factory.post_generation
@@ -22,4 +21,4 @@ class GroepFactory(DjangoModelFactory):
             for student in extracted:
                 self.studenten.add(student)
         else:
-            self.studenten.add(GebruikerFactory())
+            self.studenten.add(GebruikerFactory(is_lesgever=False))
