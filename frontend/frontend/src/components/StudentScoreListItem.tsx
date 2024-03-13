@@ -1,6 +1,7 @@
-import {ListItem, ListItemText, Divider, TextField, IconButton} from "@mui/material";
+import {Divider, IconButton, ListItem, ListItemText, TextField} from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import {t} from "i18next";
+
+//TODO: take care of internationalization
 
 interface StudentScoreListItemProps {
     key: string;
@@ -15,10 +16,10 @@ interface StudentScoreListItemProps {
 * @param submissionFiles: string[] - a list of all files submitted by this student
 */
 
-export function StudentScoreListItem({key, studentName, submissionFiles}:StudentScoreListItemProps) {
+export function StudentScoreListItem({key, studentName, submissionFiles}: StudentScoreListItemProps) {
     return (
         <>
-            <ListItem key={studentName} sx={{margin:0}} disablePadding={true}>
+            <ListItem key={studentName} sx={{margin: 0}} disablePadding={true}>
                 <ListItem sx={{
                     width: "100%",
                     height: 30,
@@ -27,18 +28,19 @@ export function StudentScoreListItem({key, studentName, submissionFiles}:Student
                     justifyContent: "space-between",
                     paddingX: 1,
                     paddingY: 3,
-                    borderRadius:2,
+                    borderRadius: 2,
                 }}>
                     <>
-                        <ListItemText sx={{maxWidth:100}} primary={studentName}/>
-                        <ListItemText sx={{maxWidth:110}} primary={submissionFiles.length? submissionFiles.length + " indieningen" : "geen indieningen"}/>
-                        <ListItem sx={{maxWidth:100}}>
-                            <TextField hiddenLabel defaultValue="0" variant="filled" size="small" />
-                            <ListItemText sx={{maxWidth:100}} primary="/20"/>
+                        <ListItemText sx={{maxWidth: 100}} primary={studentName}/>
+                        <ListItemText sx={{maxWidth: 110}}
+                                      primary={submissionFiles.length ? submissionFiles.length + " indieningen" : "geen indieningen"}/>
+                        <ListItem sx={{maxWidth: 100}}>
+                            <TextField hiddenLabel defaultValue="0" variant="filled" size="small"/>
+                            <ListItemText sx={{maxWidth: 100}} primary="/20"/>
                         </ListItem>
-                        <ListItem sx={{maxWidth:100}}>
+                        <ListItem sx={{maxWidth: 100}}>
                             <IconButton edge="end" aria-label="download">
-                                <DownloadIcon />
+                                <DownloadIcon/>
                             </IconButton>
                         </ListItem>
                     </>
