@@ -1,4 +1,3 @@
-import factory
 from api.models.score import Score
 from factory.django import DjangoModelFactory
 from factory import SubFactory, Faker

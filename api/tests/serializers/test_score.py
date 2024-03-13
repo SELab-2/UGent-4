@@ -4,6 +4,7 @@ from api.serializers.score import ScoreSerializer
 from api.tests.factories.score import ScoreFactory
 from api.tests.factories.indiening import IndieningFactory
 
+
 class ScoreSerializerTest(TestCase):
     def setUp(self):
         self.score = ScoreFactory.create()
@@ -14,15 +15,15 @@ class ScoreSerializerTest(TestCase):
     def test_score_serializer_fields(self):
         data = self.serializer.data
         self.assertEqual(set(data.keys()), set(["score_id", "indiening", "score"]))
-    
+
     def test_score_id_field_content(self):
         data = self.serializer.data
         self.assertEqual(data["score_id"], self.score.score_id)
-    
+
     def test_indiening_field_content(self):
         data = self.serializer.data
         self.assertEqual(data["indiening"], self.score.indiening.indiening_id)
-    
+
     def test_score_field_content(self):
         data = self.serializer.data
         self.assertEqual(data["score"], self.score.score)
@@ -35,11 +36,15 @@ class ScoreSerializerTest(TestCase):
         self.assertTrue(serializer.is_valid())
         score = serializer.save()
         self.assertEqual(score.indiening, indiening)
-        self.assertEqual(score.score, data["score"]) 
+        self.assertEqual(score.score, data["score"])
 
     def test_score_serializer_update(self):
         score = self.score.score
-        new_data = {"score": score - 1, "indiening": self.score.indiening.indiening_id, "score_id": self.score.score_id}
+        new_data = {
+            "score": score - 1,
+            "indiening": self.score.indiening.indiening_id,
+            "score_id": self.score.score_id,
+        }
         serializer = ScoreSerializer(instance=self.score, data=new_data, partial=True)
         self.assertTrue(serializer.is_valid())
         score = serializer.save()
