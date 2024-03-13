@@ -17,7 +17,9 @@ import { AssignmentStudentPage } from "./pages/assignmentPage/assignmentStudentP
 import { AssignmentTeacherPage } from "./pages/assignmentPage/assignmentTeacherPage.tsx";
 import { GroupsPage } from "./pages/groupsPage/groupsPage.tsx";
 import {SubjectsStudentPage} from "./pages/subjects_page/SubjectsStudentPage.tsx";
+import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
+
 
 const router = createBrowserRouter([
   {
@@ -55,6 +57,11 @@ const router = createBrowserRouter([
         element: <SubjectsStudentPage/>,
     },
     {
+
+        path: "/submission/:project",
+        element: <SubmissionPage/>,
+    },
+  {
         path: "/test_requests",
         element: <SimpleRequestsPage/>,
     }
