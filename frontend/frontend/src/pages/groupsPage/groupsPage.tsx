@@ -94,7 +94,7 @@ export function GroupsPage() {
                     <Switch/>
                 </Stack>
 
-                <Box maxHeight={"65vh"} sx={{overflowY: "auto"}}>
+                <Box maxHeight={"55vh"} sx={{overflowY: "auto"}}>
                     <List sx={{'& > :not(style)': {marginBottom: '8px', width: "100vh"}}}>
                         <ListItem>
                             <ListItemText><strong>Naam Student</strong></ListItemText>
