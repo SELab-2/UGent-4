@@ -10,6 +10,7 @@ from faker import Faker
 
 fake = Faker()
 
+
 class IndieningFactory(DjangoModelFactory):
     class Meta:
         model = Indiening
@@ -22,10 +23,11 @@ class IndieningFactory(DjangoModelFactory):
         )
     )
 
+
 class IndieningBestandFactory(DjangoModelFactory):
     class Meta:
         model = IndieningBestand
 
     indiening_bestand_id = factory.Sequence(lambda n: n)
     indiening = SubFactory(IndieningFactory)
-    bestand = FileField(filename='test.txt', data=b"file content")
+    bestand = FileField(filename="test.txt", data=b"file content")
