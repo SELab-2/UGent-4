@@ -7,47 +7,72 @@ from api.tests.factories.gebruiker import GebruikerFactory
 
 class VakSerializerTest(APITestCase):
     def setUp(self):
-        self.students = GebruikerFactory.create_batch(3, is_lesgever=False)
-        self.teachers = GebruikerFactory.create_batch(2, is_lesgever=True)
-        self.vak = VakFactory.create()
-        self.vak.students.set(self.students)
-        self.vak.teachers.set(self.teachers)
-        self.serializer = VakSerializer(instance=self.vak)
+        self.vak_data = VakFactory.create()
+        self.serializer = VakSerializer(instance=self.vak_data)
 
     def test_contains_expected_fields(self):
         data = self.serializer.data
         self.assertCountEqual(
-            data.keys(), ["vak_id", "name", "students", "teachers"]
-        )  # geen projects hier?
+            data.keys(), ["vak_id", "naam", "studenten", "lesgevers"]
+        )
 
     def test_vak_id_field_content(self):
         data = self.serializer.data
-        self.assertEqual(data["vak_id"], self.vak.vak_id)
+        self.assertEqual(data["vak_id"], self.vak_data.vak_id)
 
-    def test_name_field_content(self):
+    def test_naam_field_content(self):
         data = self.serializer.data
-        self.assertEqual(data["name"], self.vak.name)
+        self.assertEqual(data["naam"], self.vak_data.naam)
 
-    def test_students_field_content(self):
+    def test_studenten_field_content(self):
         data = self.serializer.data
-        self.assertCountEqual(
-            data["students"], [student.pk for student in self.students]
+        self.assertEqual(
+            set(data["studenten"]), set([student.user.id for student in self.vak_data.studenten.all()])
         )
 
-    def test_teachers_field_content(self):
+    def test_lesgevers_field_content(self):
         data = self.serializer.data
-        self.assertCountEqual(
-            data["teachers"], [teacher.pk for teacher in self.teachers]
+        self.assertEqual(
+            set(data["lesgevers"]), set([teacher.user.id for teacher in self.vak_data.lesgevers.all()])
         )
 
     def test_validation_for_blank_items(self):
         serializer = VakSerializer(
             data={
                 "vak_id": "",
-                "name": "",
-                "students": [],
-                "teachers": [],
-                "projects": [],
+                "naam": "",
+                "studenten": [],
+                "lesgevers": [],
             }
         )
         self.assertRaises(ValidationError, serializer.is_valid, raise_exception=True)
+
+    def test_create(self):
+        students_data = [GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)]
+        teachers_data = [GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)]
+        data = {'naam': 'test vak', 'studenten': students_data, 'lesgevers': teachers_data}
+        serializer = VakSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+        self.assertEqual(
+            set(students_data), set([student.user.id for student in vak.studenten.all()])
+        )
+        self.assertEqual(
+            set(teachers_data), set([teacher.user.id for teacher in vak.lesgevers.all()])
+        )
+        self.assertEqual(vak.naam, 'test vak')
+
+    def test_update(self):
+        students_data = [GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)]
+        teachers_data = [GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)]
+        data = {'naam': 'nieuw vak', 'studenten': students_data, 'lesgevers': teachers_data}
+        serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+        self.assertEqual(
+            set(students_data), set([student.user.id for student in vak.studenten.all()])
+        )
+        self.assertEqual(
+            set(teachers_data), set([teacher.user.id for teacher in vak.lesgevers.all()])
+        )
+        self.assertEqual(vak.naam, 'nieuw vak')
