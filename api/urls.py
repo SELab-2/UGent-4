@@ -48,8 +48,8 @@ urlpatterns = [
     path("api/indieningen/<int:id>/", indiening_detail),
     path("api/indiening_bestanden/", indiening_bestand_list),
     path("api/indiening_bestanden/<int:id>/", indiening_bestand_detail),
-    path("api/scores/", score_list),
-    path("api/scores/<int:id>/", score_detail),
+    path("api/scores/", score_list, name="score_list"),
+    path("api/scores/<int:id>/", score_detail, name="score_detail"),
     path("api/groepen/", groep_list, name="groep_list"),
     path("api/groepen/<int:id>/", groep_detail, name="groep_detail"),
 ]

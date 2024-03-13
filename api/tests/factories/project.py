@@ -23,4 +23,4 @@ class ProjectFactory(DjangoModelFactory):
             fake.date_time_between(start_date="+1d", end_date="+30d")
         )
     )
-    max_score = factory.Faker("random_int", min=10, max=30)
+    max_score = factory.Faker("random_int", min=10, max=100)

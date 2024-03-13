@@ -48,7 +48,7 @@ class ProjectSerializerTest(APITestCase):
     def test_max_score_field_content(self):
         data = self.serializer.data
         self.assertGreaterEqual(data["max_score"], 10)
-        self.assertLessEqual(data["max_score"], 30)
+        self.assertLessEqual(data["max_score"], 100)
 
     def test_deadline_field_content(self):
         data = self.serializer.data
@@ -68,7 +68,6 @@ class ProjectSerializerTest(APITestCase):
         self.assertRaises(ValidationError, serializer.is_valid, raise_exception=True)
 
     def test_create(self):
-        print(self.serializer.data["deadline"])
         vak = VakFactory.create().vak_id
         with open("api/tests/testdata/test.txt", "rb") as fp:
             data = {
