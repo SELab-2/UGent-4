@@ -8,6 +8,10 @@ import ErrorPage from "./pages/ErrorPage.tsx";
 
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
 import {Helmet, HelmetProvider} from "react-helmet-async";
+
+import { SubjectsStudentPage } from "./pages/subjectsPage/SubjectsStudentPage.tsx";
+import { SubjectsTeacherPage } from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
+import { ProjectScoresPage } from "./pages/scoresPage/ProjectScoresPage.tsx";
 import { SubjectsStudentPage } from "./pages/subjects_page/SubjectsStudentPage.tsx";
 import { AssignmentStudentPage } from "./pages/assignmentPage/assignmentStudentPage";
 import { AssignmentTeacherPage } from "./pages/assignmentPage/assignmentTeacherPage.tsx";
@@ -22,10 +26,19 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
-    path: "/subjects_student",
+    path: "/subjects_student/:courseId",
     element: <SubjectsStudentPage />,
   },
   {
+
+    path: "/subjects_teacher/:courseId",
+    element: <SubjectsTeacherPage />,
+  },
+  {
+    path: "/scores",
+    element: <ProjectScoresPage />,
+  },
+
     path: "/assignment_student",
     element: <AssignmentStudentPage />,
   },
@@ -45,6 +58,7 @@ const router = createBrowserRouter([
         path: "/test_requests",
         element: <SimpleRequestsPage/>,
     }
+
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
