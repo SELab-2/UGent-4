@@ -22,4 +22,4 @@ class GroepFactory(DjangoModelFactory):
             for student in extracted:
                 self.studenten.add(student)
         else:
-            self.students.add(GebruikerFactory())
+            self.studenten.add(GebruikerFactory())

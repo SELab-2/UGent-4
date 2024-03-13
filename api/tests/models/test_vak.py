@@ -7,20 +7,13 @@ class VakModelTest(TestCase):
         self.vak = VakFactory.create()
 
     def test_str_method(self):
-        self.assertEqual(str(self.vak), self.vak.name)
+        self.assertEqual(str(self.vak), self.vak.naam)
+    
 
-    def test_vak_id_label(self):
-        field_label = self.vak._meta.get_field("vak_id").verbose_name
-        self.assertEqual(field_label, "vak id")
+    def test_vak_studenten(self):
+        self.assertEqual(self.vak.studenten.count(), 1)
+    
 
-    def test_name_label(self):
-        field_label = self.vak._meta.get_field("name").verbose_name
-        self.assertEqual(field_label, "name")
+    def test_vak_lesgevers(self):
+        self.assertEqual(self.vak.lesgevers.count(), 1)
 
-    def test_students_label(self):
-        field_label = self.vak._meta.get_field("students").verbose_name
-        self.assertEqual(field_label, "students")
-
-    def test_teachers_label(self):
-        field_label = self.vak._meta.get_field("teachers").verbose_name
-        self.assertEqual(field_label, "teachers")

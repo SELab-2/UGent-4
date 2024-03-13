@@ -7,4 +7,4 @@ class Score(models.Model):
     indiening = models.ForeignKey('Indiening', on_delete=models.CASCADE)
 
     def __str__(self):
-        return self.score_id
+        return str(self.score_id)
