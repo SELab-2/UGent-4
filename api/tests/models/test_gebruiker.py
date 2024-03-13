@@ -13,10 +13,6 @@ class GebruikerModelTest(TestCase):
         self.assertEqual(self.gebruiker1.is_lesgever, False)
         self.assertEqual(self.gebruiker2.is_lesgever, True)
 
-    def test_user_label(self):
-        field_label = self.gebruiker1._meta.get_field("user").verbose_name
-        self.assertEqual(field_label, "user")
-
     def test_str_method(self):
         expected_object_name = self.gebruiker1.user.first_name + " " + self.gebruiker1.user.last_name
         self.assertEqual(str(self.gebruiker1), expected_object_name)

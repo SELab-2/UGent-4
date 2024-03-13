@@ -5,7 +5,6 @@ from factory import SubFactory, Faker
 from api.tests.factories.indiening import IndieningFactory
 
 
-
 class ScoreFactory(DjangoModelFactory):
     class Meta:
         model = Score

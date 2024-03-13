@@ -1,10 +1,11 @@
 import factory
 from api.models.indiening import Indiening, IndieningBestand
 from factory.django import DjangoModelFactory
-from factory import SubFactory, Faker
+from factory import SubFactory
 from .groep import GroepFactory
 from django.utils import timezone
 from factory.django import FileField
+from faker import Faker
 
 
 fake = Faker()
