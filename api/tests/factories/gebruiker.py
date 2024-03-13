@@ -1,4 +1,3 @@
-import factory
 from django.contrib.auth.models import User
 from api.models.gebruiker import Gebruiker
 from factory.django import DjangoModelFactory
@@ -9,10 +8,10 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
-    username = Faker('user_name')
-    first_name = Faker('first_name')
-    last_name = Faker('last_name')
-    email = Faker('email')
+    username = Faker("user_name")
+    first_name = Faker("first_name")
+    last_name = Faker("last_name")
+    email = Faker("email")
 
 
 class GebruikerFactory(DjangoModelFactory):
@@ -20,4 +19,4 @@ class GebruikerFactory(DjangoModelFactory):
         model = Gebruiker
 
     user = SubFactory(UserFactory)
-    is_lesgever = Faker('boolean')
+    is_lesgever = Faker("boolean")

@@ -4,13 +4,13 @@ import requests
 
 
 API_URLS = {
-    'gebruikers': '/api/gebruikers',
-    'vakken': '/api/vakken',
-    'groepen': '/api/groepen',
-    'indieningen': '/api/indieningen',
-    'indiening_bestanden': '/api/indiening_bestanden',
-    'scores': 'api/scores',
-    'projecten': 'api/projecten'
+    "gebruikers": "/api/gebruikers",
+    "vakken": "/api/vakken",
+    "groepen": "/api/groepen",
+    "indieningen": "/api/indieningen",
+    "indiening_bestanden": "/api/indiening_bestanden",
+    "scores": "api/scores",
+    "projecten": "api/projecten",
 }
 
 
@@ -37,16 +37,19 @@ def get_graph_token():
         return response.json()
     except Exception:
         return None
-    
+
+
 def is_lesgever(user):
     if user.is_superuser:
         return True
     gebruiker = Gebruiker.objects.get(pk=user.id)
     return gebruiker.is_lesgever
 
+
 def contains(lijst, user):
     gebruiker = Gebruiker.objects.get(pk=user.id)
     return lijst.all().contains(gebruiker)
+
 
 def get_gebruiker(user):
     return Gebruiker.objects.get(pk=user.id)
