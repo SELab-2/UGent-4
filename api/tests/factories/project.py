@@ -1,22 +1,25 @@
-from django.utils import timezone
 import factory
 from api.models.project import Project
-from api.tests.factories.vak import VakFactory
-from faker import Faker
+from django.core.files.base import ContentFile
+from factory.django import DjangoModelFactory
+from factory import SubFactory, Faker
+from django.utils import timezone
+from .vak import VakFactory
 
-fake = Faker()
+fake = Faker('provider')
 
-
-class ProjectFactory(factory.django.DjangoModelFactory):
+class ProjectFactory(DjangoModelFactory):
     class Meta:
         model = Project
 
-    titel = factory.Faker("sentence", nb_words=4)
-    description = factory.Faker("paragraph")
-    opgavebestanden = factory.django.FileField(filename="opgave.pdf")
-    vak = factory.SubFactory(VakFactory)
+    project_id = factory.Sequence(lambda n: n)
+    titel = Faker('title')
+    beschrijving = Faker('paragraph')
+    opgave_bestand = factory.django.FileField(data=b"file content")
+    vak = SubFactory(VakFactory)
     deadline = factory.LazyFunction(
         lambda: timezone.make_aware(
             fake.date_time_between(start_date="+1d", end_date="+30d")
         )
     )
+    max_score = Faker('random_int', min=10, max=30)

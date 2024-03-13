@@ -1,20 +1,30 @@
 import factory
-from api.models.indiening import Indiening
-from api.tests.factories.groep import GroepFactory
+from api.models.indiening import Indiening, IndieningBestand
+from factory.django import DjangoModelFactory
+from factory import SubFactory, Faker
+from .groep import GroepFactory
 from django.utils import timezone
-from faker import Faker
+from factory.django import FileField
+
 
 fake = Faker()
 
-
-class IndieningFactory(factory.django.DjangoModelFactory):
+class IndieningFactory(DjangoModelFactory):
     class Meta:
         model = Indiening
 
-    indiener = factory.SubFactory(GroepFactory)
-    indieningsbestanden = factory.django.FileField(data=b"file content")
+    indiening_id = factory.Sequence(lambda n: n)
+    groep = SubFactory(GroepFactory)
     tijdstip = factory.LazyFunction(
         lambda: timezone.make_aware(
             fake.date_time_between(start_date="+1d", end_date="+30d")
         )
     )
+
+class IndieningBestandFactory(DjangoModelFactory):
+    class Meta:
+        model = IndieningBestand
+
+    indiening_bestand_id = factory.Sequence(lambda n: n)
+    indiening = SubFactory(IndieningFactory)
+    bestand = FileField(filename='test.txt', data=b"file content")
