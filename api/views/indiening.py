@@ -3,14 +3,19 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from api.models.indiening import Indiening, IndieningBestand
+from api.models.groep import Groep
 from api.serializers.indiening import IndieningSerializer, IndieningBestandSerializer
+from api.utils import is_lesgever, contains
 
 
 @api_view(['GET', 'POST'])
 def indiening_list(request, format=None):
-
     if request.method == 'GET':
-        indieningen = Indiening.objects.all()
+        if is_lesgever(request.user):
+            indieningen = Indiening.objects.all()
+        else:
+            groepen = Groep.objects.filter(studenten=request.user.id)
+            indieningen = Indiening.objects.filter(groep__in=groepen)
 
         if "groep" in request.GET:
             try:
@@ -47,12 +52,16 @@ def indiening_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = IndieningSerializer(indiening)
-        return Response(serializer.data)
+        if is_lesgever(request.user) or contains(indiening.groep.studenten, request.user):
+            serializer = IndieningSerializer(indiening)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_403_FORBIDDEN)
     
     elif request.method == 'DELETE':
-        indiening.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        if is_lesgever(request.user) or contains(indiening.groep.studenten, request.user):
+            indiening.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_403_FORBIDDEN)
     
 
 
@@ -60,7 +69,13 @@ def indiening_detail(request, id, format=None):
 def indiening_bestand_list(request, format=None):
 
     if request.method == 'GET':
-        indieningen_bestanden = IndieningBestand.objects.all()
+        if is_lesgever(request.user):
+            indieningen_bestanden = IndieningBestand.objects.all()
+        else:
+            groepen = Groep.objects.filter(studenten=request.user.id)
+            indieningen = Indiening.objects.filter(groep__in=groepen)
+            indieningen_bestanden = IndieningBestand.objects.filter(indiening__in=indieningen)
+
 
         if "indiening" in request.GET:
             try:
@@ -81,5 +96,7 @@ def indiening_bestand_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = IndieningBestandSerializer(indiening_bestand)
-        return Response(serializer.data)
+        if is_lesgever(request.user) or contains(indiening_bestand.indiening.groep.studenten, request.user):
+            serializer = IndieningBestandSerializer(indiening_bestand)
+            return Response(serializer.data)
+        return Response(status=status.HTTP_403_FORBIDDEN)

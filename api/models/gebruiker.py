@@ -7,4 +7,4 @@ class Gebruiker(models.Model):
     is_lesgever = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.user.first_name + self.user.last_name
+        return self.user.first_name + ' ' + self.user.last_name

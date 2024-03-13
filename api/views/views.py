@@ -8,6 +8,8 @@ from api.utils import API_URLS, get_graph_token
 
 def login_redirect(request):
 
+    print(get_graph_token())
+
     gebruiker_post_data = {
         'user': request.user.id,
         'subjects': [],
