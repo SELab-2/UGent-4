@@ -3,8 +3,8 @@ import i18n from "i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
 const english = {
-    logo: "./src/assets/logo_UGent_EN_RGB_2400_white.png",
-    logo_blue: "./src/assets/logo_UGent_EN_RGB_2400_color.png",
+    logo: "/assets/logo_UGent_EN_RGB_2400_white.png",
+    logo_blue: "/assets/logo_UGent_EN_RGB_2400_color.png",
     login: "Log in with your UGent account",
     back: "Back",
     current_courses: "Current courses",
@@ -12,10 +12,16 @@ const english = {
     students: "Students: ",
     no_deadline: "No deadline",
     add_admin: "Add admin",
+    submission: "Submission",
+    error: "Something went wrong.",
+    assignment: "Assignment:",
+    filename: "Submitted file:",
+    restrictions: "Restrictions:",
+    current_projects: "Current projects",
 };
 const dutch = {
-    logo: "./src/assets/logo_UGent_NL_RGB_2400_wit.png",
-    logo_blue: "./src/assets/logo_UGent_NL_RGB_2400_kleur.png",
+    logo: "/assets/logo_UGent_NL_RGB_2400_wit.png",
+    logo_blue: "/assets/logo_UGent_NL_RGB_2400_kleur.png",
     login: "Log in met je UGent account",
     back: "Terug",
     current_courses: "Huidige vakken",
@@ -23,6 +29,12 @@ const dutch = {
     students: "Studenten: ",
     no_deadline: "Geen deadline",
     add_admin: "Voeg admin toe",
+    submission: "Indiening",
+    error: "Er is iets misgegaan.",
+    assignment: "Opgave:",
+    filename: "Ingediend bestand:",
+    restrictions: "Restricties:",
+    current_projects: "Huidige projecten",
 };
 
 i18n.use(initReactI18next).use(LanguageDetector).init({
