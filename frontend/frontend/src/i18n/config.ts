@@ -16,6 +16,7 @@ const english = {
     assignment: "Assignment:",
     filename: "Submitted file:",
     restrictions: "Restrictions:",
+    current_projects: "Current projects",
 };
 const dutch = {
     logo: "/assets/logo_UGent_NL_RGB_2400_wit.png",
@@ -26,11 +27,13 @@ const dutch = {
     archived: "Gearchiveerd",
     students: "Studenten: ",
     no_deadline: "Geen deadline",
+
     submission: "Indiening",
     error: "Er is iets misgegaan.",
     assignment: "Opgave:",
     filename: "Ingediend bestand:",
     restrictions: "Restricties:",
+    current_projects: "Huidige projecten",
 };
 
 i18n.use(initReactI18next).use(LanguageDetector).init({
