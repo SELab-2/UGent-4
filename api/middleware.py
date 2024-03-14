@@ -1,6 +1,5 @@
 from django.conf import settings
 from django.shortcuts import redirect
-from rest_framework.authentication import SessionAuthentication
 
 
 class RedirectAnonymousUserMiddleware:
@@ -31,9 +30,3 @@ class RedirectAnonymousUserMiddleware:
             return redirect(settings.LOGIN_URL)
 
         return self.get_response(request)
-
-
-class CsrfExemptSessionAuthentication(SessionAuthentication):
-
-    def enforce_csrf(self, request):
-        return  # To not perform the csrf check previously happening
