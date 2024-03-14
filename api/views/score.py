@@ -15,7 +15,10 @@ def score_list(request, format=None):
     Een view om een lijst van scores op te halen of een nieuwe score toe te voegen.
 
     GET:
-    Als de gebruiker een lesgever is, worden alle scores opgehaald. Als de gebruiker geen lesgever is, worden alleen de scores opgehaald van indieningen van groepen waarin de ingelogde gebruiker zich bevindt.
+    Als de gebruiker een lesgever is, worden alle scores opgehaald.
+    Als de gebruiker geen lesgever is,
+    worden alleen de scores opgehaald van indieningen van groepen waarin
+    de ingelogde gebruiker zich bevindt.
 
     Optionele query parameters:
         indiening (int): Filtert scores op basis van indiening-ID.
@@ -26,7 +29,7 @@ def score_list(request, format=None):
     Returns:
         Response: Een lijst van scores of een nieuwe aangemaakte score.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user):
             scores = Score.objects.all()
         else:
@@ -44,7 +47,7 @@ def score_list(request, format=None):
         serializer = ScoreSerializer(scores, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+    elif request.method == "POST":
         if is_lesgever(request.user):
             serializer = ScoreSerializer(data=request.data)
             if serializer.is_valid():
@@ -53,17 +56,19 @@ def score_list(request, format=None):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-        
-@api_view(['GET', 'PUT', 'DELETE'])
+
+@api_view(["GET", "PUT", "DELETE"])
 def score_detail(request, id, format=None):
     """
-    Een view om de gegevens van een specifieke score op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
+    Een view om de gegevens van een specifieke score op te halen (GET),
+    bij te werken (PUT) of te verwijderen (DELETE).
 
     Args:
         id (int): De primaire sleutel van de score.
 
     Returns:
-        Response: Gegevens van de score of een foutmelding als de score niet bestaat of als er een ongeautoriseerde toegang is.
+        Response: Gegevens van de score of een foutmelding als
+        de score niet bestaat of als er een ongeautoriseerde toegang is.
     """
     try:
         score = Score.objects.get(pk=id)

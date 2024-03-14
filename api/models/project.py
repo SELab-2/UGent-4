@@ -25,15 +25,22 @@ class Project(models.Model):
         project_id (AutoField): Een automatisch gegenereerd veld dat fungeert als de primaire sleutel voor het project.
         titel (CharField): Titel van het project.
         beschrijving (TextField): Beschrijving van het project.
-        opgave_bestand (FileField): Een veld voor het uploaden van het opgavebestand voor het project. (eventueel uit te breiden tot meerdere bestanden mogelijk)
-        vak (ForeignKey): Een ForeignKey relatie met het 'Vak' model, waarmee wordt aangegeven tot welk vak dit project behoort. Als het bijbehorende vak wordt verwijderd, worden ook de bijbehorende projecten verwijderd.
-        deadline (DateTimeField): Een veld voor het instellen van de deadline voor het project. Kan optioneel zijn (null=True).
-        max_score (IntegerField): Een veld voor het instellen van de maximale score voor het project. Standaard ingesteld op 20.
+        opgave_bestand (FileField): Een veld voor het uploaden van het opgavebestand voor het project.
+        (eventueel uit te breiden tot meerdere bestanden mogelijk)
+        vak (ForeignKey): Een ForeignKey relatie met het 'Vak' model,
+        waarmee wordt aangegeven tot welk vak dit project behoort.
+        Als het bijbehorende vak wordt verwijderd, worden ook de bijbehorende projecten verwijderd.
+        deadline (DateTimeField): Een veld voor het instellen van de deadline voor het project.
+        Kan optioneel zijn (null=True).
+        max_score (IntegerField): Een veld voor het instellen van de maximale score voor het project.
+        Standaard ingesteld op 20.
         # indiening restricties (TODO): Restricties/tests bij indiening moeten nog toegevoegd worden.
 
     Methods:
-        __str__(): Geeft een representatie van het model als een string terug, die de titel van het project bevat.
+        __str__(): Geeft een representatie van het model als een string terug,
+        die de titel van het project bevat.
     """
+
     project_id = models.AutoField(primary_key=True)
     titel = models.CharField(max_length=100)
     beschrijving = models.TextField()
