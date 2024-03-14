@@ -15,7 +15,7 @@ class ScoreListViewTest(TestCase):
         self.score = ScoreFactory.create()
         self.score.score = self.score.indiening.groep.project.max_score
         self.score.save()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse("score_list")
 
     def test_score_list_get(self):
@@ -40,7 +40,7 @@ class ScoreDetailViewTest(TestCase):
         self.gebruiker.user.is_superuser = True
         self.gebruiker.user.save()
         self.score = ScoreFactory.create()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse("score_detail", kwargs={"id": self.score.score_id})
 
     def test_score_detail_get(self):
