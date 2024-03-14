@@ -9,12 +9,14 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     Fields:
         Meta.model (Project): Het model waarop de serializer is gebaseerd.
-        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier wordt '__all__' gebruikt om alle velden op te nemen.
+        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer.
+        Hier wordt '__all__' gebruikt om alle velden op te nemen.
 
     Methods:
         create(self, validated_data): Maakt een nieuw project aan en voegt deze toe aan de database.
         update(self, instance, validated_data): Werkt een bestaand project bij in de database.
     """
+
     class Meta:
         model = Project
         fields = "__all__"
@@ -27,7 +29,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         Returns:
             Project: Het aangemaakte project.
         """
-        deadline = validated_data.pop('deadline')
+        deadline = validated_data.pop("deadline")
         validate_deadline(deadline)
 
         project = Project.objects.create(**validated_data)
@@ -44,7 +46,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         Returns:
             Project: Het bijgewerkte project.
         """
-        deadline = validated_data.pop('deadline')
+        deadline = validated_data.pop("deadline")
         validate_deadline(deadline)
 
         super().update(instance=instance, validated_data=validated_data)

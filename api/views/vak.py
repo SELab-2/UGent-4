@@ -15,7 +15,9 @@ def vak_list(request, format=None):
     Een view om een lijst van vakken op te halen of een nieuw vak toe te voegen.
 
     GET:
-    Als de gebruiker een lesgever is, worden alle vakken opgehaald. Als de gebruiker geen lesgever is, worden alleen de vakken opgehaald waarin de ingelogde gebruiker zich bevindt.
+    Als de gebruiker een lesgever is, worden alle vakken opgehaald.
+    Als de gebruiker geen lesgever is, worden alleen de vakken opgehaald
+    waarin de ingelogde gebruiker zich bevindt.
 
     POST:
     Voegt een nieuw vak toe.
@@ -23,7 +25,7 @@ def vak_list(request, format=None):
     Returns:
         Response: Een lijst van vakken of een nieuw aangemaakt vak.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user):
             vakken = Vak.objects.all()
         else:
@@ -32,7 +34,7 @@ def vak_list(request, format=None):
         serializer = VakSerializer(vakken, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
+    elif request.method == "POST":
         if is_lesgever(request.user):
             serializer = VakSerializer(data=request.data)
             if serializer.is_valid():
@@ -40,9 +42,9 @@ def vak_list(request, format=None):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_403_FORBIDDEN)
-    
 
-@api_view(['GET', 'PUT', 'DELETE'])
+
+@api_view(["GET", "PUT", "DELETE"])
 def vak_detail(request, id, format=None):
     """
     Een view om de gegevens van een specifiek vak op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
@@ -51,7 +53,8 @@ def vak_detail(request, id, format=None):
         id (int): De primaire sleutel van het vak.
 
     Returns:
-        Response: Gegevens van het vak of een foutmelding als het vak niet bestaat of als er een ongeautoriseerde toegang is.
+        Response: Gegevens van het vak of een foutmelding als het vak niet bestaat of
+        als er een ongeautoriseerde toegang is.
     """
     try:
         vak = Vak.objects.get(pk=id)

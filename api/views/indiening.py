@@ -14,8 +14,10 @@ def indiening_list(request, format=None):
     Een view om een lijst van indieningen op te halen of een nieuwe indiening toe te voegen.
 
     GET:
-    Als de gebruiker een lesgever is, worden alle indieningen opgehaald. Als de gebruiker geen lesgever is, worden alleen de indieningen opgehaald waarin de ingelogde gebruiker zich bevindt.
-    
+    Als de gebruiker een lesgever is, worden alle indieningen opgehaald.
+    Als de gebruiker geen lesgever is, worden alleen de indieningen opgehaald
+    waarin de ingelogde gebruiker zich bevindt.
+
     Optionele query parameters:
         groep (int): Filtert indieningen op basis van groep-ID.
 
@@ -25,7 +27,7 @@ def indiening_list(request, format=None):
     Returns:
         Response: Een lijst van indieningen of een nieuw aangemaakte indiening.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user):
             indieningen = Indiening.objects.all()
         else:
@@ -42,9 +44,12 @@ def indiening_list(request, format=None):
         serializer = IndieningSerializer(indieningen, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
-        if 'indiening_bestanden' not in request.FILES:
-            return Response({"indiening_bestanden":["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == "POST":
+        if "indiening_bestanden" not in request.FILES:
+            return Response(
+                {"indiening_bestanden": ["This field is required."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         serializer = IndieningSerializer(data=request.data)
         if serializer.is_valid():
@@ -58,8 +63,7 @@ def indiening_list(request, format=None):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-
-@api_view(['GET', 'DELETE'])
+@api_view(["GET", "DELETE"])
 def indiening_detail(request, id, format=None):
     """
     Een view om de gegevens van een specifieke indiening op te halen (GET) of te verwijderen (DELETE).
@@ -68,7 +72,8 @@ def indiening_detail(request, id, format=None):
         id (int): De primaire sleutel van de indiening.
 
     Returns:
-        Response: Gegevens van de indiening of een foutmelding als de indiening niet bestaat of als er een ongeautoriseerde toegang is.
+        Response: Gegevens van de indiening of een foutmelding als de indiening niet bestaat of
+        als er een ongeautoriseerde toegang is.
     """
     try:
         indiening = Indiening.objects.get(pk=id)
@@ -97,15 +102,17 @@ def indiening_bestand_list(request, format=None):
     """
     Een view om een lijst van indieningbestanden op te halen (GET).
     GET:
-    Als de gebruiker een lesgever is, worden alle indieningbestanden opgehaald. Als de gebruiker geen lesgever is, worden alleen de indieningbestanden opgehaald van de ingelogde gebruiker.
-    
+    Als de gebruiker een lesgever is, worden alle indieningbestanden opgehaald.
+    Als de gebruiker geen lesgever is, worden alleen de indieningbestanden opgehaald
+    van de ingelogde gebruiker.
+
     Optionele query parameters:
         indiening (int): Filtert indieningbestanden op basis van indiening-ID.
 
     Returns:
         Response: Een lijst van indieningbestandgegevens.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user):
             indieningen_bestanden = IndieningBestand.objects.all()
         else:
@@ -137,7 +144,8 @@ def indiening_bestand_detail(request, id, format=None):
         id (int): De primaire sleutel van het indieningbestand.
 
     Returns:
-        Response: Gegevens van het indieningbestand of een foutmelding als het indieningbestand niet bestaat of als er een ongeautoriseerde toegang is.
+        Response: Gegevens van het indieningbestand of een foutmelding als
+        het indieningbestand niet bestaat of als er een ongeautoriseerde toegang is.
     """
     try:
         indiening_bestand = IndieningBestand.objects.get(pk=id)
