@@ -16,7 +16,7 @@ class ScoreSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Score
-        fields = '__all__'
+        fields = "__all__"
 
     def create(self, validated_data):
         """
@@ -45,7 +45,7 @@ class ScoreSerializer(serializers.ModelSerializer):
         super().update(instance=instance, validated_data=validated_data)
         instance.save()
         return instance
-
+      
 def validate_score(data):
     """
     Controleert of de opgegeven score niet hoger is dan de maximale score van het bijbehorende project.
@@ -73,5 +73,4 @@ def validate_indiening(instance, data):
     """
     if instance.indiening != data.get('indiening'):
         raise serializers.ValidationError('indiening_id kan niet aangepast worden')
-    
 

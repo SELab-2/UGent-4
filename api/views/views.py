@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from api.serializers.gebruiker import GebruikerSerializer
-from api.utils import API_URLS, get_graph_token
+from api.utils import API_URLS
 
 
 def login_redirect(request):
@@ -18,12 +18,10 @@ def login_redirect(request):
         HttpResponseRedirect: Een HTTP-verzoek naar de startpagina na het verwerken van de login-redirect.
     """
 
-    print(get_graph_token())
-
     gebruiker_post_data = {
-        'user': request.user.id,
-        'subjects': [],
-        'is_lesgever': False
+        "user": request.user.id,
+        "subjects": [],
+        "is_lesgever": False,
     }
     serializer = GebruikerSerializer(data=gebruiker_post_data)
     if serializer.is_valid():
@@ -31,7 +29,8 @@ def login_redirect(request):
 
     return redirect(home)
 
-@api_view(['GET'])
+
+@api_view(["GET"])
 def home(request):
     """
     Een view die de startpagina van de API retourneert.
@@ -43,6 +42,7 @@ def home(request):
         Response: Een HTTP-respons met de URL's van de API.
     """
     return Response(data=API_URLS)
+
 
 def microsoft_association(request):
     """

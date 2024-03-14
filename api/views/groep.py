@@ -7,7 +7,7 @@ from api.serializers.groep import GroepSerializer
 from api.utils import is_lesgever, contains
 
 
-@api_view(['GET', 'POST'])
+@api_view(["GET", "POST"])
 def groep_list(request, format=None):
     """
     Een view om een lijst van groepen op te halen of een nieuwe groep toe te voegen.
@@ -33,18 +33,17 @@ def groep_list(request, format=None):
 
         if "project" in request.GET:
             try:
-                project = eval(request.GET.get('project'))
+                project = eval(request.GET.get("project"))
                 groepen = groepen.filter(project=project)
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
         if "student" in request.GET:
             try:
-                student = eval(request.GET.get('student'))
+                student = eval(request.GET.get("student"))
                 groepen = groepen.filter(studenten=student)
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-
 
         serializer = GroepSerializer(groepen, many=True)
         return Response(serializer.data)
@@ -74,21 +73,21 @@ def groep_detail(request, id, format=None):
         groep = Groep.objects.get(pk=id)
     except Groep.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user) or contains(groep.studenten, request.user):
             serializer = GroepSerializer(groep)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
-    
+
     if is_lesgever(request.user):
-        if request.method == 'PUT':
+        if request.method == "PUT":
             serializer = GroepSerializer(groep, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        elif request.method == 'DELETE':
+
+        elif request.method == "DELETE":
             groep.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)

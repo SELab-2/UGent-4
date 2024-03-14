@@ -1,6 +1,7 @@
 from django.db import models
 from .vak import Vak
 
+
 def upload_to(instance, filename):
     """
     Functie om het pad te genereren waar het opgavebestand wordt opgeslagen.
@@ -13,7 +14,7 @@ def upload_to(instance, filename):
         str: Het pad waar het opgavebestand moet worden opgeslagen.
     """
     vak_id = instance.vak.vak_id
-    return f'data/opgaves/vak_{vak_id}/{filename}'
+    return f"data/opgaves/vak_{vak_id}/{filename}"
 
 
 class Project(models.Model):
@@ -44,4 +45,3 @@ class Project(models.Model):
 
     def __str__(self):
         return self.titel
-    

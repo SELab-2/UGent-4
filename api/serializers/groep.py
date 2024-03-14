@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models.groep import Groep
+from collections import Counter
 
 
 class GroepSerializer(serializers.ModelSerializer):
@@ -16,9 +17,10 @@ class GroepSerializer(serializers.ModelSerializer):
     """
     class Meta:
         model = Groep
-        fields = '__all__'
+        fields = "__all__"
 
     def create(self, validated_data):
+
         """
         Args:
             validated_data (dict): Gevalideerde gegevens over de groep.
@@ -28,13 +30,13 @@ class GroepSerializer(serializers.ModelSerializer):
         """
         students_data = validated_data.pop('studenten')
         validate_students(students_data, validated_data['project'])
-
         instance = Groep.objects.create(**validated_data)
         instance.studenten.set(students_data)
 
         return instance
 
     def update(self, instance, validated_data):
+
         """
         Args:
             instance (Groep): De groep die moet worden bijgewerkt.

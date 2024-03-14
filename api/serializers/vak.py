@@ -58,6 +58,7 @@ class VakSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 def validate_students_teachers(students_data, teachers_data):
     """
     Controleert of alle gebruikers in 'studenten' studenten zijn en alle gebruikers in 'lesgevers' lesgevers zijn.
@@ -71,7 +72,9 @@ def validate_students_teachers(students_data, teachers_data):
     """
     for student in students_data:
         if student.is_lesgever:
-            raise serializers.ValidationError("Alle gebruikers in 'studenten' moeten studenten zijn")
+            raise serializers.ValidationError(
+                "Alle gebruikers in 'studenten' moeten studenten zijn"
+            )
 
     for teacher in teachers_data:
         if not teacher.is_lesgever:

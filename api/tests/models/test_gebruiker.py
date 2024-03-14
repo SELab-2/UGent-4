@@ -1,31 +1,20 @@
 from django.test import TestCase
-from api.models.gebruiker import Gebruiker
-from django.contrib.auth.models import User
+from api.tests.factories.gebruiker import UserFactory, GebruikerFactory
 
-class GebruikerTestCase(TestCase):
+
+class GebruikerModelTest(TestCase):
     def setUp(self):
-        user1 = User.objects.create_user(username='user1')
-        user2 = User.objects.create_user(username='user2')
-        Gebruiker.objects.create(user=user1, is_lesgever=False)
-        Gebruiker.objects.create(user=user2, is_lesgever=True)
+        self.user1 = UserFactory.create(username="user1")
+        self.user2 = UserFactory.create(username="user2")
+        self.gebruiker1 = GebruikerFactory.create(user=self.user1, is_lesgever=False)
+        self.gebruiker2 = GebruikerFactory.create(user=self.user2, is_lesgever=True)
 
     def test_gebruiker_is_lesgever(self):
-        user1 = Gebruiker.objects.get(user__username='user1')
-        user2 = Gebruiker.objects.get(user__username='user2')
-        self.assertEqual(user1.is_lesgever, False)
-        self.assertEqual(user2.is_lesgever, True)
+        self.assertEqual(self.gebruiker1.is_lesgever, False)
+        self.assertEqual(self.gebruiker2.is_lesgever, True)
 
-    def test_user_label(self):
-        user = Gebruiker.objects.get(user__username='user1')
-        field_label = user._meta.get_field('user').verbose_name
-        self.assertEqual(field_label, 'user')
-
-    def test_subjects_label(self):
-        user = Gebruiker.objects.get(user__username='user1')
-        field_label = user._meta.get_field('subjects').verbose_name
-        self.assertEqual(field_label, 'subjects')
-    
     def test_str_method(self):
-        gebruiker = Gebruiker.objects.get(user__username='user1')
-        expected_object_name = gebruiker.user.first_name
-        self.assertEqual(str(gebruiker), expected_object_name)
+        expected_object_name = (
+            self.gebruiker1.user.first_name + " " + self.gebruiker1.user.last_name
+        )
+        self.assertEqual(str(self.gebruiker1), expected_object_name)

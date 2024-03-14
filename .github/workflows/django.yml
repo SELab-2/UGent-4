@@ -2,9 +2,9 @@ name: Django CI
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "develop", "tests" ]
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "tests" ]
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: github_actions
+          POSTGRES_DB: github_actions_2
 
         ports:
           - 5433:5432
@@ -37,7 +37,9 @@ jobs:
         pip install -r requirements.txt
     - name: Linting API
       run: |
-        flake8 ./api
+        cd api
+        flake8 .
+        cd ..
     - name: Run Tests
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
