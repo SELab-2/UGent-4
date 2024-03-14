@@ -14,7 +14,7 @@ class IndieningListViewTest(TestCase):
         self.gebruiker = GebruikerFactory.create()
         self.gebruiker.user.is_superuser = True
         self.gebruiker.user.save()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse("indiening_list")
 
     def test_indiening_list_get(self):
@@ -42,7 +42,7 @@ class IndieningDetailViewTest(TestCase):
         self.gebruiker.user.is_superuser = True
         self.gebruiker.user.save()
         self.indiening = IndieningFactory.create()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse(
             "indiening_detail", kwargs={"id": self.indiening.indiening_id}
         )
@@ -63,7 +63,7 @@ class IndieningBestandViewTest(TestCase):
         self.gebruiker.user.is_superuser = True
         self.gebruiker.user.save()
         self.indiening_bestand = IndieningBestandFactory.create()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse("indiening_bestand_list")
 
     def test_indiening_bestand_list_get(self):

@@ -10,7 +10,7 @@ class GroepListViewTest(APITestCase):
         self.gebruiker = GebruikerFactory.create(is_lesgever=True)
         self.url = reverse("groep_list")
         self.client = APIClient()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
 
     def test_groep_list_get(self):
         response = self.client.get(self.url)
@@ -33,7 +33,7 @@ class GroepDetailViewTest(APITestCase):
         self.gebruiker = GebruikerFactory.create(is_lesgever=True)
         self.url = reverse("groep_detail", kwargs={"id": self.groep.groep_id})
         self.client = APIClient()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
 
     def test_groep_detail_get(self):
         response = self.client.get(self.url)

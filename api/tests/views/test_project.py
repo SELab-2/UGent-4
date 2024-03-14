@@ -13,7 +13,7 @@ class ProjectListViewTest(APITestCase):
         self.gebruiker = GebruikerFactory.create(is_lesgever=True)
         self.url = reverse("project_list")
         self.client = APIClient()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
 
     def test_project_list_get(self):
         response = self.client.get(self.url)
@@ -39,7 +39,7 @@ class ProjectDetailViewTest(APITestCase):
         self.gebruiker = GebruikerFactory.create(is_lesgever=True)
         self.url = reverse("project_detail", kwargs={"id": self.project.project_id})
         self.client = APIClient()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
 
     def test_project_detail_get(self):
         response = self.client.get(self.url)
