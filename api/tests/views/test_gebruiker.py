@@ -9,7 +9,7 @@ class GebruikerListViewTest(APITestCase):
         self.gebruiker = GebruikerFactory.create()
         self.url = reverse("gebruiker_list")
         self.client = APIClient()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
 
     def test_gebruiker_list_get(self):
         response = self.client.get(self.url)
@@ -22,7 +22,7 @@ class GebruikerDetailViewTest(APITestCase):
         self.gebruiker.user.is_superuser = True
         self.gebruiker.user.save()
         self.client = APIClient()
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse("gebruiker_detail", kwargs={"id": self.gebruiker.user.id})
 
     def test_gebruiker_detail_get(self):

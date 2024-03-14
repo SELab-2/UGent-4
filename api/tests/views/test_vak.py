@@ -12,7 +12,7 @@ class VakListViewTest(APITestCase):
         self.gebruiker = GebruikerFactory.create(is_lesgever=True)
         self.studenten = GebruikerFactory.create_batch(3, is_lesgever=False)
         self.lesgevers = GebruikerFactory.create_batch(2, is_lesgever=True)
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse("vak_list")
 
     def test_vak_list_get(self):
@@ -36,7 +36,7 @@ class VakDetailViewTest(APITestCase):
         self.gebruiker = GebruikerFactory.create(is_lesgever=True)
         self.studenten = GebruikerFactory.create_batch(3, is_lesgever=False)
         self.lesgevers = GebruikerFactory.create_batch(2, is_lesgever=True)
-        self.client.force_authenticate(user=self.gebruiker.user)
+        self.client.force_login(self.gebruiker.user)
         self.url = reverse("vak_detail", args=[self.vak.vak_id])
 
     def test_vak_detail_get(self):
