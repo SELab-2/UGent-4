@@ -55,4 +55,6 @@ jobs:
         DB_ENGINE: ${{secrets.DB_ENGINE}}
     
       run: |
+        yes | python manage.py makemigrations api
+        yes | python manage.py migrate api
         python manage.py test
