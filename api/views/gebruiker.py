@@ -8,9 +8,7 @@ from api.serializers.gebruiker import GebruikerSerializer
 from api.utils import is_lesgever
 
 
-
-
-@api_view(['GET'])
+@api_view(["GET"])
 def gebruiker_list(request):
     """
     Een view om alle gebruikers op te halen.
@@ -28,17 +26,21 @@ def gebruiker_list(request):
             gebruikers = Gebruiker.objects.all()
         else:
             gebruikers = Gebruiker.objects.filter(user=request.user.id)
-        
-        if 'is_lesgever' in request.GET and request.GET.get('is_lesgever').lower() in ['true', 'false']:
-            gebruikers = gebruikers.filter(is_lesgever = (request.GET.get('is_lesgever').lower() == 'true'))
 
+        if "is_lesgever" in request.GET and request.GET.get("is_lesgever").lower() in [
+            "true",
+            "false",
+        ]:
+            gebruikers = gebruikers.filter(
+                is_lesgever=(request.GET.get("is_lesgever").lower() == "true")
+            )
 
         serializer = GebruikerSerializer(gebruikers, many=True)
         return Response(serializer.data)
     return Response(status=status.HTTP_403_FORBIDDEN)
-        
 
-@api_view(['GET', 'PUT'])
+
+@api_view(["GET", "PUT"])
 def gebruiker_detail(request, id):
     """
     Een view om de gegevens van een specifieke gebruiker op te halen (GET) of bij te werken (PUT).
@@ -54,12 +56,12 @@ def gebruiker_detail(request, id):
     except Gebruiker.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user) or id == request.user.id:
             serializer = GebruikerSerializer(gebruiker)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
-    elif request.method == 'PUT':
+    elif request.method == "PUT":
         if request.user.is_superuser:
             serializer = GebruikerSerializer(gebruiker, data=request.data)
             if serializer.is_valid():
@@ -67,7 +69,3 @@ def gebruiker_detail(request, id):
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_403_FORBIDDEN)
-    
-
-
-    

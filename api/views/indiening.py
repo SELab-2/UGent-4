@@ -8,7 +8,7 @@ from api.serializers.indiening import IndieningSerializer, IndieningBestandSeria
 from api.utils import is_lesgever, contains
 
 
-@api_view(['GET', 'POST'])
+@api_view(["GET", "POST"])
 def indiening_list(request, format=None):
     """
     Een view om een lijst van indieningen op te halen of een nieuwe indiening toe te voegen.
@@ -34,7 +34,7 @@ def indiening_list(request, format=None):
 
         if "groep" in request.GET:
             try:
-                groep = eval(request.GET.get('groep'))
+                groep = eval(request.GET.get("groep"))
                 indieningen = indieningen.filter(groep=groep)
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -53,8 +53,8 @@ def indiening_list(request, format=None):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        for file in request.FILES.getlist('indiening_bestanden'):
-            IndieningBestand.objects.create(indiening = indiening, bestand = file)
+        for file in request.FILES.getlist("indiening_bestanden"):
+            IndieningBestand.objects.create(indiening=indiening, bestand=file)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -75,24 +75,27 @@ def indiening_detail(request, id, format=None):
     except Indiening.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
-        if is_lesgever(request.user) or contains(indiening.groep.studenten, request.user):
+    if request.method == "GET":
+        if is_lesgever(request.user) or contains(
+            indiening.groep.studenten, request.user
+        ):
             serializer = IndieningSerializer(indiening)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
-    
-    elif request.method == 'DELETE':
-        if is_lesgever(request.user) or contains(indiening.groep.studenten, request.user):
+
+    elif request.method == "DELETE":
+        if is_lesgever(request.user) or contains(
+            indiening.groep.studenten, request.user
+        ):
             indiening.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def indiening_bestand_list(request, format=None):
     """
     Een view om een lijst van indieningbestanden op te halen (GET).
-
     GET:
     Als de gebruiker een lesgever is, worden alle indieningbestanden opgehaald. Als de gebruiker geen lesgever is, worden alleen de indieningbestanden opgehaald van de ingelogde gebruiker.
     
@@ -108,13 +111,16 @@ def indiening_bestand_list(request, format=None):
         else:
             groepen = Groep.objects.filter(studenten=request.user.id)
             indieningen = Indiening.objects.filter(groep__in=groepen)
-            indieningen_bestanden = IndieningBestand.objects.filter(indiening__in=indieningen)
-
+            indieningen_bestanden = IndieningBestand.objects.filter(
+                indiening__in=indieningen
+            )
 
         if "indiening" in request.GET:
             try:
-                indiening = eval(request.GET.get('indiening'))
-                indieningen_bestanden = indieningen_bestanden.filter(indiening=indiening)
+                indiening = eval(request.GET.get("indiening"))
+                indieningen_bestanden = indieningen_bestanden.filter(
+                    indiening=indiening
+                )
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -122,7 +128,7 @@ def indiening_bestand_list(request, format=None):
         return Response(serializer.data)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def indiening_bestand_detail(request, id, format=None):
     """
     Een view om de gegevens van een specifiek indieningbestand op te halen (GET).
@@ -138,8 +144,10 @@ def indiening_bestand_detail(request, id, format=None):
     except IndieningBestand.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
-        if is_lesgever(request.user) or contains(indiening_bestand.indiening.groep.studenten, request.user):
+    if request.method == "GET":
+        if is_lesgever(request.user) or contains(
+            indiening_bestand.indiening.groep.studenten, request.user
+        ):
             serializer = IndieningBestandSerializer(indiening_bestand)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)

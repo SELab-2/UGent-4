@@ -9,7 +9,7 @@ from api.utils import is_lesgever, contains
 from django.core.exceptions import ValidationError
 
 
-@api_view(['GET', 'POST'])
+@api_view(["GET", "POST"])
 def vak_list(request, format=None):
     """
     Een view om een lijst van vakken op te halen of een nieuw vak toe te voegen.
@@ -58,13 +58,13 @@ def vak_detail(request, id, format=None):
     except Vak.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user) or contains(vak.studenten, request.user):
             serializer = VakSerializer(vak)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
     if is_lesgever(request.user):
-        if request.method == 'PUT':
+        if request.method == "PUT":
             try:
                 serializer = VakSerializer(vak, data=request.data)
                 if serializer.is_valid():
@@ -72,9 +72,9 @@ def vak_detail(request, id, format=None):
                     return Response(serializer.data)
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
             except ValidationError as e:
-                return Response({'error': e}, status=status.HTTP_400_BAD_REQUEST)
-        
-        elif request.method == 'DELETE':
+                return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+
+        elif request.method == "DELETE":
             vak.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)

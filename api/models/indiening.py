@@ -27,12 +27,12 @@ class Indiening(models.Model):
         __str__(): Geeft een representatie van het model als een string terug, die de ID van de indiening bevat.
     """
     indiening_id = models.AutoField(primary_key=True)
-    groep = models.ForeignKey('Groep', on_delete=models.CASCADE)
+    groep = models.ForeignKey("Groep", on_delete=models.CASCADE)
     tijdstip = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.indiening_id)
-    
+
 
 class IndieningBestand(models.Model):
     """
@@ -47,7 +47,7 @@ class IndieningBestand(models.Model):
         __str__(): Geeft een representatie van het model als een string terug, die de bestandsnaam bevat.
     """
     indiening_bestand_id = models.AutoField(primary_key=True)
-    indiening = models.ForeignKey('Indiening', on_delete=models.CASCADE)
+    indiening = models.ForeignKey("Indiening", on_delete=models.CASCADE)
     bestand = models.FileField(upload_to=upload_to)
 
     def __str__(self):

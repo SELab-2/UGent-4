@@ -8,7 +8,7 @@ from api.serializers.project import ProjectSerializer
 from api.utils import is_lesgever, contains
 
 
-@api_view(['GET', 'POST'])
+@api_view(["GET", "POST"])
 def project_list(request, format=None):
     """
     Een view om een lijst van projecten op te halen of een nieuw project toe te voegen.
@@ -32,9 +32,9 @@ def project_list(request, format=None):
             vakken = Vak.objects.filter(studenten=request.user.id)
             projects = Project.objects.filter(vak__in=vakken)
 
-        if 'vak' in request.GET:
+        if "vak" in request.GET:
             try:
-                vak = eval(request.GET.get('vak'))
+                vak = eval(request.GET.get("vak"))
                 projects = projects.filter(vak=vak)
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -67,21 +67,21 @@ def project_detail(request, id, format=None):
     except Project.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user) or contains(project.vak.studenten, request.user):
             serializer = ProjectSerializer(project)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
-    
+
     if is_lesgever(request.user):
-        if request.method == 'PUT':
+        if request.method == "PUT":
             serializer = ProjectSerializer(project, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        elif request.method == 'DELETE':
+
+        elif request.method == "DELETE":
             project.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)

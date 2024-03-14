@@ -9,7 +9,7 @@ from api.serializers.score import ScoreSerializer
 from api.utils import is_lesgever, contains
 
 
-@api_view(['GET', 'POST'])
+@api_view(["GET", "POST"])
 def score_list(request, format=None):
     """
     Een view om een lijst van scores op te halen of een nieuwe score toe te voegen.
@@ -36,7 +36,7 @@ def score_list(request, format=None):
 
         if "indiening" in request.GET:
             try:
-                indiening = eval(request.GET.get('indiening'))
+                indiening = eval(request.GET.get("indiening"))
                 scores = scores.filter(indiening=indiening)
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -52,6 +52,7 @@ def score_list(request, format=None):
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_403_FORBIDDEN)
+
         
 @api_view(['GET', 'PUT', 'DELETE'])
 def score_detail(request, id, format=None):
@@ -68,22 +69,24 @@ def score_detail(request, id, format=None):
         score = Score.objects.get(pk=id)
     except Score.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
-    if request.method == 'GET':
-        if is_lesgever(request.user) or contains(score.indiening.groep.studenten, request.user):
+
+    if request.method == "GET":
+        if is_lesgever(request.user) or contains(
+            score.indiening.groep.studenten, request.user
+        ):
             serializer = ScoreSerializer(score)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-    if is_lesgever(request.user): 
-        if request.method == 'PUT':
+    if is_lesgever(request.user):
+        if request.method == "PUT":
             serializer = ScoreSerializer(score, data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
-        elif request.method == 'DELETE':
+
+        elif request.method == "DELETE":
             score.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)
