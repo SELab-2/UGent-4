@@ -8,6 +8,14 @@ from api.serializers.indiening import IndieningSerializer, IndieningBestandSeria
 
 @api_view(['GET', 'POST'])
 def indiening_list(request, format=None):
+    """
+    Gives a list of all indieningen.
+    If the query 'groep' is in the GET request,
+    it filters on only the indieningen for with matching groep id.
+
+    Args:
+        request: A HTTP request.
+    """
 
     if request.method == 'GET':
         indieningen = Indiening.objects.all()
@@ -21,11 +29,11 @@ def indiening_list(request, format=None):
 
         serializer = IndieningSerializer(indieningen, many=True)
         return Response(serializer.data)
-    
+
     elif request.method == 'POST':
         if 'indiening_bestanden' not in request.FILES:
             return Response({"indiening_bestanden":["This field is required."]}, status=status.HTTP_400_BAD_REQUEST)
-        
+
         serializer = IndieningSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -37,10 +45,17 @@ def indiening_list(request, format=None):
             IndieningBestand.objects.create(indiening = indiening, bestand = file)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    
-        
+
+
 @api_view(['GET', 'DELETE'])
-def indiening_detail(request, id, format=None): 
+def indiening_detail(request, id, format=None):
+    """
+    Gives the indiening with a certain id.
+
+    Args:
+        request: A HTTP request.
+        id: ID of the gebruiker.
+    """
     try:
         indiening = Indiening.objects.get(pk=id)
     except Indiening.DoesNotExist:
@@ -49,11 +64,11 @@ def indiening_detail(request, id, format=None):
     if request.method == 'GET':
         serializer = IndieningSerializer(indiening)
         return Response(serializer.data)
-    
+
     elif request.method == 'DELETE':
         indiening.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
 
 
 @api_view(['GET'])

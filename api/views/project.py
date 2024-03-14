@@ -8,6 +8,14 @@ from api.serializers.project import ProjectSerializer
 
 @api_view(['GET', 'POST'])
 def project_list(request, format=None):
+    """
+    Gives a list of all projecten.
+    If the query 'vak' is in the GET request,
+    it filters on only the indieningen for with matching vak id.
+
+    Args:
+        request: A HTTP request.
+    """
 
     if request.method == 'GET':
         projects = Project.objects.all()
@@ -21,16 +29,23 @@ def project_list(request, format=None):
 
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
-    
+
     elif request.method == 'POST':
         serializer = ProjectSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 @api_view(['GET', 'PUT', 'DELETE'])
-def project_detail(request, id, format=None): 
+def project_detail(request, id, format=None):
+    """
+    Gives the project with a certain id.
+
+    Args:
+        request: A HTTP request.
+        id: ID of the gebruiker.
+    """
     try:
         project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
@@ -39,14 +54,14 @@ def project_detail(request, id, format=None):
     if request.method == 'GET':
         serializer = ProjectSerializer(project)
         return Response(serializer.data)
-    
+
     elif request.method == 'PUT':
         serializer = ProjectSerializer(project, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     elif request.method == 'DELETE':
         project.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
