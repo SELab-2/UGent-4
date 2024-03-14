@@ -11,14 +11,20 @@ from api.utils import is_lesgever, contains
 @api_view(['GET', 'POST'])
 def project_list(request, format=None):
     """
-    Gives a list of all projecten.
-    If the query 'vak' is in the GET request,
-    it filters on only the indieningen for with matching vak id.
+    Een view om een lijst van projecten op te halen of een nieuw project toe te voegen.
 
-    Args:
-        request: A HTTP request.
+    GET:
+    Als de gebruiker een lesgever is, worden alle projecten opgehaald. Als de gebruiker geen lesgever is, worden alleen de projecten opgehaald voor de vakken waarin de ingelogde gebruiker zich bevindt.
+
+    Optionele query parameters:
+        vak (int): Filtert projecten op basis van vak-ID.
+
+    POST:
+    Voegt een nieuw project toe.
+
+    Returns:
+        Response: Een lijst van projecten of een nieuw aangemaakt project.
     """
-
     if request.method == 'GET':
         if is_lesgever(request.user):
             projects = Project.objects.all()
@@ -48,11 +54,13 @@ def project_list(request, format=None):
 @api_view(['GET', 'PUT', 'DELETE'])
 def project_detail(request, id, format=None):
     """
-    Gives the project with a certain id.
+    Een view om de gegevens van een specifiek project op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
 
     Args:
-        request: A HTTP request.
-        id: ID of the gebruiker.
+        id (int): De primaire sleutel van het project.
+
+    Returns:
+        Response: Gegevens van het project of een foutmelding als het project niet bestaat of als er een ongeautoriseerde toegang is.
     """
     try:
         project = Project.objects.get(pk=id)
