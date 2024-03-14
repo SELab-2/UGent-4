@@ -36,14 +36,42 @@ def get_graph_token():
         return None
     
 def is_lesgever(user):
+    """
+    Controleert of de gebruiker een lesgever is.
+
+    Args:
+        user (User): De gebruiker waarvan moet worden gecontroleerd of deze een lesgever is.
+
+    Returns:
+        bool: True als de gebruiker een lesgever is, anders False.
+    """
     if user.is_superuser:
         return True
     gebruiker = Gebruiker.objects.get(pk=user.id)
     return gebruiker.is_lesgever
 
 def contains(lijst, user):
+    """
+    Controleert of de gebruiker aanwezig is in de gegeven lijst.
+
+    Args:
+        lijst (QuerySet): De lijst waarin moet worden gecontroleerd.
+        user (User): De gebruiker waarvan moet worden gecontroleerd of deze aanwezig is in de lijst.
+
+    Returns:
+        bool: True als de gebruiker aanwezig is in de lijst, anders False.
+    """
     gebruiker = Gebruiker.objects.get(pk=user.id)
     return lijst.all().contains(gebruiker)
 
 def get_gebruiker(user):
+    """
+    Haalt de Gebruiker-instantie op voor de gegeven gebruiker.
+
+    Args:
+        user (User): De gebruiker waarvoor de Gebruiker-instantie moet worden opgehaald.
+
+    Returns:
+        Gebruiker: De Gebruiker-instantie voor de gegeven gebruiker.
+    """
     return Gebruiker.objects.get(pk=user.id)
