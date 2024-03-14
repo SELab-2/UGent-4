@@ -4,16 +4,28 @@ from django.utils import timezone
 
 
 class ProjectSerializer(serializers.ModelSerializer):
+    """
+    Serializer voor het serialiseren en deserialiseren van Project objecten.
+
+    Fields:
+        Meta.model (Project): Het model waarop de serializer is gebaseerd.
+        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier wordt '__all__' gebruikt om alle velden op te nemen.
+
+    Methods:
+        create(self, validated_data): Maakt een nieuw project aan en voegt deze toe aan de database.
+        update(self, instance, validated_data): Werkt een bestaand project bij in de database.
+    """
     class Meta:
         model = Project
         fields = '__all__'
 
     def create(self, validated_data):
         """
-        Creates a new project to put in the database.
-
         Args:
-            validated_data: Data about the project.
+            validated_data (dict): Gevalideerde gegevens over het project.
+
+        Returns:
+            Project: Het aangemaakte project.
         """
         deadline = validated_data.pop('deadline')
         validate_deadline(deadline)
@@ -25,11 +37,12 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Updates a groep in the database.
-
         Args:
-            instance: Instance to be updated.
-            validated_data: Data about the groep.
+            instance (Project): Het project dat moet worden bijgewerkt.
+            validated_data (dict): Gevalideerde gegevens over het project.
+
+        Returns:
+            Project: Het bijgewerkte project.
         """
         deadline = validated_data.pop('deadline')
         validate_deadline(deadline)
@@ -42,8 +55,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 
 def validate_deadline(deadline):
     """
-    Checks the validity of the data and raises an error if the data is invalid.
-    The data is invalid when the deadline is already in the past.
+    Controleert of de opgegeven deadline in de toekomst ligt.
+
+    Args:
+        deadline (datetime): De deadline van het project.
+
+    Raises:
+        serializers.ValidationError: Als de deadline in het verleden ligt.
     """
     if deadline <= timezone.now():
         raise serializers.ValidationError("Deadline moet in de toekomst liggen")
