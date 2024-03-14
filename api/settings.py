@@ -166,10 +166,3 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_URL = "django_auth_adfs:login"
 LOGIN_REDIRECT_URL = "/login_redirect"
-
-REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
-        "api.middleware.CsrfExemptSessionAuthentication",
-    ]
-}
