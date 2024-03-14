@@ -48,7 +48,9 @@ class GroepSerializer(serializers.ModelSerializer):
             Groep: De bijgewerkte groep.
         """
         students_data = validated_data.pop("studenten")
-        validate_students(students_data, validated_data["project"], current_group=instance)
+        validate_students(
+            students_data, validated_data["project"], current_group=instance
+        )
         super().update(instance=instance, validated_data=validated_data)
         instance.studenten.set(students_data)
         instance.save()
@@ -85,7 +87,11 @@ def validate_students(students_data, project, current_group=None):
             )
 
         for groep in groepen:
-            if  current_group and groep.groep_id != current_group.groep_id and student in groep.studenten.all():
+            if (
+                current_group
+                and groep.groep_id != current_group.groep_id
+                and student in groep.studenten.all()
+            ):
                 raise serializers.ValidationError(
                     f"Gebruiker {student} zit al in een andere groep voor dit project!"
                 )
