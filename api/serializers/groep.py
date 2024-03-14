@@ -3,16 +3,28 @@ from api.models.groep import Groep
 
 
 class GroepSerializer(serializers.ModelSerializer):
+    """
+    Serializer voor het serialiseren en deserialiseren van Groep objecten.
+
+    Fields:
+        Meta.model (Groep): Het model waarop de serializer is gebaseerd.
+        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier wordt '__all__' gebruikt om alle velden op te nemen.
+
+    Methods:
+        create(self, validated_data): Maakt een nieuwe groep aan en voegt deze toe aan de database.
+        update(self, instance, validated_data): Werkt een bestaande groep bij in de database.
+    """
     class Meta:
         model = Groep
         fields = '__all__'
 
     def create(self, validated_data):
         """
-        Creates a new groep to put in the database.
-
         Args:
-            validated_data: Data about the groep.
+            validated_data (dict): Gevalideerde gegevens over de groep.
+
+        Returns:
+            Groep: De aangemaakte groep.
         """
         students_data = validated_data.pop('studenten')
         validate_students(students_data, validated_data['project'])
@@ -24,11 +36,12 @@ class GroepSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Updates a groep in the database.
-
         Args:
-            instance: Instance to be updated.
-            validated_data: Data about the groep.
+            instance (Groep): De groep die moet worden bijgewerkt.
+            validated_data (dict): Gevalideerde gegevens over de groep.
+
+        Returns:
+            Groep: De bijgewerkte groep.
         """
         students_data = validated_data.pop('studenten')
         validate_students(students_data, validated_data['project'])
@@ -42,8 +55,14 @@ class GroepSerializer(serializers.ModelSerializer):
 
 def validate_students(students_data, project):
     """
-    Checks the validity of the data and raises an error if the data is invalid.
-    The data is invalid when a teacher is a member of a group or if a student is already part of a different group for the same project.
+    Controleert of de opgegeven gebruikers studenten zijn en of ze al in een andere groep voor dit project zitten.
+
+    Args:
+        students_data (list): Een lijst met gebruikers die aan de groep moeten worden toegevoegd.
+        project (Project): Het project waartoe de groep behoort.
+
+    Raises:
+        serializers.ValidationError: Als een gebruiker geen student is of al in een andere groep voor dit project zit.
     """
     groepen = Groep.objects.filter(project=project)
 
