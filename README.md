@@ -1,6 +1,14 @@
 # UGent-4
+
+# Wiki
+
+- Zie de wiki voor meer informatie zoals bijvoorbeeld de use-cases en documentatie
+
+# Frontend
+
+## WIP
+
 # Backend
-Deze folder bevat de code van de backend.
 
 ## Hoe runnen?
 
