@@ -46,8 +46,16 @@ urlpatterns = [
     path("api/projecten/<int:id>/", project_detail, name="project_detail"),
     path("api/indieningen/", indiening_list, name="indiening_list"),
     path("api/indieningen/<int:id>/", indiening_detail, name="indiening_detail"),
-    path("api/indiening_bestanden/", indiening_bestand_list, name="indiening_bestand_list"),
-    path("api/indiening_bestanden/<int:id>/", indiening_bestand_detail, name="indiening_bestand_detail"),
+    path(
+        "api/indiening_bestanden/",
+        indiening_bestand_list,
+        name="indiening_bestand_list",
+    ),
+    path(
+        "api/indiening_bestanden/<int:id>/",
+        indiening_bestand_detail,
+        name="indiening_bestand_detail",
+    ),
     path("api/scores/", score_list, name="score_list"),
     path("api/scores/<int:id>/", score_detail, name="score_detail"),
     path("api/groepen/", groep_list, name="groep_list"),
