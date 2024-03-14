@@ -5,7 +5,7 @@ from api.tests.factories.project import ProjectFactory
 from api.tests.factories.vak import VakFactory
 from api.tests.factories.gebruiker import GebruikerFactory
 from rest_framework.test import APIClient
-from django.core.files import File
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class ProjectListViewTest(APITestCase):
@@ -21,17 +21,16 @@ class ProjectListViewTest(APITestCase):
 
     def test_project_list_post(self):
         vak = VakFactory.create().vak_id
-        with open("api/tests/testdata/test.txt", "rb") as fp:
-            data = {
-                "titel": "test project",
-                "beschrijving": "Dit is een test project.",
-                "opgave_bestand": File(fp),
-                "vak": vak,
-                "deadline": "2024-03-31T12:40:05.317980Z",
-                "max_score": 20,
-            }
-            response = self.client.post(self.url, data, format="multipart")
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        data = {
+            "titel": "test project",
+            "beschrijving": "Dit is een test project.",
+            "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
+            "vak": vak,
+            "deadline": "2024-03-31T12:40:05.317980Z",
+            "max_score": 20,
+        }
+        response = self.client.post(self.url, data, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
 class ProjectDetailViewTest(APITestCase):

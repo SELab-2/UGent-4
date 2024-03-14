@@ -4,7 +4,7 @@ from api.serializers.project import ProjectSerializer
 from api.tests.factories.project import ProjectFactory
 from dateutil.parser import parse
 from api.tests.factories.vak import VakFactory
-from django.core.files import File
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
 class ProjectSerializerTest(APITestCase):
@@ -69,33 +69,29 @@ class ProjectSerializerTest(APITestCase):
 
     def test_create(self):
         vak = VakFactory.create().vak_id
-        with open("api/tests/testdata/test.txt", "rb") as fp:
-            data = {
-                "titel": "test project",
-                "beschrijving": "Dit is een test project.",
-                "opgave_bestand": File(fp),
-                "vak": vak,
-                "deadline": self.serializer.data["deadline"],
-                "max_score": 20,
-            }
-            serializer = ProjectSerializer(data=data)
-            self.assertTrue(serializer.is_valid())
-            project = serializer.save()
-            self.assertEqual(project.deadline, parse(data["deadline"]))
+        data = {
+            "titel": "test project",
+            "beschrijving": "Dit is een test project.",
+            "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
+            "vak": vak,
+            "deadline": self.serializer.data["deadline"],
+            "max_score": 20,
+        }
+        serializer = ProjectSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        project = serializer.save()
+        self.assertEqual(project.deadline, parse(data["deadline"]))
 
     def test_update(self):
-        with open("api/tests/testdata/test.txt", "rb") as fp:
-            data = {
-                "titel": "test project",
-                "beschrijving": "Dit is een test project.",
-                "opgave_bestand": File(fp),
-                "vak": self.serializer.data["vak"],
-                "deadline": self.serializer.data["deadline"],
-                "max_score": 20,
-            }
-            serializer = ProjectSerializer(
-                instance=self.project, data=data, partial=True
-            )
-            self.assertTrue(serializer.is_valid())
-            project = serializer.save()
-            self.assertEqual(project.deadline, parse(data["deadline"]))
+        data = {
+            "titel": "test project",
+            "beschrijving": "Dit is een test project.",
+            "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
+            "vak": self.serializer.data["vak"],
+            "deadline": self.serializer.data["deadline"],
+            "max_score": 20,
+        }
+        serializer = ProjectSerializer(instance=self.project, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        project = serializer.save()
+        self.assertEqual(project.deadline, parse(data["deadline"]))
