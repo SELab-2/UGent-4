@@ -3,12 +3,13 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
+
 interface AssignmentListItemProps {
-    key: string;
+    id: string;
     projectName: string;
     dueDate?: Date;
     status: boolean;
-    isStudent:boolean;
+    isStudent: boolean;
 }
 
 /*
@@ -20,16 +21,16 @@ interface AssignmentListItemProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItem({key,projectName, dueDate, status,isStudent}:AssignmentListItemProps) {
+export function AssignmentListItem({id, projectName, dueDate, status, isStudent}: AssignmentListItemProps) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
-        navigate(`/${key}`)
+        navigate(`/${id}`)
     }
 
     return (
         <>
-            <ListItem key={projectName} sx={{margin:0}} disablePadding={true}>
+            <ListItem key={projectName} sx={{margin: 0}} disablePadding={true}>
                 <ListItemButton onClick={handleProjectClick} sx={{
                     width: "100%",
                     height: 30,
@@ -38,11 +39,14 @@ export function AssignmentListItem({key,projectName, dueDate, status,isStudent}:
                     justifyContent: "space-between",
                     paddingX: 1,
                     paddingY: 3,
-                    borderRadius:2,
+                    borderRadius: 2,
                 }}>
-                    <ListItemText sx={{maxWidth:100}} primary={projectName}/>
-                    <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                    {isStudent && <ListItemIcon sx={{minWidth:35}}>{status?<CheckCircleOutlineIcon sx={{color:"success.main"}}/>:<HighlightOffIcon sx={{color:"error.main"}}/>}</ListItemIcon>}
+                    <ListItemText sx={{maxWidth: 100}} primary={projectName}/>
+                    <ListItemText sx={{maxWidth: 110}}
+                                  primary={dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
+                    {isStudent && <ListItemIcon sx={{minWidth: 35}}>{status ?
+                        <CheckCircleOutlineIcon sx={{color: "success.main"}}/> :
+                        <HighlightOffIcon sx={{color: "error.main"}}/>}</ListItemIcon>}
 
                 </ListItemButton>
             </ListItem>

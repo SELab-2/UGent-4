@@ -1,30 +1,41 @@
-import {Box, Stack} from "@mui/material";
+import {IconButton, Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
+import AddIcon from "@mui/icons-material/Add";
 
 interface CourseCardProps {
     isStudent: boolean;
 }
+
 export function CoursesView({isStudent}: CourseCardProps) {
     //TODO: get courses from state
     const courses = getCourses();
     return (
         <>
-            <Stack flexDirection={"row"}>
-                <Stack flexDirection={"row"} flexWrap={"wrap"}>
-                    <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
-                    <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
-                    <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
-                    <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
+            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
+                <Stack direction={"column"} spacing={1} width={"100%"}>
+                    <Stack flexDirection={"row"} flexWrap={"wrap"} width={"100%"}
+                           sx={{
+                               overflowY: {sm: "auto"},
+                               maxHeight: "65vh",
+                           }}>
+                        <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
+                        <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
+                        <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
+                        <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
+                    </Stack>
+                    {!isStudent &&
+                        <Stack flexDirection={"row"} justifyContent={"end"} width={"100%"} padding={0}>
+                            <IconButton color={"primary"} aria-label={'add-button'}>
+                                <AddIcon fontSize={"large"}/>
+                            </IconButton>
+                        </Stack>}
                 </Stack>
-                <Box aria-label={"calendarView"}>
-
-                </Box>
             </Stack>
         </>
     );
 }
 
 //fix courses with state
-function getCourses():string[]{
+function getCourses(): string[] {
     return []
 }
