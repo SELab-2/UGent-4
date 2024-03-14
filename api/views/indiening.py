@@ -28,6 +28,12 @@ def indiening_list(request, format=None):
         return Response(serializer.data)
 
     elif request.method == "POST":
+        if "indiening_bestanden" not in request.FILES:
+            return Response(
+                {"indiening_bestanden": ["This field is required."]},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         serializer = IndieningSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
