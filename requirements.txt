@@ -1,0 +1,10 @@
+django~=5.0.2
+gunicorn
+psycopg2-binary
+djangorestframework~=3.14.0
+django-auth-adfs
+python-dotenv
+coverage
+flake8
+black
+factory_boy
