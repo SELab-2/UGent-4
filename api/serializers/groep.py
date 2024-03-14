@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models.groep import Groep
+from collections import Counter
 
 
 class GroepSerializer(serializers.ModelSerializer):
@@ -47,7 +48,7 @@ class GroepSerializer(serializers.ModelSerializer):
             Groep: De bijgewerkte groep.
         """
         students_data = validated_data.pop("studenten")
-        validate_students(students_data, validated_data["project"])
+        validate_students(students_data, validated_data["project"], current_group=instance)
         super().update(instance=instance, validated_data=validated_data)
         instance.studenten.set(students_data)
         instance.save()
@@ -55,18 +56,27 @@ class GroepSerializer(serializers.ModelSerializer):
         return instance
 
 
-def validate_students(students_data, project):
+def validate_students(students_data, project, current_group=None):
     """
     Controleert of de opgegeven gebruikers studenten zijn en of ze al in een andere groep voor dit project zitten.
 
     Args:
         students_data (list): Een lijst met gebruikers die aan de groep moeten worden toegevoegd.
         project (Project): Het project waartoe de groep behoort.
+        current_groep (Groep): De huidige groep waartoe de studenten behoren.
+
 
     Raises:
         serializers.ValidationError: Als een gebruiker geen student is of al in een andere groep voor dit project zit.
     """
     groepen = Groep.objects.filter(project=project)
+
+    student_counts = Counter(students_data)
+    for student, count in student_counts.items():
+        if count > 1:
+            raise serializers.ValidationError(
+                f"Student {student} zit al in deze groep!"
+            )
 
     for student in students_data:
         if student.is_lesgever:
@@ -75,7 +85,7 @@ def validate_students(students_data, project):
             )
 
         for groep in groepen:
-            if groep.studenten.contains(student):
+            if  current_group and groep.groep_id != current_group.groep_id and student in groep.studenten.all():
                 raise serializers.ValidationError(
-                    f"Gebruiker {student.user.id} zit al in een groep voor dit project"
+                    f"Gebruiker {student} zit al in een andere groep voor dit project!"
                 )
