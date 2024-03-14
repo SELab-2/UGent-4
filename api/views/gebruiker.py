@@ -13,15 +13,17 @@ def gebruiker_list(request):
     """
     Een view om alle gebruikers op te halen.
 
-    Als de gebruiker een lesgever is, worden alle gebruikers opgehaald. Als de gebruiker geen lesgever is, worden alleen de gegevens van de ingelogde gebruiker opgehaald.
-    
+    Als de gebruiker een lesgever is, worden alle gebruikers opgehaald.
+    Als de gebruiker geen lesgever is, worden alleen de gegevens van de
+    ingelogde gebruiker opgehaald.
+
     Optionele query parameters:
         is_lesgever (bool): Filtert gebruikers op basis van of ze lesgevers zijn of niet.
 
     Returns:
         Response: Een lijst van gebruikers.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         if is_lesgever(request.user):
             gebruikers = Gebruiker.objects.all()
         else:
@@ -49,7 +51,8 @@ def gebruiker_detail(request, id):
         id (int): De primaire sleutel van de gebruiker.
 
     Returns:
-        Response: Gegevens van de gebruiker of een foutmelding als de gebruiker niet bestaat of als er een ongeautoriseerde toegang is.
+        Response: Gegevens van de gebruiker of een foutmelding als de gebruiker niet
+        bestaat of als er een ongeautoriseerde toegang is.
     """
     try:
         gebruiker = Gebruiker.objects.get(pk=id)

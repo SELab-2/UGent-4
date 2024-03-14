@@ -11,6 +11,7 @@ class IndieningSerializer(serializers.ModelSerializer):
         Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier worden alle velden opgenomen.
 
     """
+
     class Meta:
         model = Indiening
         fields = "__all__"
@@ -25,6 +26,7 @@ class IndieningBestandSerializer(serializers.ModelSerializer):
         Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier worden alle velden opgenomen.
 
     """
+
     class Meta:
         model = IndieningBestand
         fields = "__all__"

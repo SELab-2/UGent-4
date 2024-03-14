@@ -9,7 +9,9 @@ from api.utils import API_URLS
 def login_redirect(request):
     """
     Een view die wordt gebruikt voor het verwerken van een login redirect.
-    Deze view controleert of de gebruiker is ingelogd, en maakt vervolgens een nieuwe gebruiker aan in het systeem voor de ingelogde gebruiker, indien deze nog niet bestaat.
+    Deze view controleert of de gebruiker is ingelogd, en maakt vervolgens een
+    nieuwe gebruiker aan in het systeem voor de ingelogde gebruiker,
+    indien deze nog niet bestaat.
 
     Args:
         request (HttpRequest): Het HTTP-verzoek dat naar de view is gestuurd.
@@ -54,4 +56,10 @@ def microsoft_association(request):
     Returns:
         JsonResponse: Een JSON-respons met de geassocieerde applicaties.
     """
-    return JsonResponse({"associatedApplications": [{ "applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5" }]})
+    return JsonResponse(
+        {
+            "associatedApplications": [
+                {"applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5"}
+            ]
+        }
+    )
