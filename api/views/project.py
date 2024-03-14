@@ -10,7 +10,22 @@ from api.utils import is_lesgever, contains
 
 @api_view(["GET", "POST"])
 def project_list(request, format=None):
-    if request.method == "GET":
+    """
+    Een view om een lijst van projecten op te halen of een nieuw project toe te voegen.
+
+    GET:
+    Als de gebruiker een lesgever is, worden alle projecten opgehaald. Als de gebruiker geen lesgever is, worden alleen de projecten opgehaald voor de vakken waarin de ingelogde gebruiker zich bevindt.
+
+    Optionele query parameters:
+        vak (int): Filtert projecten op basis van vak-ID.
+
+    POST:
+    Voegt een nieuw project toe.
+
+    Returns:
+        Response: Een lijst van projecten of een nieuw aangemaakt project.
+    """
+    if request.method == 'GET':
         if is_lesgever(request.user):
             projects = Project.objects.all()
         else:
@@ -27,7 +42,7 @@ def project_list(request, format=None):
         serializer = ProjectSerializer(projects, many=True)
         return Response(serializer.data)
 
-    elif request.method == "POST":
+    elif request.method == 'POST':
         if is_lesgever(request.user):
             serializer = ProjectSerializer(data=request.data)
             if serializer.is_valid():
@@ -36,9 +51,17 @@ def project_list(request, format=None):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(['GET', 'PUT', 'DELETE'])
 def project_detail(request, id, format=None):
+    """
+    Een view om de gegevens van een specifiek project op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
+
+    Args:
+        id (int): De primaire sleutel van het project.
+
+    Returns:
+        Response: Gegevens van het project of een foutmelding als het project niet bestaat of als er een ongeautoriseerde toegang is.
+    """
     try:
         project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
