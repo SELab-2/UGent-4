@@ -9,6 +9,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def create(self, validated_data):
+        """
+        Creates a new project to put in the database.
+
+        Args:
+            validated_data: Data about the project.
+        """
         deadline = validated_data.pop('deadline')
         validate_deadline(deadline)
 
@@ -16,8 +22,15 @@ class ProjectSerializer(serializers.ModelSerializer):
         project.deadline = deadline
         project.save()
         return project
-    
+
     def update(self, instance, validated_data):
+        """
+        Updates a groep in the database.
+
+        Args:
+            instance: Instance to be updated.
+            validated_data: Data about the groep.
+        """
         deadline = validated_data.pop('deadline')
         validate_deadline(deadline)
 
@@ -25,8 +38,12 @@ class ProjectSerializer(serializers.ModelSerializer):
         instance.deadline = deadline
         instance.save()
         return instance
-    
+
 
 def validate_deadline(deadline):
+    """
+    Checks the validity of the data and raises an error if the data is invalid.
+    The data is invalid when the deadline is already in the past.
+    """
     if deadline <= timezone.now():
         raise serializers.ValidationError("Deadline moet in de toekomst liggen")
