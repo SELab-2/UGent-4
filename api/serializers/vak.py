@@ -3,13 +3,31 @@ from api.models.vak import Vak
 
 
 class VakSerializer(serializers.ModelSerializer):
+    """
+    Serializer voor het serialiseren en deserialiseren van Vak objecten.
+
+    Fields:
+        Meta.model (Vak): Het model waarop de serializer is gebaseerd.
+        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier wordt '__all__' gebruikt om alle velden op te nemen.
+
+    Methods:
+        create(self, validated_data): Maakt een nieuw vak aan en voegt deze toe aan de database.
+        update(self, instance, validated_data): Werkt een bestaand vak bij in de database.
+    """
     class Meta:
         model = Vak
-        fields = "__all__"
+        fields = '__all__'
 
     def create(self, validated_data):
-        students_data = validated_data.pop("studenten")
-        teachers_data = validated_data.pop("lesgevers")
+        """
+        Args:
+            validated_data (dict): Gevalideerde gegevens over het vak.
+
+        Returns:
+            Vak: Het aangemaakte vak.
+        """
+        students_data = validated_data.pop('studenten')
+        teachers_data = validated_data.pop('lesgevers')
 
         validate_students_teachers(students_data, teachers_data)
 
@@ -20,8 +38,16 @@ class VakSerializer(serializers.ModelSerializer):
         return vak
 
     def update(self, instance, validated_data):
-        students_data = validated_data.pop("studenten", [])
-        teachers_data = validated_data.pop("lesgevers", [])
+        """
+        Args:
+            instance (Vak): Het vak dat moet worden bijgewerkt.
+            validated_data (dict): Gevalideerde gegevens over het vak.
+
+        Returns:
+            Vak: Het bijgewerkte vak.
+        """
+        students_data = validated_data.pop('studenten', [])
+        teachers_data = validated_data.pop('lesgevers', [])
 
         validate_students_teachers(students_data, teachers_data)
 
@@ -34,6 +60,16 @@ class VakSerializer(serializers.ModelSerializer):
 
 
 def validate_students_teachers(students_data, teachers_data):
+    """
+    Controleert of alle gebruikers in 'studenten' studenten zijn en alle gebruikers in 'lesgevers' lesgevers zijn.
+
+    Args:
+        students_data (list): Een lijst met gebruikers die aan het vak moeten worden toegevoegd als studenten.
+        teachers_data (list): Een lijst met gebruikers die aan het vak moeten worden toegevoegd als lesgevers.
+
+    Raises:
+        serializers.ValidationError: Als een gebruiker in 'studenten' geen student is of een gebruiker in 'lesgevers' geen lesgever is.
+    """
     for student in students_data:
         if student.is_lesgever:
             raise serializers.ValidationError(
@@ -42,6 +78,4 @@ def validate_students_teachers(students_data, teachers_data):
 
     for teacher in teachers_data:
         if not teacher.is_lesgever:
-            raise serializers.ValidationError(
-                "Alle gebruikers in 'lesgevers' moeten lesgevers zijn"
-            )
+            raise serializers.ValidationError("Alle gebruikers in 'lesgevers' moeten lesgevers zijn")

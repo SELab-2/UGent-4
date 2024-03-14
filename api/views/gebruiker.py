@@ -10,7 +10,18 @@ from api.utils import is_lesgever
 
 @api_view(["GET"])
 def gebruiker_list(request):
-    if request.method == "GET":
+    """
+    Een view om alle gebruikers op te halen.
+
+    Als de gebruiker een lesgever is, worden alle gebruikers opgehaald. Als de gebruiker geen lesgever is, worden alleen de gegevens van de ingelogde gebruiker opgehaald.
+    
+    Optionele query parameters:
+        is_lesgever (bool): Filtert gebruikers op basis van of ze lesgevers zijn of niet.
+
+    Returns:
+        Response: Een lijst van gebruikers.
+    """
+    if request.method == 'GET':
         if is_lesgever(request.user):
             gebruikers = Gebruiker.objects.all()
         else:
@@ -31,6 +42,15 @@ def gebruiker_list(request):
 
 @api_view(["GET", "PUT"])
 def gebruiker_detail(request, id):
+    """
+    Een view om de gegevens van een specifieke gebruiker op te halen (GET) of bij te werken (PUT).
+
+    Args:
+        id (int): De primaire sleutel van de gebruiker.
+
+    Returns:
+        Response: Gegevens van de gebruiker of een foutmelding als de gebruiker niet bestaat of als er een ongeautoriseerde toegang is.
+    """
     try:
         gebruiker = Gebruiker.objects.get(pk=id)
     except Gebruiker.DoesNotExist:
