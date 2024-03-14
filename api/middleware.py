@@ -31,10 +31,9 @@ class RedirectAnonymousUserMiddleware:
             return redirect(settings.LOGIN_URL)
 
         return self.get_response(request)
-    
+
 
 class CsrfExemptSessionAuthentication(SessionAuthentication):
 
     def enforce_csrf(self, request):
         return  # To not perform the csrf check previously happening
-
