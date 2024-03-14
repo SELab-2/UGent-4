@@ -12,14 +12,20 @@ from api.utils import is_lesgever, contains
 @api_view(['GET', 'POST'])
 def score_list(request, format=None):
     """
-    Gives a list of all scores.
-    If the query 'indiening' is in the GET request,
-    it filters on only the indieningen for with matching indiening id.
+    Een view om een lijst van scores op te halen of een nieuwe score toe te voegen.
 
-    Args:
-        request: A HTTP request.
+    GET:
+    Als de gebruiker een lesgever is, worden alle scores opgehaald. Als de gebruiker geen lesgever is, worden alleen de scores opgehaald van indieningen van groepen waarin de ingelogde gebruiker zich bevindt.
+
+    Optionele query parameters:
+        indiening (int): Filtert scores op basis van indiening-ID.
+
+    POST:
+    Voegt een nieuwe score toe.
+
+    Returns:
+        Response: Een lijst van scores of een nieuwe aangemaakte score.
     """
-
     if request.method == 'GET':
         if is_lesgever(request.user):
             scores = Score.objects.all()
@@ -50,11 +56,13 @@ def score_list(request, format=None):
 @api_view(['GET', 'PUT', 'DELETE'])
 def score_detail(request, id, format=None):
     """
-    Gives the score with a certain id.
+    Een view om de gegevens van een specifieke score op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
 
     Args:
-        request: A HTTP request.
-        id: ID of the gebruiker.
+        id (int): De primaire sleutel van de score.
+
+    Returns:
+        Response: Gegevens van de score of een foutmelding als de score niet bestaat of als er een ongeautoriseerde toegang is.
     """
     try:
         score = Score.objects.get(pk=id)

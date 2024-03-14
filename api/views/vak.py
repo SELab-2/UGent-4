@@ -12,12 +12,17 @@ from django.core.exceptions import ValidationError
 @api_view(['GET', 'POST'])
 def vak_list(request, format=None):
     """
-    Gives a list of all vakken.
+    Een view om een lijst van vakken op te halen of een nieuw vak toe te voegen.
 
-    Args:
-        request: A HTTP request.
+    GET:
+    Als de gebruiker een lesgever is, worden alle vakken opgehaald. Als de gebruiker geen lesgever is, worden alleen de vakken opgehaald waarin de ingelogde gebruiker zich bevindt.
+
+    POST:
+    Voegt een nieuw vak toe.
+
+    Returns:
+        Response: Een lijst van vakken of een nieuw aangemaakt vak.
     """
-
     if request.method == 'GET':
         if is_lesgever(request.user):
             vakken = Vak.objects.all()
@@ -40,11 +45,13 @@ def vak_list(request, format=None):
 @api_view(['GET', 'PUT', 'DELETE'])
 def vak_detail(request, id, format=None):
     """
-    Gives the vak with a certain id.
+    Een view om de gegevens van een specifiek vak op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
 
     Args:
-        request: A HTTP request.
-        id: ID of the gebruiker.
+        id (int): De primaire sleutel van het vak.
+
+    Returns:
+        Response: Gegevens van het vak of een foutmelding als het vak niet bestaat of als er een ongeautoriseerde toegang is.
     """
     try:
         vak = Vak.objects.get(pk=id)

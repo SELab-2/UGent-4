@@ -11,14 +11,20 @@ from api.utils import is_lesgever, contains
 @api_view(['GET', 'POST'])
 def indiening_list(request, format=None):
     """
-    Gives a list of all indieningen.
-    If the query 'groep' is in the GET request,
-    it filters on only the indieningen for with matching groep id.
+    Een view om een lijst van indieningen op te halen of een nieuwe indiening toe te voegen.
 
-    Args:
-        request: A HTTP request.
+    GET:
+    Als de gebruiker een lesgever is, worden alle indieningen opgehaald. Als de gebruiker geen lesgever is, worden alleen de indieningen opgehaald waarin de ingelogde gebruiker zich bevindt.
+    
+    Optionele query parameters:
+        groep (int): Filtert indieningen op basis van groep-ID.
+
+    POST:
+    Voegt een nieuwe indiening toe.
+
+    Returns:
+        Response: Een lijst van indieningen of een nieuw aangemaakte indiening.
     """
-
     if request.method == 'GET':
         if is_lesgever(request.user):
             indieningen = Indiening.objects.all()
@@ -56,11 +62,13 @@ def indiening_list(request, format=None):
 @api_view(['GET', 'DELETE'])
 def indiening_detail(request, id, format=None):
     """
-    Gives the indiening with a certain id.
+    Een view om de gegevens van een specifieke indiening op te halen (GET) of te verwijderen (DELETE).
 
     Args:
-        request: A HTTP request.
-        id: ID of the gebruiker.
+        id (int): De primaire sleutel van de indiening.
+
+    Returns:
+        Response: Gegevens van de indiening of een foutmelding als de indiening niet bestaat of als er een ongeautoriseerde toegang is.
     """
     try:
         indiening = Indiening.objects.get(pk=id)
@@ -82,7 +90,18 @@ def indiening_detail(request, id, format=None):
 
 @api_view(['GET'])
 def indiening_bestand_list(request, format=None):
+    """
+    Een view om een lijst van indieningbestanden op te halen (GET).
 
+    GET:
+    Als de gebruiker een lesgever is, worden alle indieningbestanden opgehaald. Als de gebruiker geen lesgever is, worden alleen de indieningbestanden opgehaald van de ingelogde gebruiker.
+    
+    Optionele query parameters:
+        indiening (int): Filtert indieningbestanden op basis van indiening-ID.
+
+    Returns:
+        Response: Een lijst van indieningbestandgegevens.
+    """
     if request.method == 'GET':
         if is_lesgever(request.user):
             indieningen_bestanden = IndieningBestand.objects.all()
@@ -105,6 +124,15 @@ def indiening_bestand_list(request, format=None):
 
 @api_view(['GET'])
 def indiening_bestand_detail(request, id, format=None):
+    """
+    Een view om de gegevens van een specifiek indieningbestand op te halen (GET).
+
+    Args:
+        id (int): De primaire sleutel van het indieningbestand.
+
+    Returns:
+        Response: Gegevens van het indieningbestand of een foutmelding als het indieningbestand niet bestaat of als er een ongeautoriseerde toegang is.
+    """
     try:
         indiening_bestand = IndieningBestand.objects.get(pk=id)
     except IndieningBestand.DoesNotExist:
