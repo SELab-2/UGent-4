@@ -12,9 +12,11 @@ class RedirectAnonymousUserMiddleware:
         get_response (function): De functie die wordt aangeroepen om het verzoek te verwerken.
 
     Returns:
-        HttpResponse: Een HTTP-omleiding naar de inlogpagina als de gebruiker anoniem is en het huidige pad niet de inlogpagina is.
+        HttpResponse: Een HTTP-omleiding naar de inlogpagina als de gebruiker anoniem is
+        en het huidige pad niet de inlogpagina is.
                       Anders wordt het verzoek verder verwerkt door de volgende middleware of de weergavefunctie.
     """
+
     def __init__(self, get_response):
         self.get_response = get_response
 
