@@ -49,15 +49,18 @@ export function AddChangeAssignmentPage() {
     const [restrictions, setRestrictions] = useState<restriction[]>([]);
     const [groups, setGroups] = useState(false);
     const [visible, setVisible] = useState(false);
-    const [assignmentFile, setAssignmentFile] = useState<string>("");
+    const [assignmentFile, setAssignmentFile] = useState<File>();
 
     /**
      * Function to upload the details of the assignment through a text file
      * @param {ChangeEvent<HTMLInputElement>} event - The event object
      */
-    const uploadDescription = (event: ChangeEvent<HTMLInputElement>) => {
-        setDescription(event.target.value);
-    }
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            setAssignmentFile(event.target.files[0]);
+            console.log(assignmentFile?.name);
+        }
+    };
 
     return (
         <>
@@ -77,8 +80,12 @@ export function AddChangeAssignmentPage() {
                             <TextField type="text" placeholder={"Title"}
                                        onChange={(event) => setTitle(event.target.value)}/>
                         </Box>
-                        <FileUploadButton name={t('upload')} path={assignmentFile}
-                                          fileTypes={['.pdf', '.zip']}/>
+                        <Box padding={0} marginRight={3} display={"flex"} flexDirection={"column"}
+                             alignItems={"flex-start"}>
+                            <FileUploadButton name={t('upload')} path={assignmentFile}
+                                              onFileChange={handleFileChange}
+                                              fileTypes={['.pdf', '.zip']}/>
+                        </Box>
                     </Box>
                     <Box aria-label={'deadline'} padding={2} display={'flex'} flexDirection={'row'}
                          alignItems={'center'} gap={2}>
@@ -105,6 +112,9 @@ export function AddChangeAssignmentPage() {
                                        sx={{overflowY: 'auto', maxHeight: '25svh'}}/>
                         </Box>
                     </Card>
+                    <Box aria-label={'restrictions'} padding={2} display={'flex'} flexDirection={'column'}>
+
+                    </Box>
                 </Stack>
             </Stack>
         </>

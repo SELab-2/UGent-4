@@ -17,6 +17,8 @@ const english = {
     assignmentName: "Name assignment:",
     upload: "Upload assignment",
     description: "Description assignment:",
+    uploadToolTip: 'upload a .zip or .pdf file',
+    noFile: "No file chosen",
 };
 
 export default english;
