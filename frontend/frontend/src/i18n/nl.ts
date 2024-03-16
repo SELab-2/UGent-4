@@ -17,6 +17,8 @@ const dutch = {
     assignmentName: "Naam opdracht:",
     upload: "Upload opgavebestand",
     description: "Beschrijving opgave:",
+    uploadToolTip: 'upload een .zip of .pdf bestand',
+    noFile: "Geen bestand gekozen",
 };
 
 export default dutch;
