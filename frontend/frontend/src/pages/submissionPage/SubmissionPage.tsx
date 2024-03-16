@@ -1,4 +1,3 @@
-import Grid2 from "@mui/material/Unstable_Grid2";
 import {Header} from "../../components/Header.tsx";
 import {useParams} from "react-router-dom";
 import {t} from "i18next";
@@ -7,9 +6,16 @@ import {Box, Button, Card, Divider, ListItem, Paper, Typography} from "@mui/mate
 import dayjs, {Dayjs} from "dayjs";
 import DownloadIcon from '@mui/icons-material/Download';
 import List from "@mui/material/List";
+import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+
+/**
+ * Page for viewing a specific submission
+ * The page should take the necessary data from the backend according to the id present in the url and the logged in user
+ * The page should display the deadline, the assignment, the filename and the restrictions of the submission
+ * The page should also allow the user to download the submission and any restriction artifacts that are present
+ */
 
 interface Submission {
-    //Dayjs is present in pull request for mainpage
     deadline: Dayjs;
     projectName: string;
     assignment: string;
@@ -56,7 +62,7 @@ export function SubmissionPage() {
             });
     }
 
-    //TODO: fetch submission data from backend
+    //TODO: fetch submission data from backend and remove the mock data
     useEffect(() => {
         // fetch(`/api/submissions/${project}`)
         //     .then(res => res.json())

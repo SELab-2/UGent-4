@@ -14,6 +14,9 @@ const english = {
     filename: "Submitted file:",
     restrictions: "Restrictions:",
     current_projects: "Current projects",
+    assignmentName: "Name assignment:",
+    upload: "Upload assignment",
+    description: "Description assignment:",
 };
 
 export default english;

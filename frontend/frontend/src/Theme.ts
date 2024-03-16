@@ -17,7 +17,7 @@ const theme = createTheme({
         },
         text: {
             primary: '#47464A',
-            secondary: '#FCF8FD'
+            secondary: '#cbc8cc'
         },
         error: {
             main: '#FF5445'
@@ -27,7 +27,6 @@ const theme = createTheme({
         },
 
     },
-
 });
 
 export default theme;
