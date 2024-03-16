@@ -8,9 +8,18 @@ import dayjs from "dayjs";
 import {t} from "i18next";
 import {useEffect, useState} from "react";
 
+/**
+ * MainPage function component
+ * This is the main page of the application.
+ * It contains a header, a tab switcher for current and archived courses, a deadline calendar, and an admin button.
+ */
 export function MainPage() {
+    // State for role
     const [role, setRole] = useState(getRole("1"));
 
+    /**
+     * useEffect hook to set the role of the user and log it
+     */
     useEffect(() => {
         setRole(getRole("1"));
         console.log("current user is: " + role);
@@ -52,7 +61,12 @@ export function MainPage() {
     );
 }
 
-//TODO: use api to check user role
+//TODO: implement api integration
+/**
+ * Function to get the role of the user
+ * @param {string} id - The id of the user
+ * @returns {string} - The role of the user
+ */
 function getRole(id: string): string {
     return "teacher";
 }

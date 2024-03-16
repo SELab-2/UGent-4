@@ -20,6 +20,7 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs/AdapterDayjs';
 
 import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
+import {AddChangeAssignmentPage} from "./pages/AddChangeAssignmentPage/AddChangeAssignmentPage.tsx";
 
 
 const router = createBrowserRouter([
@@ -57,9 +58,11 @@ const router = createBrowserRouter([
         path: "/subjects_student",
         element: <SubjectsStudentPage/>,
     },
-
     {
-
+        path: "/add_change_assignment",
+        element: <AddChangeAssignmentPage/>,
+    },
+    {
         path: "/submission/:project",
         element: <SubmissionPage/>,
     },
