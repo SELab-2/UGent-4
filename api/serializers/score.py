@@ -28,6 +28,7 @@ class ScoreSerializer(serializers.ModelSerializer):
         Returns:
             Score: De aangemaakte score.
         """
+
         if Score.objects.filter(indiening=validated_data.get("indiening")).exists():
             raise serializers.ValidationError(
                 "Deze indiening heeft al een bestaande score"

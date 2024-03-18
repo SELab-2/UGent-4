@@ -38,6 +38,43 @@ class GroepSerializerTest(APITestCase):
             set([student.user.id for student in groep.studenten.all()]),
             set(data["studenten"]),
         )
+    
+    def test_create_invalid_user_already_in_a_group(self):
+        student = GebruikerFactory.create(is_lesgever=False).user.id
+        data = {
+            "project": self.groep.project.project_id,
+            "studenten": [
+                student
+            ],
+        }
+        serializer = GroepSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        groep = serializer.save()
+        self.assertEqual(groep.project.project_id, data["project"])
+        self.assertEqual(
+            set([student.user.id for student in groep.studenten.all()]),
+            set(data["studenten"]),
+        )
+        new_data = {
+            "project": self.groep.project.project_id,
+            "studenten": [
+                student
+            ],
+        }
+        newserializer = GroepSerializer(data=new_data)
+        self.assertTrue(newserializer.is_valid())
+        self.assertRaises(ValidationError, newserializer.save, raise_exception=True)
+    
+    def test_create_invalid_user_is_teacher(self):
+        data = {
+            "project": self.groep.project.project_id,
+            "studenten": [
+                GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+            ],
+        }
+        serializer = GroepSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
     def test_update(self):
         data = self.serializer.data
@@ -49,6 +86,23 @@ class GroepSerializerTest(APITestCase):
         self.assertEqual(
             [student.user.id for student in groep.studenten.all()], data["studenten"]
         )
+
+    def test_update_invalid_user_already_in_this_group(self):
+        data = self.serializer.data
+        self.assertEqual(len(data["studenten"]), 1)
+        student = GebruikerFactory.create(is_lesgever=False).user.id
+        data["studenten"].append(student)
+        serializer = GroepSerializer(instance=self.groep, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        groep = serializer.save()
+        self.assertEqual(
+            [student.user.id for student in groep.studenten.all()], data["studenten"]
+        )
+        new_data = self.serializer.data
+        new_data["studenten"].append(student)
+        serializer = GroepSerializer(instance=groep, data=new_data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
     def test_validation_for_blank_items(self):
         serializer = GroepSerializer(data={"project": "", "studenten": []})

@@ -1,4 +1,4 @@
-# test_score.py
+from rest_framework.exceptions import ValidationError
 from django.test import TestCase
 from api.serializers.score import ScoreSerializer
 from api.tests.factories.score import ScoreFactory
@@ -37,6 +37,26 @@ class ScoreSerializerTest(TestCase):
         score = serializer.save()
         self.assertEqual(score.indiening, indiening)
         self.assertEqual(score.score, data["score"])
+    
+    def test_score_serializer_create_invalid(self):
+        indiening = IndieningFactory.create()
+        max_score = indiening.groep.project.max_score
+        data = {"indiening": indiening.indiening_id, "score": max_score}
+        serializer = ScoreSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        score = serializer.save()
+        new_data = {"indiening": indiening.indiening_id, "score": max_score}
+        new_serializer = ScoreSerializer(data=new_data)
+        self.assertTrue(new_serializer.is_valid())
+        self.assertRaises(ValidationError, new_serializer.save, raise_exception=True)
+    
+    def test_score_serializer_create_invalid_high_score(self):
+        indiening = IndieningFactory.create()
+        max_score = indiening.groep.project.max_score
+        data = {"indiening": indiening.indiening_id, "score": max_score + 1}
+        serializer = ScoreSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
     def test_score_serializer_update(self):
         score = self.score.score
@@ -49,3 +69,18 @@ class ScoreSerializerTest(TestCase):
         self.assertTrue(serializer.is_valid())
         score = serializer.save()
         self.assertEqual(score.score, new_data["score"])
+    
+    def test_score_serializer_update_invalid(self):
+        indiening = IndieningFactory.create()
+        score = self.score.score
+        new_data = {
+            "score": score,
+            "indiening": indiening.indiening_id,
+            "score_id": self.score.score_id,
+        }
+        print(new_data)
+        serializer = ScoreSerializer(instance=self.score, data=new_data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+
+

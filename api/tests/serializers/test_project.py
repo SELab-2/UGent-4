@@ -5,6 +5,7 @@ from api.tests.factories.project import ProjectFactory
 from dateutil.parser import parse
 from api.tests.factories.vak import VakFactory
 from django.core.files.uploadedfile import SimpleUploadedFile
+from datetime import datetime, timedelta
 
 
 class ProjectSerializerTest(APITestCase):
@@ -81,6 +82,21 @@ class ProjectSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         project = serializer.save()
         self.assertEqual(project.deadline, parse(data["deadline"]))
+
+    def test_create_invalid_deadline(self):
+        vak = VakFactory.create().vak_id
+        data = {
+            "titel": "test project",
+            "beschrijving": "Dit is een test project.",
+            "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
+            "vak": vak,
+            "deadline": datetime.now() - timedelta(days=1),
+            "max_score": 20,
+        }
+        serializer = ProjectSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+
 
     def test_update(self):
         data = {
