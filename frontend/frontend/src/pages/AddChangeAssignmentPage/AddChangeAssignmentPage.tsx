@@ -84,7 +84,9 @@ export function AddChangeAssignmentPage() {
                              alignItems={"flex-start"}>
                             <FileUploadButton name={t('upload')} path={assignmentFile}
                                               onFileChange={handleFileChange}
-                                              fileTypes={['.pdf', '.zip']}/>
+                                              fileTypes={['.pdf', '.zip']}
+                                              tooltip={t('uploadToolTip')}
+                            />
                         </Box>
                     </Box>
                     <Box aria-label={'deadline'} padding={2} display={'flex'} flexDirection={'row'}
