@@ -72,13 +72,11 @@ class ScoreSerializerTest(TestCase):
     
     def test_score_serializer_update_invalid(self):
         indiening = IndieningFactory.create()
-        score = self.score.score
         new_data = {
-            "score": score,
+            "score": indiening.groep.project.max_score,
             "indiening": indiening.indiening_id,
             "score_id": self.score.score_id,
         }
-        print(new_data)
         serializer = ScoreSerializer(instance=self.score, data=new_data, partial=True)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
