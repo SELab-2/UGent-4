@@ -4,6 +4,14 @@ import {Badge, SxProps} from "@mui/material";
 import {useEffect, useRef, useState} from "react";
 import AssignmentIcon from '@mui/icons-material/Assignment';
 
+/*
+* This component is a calendar that displays deadlines.
+* It uses the DateCalendar component from @mui/x-date-pickers to display the calendar.
+* The calendar is read-only and the user can't select a date.
+* The deadlines are passed as an array of Dayjs objects.
+* The deadlines are displayed as a badge on the day of the deadline.
+ */
+
 //TODO: fix highlights for day with deadlines in the displayed month
 
 function fakeFetch(date: Dayjs, {signal}: { signal: AbortSignal }, deadlines: Dayjs[]) {
@@ -39,14 +47,6 @@ function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] 
         </Badge>
     );
 }
-
-/*
-* This component is a calendar that displays deadlines.
-* It uses the DateCalendar component from @mui/x-date-pickers to display the calendar.
-* The calendar is read-only and the user can't select a date.
-* The deadlines are passed as an array of Dayjs objects.
-* The deadlines are displayed as a badge on the day of the deadline.
- */
 
 interface DeadlineCalendarProps {
     deadlines: Dayjs[];

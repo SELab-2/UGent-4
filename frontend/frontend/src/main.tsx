@@ -20,6 +20,7 @@ import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs/AdapterDayjs';
 
 import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
+import {AddChangeAssignmentPage} from "./pages/AddChangeAssignmentPage/AddChangeAssignmentPage.tsx";
 
 
 const router = createBrowserRouter([
@@ -27,45 +28,68 @@ const router = createBrowserRouter([
         path: "/",
         element: <MainPage/>,
         errorElement: <ErrorPage/>,
+
     },
     {
         path: "/subjects_student/:courseId",
         element: <SubjectsStudentPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
 
         path: "/subjects_teacher/:courseId",
         element: <SubjectsTeacherPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
         path: "/scores",
         element: <ProjectScoresPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
         path: "/assignment_student",
         element: <AssignmentStudentPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
         path: "/assignment_teacher",
         element: <AssignmentTeacherPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
         path: "/groups",
         element: <GroupsPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
         path: "/subjects_student",
         element: <SubjectsStudentPage/>,
+        errorElement: <ErrorPage/>,
+
     },
-
     {
+        path: "/add_change_assignment",
+        element: <AddChangeAssignmentPage/>,
+        errorElement: <ErrorPage/>,
 
+    },
+    {
         path: "/submission/:project",
         element: <SubmissionPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
         path: "/test_requests",
         element: <SimpleRequestsPage/>,
+        errorElement: <ErrorPage/>,
+
     }
 
 ]);
