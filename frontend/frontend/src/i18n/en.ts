@@ -14,6 +14,11 @@ const english = {
     filename: "Submitted file:",
     restrictions: "Restrictions:",
     current_projects: "Current projects",
+    assignmentName: "Name assignment:",
+    upload: "Upload assignment",
+    description: "Description assignment:",
+    uploadToolTip: 'upload a .zip or .pdf file',
+    noFile: "No file chosen",
 };
 
 export default english;
