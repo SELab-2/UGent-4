@@ -1,4 +1,3 @@
-# test_score.py
 from django.test import TestCase
 from api.tests.factories.score import ScoreFactory
 from api.tests.factories.indiening import IndieningFactory
@@ -52,7 +51,7 @@ class ScoreDetailViewTest(TestCase):
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, 200)
         self.score.refresh_from_db()
-        self.assertEqual(self.score.score, new_data["score"])  # Add other assertions
+        self.assertEqual(self.score.score, new_data["score"])
 
     def test_score_detail_delete(self):
         response = self.client.delete(self.url)
