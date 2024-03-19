@@ -86,8 +86,7 @@ class IndieningDetailViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_indiening_detail_get_invalid(self):
-        url = reverse("indiening_detail", kwargs={"id": 69})
-        response = self.client.get(url)
+        response = self.client.get(reverse("indiening_detail", kwargs={"id": 69}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_indiening_detail_get_unauthorized(self):

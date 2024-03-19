@@ -143,6 +143,5 @@ class GroepDetailViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_invalid_groep(self):
-        url = reverse("groep_detail", kwargs={"id": 10101})
-        response = self.client.get(url)
+        response = self.client.get(reverse("groep_detail", kwargs={"id": 10101}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

@@ -8,7 +8,6 @@ class GebruikerListViewTest(APITestCase):
     def setUp(self):
         self.student = GebruikerFactory.create(is_lesgever=False)
         self.student.user.is_superuser = False
-        self.student.user.save()
         self.teacher = GebruikerFactory.create(is_lesgever=True)
         self.url = reverse("gebruiker_list")
         self.client = APIClient()
