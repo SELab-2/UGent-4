@@ -1,6 +1,11 @@
-import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
+import {ListItem, ListItemButton, ListItemText, Divider, IconButton} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+
 interface AssignmentListItemSubjectsPageProps {
     key: string;
     projectName: string;
@@ -8,6 +13,7 @@ interface AssignmentListItemSubjectsPageProps {
     submissions: number;
     score: number;
     isStudent: boolean;
+    visible: boolean;
 }
 
 /*
@@ -20,7 +26,7 @@ interface AssignmentListItemSubjectsPageProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submissions, score, isStudent}:AssignmentListItemSubjectsPageProps) {
+export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submissions, score, isStudent, visible}:AssignmentListItemSubjectsPageProps) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
@@ -51,7 +57,21 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:40}} primary={"edit"}/>
+                            {visible?
+                                <IconButton edge="end" aria-label="not-visible">
+                                    <VisibilityOffOutlinedIcon/>
+                                </IconButton>
+                                :
+                                <IconButton edge="end" aria-label="visible">
+                                    <VisibilityOutlinedIcon/>
+                                </IconButton>
+                            }
+                            <IconButton edge="end" aria-label="archive">
+                                <ArchiveOutlinedIcon/>
+                            </IconButton>
+                            <IconButton edge="end" aria-label="delete">
+                                <DeleteOutlinedIcon/>
+                            </IconButton>
                         </>
                     }
                 </ListItemButton>
