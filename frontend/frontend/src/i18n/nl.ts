@@ -20,6 +20,9 @@ const dutch = {
     description: "Beschrijving opgave:",
     uploadToolTip: 'upload een .zip of .pdf bestand',
     noFile: "Geen bestand gekozen",
+    export_submissions: "Exporteer Indieningen",
+    time: "Tijdstip",
+    no_submissions: "Geen indieningen",
 };
 
 export default dutch;

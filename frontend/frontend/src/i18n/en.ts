@@ -20,6 +20,9 @@ const english = {
     description: "Description assignment:",
     uploadToolTip: 'upload a .zip or .pdf file',
     noFile: "No file chosen",
+    export_submissions: "Export Submissions",
+    time: "Time",
+    no_submissions: "No submissions",
 };
 
 export default english;
