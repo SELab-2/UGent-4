@@ -23,6 +23,7 @@ interface Assignment {
     deadline?: Date;
     submissions: number;
     score: number;
+    visible: boolean;
 }
 
 export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
@@ -68,7 +69,7 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
                     <Box sx={{width:"100%", height: 380, overflow:"auto"}}>
                         <List disablePadding={true}>
                             {assignments.map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent}/>
+                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent} visible={assignment.visible}/>
                             ))}
                         </List>
                     </Box>
@@ -96,6 +97,7 @@ function getAssignment(assignmentId: string): Assignment {
         name: "assignmentName",
         deadline: new Date(2022, 11, 17),
         submissions: 2,
-        score: 10
+        score: 10,
+        visible: false,
     }
 }
