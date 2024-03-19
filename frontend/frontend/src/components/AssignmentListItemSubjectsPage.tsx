@@ -57,21 +57,23 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            {visible?
-                                <IconButton edge="end" aria-label="not-visible">
-                                    <VisibilityOffOutlinedIcon/>
+                            <ListItem sx={{maxWidth:110}}>
+                                {visible?
+                                    <IconButton edge="end" aria-label="visible">
+                                        <VisibilityOutlinedIcon/>
+                                    </IconButton>
+                                    :
+                                    <IconButton edge="end" aria-label="not-visible">
+                                        <VisibilityOffOutlinedIcon/>
+                                    </IconButton>
+                                }
+                                <IconButton edge="end" aria-label="archive">
+                                    <ArchiveOutlinedIcon/>
                                 </IconButton>
-                                :
-                                <IconButton edge="end" aria-label="visible">
-                                    <VisibilityOutlinedIcon/>
+                                <IconButton edge="end" aria-label="delete">
+                                    <DeleteOutlinedIcon/>
                                 </IconButton>
-                            }
-                            <IconButton edge="end" aria-label="archive">
-                                <ArchiveOutlinedIcon/>
-                            </IconButton>
-                            <IconButton edge="end" aria-label="delete">
-                                <DeleteOutlinedIcon/>
-                            </IconButton>
+                            </ListItem>
                         </>
                     }
                 </ListItemButton>
