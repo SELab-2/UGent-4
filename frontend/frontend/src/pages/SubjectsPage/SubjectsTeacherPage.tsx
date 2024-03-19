@@ -1,7 +1,6 @@
 import { Header } from "../../components/Header";
 import { Box, Stack } from "@mui/material";
 import TabSwitcher from "../../components/TabSwitcher.tsx";
-import {ArchivedProjectsView} from "./ArchivedProjectsView.tsx";
 import {ProjectsView} from "./ProjectsView.tsx";
 import { useParams } from "react-router-dom";
 
@@ -14,7 +13,8 @@ export function SubjectsTeacherPage() {
                 <Header variant={"default"} title={"Naam Vak"} />
                 <Box sx={{ width: '100%', height:"70%", marginTop:10 }}>
                     <TabSwitcher titles={["current_projects","archived"]}
-                                 nodes={[<ProjectsView courseId={courseId} isStudent={false} />,<ArchivedProjectsView/>]}/>
+                                 nodes={[<ProjectsView courseId={courseId} isStudent={false} archived={false} />,
+                                 <ProjectsView courseId={courseId} isStudent={false} archived={true} />]}/>
                 </Box>
             </Stack>
         </>

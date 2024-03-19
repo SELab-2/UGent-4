@@ -5,6 +5,7 @@ import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListIte
 interface ProjectsViewProps {
     courseId: string;
     isStudent: boolean;
+    archived: boolean;
 }
 
 interface Course {
@@ -24,9 +25,10 @@ interface Assignment {
     submissions: number;
     score: number;
     visible: boolean;
+    archived: boolean;
 }
 
-export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
+export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps) {
     const course = getCourse(courseId);
     const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
 
@@ -68,7 +70,8 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width:"100%", height: 380, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {assignments.map((assignment) => (
+                            {assignments.filter((assignment) => assignment.archived == archived)
+                            .map((assignment) => (
                                 <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent} visible={assignment.visible}/>
                             ))}
                         </List>
@@ -99,5 +102,6 @@ function getAssignment(assignmentId: string): Assignment {
         submissions: 2,
         score: 10,
         visible: true,
+        archived: false,
     }
 }
