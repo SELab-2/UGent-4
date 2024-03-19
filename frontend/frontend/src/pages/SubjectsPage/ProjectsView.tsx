@@ -55,7 +55,7 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
-                        <Typography variant={"h4"}>Edit</Typography>
+                        <Typography variant={"h4"}>{t("edit")}</Typography>
                     </>
                 }
             </Box>

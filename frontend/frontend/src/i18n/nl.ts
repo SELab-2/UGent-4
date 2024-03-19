@@ -23,6 +23,7 @@ const dutch = {
     export_submissions: "Exporteer Indieningen",
     time: "Tijdstip",
     no_submissions: "Geen indieningen",
+    edit: "Aanpassen",
 };
 
 export default dutch;

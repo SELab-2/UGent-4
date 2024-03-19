@@ -23,6 +23,7 @@ const english = {
     export_submissions: "Export Submissions",
     time: "Time",
     no_submissions: "No submissions",
+    edit: "Edit",
 };
 
 export default english;
