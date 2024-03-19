@@ -37,19 +37,19 @@ class ScoreSerializerTest(TestCase):
         score = serializer.save()
         self.assertEqual(score.indiening, indiening)
         self.assertEqual(score.score, data["score"])
-    
+
     def test_score_serializer_create_invalid(self):
         indiening = IndieningFactory.create()
         max_score = indiening.groep.project.max_score
         data = {"indiening": indiening.indiening_id, "score": max_score}
         serializer = ScoreSerializer(data=data)
         self.assertTrue(serializer.is_valid())
-        score = serializer.save()
+        serializer.save()
         new_data = {"indiening": indiening.indiening_id, "score": max_score}
         new_serializer = ScoreSerializer(data=new_data)
         self.assertTrue(new_serializer.is_valid())
         self.assertRaises(ValidationError, new_serializer.save, raise_exception=True)
-    
+
     def test_score_serializer_create_invalid_high_score(self):
         indiening = IndieningFactory.create()
         max_score = indiening.groep.project.max_score
@@ -69,7 +69,7 @@ class ScoreSerializerTest(TestCase):
         self.assertTrue(serializer.is_valid())
         score = serializer.save()
         self.assertEqual(score.score, new_data["score"])
-    
+
     def test_score_serializer_update_invalid(self):
         indiening = IndieningFactory.create()
         new_data = {
@@ -80,5 +80,3 @@ class ScoreSerializerTest(TestCase):
         serializer = ScoreSerializer(instance=self.score, data=new_data, partial=True)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-
-

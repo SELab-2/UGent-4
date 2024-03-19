@@ -18,10 +18,10 @@ class GebruikerListViewTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-    
+
     def test_gebruiker_list_get_lesgevers(self):
         self.client.force_login(self.teacher.user)
-        response = self.client.get(self.url, {'is_lesgever': 'true'}, format="json")
+        response = self.client.get(self.url, {"is_lesgever": "true"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
@@ -30,7 +30,7 @@ class GebruikerListViewTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
-    
+
     def test_gebruiker_list_post(self):
         self.client.force_login(self.student.user)
         new_data = {
@@ -64,17 +64,17 @@ class GebruikerDetailViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.gebruiker.refresh_from_db()
         self.assertEqual(self.gebruiker.is_lesgever, new_data["is_lesgever"])
-    
+
     def test_gebruiker_detail_get_non_existing_user(self):
         response = self.client.get(reverse("gebruiker_detail", kwargs={"id": 69}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_gebruiker_detail_get_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    
+
     def test_gebruiker_detail_put_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)

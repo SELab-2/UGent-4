@@ -38,14 +38,12 @@ class GroepSerializerTest(APITestCase):
             set([student.user.id for student in groep.studenten.all()]),
             set(data["studenten"]),
         )
-    
+
     def test_create_invalid_user_already_in_a_group(self):
         student = GebruikerFactory.create(is_lesgever=False).user.id
         data = {
             "project": self.groep.project.project_id,
-            "studenten": [
-                student
-            ],
+            "studenten": [student],
         }
         serializer = GroepSerializer(data=data)
         self.assertTrue(serializer.is_valid())
@@ -57,14 +55,12 @@ class GroepSerializerTest(APITestCase):
         )
         new_data = {
             "project": self.groep.project.project_id,
-            "studenten": [
-                student
-            ],
+            "studenten": [student],
         }
         newserializer = GroepSerializer(data=new_data)
         self.assertTrue(newserializer.is_valid())
         self.assertRaises(ValidationError, newserializer.save, raise_exception=True)
-    
+
     def test_create_invalid_user_is_teacher(self):
         data = {
             "project": self.groep.project.project_id,

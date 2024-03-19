@@ -12,9 +12,7 @@ class IndieningSerializerTest(TestCase):
 
     def test_indiening_serializer_fields(self):
         data = self.serializer.data
-        self.assertEqual(
-            set(data.keys()), set(["indiening_id", "groep", "tijdstip"])
-        )
+        self.assertEqual(set(data.keys()), set(["indiening_id", "groep", "tijdstip"]))
 
     def test_indiening_serializer_create(self):
         # can't check tijdstip because it's auto_now_add

@@ -97,7 +97,6 @@ class ProjectSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
-
     def test_update(self):
         data = {
             "titel": "test project",

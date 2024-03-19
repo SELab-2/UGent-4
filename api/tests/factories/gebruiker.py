@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from api.models.gebruiker import Gebruiker
 from factory.django import DjangoModelFactory
-from factory import SubFactory, Faker, PostGeneration 
+from factory import SubFactory, Faker, PostGeneration
 
 
 class UserFactory(DjangoModelFactory):

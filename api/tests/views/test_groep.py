@@ -21,32 +21,35 @@ class GroepListViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
-    
     def test_groep_list_get_as_student(self):
         self.client.force_login(self.student.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["groep_id"], self.groep1.groep_id)
-    
+
     def test_groep_list_get_project(self):
-        response = self.client.get(self.url, {"project": self.groep1.project.project_id}, format="json")
+        response = self.client.get(
+            self.url, {"project": self.groep1.project.project_id}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["groep_id"], self.groep1.groep_id)
-    
+
     def test_groep_list_get_invalid_project(self):
-        response = self.client.get(self.url, {"project": 'project'}, format="json")
+        response = self.client.get(self.url, {"project": "project"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
     def test_groep_list_get_student(self):
-        response = self.client.get(self.url, {"student": self.student.user.id}, format="json")
+        response = self.client.get(
+            self.url, {"student": self.student.user.id}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["groep_id"], self.groep1.groep_id)
-    
+
     def test_groep_list_get_invalid_student(self):
-        response = self.client.get(self.url, {"student": 'student'}, format="json")
+        response = self.client.get(self.url, {"student": "student"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_groep_list_post(self):
@@ -58,7 +61,7 @@ class GroepListViewTest(APITestCase):
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    
+
     def test_groep_list_post_unauthorized(self):
         self.client.force_login(self.student.user)
         groep = GroepFactory.create()
@@ -69,7 +72,7 @@ class GroepListViewTest(APITestCase):
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    
+
     def test_groep_list_post_invalid(self):
         data = {
             "groep_id": self.groep1.groep_id,
@@ -91,7 +94,7 @@ class GroepDetailViewTest(APITestCase):
     def test_groep_detail_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
     def test_groep_detail_get_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)
@@ -108,7 +111,7 @@ class GroepDetailViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.groep.refresh_from_db()
         self.assertEqual(set(self.groep.studenten.all()), set(new_data["studenten"]))
-    
+
     def test_groep_detail_put_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)
@@ -119,7 +122,7 @@ class GroepDetailViewTest(APITestCase):
         }
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    
+
     def test_groep_detail_put_invalid(self):
         new_data = {
             "groep_id": self.groep.groep_id,
@@ -132,7 +135,7 @@ class GroepDetailViewTest(APITestCase):
     def test_groep_detail_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-    
+
     def test_groep_detail_delete_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)
