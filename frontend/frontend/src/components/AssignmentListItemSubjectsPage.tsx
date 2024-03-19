@@ -30,7 +30,11 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
-        navigate(`/${key}`)
+        if(isStudent){
+            navigate("/assignment_student");
+        } else {
+            navigate("/assignment_teacher");
+        }
     }
 
     return (
