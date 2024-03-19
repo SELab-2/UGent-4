@@ -98,6 +98,6 @@ function getAssignment(assignmentId: string): Assignment {
         deadline: new Date(2022, 11, 17),
         submissions: 2,
         score: 10,
-        visible: false,
+        visible: true,
     }
 }
