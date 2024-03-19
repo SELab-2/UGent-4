@@ -1,5 +1,6 @@
 import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
+import {t} from "i18next";
 import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
 
 interface ProjectsViewProps {
@@ -47,7 +48,7 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
-                        <Typography variant={"h4"}>Submissions</Typography>
+                        <Typography variant={"h4"}>{t("submissions")}</Typography>
                         <Typography variant={"h4"}>Score</Typography>
                     </>
                     :
