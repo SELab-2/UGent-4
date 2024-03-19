@@ -50,7 +50,7 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:100}} primary={submissions + " indieningen"}/>
+                            <ListItemText sx={{maxWidth:110}} primary={submissions + " " + t("submissions")}/>
                             <ListItemText sx={{maxWidth:50}} primary={score + "/20"}/>
                         </>
                         :

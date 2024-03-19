@@ -9,6 +9,7 @@ const dutch = {
     no_deadline: "Geen deadline",
     add_admin: "Voeg admin toe",
     submission: "Indiening",
+    submissions: "Indieningen",
     error: "Er is iets misgegaan.",
     assignment: "Opgave:",
     filename: "Ingediend bestand:",

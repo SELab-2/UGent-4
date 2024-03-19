@@ -9,6 +9,7 @@ const english = {
     no_deadline: "No deadline",
     add_admin: "Add admin",
     submission: "Submission",
+    submissions: "Submissions",
     error: "Something went wrong.",
     assignment: "Assignment:",
     filename: "Submitted file:",
