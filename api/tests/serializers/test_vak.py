@@ -87,7 +87,7 @@ class VakSerializerTest(APITestCase):
         serializer = VakSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-    
+
     def test_create_invalid_teachers(self):
         students_data = [
             GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
@@ -103,7 +103,6 @@ class VakSerializerTest(APITestCase):
         serializer = VakSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-
 
     def test_update(self):
         students_data = [
