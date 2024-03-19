@@ -26,13 +26,15 @@ class ScoreListViewTest(TestCase):
         self.client.force_login(self.student.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
     def test_score_list_get_indiening(self):
-        response = self.client.get(self.url, {"indiening": self.score1.indiening.indiening_id})
+        response = self.client.get(
+            self.url, {"indiening": self.score1.indiening.indiening_id}
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]["score_id"], self.score1.score_id)
-    
+
     def test_score_list_get_invalid_indiening(self):
         response = self.client.get(self.url, {"indiening": "indiening"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -46,7 +48,7 @@ class ScoreListViewTest(TestCase):
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-    
+
     def test_score_list_post_unauthorized(self):
         self.client.force_login(self.student.user)
         indiening = IndieningFactory.create()
@@ -57,7 +59,7 @@ class ScoreListViewTest(TestCase):
         }
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    
+
     def test_score_list_post_invalid(self):
         data = {
             "score_id": self.score1.score_id,
@@ -82,20 +84,19 @@ class ScoreDetailViewTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["score_id"], self.score.score_id)
-    
+
     def test_score_detail_get_as_student(self):
         self.client.force_login(self.student.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["score_id"], self.score.score_id)
-    
+
     def test_score_detail_get_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)
         response = self.client.get(self.url)
-        print(response.data)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    
+
     def test_score_detail_get_invalid(self):
         response = self.client.get(reverse("score_detail", kwargs={"id": 69}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -106,12 +107,12 @@ class ScoreDetailViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.score.refresh_from_db()
         self.assertEqual(self.score.score, new_data["score"])
-    
+
     def test_score_detail_put_invalid(self):
         new_data = {"score": 10, "indiening": "indiening"}
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
     def test_score_detail_put_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)
@@ -122,7 +123,7 @@ class ScoreDetailViewTest(TestCase):
     def test_score_detail_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-    
+
     def test_score_detail_delete_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
         self.client.force_login(student.user)

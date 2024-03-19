@@ -30,16 +30,6 @@ class GebruikerListViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
-    def test_gebruiker_list_post(self):
-        self.client.force_login(self.student.user)
-        new_data = {
-            "user": 69,
-            "is_lesgever": True,
-        }
-        response = self.client.post(self.url, new_data, format="json")
-        # TODO: 403 wordt nooit gegeven, want automatisch al 405
-        # self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-
 
 class GebruikerDetailViewTest(APITestCase):
     def setUp(self):
