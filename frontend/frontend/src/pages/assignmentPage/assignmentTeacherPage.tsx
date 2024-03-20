@@ -1,5 +1,5 @@
 import {Header} from "../../components/Header.tsx";
-import {Button, Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextField, Typography} from "@mui/material";
+import { Box, Button, Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextField, Typography} from "@mui/material";
 import UploadIcon from '@mui/icons-material/Upload';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
@@ -49,37 +49,49 @@ export function AssignmentTeacherPage() {
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
 
                 {/*opdracht and upload button*/}
-                <Stack direction={"row"}>
+                <Box sx={{
+                    padding: '20px',
+                    backgroundColor: "background.default",
+                }}
+                >
+                    <Stack direction={"row"}>
+                        <Grid container spacing={2} alignItems="center">
+                            <Grid item>
+                                <Typography variant="h6" sx={{ fontWeight: 'bold'}} color="text.primary">
+                                    Naam Opdracht
+                                </Typography>
+                            </Grid>
+                            <Grid item>
+                                <TextField variant="outlined"/>
+                            </Grid>
+                        </Grid>
+                        <div style={{flexGrow: 1}}/>
+                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                            <Typography color="secondary.contrastText">upload opgavebestand</Typography>
+                            <UploadIcon></UploadIcon>
+                        </Button>
+                    </Stack>
+                </Box>
+
+                {/*Deadline*/}
+                <Box sx={{
+                    padding: '20px',
+                    backgroundColor: "background.default",
+                }}
+                >
                     <Grid container spacing={2} alignItems="center">
                         <Grid item>
-                            <Typography variant="h6" sx={{textDecoration: 'underline'}} color="text.primary">
-                                Naam Opdracht:
+                            <Typography variant="h6" sx={{ fontWeight: 'bold'}} color="text.primary">
+                                Deadline
                             </Typography>
                         </Grid>
                         <Grid item>
-                            <TextField variant="outlined"/>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DatePicker/>
+                            </LocalizationProvider>
                         </Grid>
                     </Grid>
-                    <div style={{flexGrow: 1}}/>
-                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                        <Typography color="secondary.contrastText">upload opgavebestand</Typography>
-                        <UploadIcon></UploadIcon>
-                    </Button>
-                </Stack>
-
-
-                <Grid container spacing={2} alignItems="center">
-                    <Grid item>
-                        <Typography variant="h6" sx={{textDecoration: 'underline'}} color="text.primary">
-                            Deadline:
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker/>
-                        </LocalizationProvider>
-                    </Grid>
-                </Grid>
+                </Box>
 
                 {/*Opgave*/}
                 <Card elevation={1} sx={{
@@ -90,8 +102,8 @@ export function AssignmentTeacherPage() {
                 }}
                 >
                     <Stack direction={"column"}>
-                        <Typography sx={{textDecoration: 'underline'}}>Opgave</Typography>
-                        <Typography>{text}</Typography>
+                        <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>Opgave</Typography>
+                        <TextField multiline variant="outlined" defaultValue={text}/>
                     </Stack>
                 </Card>
 
@@ -119,18 +131,23 @@ export function AssignmentTeacherPage() {
                     <Button sx={{bgcolor: 'secondary.main'}}>
                         <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
                     </Button>
-
                 </Card>
-
-                <Stack direction={"row"}>
-                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                        <Typography color="secondary.contrastText">groepen</Typography>
-                    </Button>
-                    <div style={{flexGrow: 1}}/>
-                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                        <   SaveIcon sx={{color: "secondary.contrastText"}}></SaveIcon>
-                    </Button>
-                </Stack>
+                
+                <Box sx={{
+                    padding: '20px',
+                    backgroundColor: "background.default",
+                }}
+                >
+                    <Stack direction={"row"}>
+                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                            <Typography color="secondary.contrastText">groepen</Typography>
+                        </Button>
+                        <div style={{flexGrow: 1}}/>
+                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                            <SaveIcon sx={{color: "secondary.contrastText"}}></SaveIcon>
+                        </Button>
+                    </Stack>
+                </Box>
             </Stack>
         </>
     );
