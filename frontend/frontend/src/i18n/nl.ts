@@ -19,6 +19,11 @@ const dutch = {
     description: "Beschrijving opgave:",
     uploadToolTip: 'upload een .zip of .pdf bestand',
     noFile: "Geen bestand gekozen",
+    groups: "Groepen",
+    remove: "Verwijder",
+    submit: "Bevestig",
+    cancel: "Annuleer",
+    add_restriction: "Voeg restrictie toe",
 };
 
 export default dutch;

@@ -19,6 +19,11 @@ const english = {
     description: "Description assignment:",
     uploadToolTip: 'upload a .zip or .pdf file',
     noFile: "No file chosen",
+    groups: "Groups",
+    remove: "Remove",
+    submit: "Submit",
+    cancel: "Cancel",
+    add_restriction: "Add restriction",
 };
 
 export default english;
