@@ -52,6 +52,7 @@ const assignments = [
     }
 ];
 
+const deadline = "02/04/2024";
 
 export function AssignmentStudentPage() {
     return (
@@ -59,15 +60,21 @@ export function AssignmentStudentPage() {
             <Header variant={"default"} title={"Naam Opdracht"}></Header>
             <Stack marginTop={15} direction={"column"} spacing={4}
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
-
+                
                 {/*deadline and groep button */}
-                <Stack direction={"row"}>
-                    <Typography color="text.primary">Deadline: 02/04/2024</Typography>
-                    <div style={{flexGrow: 1}}/>
-                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                        <Typography color="secondary.contrastText">groep</Typography>
-                    </Button>
-                </Stack>
+                <Box sx={{
+                    padding: '20px',
+                    backgroundColor: "background.default",
+                }}
+                >
+                    <Stack direction={"row"}>
+                        <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{deadline}</Typography>
+                        <div style={{flexGrow: 1}}/>
+                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                            <Typography color="secondary.contrastText">groep</Typography>
+                        </Button>
+                    </Stack>
+                </Box>
 
                 {/*Opgave*/}
                 <Card elevation={1} sx={{
@@ -78,7 +85,7 @@ export function AssignmentStudentPage() {
                 }}
                 >
                     <Stack direction={"column"}>
-                        <Typography sx={{textDecoration: 'underline'}}>Opgave</Typography>
+                        <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>Opgave</Typography>
                         <TextField multiline variant="outlined" defaultValue={text}/>
                     </Stack>
                 </Card>
@@ -93,8 +100,8 @@ export function AssignmentStudentPage() {
                 >
                     <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} paddingLeft={0}
                          paddingRight={10}>
-                        <Typography width={30}>Indiening</Typography>
-                        <Typography width={30}>Datum</Typography>
+                        <Typography sx={{ fontWeight: 'bold' }} width={30}>Indiening</Typography>
+                        <Typography sx={{ fontWeight: 'bold' }} width={30}>Datum</Typography>
                     </Box>
                     <List disablePadding={true}>
                         {assignments.map((assignment) => (
@@ -110,15 +117,21 @@ export function AssignmentStudentPage() {
                 </Card>
 
                 {/*Upload knop*/}
-                <Stack direction={"row"}>
-                    <Button sx={{bgcolor: 'primary.main', textTransform: 'none'}}>
-                        <Typography color="primary.contrastText">Uploaden</Typography>
-                    </Button>
-                    <div style={{flexGrow: 1}}/>
-                    <Button sx={{bgcolor: 'success.main', textTransform: 'none'}}>
-                        <Typography color="primary.contrastText">Uploaden Geslaagd</Typography>
-                    </Button>
-                </Stack>
+                <Box sx={{
+                    padding: '20px',
+                    backgroundColor: "background.default",
+                }}
+                >
+                    <Stack direction={"row"}>
+                        <Button sx={{bgcolor: 'primary.main', textTransform: 'none'}}>
+                            <Typography color="primary.contrastText">Uploaden</Typography>
+                        </Button>
+                        <div style={{flexGrow: 1}}/>
+                        <Button sx={{bgcolor: 'success.main', textTransform: 'none'}}>
+                            <Typography color="primary.contrastText">Uploaden Geslaagd</Typography>
+                        </Button>
+                    </Stack>
+                </Box>
 
             </Stack>
         </>
