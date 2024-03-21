@@ -2,7 +2,7 @@ import { Header } from "../../components/Header";
 import { Box, IconButton, Stack } from "@mui/material";
 import TabSwitcher from "../../components/TabSwitcher.tsx";
 import {ProjectsView} from "./ProjectsView.tsx";
-import { redirect, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 
 export function SubjectsTeacherPage() {
@@ -18,7 +18,7 @@ export function SubjectsTeacherPage() {
 
     return (
         <>
-            <Stack direction={"column"} spacing={10} sx={{width:"100%" ,height:"100%", backgroundColor:"background.default"}}>
+            <Stack direction={"column"} spacing={0} sx={{width:"99%" ,height:"100%", backgroundColor:"background.default"}}>
                 <Header variant={"editable"} title={"Naam Vak"} />
                 <Box sx={{ width: '100%', height:"70%", marginTop:10 }}>
                     <TabSwitcher titles={["current_projects","archived"]}

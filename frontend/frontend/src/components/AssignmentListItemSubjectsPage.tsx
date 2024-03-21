@@ -7,7 +7,6 @@ import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 
 interface AssignmentListItemSubjectsPageProps {
-    key: string;
     projectName: string;
     dueDate?: Date;
     submissions: number;
@@ -26,7 +25,7 @@ interface AssignmentListItemSubjectsPageProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submissions, score, isStudent, visible}:AssignmentListItemSubjectsPageProps) {
+export function AssignmentListItemSubjectsPage({projectName, dueDate, submissions, score, isStudent, visible}:AssignmentListItemSubjectsPageProps) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
