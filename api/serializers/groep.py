@@ -72,13 +72,12 @@ def validate_students(students_data, project, current_group=None):
     """
     groepen = Groep.objects.filter(project=project)
 
-
     for student in students_data:
         if student.is_lesgever:
             raise serializers.ValidationError(
                 "Alle gebruikers in 'studenten' moeten studenten zijn!"
             )
-        
+
         if not project.vak.studenten.all().contains(student):
             raise serializers.ValidationError(
                 f"Student {student} is geen student van het vak {project.vak}"

@@ -49,8 +49,8 @@ class Project(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     extra_deadline = models.DateTimeField(null=True, blank=True)
     max_score = models.IntegerField(default=20)
-    zichtbaar = models.BooleanField(default = True, blank = True)
-    gearchiveerd = models.BooleanField(default = False, blank = True)
+    zichtbaar = models.BooleanField(default=True, blank=True)
+    gearchiveerd = models.BooleanField(default=False, blank=True)
     # indiening restricties
 
     def __str__(self):

@@ -71,6 +71,8 @@ def validate_deadlines(deadline, extra_deadline):
     """
     if deadline <= timezone.now():
         raise serializers.ValidationError("Deadline moet in de toekomst liggen")
-    
+
     if extra_deadline <= deadline:
-        raise serializers.ValidationError("Extra deadline moet na de eerste deadline liggen")
+        raise serializers.ValidationError(
+            "Extra deadline moet na de eerste deadline liggen"
+        )
