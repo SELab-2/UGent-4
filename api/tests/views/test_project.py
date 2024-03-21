@@ -13,7 +13,7 @@ class ProjectListViewTest(APITestCase):
         self.teacher = GebruikerFactory.create(is_lesgever=True)
         self.student = GebruikerFactory.create(is_lesgever=False)
         self.project1 = ProjectFactory.create()
-        self.project2 = ProjectFactory.create()
+        self.project2 = ProjectFactory.create(zichtbaar=True, gearchiveerd=False)
         self.project2.vak.studenten.add(self.student)
         self.url = reverse("project_list")
         self.client = APIClient()
@@ -49,7 +49,10 @@ class ProjectListViewTest(APITestCase):
             "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
             "vak": vak,
             "deadline": "2024-03-31T12:40:05.317980Z",
+            "extra_deadline": "",
             "max_score": 20,
+            "zichtbaar": "true",
+            "gearchiveerd": "false",
         }
         response = self.client.post(self.url, data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -63,7 +66,10 @@ class ProjectListViewTest(APITestCase):
             "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
             "vak": vak,
             "deadline": "2024-03-31T12:40:05.317980Z",
+
             "max_score": 20,
+            "zichtbaar": "true",
+            "gearchiveerd": "false",
         }
         response = self.client.post(self.url, data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
@@ -75,7 +81,10 @@ class ProjectListViewTest(APITestCase):
             "opgave_bestand": "bestand",
             "vak": "vak",
             "deadline": "2024-03-31T12:40:05.317980Z",
+            "extra_deadline": "2024-03-31T12:40:05.317980Z",
             "max_score": 20,
+            "zichtbaar": "true",
+            "gearchiveerd": "false",
         }
         response = self.client.post(self.url, data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -120,7 +129,10 @@ class ProjectDetailViewTest(APITestCase):
             "opgave_bestand": self.project.opgave_bestand,
             "vak": self.project.vak.vak_id,
             "deadline": self.project.deadline,
+            "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
+            "zichtbaar": self.project.zichtbaar,
+            "gearchiveerd": self.project.gearchiveerd,
         }
         response = self.client.put(self.url, new_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -136,7 +148,10 @@ class ProjectDetailViewTest(APITestCase):
             "opgave_bestand": "bestand",
             "vak": self.project.vak.vak_id,
             "deadline": self.project.deadline,
+            "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
+            "zichtbaar": self.project.zichtbaar,
+            "gearchiveerd": self.project.gearchiveerd,
         }
         response = self.client.put(self.url, new_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -151,7 +166,10 @@ class ProjectDetailViewTest(APITestCase):
             "opgave_bestand": "bestand",
             "vak": self.project.vak.vak_id,
             "deadline": self.project.deadline,
+            "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
+            "zichtbaar": "true",
+            "gearchiveerd": "false",
         }
         response = self.client.put(self.url, new_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
