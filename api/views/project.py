@@ -32,7 +32,7 @@ def project_list(request, format=None):
             projects = Project.objects.all()
         else:
             vakken = Vak.objects.filter(studenten=request.user.id)
-            projects = Project.objects.filter(vak__in=vakken)
+            projects = Project.objects.filter(vak__in=vakken).filter(zichtbaar=True)
 
         if "vak" in request.GET:
             try:
