@@ -57,7 +57,7 @@ class ProjectSerializerTest(APITestCase):
     def test_deadline_field_content(self):
         data = self.serializer.data
         self.assertEqual(parse(data["deadline"]), self.project.deadline)
-    
+
     def test_extra_deadline_field_content(self):
         data = self.serializer.data
         self.assertEqual(parse(data["extra_deadline"]), self.project.extra_deadline)
@@ -65,7 +65,7 @@ class ProjectSerializerTest(APITestCase):
     def test_zichtbaar_field_content(self):
         data = self.serializer.data
         self.assertEqual(data["zichtbaar"], self.project.zichtbaar)
-    
+
     def test_gearchiveerd_field_content(self):
         data = self.serializer.data
         self.assertEqual(data["gearchiveerd"], self.project.gearchiveerd)
@@ -78,7 +78,7 @@ class ProjectSerializerTest(APITestCase):
                 "opgave_bestand": "",
                 "vak": "",
                 "deadline": "",
-                "extra_deadline": "", 
+                "extra_deadline": "",
                 "max_score": "",
                 "zichtbaar": "",
                 "gearchiveerd": "",
@@ -120,7 +120,7 @@ class ProjectSerializerTest(APITestCase):
         serializer = ProjectSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-    
+
     def test_create_invalid_extra_deadline(self):
         vak = VakFactory.create().vak_id
         data = {

@@ -28,5 +28,5 @@ class ProjectFactory(DjangoModelFactory):
         )
     )
     max_score = factory.Faker("random_int", min=10, max=100)
-    zichtbaar = factory.Faker('boolean')
-    gearchiveerd = factory.Faker('boolean')
+    zichtbaar = factory.Faker("boolean")
+    gearchiveerd = factory.Faker("boolean")
