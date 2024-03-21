@@ -30,10 +30,12 @@ class ProjectSerializer(serializers.ModelSerializer):
             Project: Het aangemaakte project.
         """
         deadline = validated_data.pop("deadline")
-        validate_deadline(deadline)
+        extra_deadline = validated_data.pop("extra_deadline")
+        validate_deadlines(deadline, extra_deadline)
 
         project = Project.objects.create(**validated_data)
         project.deadline = deadline
+        project.extra_deadline = extra_deadline
         project.save()
         return project
 
@@ -47,15 +49,17 @@ class ProjectSerializer(serializers.ModelSerializer):
             Project: Het bijgewerkte project.
         """
         deadline = validated_data.pop("deadline")
-        validate_deadline(deadline)
+        extra_deadline = validated_data.pop("extra_deadline")
+        validate_deadlines(deadline, extra_deadline)
 
         super().update(instance=instance, validated_data=validated_data)
         instance.deadline = deadline
+        instance.extra_deadline = extra_deadline
         instance.save()
         return instance
 
 
-def validate_deadline(deadline):
+def validate_deadlines(deadline, extra_deadline):
     """
     Controleert of de opgegeven deadline in de toekomst ligt.
 
@@ -67,3 +71,6 @@ def validate_deadline(deadline):
     """
     if deadline <= timezone.now():
         raise serializers.ValidationError("Deadline moet in de toekomst liggen")
+    
+    if extra_deadline <= deadline:
+        raise serializers.ValidationError("Extra deadline moet na de eerste deadline liggen")

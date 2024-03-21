@@ -46,7 +46,8 @@ class Project(models.Model):
     beschrijving = models.TextField()
     opgave_bestand = models.FileField(upload_to=upload_to)
     vak = models.ForeignKey(Vak, on_delete=models.CASCADE)
-    deadline = models.DateTimeField(null=True)
+    deadline = models.DateTimeField(null=True, blank=True)
+    extra_deadline = models.DateTimeField(null=True, blank=True)
     max_score = models.IntegerField(default=20)
     # indiening restricties
 
