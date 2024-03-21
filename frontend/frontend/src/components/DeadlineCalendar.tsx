@@ -99,7 +99,7 @@ export function DeadlineCalendar({deadlines}: DeadlineCalendarProps) {
         <>
             <DateCalendar readOnly={true} value={value}
                           onChange={(newValue) => setValue(newValue)}
-                          onMonthChange={handleMonthChange}
+                          onMonthChange={(newValue) => handleMonthChange(newValue)}
                           renderLoading={() => <DayCalendarSkeleton/>}
                           loading={isLoading}
                           sx={dateStyle}

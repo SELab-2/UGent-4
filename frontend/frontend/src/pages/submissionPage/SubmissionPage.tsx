@@ -6,7 +6,7 @@ import {Box, Button, Card, Divider, ListItem, Paper, Typography} from "@mui/mate
 import dayjs, {Dayjs} from "dayjs";
 import DownloadIcon from '@mui/icons-material/Download';
 import List from "@mui/material/List";
-import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
+import Grid2 from "@mui/material/Unstable_Grid2";
 
 /**
  * Page for viewing a specific submission
@@ -172,7 +172,7 @@ export function SubmissionPage() {
                           sx={{
                               padding: 1,
                               backgroundColor: "background.default",
-                              width: "99 %",
+                              maxWidth: "60%",
                               height: "20vh",
                           }}>
                         <Typography variant={"h6"} fontWeight={"bold"}>{t("restrictions")}</Typography>
@@ -181,8 +181,8 @@ export function SubmissionPage() {
                                 {
                                     submission.restrictions.map((restriction, index) => {
                                         return (
-                                            <>
-                                                <ListItem key={index} sx={{gap: 4, justifyContent: "space-between"}}>
+                                            <Box key={index}>
+                                                <ListItem sx={{gap: 4, justifyContent: "space-between"}}>
                                                     <Typography variant={"body1"}
                                                                 fontWeight={"bold"}>{restriction.name}</Typography>
                                                     {restriction.artifact &&
@@ -192,7 +192,7 @@ export function SubmissionPage() {
                                                     <Typography variant={"body1"}>{restriction.value}</Typography>
                                                 </ListItem>
                                                 <Divider/>
-                                            </>
+                                            </Box>
                                         );
                                     })
                                 }

@@ -11,15 +11,18 @@ export function ArchivedView({isStudent}: CourseCardProps) {
     return (
         <>
             <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
-                <Stack flexDirection={"row"} flexWrap={"wrap"} width={"100%"}
-                       sx={{
-                           overflowY: {sm: "auto"},
-                           maxHeight: "78vh",
-                       }}>
-                    <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
-                    <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
-                    <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
-                    <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
+                <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
+                    <Stack flexDirection={"row"} flexWrap={"wrap"} width={{xs: '100%', md: "90%"}}
+                           sx={{
+                               gap: 2,
+                               overflowY: {sm: "auto"},
+                               maxHeight: "78svh",
+                           }}>
+                        <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
+                        <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
+                        <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
+                        <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
+                    </Stack>
                 </Stack>
             </Stack>
         </>
