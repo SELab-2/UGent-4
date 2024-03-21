@@ -15,9 +15,13 @@ class GebruikerSerializer(serializers.ModelSerializer):
         update(self, instance, validated_data): Werkt een bestaande gebruiker bij in de database.
     """
 
+    first_name = serializers.CharField(source='user.first_name', read_only=True)
+    last_name = serializers.CharField(source='user.last_name', read_only=True)
+    email = serializers.EmailField(source='user.email', read_only=True)
+
     class Meta:
         model = Gebruiker
-        fields = ['user', 'user.first_name', 'is_lesgever']
+        fields = ['user', 'is_lesgever', 'first_name', 'last_name', 'email']
 
     def create(self, validated_data):
         """
