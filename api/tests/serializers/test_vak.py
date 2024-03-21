@@ -72,6 +72,38 @@ class VakSerializerTest(APITestCase):
         )
         self.assertEqual(vak.naam, "test vak")
 
+    def test_create_invalid_students(self):
+        students_data = [
+            GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+        ]
+        teachers_data = [
+            GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+        ]
+        data = {
+            "naam": "test vak",
+            "studenten": students_data,
+            "lesgevers": teachers_data,
+        }
+        serializer = VakSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+
+    def test_create_invalid_teachers(self):
+        students_data = [
+            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+        ]
+        teachers_data = [
+            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+        ]
+        data = {
+            "naam": "test vak",
+            "studenten": students_data,
+            "lesgevers": teachers_data,
+        }
+        serializer = VakSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+
     def test_update(self):
         students_data = [
             GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)

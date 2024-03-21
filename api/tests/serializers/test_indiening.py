@@ -1,4 +1,3 @@
-# test_indiening.py
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from api.serializers.indiening import IndieningSerializer, IndieningBestandSerializer
@@ -13,9 +12,7 @@ class IndieningSerializerTest(TestCase):
 
     def test_indiening_serializer_fields(self):
         data = self.serializer.data
-        self.assertEqual(
-            set(data.keys()), set(["indiening_id", "groep", "tijdstip"])
-        )  # Add other fields
+        self.assertEqual(set(data.keys()), set(["indiening_id", "groep", "tijdstip"]))
 
     def test_indiening_serializer_create(self):
         # can't check tijdstip because it's auto_now_add
@@ -55,7 +52,7 @@ class IndieningBestandSerializerTest(TestCase):
         data = {
             "indiening": indiening.indiening_id,
             "bestand": SimpleUploadedFile("file.txt", b"file_content"),
-        }  # Add other fields
+        }
         serializer = IndieningBestandSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         indiening_bestand = serializer.save()
@@ -65,7 +62,7 @@ class IndieningBestandSerializerTest(TestCase):
         new_data = {
             "indiening": self.indiening_bestand.indiening.indiening_id,
             "bestand": SimpleUploadedFile("file.txt", b"file_content"),
-        }  # Add other fields
+        }
         serializer = IndieningBestandSerializer(
             instance=self.indiening_bestand, data=new_data, partial=True
         )
