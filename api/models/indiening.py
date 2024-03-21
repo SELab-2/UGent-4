@@ -59,7 +59,7 @@ class IndieningBestand(models.Model):
     """
 
     indiening_bestand_id = models.AutoField(primary_key=True)
-    indiening = models.ForeignKey("Indiening", on_delete=models.CASCADE)
+    indiening = models.ForeignKey(Indiening, related_name='indiening_bestanden', on_delete=models.CASCADE)
     bestand = models.FileField(upload_to=upload_to)
 
     def __str__(self):
