@@ -1,5 +1,5 @@
 from django.test import TestCase
-from api.tests.factories.indiening import IndieningFactory, IndieningBestandFactory
+from api.tests.factories.indiening import IndieningFactory
 from api.tests.factories.gebruiker import GebruikerFactory
 from rest_framework.test import APIClient
 from django.urls import reverse

@@ -12,7 +12,10 @@ class IndieningSerializerTest(TestCase):
 
     def test_indiening_serializer_fields(self):
         data = self.serializer.data
-        self.assertEqual(set(data.keys()), set(["indiening_id", "groep", "tijdstip", "status", "indiening_bestanden"]))
+        self.assertEqual(
+            set(data.keys()),
+            set(["indiening_id", "groep", "tijdstip", "status", "indiening_bestanden"]),
+        )
 
     def test_indiening_serializer_create(self):
         groep = GroepFactory.create()
