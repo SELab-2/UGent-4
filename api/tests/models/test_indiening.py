@@ -15,14 +15,12 @@ class IndieningModelTest(TestCase):
 
     def test_tijdstip(self):
         self.assertIsNotNone(self.indiening.tijdstip)
-
-    def test_indiening_bestand(self):
-        self.assertEqual(self.indiening.indieningbestand_set.count(), 0)
-
-    def test_indiening_bestand_add(self):
-        IndieningBestandFactory.create(indiening=self.indiening)
-        self.assertEqual(self.indiening.indieningbestand_set.count(), 1)
-
+    
+    def test_status(self):
+        self.assertIsNotNone(self.indiening.status)
+    
+    def test_indiening_bestanden(self):
+        self.assertEqual(self.indiening.indiening_bestanden.count(), 1)
 
 class IndieningBestandModelTest(TestCase):
     def setUp(self):

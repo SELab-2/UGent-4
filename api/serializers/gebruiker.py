@@ -2,6 +2,7 @@ from rest_framework import serializers
 from api.models.gebruiker import Gebruiker
 from api.models.vak import Vak
 
+
 class GebruikerSerializer(serializers.ModelSerializer):
     """
     Serializer voor het serialiseren en deserialiseren van Gebruiker objecten.
@@ -16,13 +17,13 @@ class GebruikerSerializer(serializers.ModelSerializer):
         update(self, instance, validated_data): Werkt een bestaande gebruiker bij in de database.
     """
 
-    first_name = serializers.CharField(source='user.first_name', read_only=True)
-    last_name = serializers.CharField(source='user.last_name', read_only=True)
-    email = serializers.EmailField(source='user.email', read_only=True)
+    first_name = serializers.CharField(source="user.first_name", read_only=True)
+    last_name = serializers.CharField(source="user.last_name", read_only=True)
+    email = serializers.EmailField(source="user.email", read_only=True)
 
     class Meta:
         model = Gebruiker
-        fields = ['user', 'is_lesgever', 'first_name', 'last_name', 'email']
+        fields = ["user", "is_lesgever", "first_name", "last_name", "email"]
 
     def create(self, validated_data):
         """
@@ -52,8 +53,13 @@ class GebruikerSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 def validate_lesgever_change(instance):
     if instance.is_lesgever and Vak.objects.filter(lesgevers=instance):
-        raise serializers.ValidationError(f"De lesgever {instance} moet eerst verwijderd worden als lesgever in zijn huidige vakken")
+        raise serializers.ValidationError(
+            f"De lesgever {instance} moet eerst verwijderd worden als lesgever in zijn huidige vakken"
+        )
     elif not instance.is_lesgever and Vak.objects.filter(studenten=instance):
-        raise serializers.ValidationError(f"De student {instance} moet eerst verwijderd worden als student in zijn huidige vakken")
+        raise serializers.ValidationError(
+            f"De student {instance} moet eerst verwijderd worden als student in zijn huidige vakken"
+        )

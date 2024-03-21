@@ -22,6 +22,11 @@ class IndieningFactory(DjangoModelFactory):
             fake.date_time_between(start_date="+1d", end_date="+30d")
         )
     )
+    status = factory.Faker("boolean")
+    
+    indiening_bestanden = factory.RelatedFactory(
+        "api.tests.factories.indiening.IndieningBestandFactory", "indiening"
+    )
 
 
 class IndieningBestandFactory(DjangoModelFactory):
