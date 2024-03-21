@@ -36,6 +36,7 @@ class Indiening(models.Model):
     indiening_id = models.AutoField(primary_key=True)
     groep = models.ForeignKey("Groep", on_delete=models.CASCADE)
     tijdstip = models.DateTimeField(auto_now_add=True)
+    status = models.BooleanField()
 
     def __str__(self):
         return str(self.indiening_id)
