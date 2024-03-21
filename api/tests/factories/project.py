@@ -23,4 +23,11 @@ class ProjectFactory(DjangoModelFactory):
             fake.date_time_between(start_date="+1d", end_date="+30d")
         )
     )
+    extra_deadline = factory.LazyFunction(
+        lambda: timezone.make_aware(
+            fake.date_time_between(start_date="+30d", end_date="+40d")
+        )
+    )
     max_score = factory.Faker("random_int", min=10, max=100)
+    zichtbaar = factory.Faker('boolean')
+    gearchiveerd = factory.Faker('boolean')

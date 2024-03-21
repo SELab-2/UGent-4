@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.models.indiening import Indiening, IndieningBestand
 from api.models.groep import Groep
-from api.serializers.indiening import IndieningSerializer, IndieningBestandSerializer
+from api.serializers.indiening import IndieningSerializer
 from api.utils import is_lesgever, contains
 
 
@@ -94,68 +94,4 @@ def indiening_detail(request, id, format=None):
         ):
             indiening.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(status=status.HTTP_403_FORBIDDEN)
-
-
-@api_view(["GET"])
-def indiening_bestand_list(request, format=None):
-    """
-    Een view om een lijst van indieningbestanden op te halen (GET).
-    GET:
-    Als de gebruiker een lesgever is, worden alle indieningbestanden opgehaald.
-    Als de gebruiker geen lesgever is, worden alleen de indieningbestanden opgehaald
-    van de ingelogde gebruiker.
-
-    Optionele query parameters:
-        indiening (int): Filtert indieningbestanden op basis van indiening-ID.
-
-    Returns:
-        Response: Een lijst van indieningbestandgegevens.
-    """
-    if request.method == "GET":
-        if is_lesgever(request.user):
-            indieningen_bestanden = IndieningBestand.objects.all()
-        else:
-            groepen = Groep.objects.filter(studenten=request.user.id)
-            indieningen = Indiening.objects.filter(groep__in=groepen)
-            indieningen_bestanden = IndieningBestand.objects.filter(
-                indiening__in=indieningen
-            )
-
-        if "indiening" in request.GET:
-            try:
-                indiening = eval(request.GET.get("indiening"))
-                indieningen_bestanden = indieningen_bestanden.filter(
-                    indiening=indiening
-                )
-            except NameError:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        serializer = IndieningBestandSerializer(indieningen_bestanden, many=True)
-        return Response(serializer.data)
-
-
-@api_view(["GET"])
-def indiening_bestand_detail(request, id, format=None):
-    """
-    Een view om de gegevens van een specifiek indieningbestand op te halen (GET).
-
-    Args:
-        id (int): De primaire sleutel van het indieningbestand.
-
-    Returns:
-        Response: Gegevens van het indieningbestand of een foutmelding als
-        het indieningbestand niet bestaat of als er een ongeautoriseerde toegang is.
-    """
-    try:
-        indiening_bestand = IndieningBestand.objects.get(pk=id)
-    except IndieningBestand.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == "GET":
-        if is_lesgever(request.user) or contains(
-            indiening_bestand.indiening.groep.studenten, request.user
-        ):
-            serializer = IndieningBestandSerializer(indiening_bestand)
-            return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
