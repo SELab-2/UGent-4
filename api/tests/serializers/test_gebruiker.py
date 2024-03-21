@@ -12,7 +12,7 @@ class GebruikerSerializerTest(APITestCase):
 
     def test_contains_expected_fields(self):
         data = self.serializer.data
-        self.assertCountEqual(data.keys(), ["user", "is_lesgever"])
+        self.assertCountEqual(data.keys(), ["user", "is_lesgever", "first_name", "last_name", "email"])
 
     def test_user_field_content(self):
         data = self.serializer.data
@@ -21,6 +21,18 @@ class GebruikerSerializerTest(APITestCase):
     def test_is_lesgever_field_content(self):
         data = self.serializer.data
         self.assertEqual(data["is_lesgever"], self.gebruiker.is_lesgever)
+    
+    def test_first_name_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data["first_name"], self.user.first_name)
+    
+    def test_last_name_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data["last_name"], self.user.last_name)
+
+    def test_email_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data["email"], self.user.email)
 
     def test_create(self):
         data = {"user": UserFactory.create().id, "is_lesgever": False}

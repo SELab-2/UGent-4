@@ -24,11 +24,12 @@ class GroepSerializerTest(APITestCase):
         self.assertEqual(data["studenten"], students)
 
     def test_create(self):
+        studenten = [GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)]
+        for student in studenten:
+            self.groep.project.vak.studenten.add(student)
         data = {
             "project": self.groep.project.project_id,
-            "studenten": [
-                GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
-            ],
+            "studenten": studenten,
         }
         serializer = GroepSerializer(data=data)
         self.assertTrue(serializer.is_valid())
@@ -41,6 +42,7 @@ class GroepSerializerTest(APITestCase):
 
     def test_create_invalid_user_already_in_a_group(self):
         student = GebruikerFactory.create(is_lesgever=False).user.id
+        self.groep.project.vak.studenten.add(student)
         data = {
             "project": self.groep.project.project_id,
             "studenten": [student],
@@ -60,6 +62,16 @@ class GroepSerializerTest(APITestCase):
         newserializer = GroepSerializer(data=new_data)
         self.assertTrue(newserializer.is_valid())
         self.assertRaises(ValidationError, newserializer.save, raise_exception=True)
+    
+    def test_create_invalid_user_not_in_vak(self):
+        student = GebruikerFactory.create(is_lesgever=False).user.id
+        data = {
+            "project": self.groep.project.project_id,
+            "studenten": [student],
+        }
+        serializer = GroepSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
     def test_create_invalid_user_is_teacher(self):
         data = {
@@ -74,8 +86,9 @@ class GroepSerializerTest(APITestCase):
 
     def test_update(self):
         data = self.serializer.data
-        self.assertEqual(len(data["studenten"]), 1)
-        data["studenten"].append(GebruikerFactory.create(is_lesgever=False).user.id)
+        student = GebruikerFactory.create(is_lesgever=False).user.id
+        self.groep.project.vak.studenten.add(student)
+        data["studenten"].append(student)
         serializer = GroepSerializer(instance=self.groep, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
         groep = serializer.save()
@@ -87,6 +100,7 @@ class GroepSerializerTest(APITestCase):
         data = self.serializer.data
         self.assertEqual(len(data["studenten"]), 1)
         student = GebruikerFactory.create(is_lesgever=False).user.id
+        self.groep.project.vak.studenten.add(student)
         data["studenten"].append(student)
         serializer = GroepSerializer(instance=self.groep, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
@@ -96,6 +110,20 @@ class GroepSerializerTest(APITestCase):
         )
         new_data = self.serializer.data
         new_data["studenten"].append(student)
+        serializer = GroepSerializer(instance=groep, data=new_data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+    
+    def test_update_invalid_user_not_in_vak(self):
+        data = self.serializer.data
+        serializer = GroepSerializer(instance=self.groep, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        groep = serializer.save()
+        self.assertEqual(
+            [student.user.id for student in groep.studenten.all()], data["studenten"]
+        )
+        new_data = self.serializer.data
+        new_data["studenten"].append(GebruikerFactory.create(is_lesgever=False).user.id)
         serializer = GroepSerializer(instance=groep, data=new_data, partial=True)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)

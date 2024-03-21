@@ -13,7 +13,6 @@ class ProjectFactory(DjangoModelFactory):
     class Meta:
         model = Project
 
-    project_id = factory.Sequence(lambda n: n)
     titel = factory.Faker("word")
     beschrijving = factory.Faker("paragraph")
     opgave_bestand = factory.django.FileField(data=b"file content")
