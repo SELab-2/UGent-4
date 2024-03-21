@@ -8,7 +8,6 @@ API_URLS = {
     "vakken": "/api/vakken",
     "groepen": "/api/groepen",
     "indieningen": "/api/indieningen",
-    "indiening_bestanden": "/api/indiening_bestanden",
     "scores": "api/scores",
     "projecten": "api/projecten",
 }

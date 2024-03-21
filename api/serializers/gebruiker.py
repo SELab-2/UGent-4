@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from api.models.gebruiker import Gebruiker
 
-
 class GebruikerSerializer(serializers.ModelSerializer):
     """
     Serializer voor het serialiseren en deserialiseren van Gebruiker objecten.
@@ -18,7 +17,7 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gebruiker
-        fields = "__all__"
+        fields = ['user', 'user.first_name', 'is_lesgever']
 
     def create(self, validated_data):
         """
