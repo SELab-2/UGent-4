@@ -61,7 +61,7 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
             </Box>
             <Box aria-label={"assignmentList"}
                 sx={{backgroundColor: "background.default",
-                    height: 350,
+                    height: 340,
                     display: "flex",
                     flexDirection: "column",
                     padding:1,
@@ -69,7 +69,7 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
                     paddingBottom:0
                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 330, overflow:"auto"}}>
+                    <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
                         <List disablePadding={true}>
                             {assignments.filter((assignment) => assignment.archived == archived)
                             .map((assignment) => (
