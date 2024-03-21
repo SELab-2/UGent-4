@@ -71,6 +71,8 @@ def validate_students(students_data, project, current_group=None):
         serializers.ValidationError: Als een gebruiker geen student is of al in een andere groep voor dit project zit.
     """
     groepen = Groep.objects.filter(project=project)
+    if current_group is not None:
+        groepen = groepen.exclude(groep_id=current_group.groep_id)
 
     for student in students_data:
         if student.is_lesgever:
@@ -84,11 +86,7 @@ def validate_students(students_data, project, current_group=None):
             )
 
         for groep in groepen:
-            if (
-                current_group
-                and groep.groep_id != current_group.groep_id
-                and student in groep.studenten.all()
-            ):
+            if student in groep.studenten.all():
                 raise serializers.ValidationError(
                     f"Student {student} zit al in een andere groep voor dit project!"
                 )

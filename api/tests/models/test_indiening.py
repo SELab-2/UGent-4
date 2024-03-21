@@ -1,4 +1,3 @@
-# test_indiening.py
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from api.tests.factories.indiening import IndieningFactory, IndieningBestandFactory

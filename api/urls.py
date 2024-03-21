@@ -28,11 +28,15 @@ from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
 
 urlpatterns = [
-    path(".well-known/microsoft-identity-association.json", microsoft_association),
+    path(
+        ".well-known/microsoft-identity-association.json",
+        microsoft_association,
+        name="microsoft_association",
+    ),
     path("admin/", admin.site.urls),
     path("oauth2/", include("django_auth_adfs.urls")),
-    path("login_redirect/", login_redirect),
-    path("api/", home),
+    path("login_redirect/", login_redirect, name="login_redirect"),
+    path("api/", home, name="home"),
     path("api/gebruikers/", gebruiker_list, name="gebruiker_list"),
     path("api/gebruikers/<int:id>/", gebruiker_detail, name="gebruiker_detail"),
     path("api/vakken/", vak_list, name="vak_list"),
