@@ -24,6 +24,9 @@ const dutch = {
     submit: "Bevestig",
     cancel: "Annuleer",
     add_restriction: "Voeg restrictie toe",
+    is_required: "is verplicht",
+    name: "Naam",
+    descriptionName: "Beschrijving",
 };
 
 export default dutch;
