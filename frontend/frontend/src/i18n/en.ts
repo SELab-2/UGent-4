@@ -27,6 +27,15 @@ const english = {
     is_required: "is required",
     name: "Name",
     descriptionName: "Description",
+    restrictionType: "Restriction type",
+    upload_container: "Upload a .tar file",
+    dockerfile: "Dockerfile",
+    restrictiontype: "Restriction type",
+    maxSize: "Max file size",
+    fileType: "Allowed file types",
+    fileSize: "Max file size",
+    allowed_file_types: "Allowed file types",
+
 };
 
 export default english;

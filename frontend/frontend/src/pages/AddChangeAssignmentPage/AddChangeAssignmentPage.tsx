@@ -15,6 +15,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
+import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
 
 //TODO: fix api integration
 //TODO: add restriction functionality
@@ -42,9 +43,9 @@ interface assignment {
     visible: boolean,
 }
 
-interface restriction {
+export interface restriction {
     type: string,
-    value: string,
+    value: string[] | number | File | undefined,
 }
 
 interface errorChecks {
@@ -67,6 +68,13 @@ export function AddChangeAssignmentPage() {
         description: false,
         dueDate: false
     });
+    const [open, setOpen] = useState(false);
+    const [type, setType] = useState<restrictionType>('dockerTest');
+    const [dockerfile, setDockerFile] = useState<File>();
+    const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
+    const [maxSize, setMaxSize] = useState<number>();
+    const [restriction, setRestriction] = useState<restriction>({type: '', value: undefined});
+
 
     /**
      * Function to upload the details of the assignment through a text file
@@ -80,7 +88,7 @@ export function AddChangeAssignmentPage() {
     };
 
     const handleAddRestriction = () => {
-
+        setOpen(true);
     }
 
     const removeRestriction = (index: number) => {
@@ -114,11 +122,14 @@ export function AddChangeAssignmentPage() {
     useEffect(() => {
         //TODO: fetch data from api
         console.log(assignmentFile);
-        setRestrictions([{type: "test", value: "test"}, {type: "test2", value: "test2"}, {
-            type: "test3",
-            value: "test3"
-        }, {type: "test4", value: "test4"}])
     }, [assignmentFile]);
+
+    useEffect(() => {
+        if (restriction.type === '' || restriction.value === undefined) {
+            return;
+        }
+        setRestrictions(prevRestrictions => [...prevRestrictions, restriction]);
+    }, [restriction]);
 
     return (
         <>
@@ -206,7 +217,8 @@ export function AddChangeAssignmentPage() {
                                                         <Box display={'flex'} flexDirection={'row'}
                                                              alignItems={'center'} gap={1}>
                                                             <Typography
-                                                                variant={"body1"}>{restriction.value}</Typography>
+                                                                variant={"body1"}>{restriction.value instanceof File ? restriction.value.name : restriction.value instanceof Array ? restriction.value.join(', ') : typeof restriction.value === 'number' ? restriction.value.toString() + 'mb' : ''
+                                                            }</Typography>
                                                             <IconButton size={'small'}
                                                                         onClick={() => removeRestriction(index)}>
                                                                 <ClearIcon fontSize={'small'}
@@ -274,6 +286,12 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                 </Stack>
+                <RestrictionPopup open={open} setOpen={setOpen}
+                                  type={type} setType={setType}
+                                  setRestriction={setRestriction}
+                                  allowedFileTypes={allowedFileTypes} setAllowedFileTypes={setAllowedFileTypes}
+                                  dockerfile={dockerfile} setDockerFile={setDockerFile}
+                                  maxSize={maxSize} setMaxSize={setMaxSize}/>
             </Stack>
         </>
     );
