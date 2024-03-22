@@ -24,6 +24,9 @@ const english = {
     submit: "Submit",
     cancel: "Cancel",
     add_restriction: "Add restriction",
+    is_required: "is required",
+    name: "Name",
+    descriptionName: "Description",
 };
 
 export default english;

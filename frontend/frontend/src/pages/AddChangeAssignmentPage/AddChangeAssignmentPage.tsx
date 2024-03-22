@@ -1,6 +1,6 @@
 import {Box, Button, Card, Divider, IconButton, ListItem, Stack, TextField, Tooltip, Typography} from "@mui/material";
 import {Header} from "../../components/Header.tsx";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import {Dayjs} from "dayjs";
 import {t} from "i18next";
 import {DateTimePicker, LocalizationProvider, renderTimeViewClock} from "@mui/x-date-pickers";
@@ -17,8 +17,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 
 //TODO: fix api integration
-//TODO: add logic for all form state manipulations
-
+//TODO: add restriction functionality
 /**
  * This page is used to add or change an assignment.
  * The page should only be accessible to teachers of the course.
@@ -36,7 +35,7 @@ import SaveIcon from '@mui/icons-material/Save';
 interface assignment {
     title: string,
     description: string,
-    assignmentFile: File,
+    assignmentFile: File | null,
     dueDate: Dayjs,
     restrictions: restriction[],
     groups: boolean,
@@ -48,6 +47,12 @@ interface restriction {
     value: string,
 }
 
+interface errorChecks {
+    title: boolean,
+    description: boolean,
+    dueDate: boolean,
+}
+
 export function AddChangeAssignmentPage() {
     // State for the different fields of the assignment
     const [title, setTitle] = useState("");
@@ -57,6 +62,11 @@ export function AddChangeAssignmentPage() {
     const [groups, setGroups] = useState(false);
     const [visible, setVisible] = useState(false);
     const [assignmentFile, setAssignmentFile] = useState<File>();
+    const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
+        title: false,
+        description: false,
+        dueDate: false
+    });
 
     /**
      * Function to upload the details of the assignment through a text file
@@ -73,6 +83,34 @@ export function AddChangeAssignmentPage() {
 
     }
 
+    const removeRestriction = (index: number) => {
+        setRestrictions(restrictions.filter((_, i) => i !== index));
+    }
+
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setAssignmentErrors({title: title === "", description: description === "", dueDate: dueDate === null});
+        if (title === "" || description === "" || dueDate === null) {
+            return;
+        }
+        let optionalFile: File | null = null;
+        if (assignmentFile !== undefined) {
+            optionalFile = assignmentFile;
+        }
+        const newAssignment: assignment = {
+            title: title,
+            description: description,
+            assignmentFile: optionalFile,
+            dueDate: dueDate,
+            restrictions: restrictions,
+            groups: groups,
+            visible: visible,
+        }
+        //TODO: send data to api
+        alert("Form Submitted");
+        console.info('Form submitted', title, description, dueDate, restrictions, groups, visible, assignmentFile)
+    }
+
     useEffect(() => {
         //TODO: fetch data from api
         console.log(assignmentFile);
@@ -86,7 +124,7 @@ export function AddChangeAssignmentPage() {
         <>
             <Stack direction={"column"} paddingX={2}>
                 <Header variant={"default"} title={title}/>
-                <Stack direction={"column"} marginTop={11}>
+                <Stack direction={"column"} marginTop={11} component={"form"} onSubmit={handleSubmit}>
                     <Box aria-label={"title_and_upload"}
                          padding={2}
                          paddingRight={0}
@@ -95,10 +133,12 @@ export function AddChangeAssignmentPage() {
                          flexDirection={"row"}
                          width={'98%'}
                          justifyContent={"space-between"}>
-                        <Box aria-label={'title'} display={'flex'} flexDirection={"row"} gap={2} alignItems={"center"}>
+                        <Box aria-label={'title'} display={'flex'} flexDirection={"row"} gap={2}
+                             alignItems={"center"}>
                             <Typography variant={'h6'} color={"text.primary"}
                                         fontWeight={"bold"}>{t('assignmentName')}</Typography>
-                            <TextField type="text" placeholder={"Title"}
+                            <TextField type="text" placeholder={"Title"} error={assignmentErrors.title}
+                                       helperText={assignmentErrors.title ? t('name') + " " + t('is_required') : ""}
                                        onChange={(event) => setTitle(event.target.value)}/>
                         </Box>
                         <Box padding={0} marginRight={3} display={"flex"} flexDirection={"column"}
@@ -115,12 +155,18 @@ export function AddChangeAssignmentPage() {
                         <Typography variant={'h6'} color={"text.primary"}
                                     fontWeight={"bold"}>Deadline:</Typography>
                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
-                            <DateTimePicker value={dueDate}
+                            <DateTimePicker value={dueDate} disablePast
                                             sx={{width: 230}}
                                             viewRenderers={{
                                                 hours: renderTimeViewClock,
                                                 minutes: renderTimeViewClock,
                                                 seconds: renderTimeViewClock,
+                                            }}
+                                            slotProps={{
+                                                textField: {
+                                                    error: assignmentErrors.dueDate,
+                                                    helperText: assignmentErrors.dueDate ? "Deadline" + " " + t('is_required') : "",
+                                                },
                                             }}
                                             onChange={(newValue) => setDueDate(newValue)}/>
                         </LocalizationProvider>
@@ -133,6 +179,8 @@ export function AddChangeAssignmentPage() {
                             <TextField type="text" placeholder={"Description"} variant={'standard'} multiline
                                        value={description} onChange={(event) => setDescription(event.target.value)}
                                        fullWidth
+                                       error={assignmentErrors.description}
+                                       helperText={assignmentErrors.description ? t("descriptionName") + " " + t('is_required') : ""}
                                        sx={{overflowY: 'auto', maxHeight: '25svh'}}/>
                         </Box>
                     </Card>
@@ -159,7 +207,8 @@ export function AddChangeAssignmentPage() {
                                                              alignItems={'center'} gap={1}>
                                                             <Typography
                                                                 variant={"body1"}>{restriction.value}</Typography>
-                                                            <IconButton size={'small'}>
+                                                            <IconButton size={'small'}
+                                                                        onClick={() => removeRestriction(index)}>
                                                                 <ClearIcon fontSize={'small'}
                                                                            color={'error'}></ClearIcon>
                                                             </IconButton>
@@ -174,12 +223,13 @@ export function AddChangeAssignmentPage() {
                             </Box>
                             <Box width={'100%'} display={'flex'} justifyContent={'flex-end'}>
                                 <Tooltip title={t('add_restriction')}>
-                                    <IconButton color={"primary"} onClick={handleAddRestriction}><AddIcon/></IconButton>
+                                    <IconButton color={"primary"}
+                                                onClick={handleAddRestriction}><AddIcon/></IconButton>
                                 </Tooltip>
                             </Box>
                         </Card>
                     </Box>
-                    <Box aria-label={'main actions'} marginTop={5} display={"flex"} flexDirection={'row'}
+                    <Box aria-label={'main actions'} marginTop={3} display={"flex"} flexDirection={'row'}
                          width={'100%'} justifyContent={'space-between'}>
                         <Box aria-label={'visibility_and_groups'} display={'flex'} flexDirection={'row'} gap={1}
                              alignItems={'center'}
@@ -209,15 +259,15 @@ export function AddChangeAssignmentPage() {
                                         fontSize={'medium'}/></IconButton>
                             </Tooltip>
                             <Tooltip title={t('submit')}>
-                                <IconButton
-                                    sx={{
-                                        backgroundColor: 'primary.main', borderRadius: 2,
-                                        color: 'background.default',
-                                        "&:hover": {
-                                            backgroundColor: 'secondary.main',
-                                            color: 'text.primary'
-                                        },
-                                    }}>
+                                <IconButton type="submit" aria-label={"submit"}
+                                            sx={{
+                                                backgroundColor: 'primary.main', borderRadius: 2,
+                                                color: 'background.default',
+                                                "&:hover": {
+                                                    backgroundColor: 'secondary.main',
+                                                    color: 'text.primary'
+                                                },
+                                            }}>
                                     <SaveIcon
                                         fontSize={'medium'}/></IconButton>
                             </Tooltip>
