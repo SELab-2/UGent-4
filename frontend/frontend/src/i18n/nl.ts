@@ -27,6 +27,14 @@ const dutch = {
     is_required: "is verplicht",
     name: "Naam",
     descriptionName: "Beschrijving",
+    restrictionType: "Restrictietype",
+    upload_container: "Upload een .tar bestand",
+    dockerfile: "Docker bestand (Dockerfile)",
+    restrictiontype: "Restrictietype",
+    maxSize: "Maximale bestandsgrootte",
+    fileType: "Toegestane bestandstypes",
+    fileSize: "Maximale bestandsgrootte",
+    allowed_file_types: "Toegestane bestandstypes",
 };
 
 export default dutch;
