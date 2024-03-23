@@ -2,6 +2,7 @@ from rest_framework import serializers
 from api.models.gebruiker import Gebruiker
 from api.models.vak import Vak
 
+
 class GebruikerSerializer(serializers.ModelSerializer):
     """
     Serializer voor het serialiseren en deserialiseren van Gebruiker objecten.
@@ -52,8 +53,15 @@ class GebruikerSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+
 def validate_lesgever_change(instance):
     if instance.is_lesgever and Vak.objects.filter(lesgevers=instance):
-        raise serializers.ValidationError(f"De lesgever {instance} moet eerst verwijderd worden als lesgever in zijn huidige vakken")
+        raise serializers.ValidationError(
+            f"De lesgever {instance} moet eerst verwijderd worden \
+            als lesgever in zijn huidige vakken"
+            )
     elif not instance.is_lesgever and Vak.objects.filter(studenten=instance):
-        raise serializers.ValidationError(f"De student {instance} moet eerst verwijderd worden als student in zijn huidige vakken")
+        raise serializers.ValidationError(
+            f"De student {instance} moet eerst verwijderd worden \
+            als student in zijn huidige vakken"
+            )

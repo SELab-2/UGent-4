@@ -1,6 +1,7 @@
 from django.db import models
 from api.models.project import Project
 
+
 def upload_to(instance, filename):
     """
     Functie om het pad te genereren waar het opgavebestand wordt opgeslagen.
