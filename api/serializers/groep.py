@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from api.models.groep import Groep
+from collections import Counter
 
 
 class GroepSerializer(serializers.ModelSerializer):
@@ -73,6 +74,13 @@ def validate_students(students_data, project, current_group=None):
     groepen = Groep.objects.filter(project=project)
     if current_group is not None:
         groepen = groepen.exclude(groep_id=current_group.groep_id)
+
+    student_counts = Counter(students_data)
+    for student, count in student_counts.items():
+        if count > 1:
+            raise serializers.ValidationError(
+                f"Student {student} komt meerdere keren voor in de groep!"
+            )
 
     for student in students_data:
         if student.is_lesgever:
