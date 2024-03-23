@@ -23,8 +23,8 @@ class Restrictie(models.Model):
 
     restrictie_id = models.AutoField(primary_key=True)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
-    restrictie_script = models.FileField(upload_to=upload_to)
+    script = models.FileField(upload_to=upload_to)
     moet_slagen = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
-        return self.project.naam + ', restrictie: ' + self.restrictie_script
+        return self.project.titel + ', restrictie: ' + str(self.script)

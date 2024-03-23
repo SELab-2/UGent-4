@@ -2,7 +2,7 @@ from rest_framework import serializers
 from api.models.restrictie import Restrictie
 
 
-class ProjectSerializer(serializers.ModelSerializer):
+class RestrictieSerializer(serializers.ModelSerializer):
     """
     TODO
     """
@@ -11,21 +11,33 @@ class ProjectSerializer(serializers.ModelSerializer):
         model = Restrictie
         fields = "__all__"
 
+
+    def create(self, validated_data):
+        """
+        TODO
+        """
+
+        validate_script(validated_data.get('script'))
+        return Restrictie.objects.create(**validated_data)
+
+
     def update(self, instance, validated_data):
         """
-        Args:
-            instance (Project): Het project dat moet worden bijgewerkt.
-            validated_data (dict): Gevalideerde gegevens over het project.
-
-        Returns:
-            Project: Het bijgewerkte project.
+        TODO
         """
-        project = validated_data.get('project')
-        validate_project(instance, project)
+        validate_project(instance, validated_data.get('project'))
+        validate_script(instance, validated_data.get('script'))
+
 
         super().update(instance=instance, validated_data=validated_data)
         instance.save()
         return instance
+
+def validate_script(new_script):
+    
+    if not str(new_script).endswith('.sh') or not str(new_script).endswith('.py'):
+        raise serializers.ValidationError('Het restrictie script moet een Python of Shell script zijn')
+
 
 
 def validate_project(instance, new_project):

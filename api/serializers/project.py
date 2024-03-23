@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models.project import Project
 from django.utils import timezone
+from api.serializers.restrictie import RestrictieSerializer
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -17,9 +18,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         update(self, instance, validated_data): Werkt een bestaand project bij in de database.
     """
 
+    restricties = RestrictieSerializer(many=True, read_only=True)
+
     class Meta:
         model = Project
-        fields = "__all__"
+        fields = [
+            'project_id', 'titel', 'beschrijving', 'opgave_bestand', 'vak', 'deadline', 
+            'extra_deadline', 'max_score', 'zichtbaar', 'gearchiveerd', 'restricties'
+            ]
 
     def create(self, validated_data):
         """

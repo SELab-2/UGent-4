@@ -51,7 +51,6 @@ class Project(models.Model):
     max_score = models.IntegerField(default=20)
     zichtbaar = models.BooleanField(default=True, blank=True)
     gearchiveerd = models.BooleanField(default=False, blank=True)
-    # indiening restricties
 
     def __str__(self):
         return self.titel
