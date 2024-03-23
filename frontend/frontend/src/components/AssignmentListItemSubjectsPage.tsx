@@ -92,9 +92,7 @@ function ButtonActions({archived, startVisible, deleteEvent, archiveEvent}: Butt
                 setVisible(!visible);
                 break;
             case 'archive':
-                if(!archived){
-                    archiveEvent();
-                }
+                archiveEvent();
                 break;
             case 'delete':
                 deleteEvent();
@@ -115,9 +113,11 @@ function ButtonActions({archived, startVisible, deleteEvent, archiveEvent}: Butt
                     <VisibilityOffOutlinedIcon/>
                 </IconButton>
             }
-            <IconButton onClick={(e) => handleIconClick(e, "archive")} edge="end" aria-label="archive">
-                <ArchiveOutlinedIcon/>
-            </IconButton>
+            {!archived &&
+                <IconButton onClick={(e) => handleIconClick(e, "archive")} edge="end" aria-label="archive">
+                    <ArchiveOutlinedIcon/>
+                </IconButton>
+            }
             <IconButton onClick={(e) => handleIconClick(e, "delete")} edge="end" aria-label="delete">
                 <DeleteOutlinedIcon/>
             </IconButton>

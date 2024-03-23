@@ -2,22 +2,15 @@ import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
 import {t} from "i18next";
 import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
-import { useState } from "react";
 
 interface ProjectsViewProps {
-    courseId: string;
     isStudent: boolean;
     archived: boolean;
-}
-
-interface Course {
-    id: string;
-    name: string;
-    teacher: string;
-    students: string[];
-    //list of assignment ids
-    assignments: string[];
-    archived: boolean;
+    assignments: Assignment[];
+    deleteAssignment: (index: number) => void;
+    archiveAssignment: (index: number) => void;
+    archivedAssignments: Assignment[];
+    deleteArchivedAssignment: (index: number) => void;
 }
 
 interface Assignment {
@@ -30,24 +23,7 @@ interface Assignment {
     archived: boolean;
 }
 
-export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps) {
-    const course = getCourse(courseId);
-    const assignmentsTemp = course.assignments.map((assignmentId) => getAssignment(assignmentId));
-    
-    const [assignments, setAssignments] = useState<Assignment[]>(assignmentsTemp.filter((assignment) => !assignment.archived));
-    const [archivedAssignments, setArchivedAssignments] = useState<Assignment[]>(assignmentsTemp.filter((assignment) => assignment.archived));
-
-    const deleteAssignment = (index: number) => {
-        setAssignments(assignments.filter((_, i) => i !== index));
-    }
-    const deleteArchivedAssignment = (index: number) => {
-        setArchivedAssignments(archivedAssignments.filter((_, i) => i !== index));
-    }
-    const archiveAssignment = (index: number) => {
-        setArchivedAssignments([...archivedAssignments, assignments[index]]);
-        deleteAssignment(index);
-    }
-
+export function ProjectsView({isStudent, archived, assignments, deleteAssignment, archiveAssignment, archivedAssignments, deleteArchivedAssignment}: ProjectsViewProps) {
     return (
         <>
             <Box aria-label={"courseHeader"}
@@ -91,7 +67,7 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
                                 .map((assignment, index) => (
                                     <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
                                         dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
-                                        isStudent={isStudent} archived={assignment.archived} visible={assignment.visible}
+                                        isStudent={isStudent} archived={archived} visible={assignment.visible}
                                         deleteEvent={() => deleteAssignment(index)}
                                         archiveEvent={() => archiveAssignment(index)}/>
                                 ))
@@ -100,7 +76,7 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
                                 .map((assignment, index) => (
                                     <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
                                         dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
-                                        isStudent={isStudent} archived={assignment.archived} visible={assignment.visible}
+                                        isStudent={isStudent} archived={archived} visible={assignment.visible}
                                         deleteEvent={() => deleteArchivedAssignment(index)}
                                         archiveEvent={() => archiveAssignment(index)}/>
                                 ))
@@ -111,28 +87,4 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
             </Box>
         </>
     );
-}
-
-//TODO: use api to get data, for now use mock data
-function getCourse(courseId: string): Course {
-    return {
-        id: courseId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2"],
-        archived: false,
-        assignments: ["assignment1", "assignment2", "assignment3", "assignment4", "assignment5", "assignment6", "assignment7", "assignment8", "assignment9"]
-    }
-}
-
-function getAssignment(assignmentId: string): Assignment {
-    return {
-        id: assignmentId,
-        name: assignmentId,
-        deadline: new Date(2022, 11, 17),
-        submissions: 2,
-        score: 10,
-        visible: true,
-        archived: Number(assignmentId.slice(-1))%2==0,
-    }
 }
