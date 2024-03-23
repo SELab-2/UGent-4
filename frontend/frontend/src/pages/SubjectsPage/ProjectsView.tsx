@@ -9,8 +9,6 @@ interface ProjectsViewProps {
     assignments: Assignment[];
     deleteAssignment: (index: number) => void;
     archiveAssignment: (index: number) => void;
-    archivedAssignments: Assignment[];
-    deleteArchivedAssignment: (index: number) => void;
 }
 
 interface Assignment {
@@ -23,7 +21,7 @@ interface Assignment {
     archived: boolean;
 }
 
-export function ProjectsView({isStudent, archived, assignments, deleteAssignment, archiveAssignment, archivedAssignments, deleteArchivedAssignment}: ProjectsViewProps) {
+export function ProjectsView({isStudent, archived, assignments, deleteAssignment, archiveAssignment}: ProjectsViewProps) {
     return (
         <>
             <Box aria-label={"courseHeader"}
@@ -62,25 +60,16 @@ export function ProjectsView({isStudent, archived, assignments, deleteAssignment
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {!archived?
-                                assignments
-                                .map((assignment, index) => (
-                                    <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
+                            {assignments
+                            .map((assignment, index) => ({...assignment, index}))
+                            .filter((assignment) => assignment.archived == archived)
+                            .map((assignment) => (
+                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
                                         dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
                                         isStudent={isStudent} archived={archived} visible={assignment.visible}
-                                        deleteEvent={() => deleteAssignment(index)}
-                                        archiveEvent={() => archiveAssignment(index)}/>
-                                ))
-                                :
-                                archivedAssignments
-                                .map((assignment, index) => (
-                                    <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
-                                        dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
-                                        isStudent={isStudent} archived={archived} visible={assignment.visible}
-                                        deleteEvent={() => deleteArchivedAssignment(index)}
-                                        archiveEvent={() => archiveAssignment(index)}/>
-                                ))
-                            }
+                                        deleteEvent={() => deleteAssignment(assignment.index)}
+                                        archiveEvent={() => archiveAssignment(assignment.index)}/>
+                            ))}
                         </List>
                     </Box>
                 </Box>

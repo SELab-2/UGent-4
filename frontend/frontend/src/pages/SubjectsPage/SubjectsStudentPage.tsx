@@ -30,20 +30,15 @@ export function SubjectsStudentPage() {
     courseId = String(courseId);
 
     const course = getCourse(courseId);
-    const assignmentsTemp = course.assignments.map((assignmentId) => getAssignment(assignmentId));
     
-    const [assignments, setAssignments] = useState<Assignment[]>(assignmentsTemp.filter((assignment) => !assignment.archived));
-    const [archivedAssignments, setArchivedAssignments] = useState<Assignment[]>(assignmentsTemp.filter((assignment) => assignment.archived));
+    const [assignments, setAssignments] = useState<Assignment[]>(course.assignments.map((assignmentId) => getAssignment(assignmentId)));
 
     const deleteAssignment = (index: number) => {
         setAssignments(assignments.filter((_, i) => i !== index));
     }
-    const deleteArchivedAssignment = (index: number) => {
-        setArchivedAssignments(archivedAssignments.filter((_, i) => i !== index));
-    }
     const archiveAssignment = (index: number) => {
-        setArchivedAssignments([...archivedAssignments, assignments[index]]);
-        deleteAssignment(index);
+        const newAssignments = assignments.map((a, i) => i==index? archiveSingleAssignment(a): a);
+        setAssignments(newAssignments);
     }
     
     return (
@@ -53,11 +48,9 @@ export function SubjectsStudentPage() {
                 <Box sx={{ width: '100%', height:"70%", marginTop:10 }}>
                     <TabSwitcher titles={["current_projects","archived"]}
                                  nodes={[<ProjectsView isStudent={true} archived={false} assignments={assignments}
-                                 deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
-                                 archivedAssignments={archivedAssignments} deleteArchivedAssignment={deleteArchivedAssignment}/>,
+                                 deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}/>,
                                  <ProjectsView isStudent={true} archived={true} assignments={assignments}
-                                 deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
-                                 archivedAssignments={archivedAssignments} deleteArchivedAssignment={deleteArchivedAssignment}/>]}/>
+                                 deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}/>]}/>
                 </Box>
             </Stack>
         </>
@@ -85,5 +78,17 @@ function getAssignment(assignmentId: string): Assignment {
         score: 10,
         visible: true,
         archived: Number(assignmentId.slice(-1))%2==0,
+    }
+}
+
+function archiveSingleAssignment(assignment: Assignment): Assignment {
+    return {
+        id: assignment.id,
+        name: assignment.name,
+        deadline: assignment.deadline,
+        submissions: assignment.submissions,
+        score: assignment.score,
+        visible: assignment.visible,
+        archived: true,
     }
 }
