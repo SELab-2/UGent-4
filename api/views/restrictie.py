@@ -19,7 +19,7 @@ def restrictie_list(request, format=None):
             if "project" in request.GET:
                 try:
                     project = eval(request.GET.get("project"))
-                    restricties = restricties.filter(project = project)
+                    restricties = restricties.filter(project=project)
                 except NameError:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -40,7 +40,6 @@ def restrictie_list(request, format=None):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
     return Response(status=status.HTTP_403_FORBIDDEN)
 
 

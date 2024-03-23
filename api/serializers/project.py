@@ -23,7 +23,7 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
-            'project_id', 'titel', 'beschrijving', 'opgave_bestand', 'vak', 'deadline', 
+            'project_id', 'titel', 'beschrijving', 'opgave_bestand', 'vak', 'deadline',
             'extra_deadline', 'max_score', 'zichtbaar', 'gearchiveerd', 'restricties'
             ]
 
@@ -85,6 +85,7 @@ def validate_deadlines(deadline, extra_deadline):
         raise serializers.ValidationError(
             "Extra deadline moet na de eerste deadline liggen"
         )
+
 
 def validate_vak(instance, new_vak):
     """

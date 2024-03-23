@@ -11,7 +11,6 @@ class RestrictieSerializer(serializers.ModelSerializer):
         model = Restrictie
         fields = "__all__"
 
-
     def create(self, validated_data):
         """
         TODO
@@ -20,7 +19,6 @@ class RestrictieSerializer(serializers.ModelSerializer):
         validate_script(validated_data.get('script'))
         return Restrictie.objects.create(**validated_data)
 
-
     def update(self, instance, validated_data):
         """
         TODO
@@ -28,16 +26,14 @@ class RestrictieSerializer(serializers.ModelSerializer):
         validate_project(instance, validated_data.get('project'))
         validate_script(instance, validated_data.get('script'))
 
-
         super().update(instance=instance, validated_data=validated_data)
         instance.save()
         return instance
 
+
 def validate_script(new_script):
-    
     if not str(new_script).endswith('.sh') or not str(new_script).endswith('.py'):
         raise serializers.ValidationError('Het restrictie script moet een Python of Shell script zijn')
-
 
 
 def validate_project(instance, new_project):

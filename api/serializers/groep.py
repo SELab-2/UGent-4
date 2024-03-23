@@ -59,6 +59,7 @@ class GroepSerializer(serializers.ModelSerializer):
 
         return instance
 
+
 def validate_project(instance, new_project):
     """
     TODO
@@ -66,6 +67,7 @@ def validate_project(instance, new_project):
 
     if instance.project != new_project:
         raise serializers.ValidationError('Het project van een groep kan niet aangepast worden')
+
 
 def validate_students(students_data, project, current_group=None):
     """
