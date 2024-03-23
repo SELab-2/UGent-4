@@ -3,7 +3,6 @@ import { Box, Stack } from "@mui/material";
 import TabSwitcher from "../../components/TabSwitcher.tsx";
 import {ProjectsView} from "./ProjectsView.tsx";
 import { useParams } from "react-router-dom";
-import { useState } from "react";
 
 interface Course {
     id: string;
@@ -31,15 +30,7 @@ export function SubjectsStudentPage() {
 
     const course = getCourse(courseId);
     
-    const [assignments, setAssignments] = useState<Assignment[]>(course.assignments.map((assignmentId) => getAssignment(assignmentId)));
-
-    const deleteAssignment = (index: number) => {
-        setAssignments(assignments.filter((_, i) => i !== index));
-    }
-    const archiveAssignment = (index: number) => {
-        const newAssignments = assignments.map((a, i) => i==index? archiveSingleAssignment(a): a);
-        setAssignments(newAssignments);
-    }
+    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
     
     return (
         <>
@@ -48,9 +39,11 @@ export function SubjectsStudentPage() {
                 <Box sx={{ width: '100%', height:"70%", marginTop:10 }}>
                     <TabSwitcher titles={["current_projects","archived"]}
                                  nodes={[<ProjectsView isStudent={true} archived={false} assignments={assignments}
-                                 deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}/>,
+                                 deleteAssignment={() => undefined} archiveAssignment={() => undefined}
+                                 changeVisibilityAssignment={() => undefined}/>,
                                  <ProjectsView isStudent={true} archived={true} assignments={assignments}
-                                 deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}/>]}/>
+                                 deleteAssignment={() => undefined} archiveAssignment={() => undefined}
+                                 changeVisibilityAssignment={() => undefined}/>]}/>
                 </Box>
             </Stack>
         </>
@@ -78,17 +71,5 @@ function getAssignment(assignmentId: string): Assignment {
         score: 10,
         visible: true,
         archived: Number(assignmentId.slice(-1))%2==0,
-    }
-}
-
-function archiveSingleAssignment(assignment: Assignment): Assignment {
-    return {
-        id: assignment.id,
-        name: assignment.name,
-        deadline: assignment.deadline,
-        submissions: assignment.submissions,
-        score: assignment.score,
-        visible: assignment.visible,
-        archived: true,
     }
 }

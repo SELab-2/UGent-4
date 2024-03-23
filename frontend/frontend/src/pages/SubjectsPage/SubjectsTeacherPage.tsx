@@ -48,6 +48,10 @@ export function SubjectsTeacherPage() {
         const newAssignments = assignments.map((a, i) => i==index? archiveSingleAssignment(a): a);
         setAssignments(newAssignments);
     }
+    const changeVisibilityAssignment = (index: number) => {
+        const newAssignments = assignments.map((a, i) => i==index? changeVisibilitySingleAssignment(a): a);
+        setAssignments(newAssignments);
+    }
     
     return (
         <>
@@ -56,9 +60,11 @@ export function SubjectsTeacherPage() {
                 <Box sx={{ width: '100%', height:"70%", marginTop:10 }}>
                     <TabSwitcher titles={["current_projects","archived"]}
                                  nodes={[<ProjectsView isStudent={false} archived={false} assignments={assignments}
-                                    deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}/>,
+                                    deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
+                                    changeVisibilityAssignment={changeVisibilityAssignment}/>,
                                     <ProjectsView isStudent={false} archived={true} assignments={assignments}
-                                    deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}/>]}/>
+                                    deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
+                                    changeVisibilityAssignment={changeVisibilityAssignment}/>]}/>
                 </Box>
                 <Box display="flex" flexDirection="row-reverse" sx={{ width: '100%', height:"30%" }}>
                     <IconButton onClick={addProject} color="primary" edge="end" aria-label="add-project" >
@@ -103,5 +109,17 @@ function archiveSingleAssignment(assignment: Assignment): Assignment {
         score: assignment.score,
         visible: assignment.visible,
         archived: true,
+    }
+}
+
+function changeVisibilitySingleAssignment(assignment: Assignment): Assignment {
+    return {
+        id: assignment.id,
+        name: assignment.name,
+        deadline: assignment.deadline,
+        submissions: assignment.submissions,
+        score: assignment.score,
+        visible: !assignment.visible,
+        archived: assignment.archived,
     }
 }
