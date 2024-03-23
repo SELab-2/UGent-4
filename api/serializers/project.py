@@ -52,6 +52,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         extra_deadline = validated_data.pop("extra_deadline")
         validate_deadlines(deadline, extra_deadline)
 
+        new_vak = validated_data.get('vak')
+        validate_vak(instance, new_vak)
+
         super().update(instance=instance, validated_data=validated_data)
         instance.deadline = deadline
         instance.extra_deadline = extra_deadline
@@ -76,3 +79,11 @@ def validate_deadlines(deadline, extra_deadline):
         raise serializers.ValidationError(
             "Extra deadline moet na de eerste deadline liggen"
         )
+
+def validate_vak(instance, new_vak):
+    """
+    TODO
+    """
+
+    if instance.vak != new_vak:
+        raise serializers.ValidationError('Het vak van een project kan niet aangepast worden')
