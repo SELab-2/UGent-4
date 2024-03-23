@@ -9,6 +9,7 @@ interface ProjectsViewProps {
     assignments: Assignment[];
     deleteAssignment: (index: number) => void;
     archiveAssignment: (index: number) => void;
+    changeVisibilityAssignment: (index: number) => void;
 }
 
 interface Assignment {
@@ -21,7 +22,7 @@ interface Assignment {
     archived: boolean;
 }
 
-export function ProjectsView({isStudent, archived, assignments, deleteAssignment, archiveAssignment}: ProjectsViewProps) {
+export function ProjectsView({isStudent, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
     return (
         <>
             <Box aria-label={"courseHeader"}
@@ -68,7 +69,8 @@ export function ProjectsView({isStudent, archived, assignments, deleteAssignment
                                         dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
                                         isStudent={isStudent} archived={archived} visible={assignment.visible}
                                         deleteEvent={() => deleteAssignment(assignment.index)}
-                                        archiveEvent={() => archiveAssignment(assignment.index)}/>
+                                        archiveEvent={() => archiveAssignment(assignment.index)}
+                                        visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
                             ))}
                         </List>
                     </Box>

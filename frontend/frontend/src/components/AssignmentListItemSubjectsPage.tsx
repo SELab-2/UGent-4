@@ -17,6 +17,7 @@ interface AssignmentListItemSubjectsPageProps {
     visible: boolean;
     deleteEvent: () => void;
     archiveEvent: () => void;
+    visibilityEvent: () => void;
 }
 
 /*
@@ -29,7 +30,8 @@ interface AssignmentListItemSubjectsPageProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItemSubjectsPage({projectName, dueDate, submissions, score, isStudent, archived, visible, deleteEvent, archiveEvent}:AssignmentListItemSubjectsPageProps) {
+export function AssignmentListItemSubjectsPage({projectName, dueDate, submissions, score, isStudent, archived, visible,
+    deleteEvent, archiveEvent, visibilityEvent}:AssignmentListItemSubjectsPageProps) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
@@ -64,7 +66,8 @@ export function AssignmentListItemSubjectsPage({projectName, dueDate, submission
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ButtonActions archived={archived} startVisible={visible} deleteEvent={deleteEvent} archiveEvent={archiveEvent}/>
+                            <ButtonActions archived={archived} startVisible={visible} deleteEvent={deleteEvent}
+                            archiveEvent={archiveEvent} visibilityEvent={visibilityEvent}/>
                         </>
                     }
                 </ListItemButton>
@@ -79,9 +82,10 @@ interface ButtonActionsProps {
     startVisible: boolean;
     deleteEvent: () => void;
     archiveEvent: () => void;
+    visibilityEvent: () => void;
 }
 
-function ButtonActions({archived, startVisible, deleteEvent, archiveEvent}: ButtonActionsProps){
+function ButtonActions({archived, startVisible, deleteEvent, archiveEvent, visibilityEvent}: ButtonActionsProps){
     const [visible, setVisible] = useState(startVisible);
 
     const handleIconClick = (e, icon: string) => {
@@ -90,6 +94,7 @@ function ButtonActions({archived, startVisible, deleteEvent, archiveEvent}: Butt
         switch (icon) {
             case 'visible':
                 setVisible(!visible);
+                visibilityEvent();
                 break;
             case 'archive':
                 archiveEvent();
