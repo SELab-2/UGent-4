@@ -13,7 +13,6 @@ class ProjectFactory(DjangoModelFactory):
     class Meta:
         model = Project
 
-    project_id = factory.Sequence(lambda n: n)
     titel = factory.Faker("word")
     beschrijving = factory.Faker("paragraph")
     opgave_bestand = factory.django.FileField(data=b"file content")
@@ -29,5 +28,5 @@ class ProjectFactory(DjangoModelFactory):
         )
     )
     max_score = factory.Faker("random_int", min=10, max=100)
-    zichtbaar = factory.Faker('boolean')
-    gearchiveerd = factory.Faker('boolean')
+    zichtbaar = factory.Faker("boolean")
+    gearchiveerd = factory.Faker("boolean")
