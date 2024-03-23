@@ -2,6 +2,7 @@ import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
 import {t} from "i18next";
 import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
+import { useState } from "react";
 
 interface ProjectsViewProps {
     courseId: string;
@@ -31,7 +32,21 @@ interface Assignment {
 
 export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps) {
     const course = getCourse(courseId);
-    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
+    const assignmentsTemp = course.assignments.map((assignmentId) => getAssignment(assignmentId));
+    
+    const [assignments, setAssignments] = useState<Assignment[]>(assignmentsTemp.filter((assignment) => !assignment.archived));
+    const [archivedAssignments, setArchivedAssignments] = useState<Assignment[]>(assignmentsTemp.filter((assignment) => assignment.archived));
+
+    const deleteAssignment = (index: number) => {
+        setAssignments(assignments.filter((_, i) => i !== index));
+    }
+    const deleteArchivedAssignment = (index: number) => {
+        setArchivedAssignments(archivedAssignments.filter((_, i) => i !== index));
+    }
+    const archiveAssignment = (index: number) => {
+        setArchivedAssignments([...archivedAssignments, assignments[index]]);
+        deleteAssignment(index);
+    }
 
     return (
         <>
@@ -71,10 +86,25 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {assignments.filter((assignment) => assignment.archived == archived)
-                            .map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent} visible={assignment.visible}/>
-                            ))}
+                            {!archived?
+                                assignments
+                                .map((assignment, index) => (
+                                    <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
+                                        dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
+                                        isStudent={isStudent} archived={assignment.archived} visible={assignment.visible}
+                                        deleteEvent={() => deleteAssignment(index)}
+                                        archiveEvent={() => archiveAssignment(index)}/>
+                                ))
+                                :
+                                archivedAssignments
+                                .map((assignment, index) => (
+                                    <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
+                                        dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
+                                        isStudent={isStudent} archived={assignment.archived} visible={assignment.visible}
+                                        deleteEvent={() => deleteArchivedAssignment(index)}
+                                        archiveEvent={() => archiveAssignment(index)}/>
+                                ))
+                            }
                         </List>
                     </Box>
                 </Box>
@@ -98,11 +128,11 @@ function getCourse(courseId: string): Course {
 function getAssignment(assignmentId: string): Assignment {
     return {
         id: assignmentId,
-        name: "assignmentName",
+        name: assignmentId,
         deadline: new Date(2022, 11, 17),
         submissions: 2,
         score: 10,
         visible: true,
-        archived: false,
+        archived: Number(assignmentId.slice(-1))%2==0,
     }
 }
