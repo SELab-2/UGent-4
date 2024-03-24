@@ -169,7 +169,7 @@ export default function RestrictionPopup({
                             {type === 'dockerTest' && (<>
                                 <Typography>{t('dockerfile')}</Typography>
                                 <FileUploadButton name={'Upload Docker container'}
-                                                  fileTypes={['.tar']}
+                                                  fileTypes={['.tar', '.dockerfile']}
                                                   tooltip={t('upload_container')}
                                                   onFileChange={setFile}
                                                   path={dockerfile ? dockerfile : undefined}
