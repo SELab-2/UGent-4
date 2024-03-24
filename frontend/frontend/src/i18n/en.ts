@@ -31,10 +31,13 @@ const english = {
     upload_container: "Upload a .tar file",
     dockerfile: "Dockerfile",
     restrictiontype: "Restriction type",
+    dockerTest: "Docker test",
     maxSize: "Max file size",
     fileType: "Allowed file types",
     fileSize: "Max file size",
     allowed_file_types: "Allowed file types",
+    dockerfile_error: "Please upload a Dockerfile.",
+    filetype_error: "Please select at least one file type.",
 
 };
 

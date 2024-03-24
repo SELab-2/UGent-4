@@ -63,19 +63,21 @@ export function AddChangeAssignmentPage() {
     const [groups, setGroups] = useState(false);
     const [visible, setVisible] = useState(false);
     const [assignmentFile, setAssignmentFile] = useState<File>();
+
+    // State for the error checks of the assignment
     const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
         title: false,
         description: false,
         dueDate: false
     });
+
+    // State for the restriction popup
     const [open, setOpen] = useState(false);
     const [type, setType] = useState<restrictionType>('dockerTest');
     const [dockerfile, setDockerFile] = useState<File>();
     const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
     const [maxSize, setMaxSize] = useState<number>();
-    const [restriction, setRestriction] = useState<restriction>({type: '', value: undefined});
-
-
+    const [allowedTypes, setAllowedTypes] = useState<restrictionType[]>(['dockerTest', 'fileSize', 'fileType']);
     /**
      * Function to upload the details of the assignment through a text file
      * @param {ChangeEvent<HTMLInputElement>} event - The event object
@@ -87,14 +89,22 @@ export function AddChangeAssignmentPage() {
         }
     };
 
+    // Limit the types of restrictions that can be added by one for each type and set the type to the first allowed type,
+    // then open the restriction popup.
     const handleAddRestriction = () => {
+        //found at https://upmostly.com/typescript/typescripts-array-filter-method-explained
+        const currentRestrictionTypes = restrictions.map((restriction) => restriction.type as restrictionType);
+        setAllowedTypes(allowedTypes.filter((type) => !currentRestrictionTypes.includes(type)));
+        setType(allowedTypes[0])
         setOpen(true);
     }
 
+    // Remove the restriction at the given index, tied to the remove button in the restriction list.
     const removeRestriction = (index: number) => {
         setRestrictions(restrictions.filter((_, i) => i !== index));
     }
 
+// Handle the submission of the form, check if all required fields are filled in, and send the data to the API.
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setAssignmentErrors({title: title === "", description: description === "", dueDate: dueDate === null});
@@ -119,17 +129,10 @@ export function AddChangeAssignmentPage() {
         console.info('Form submitted', title, description, dueDate, restrictions, groups, visible, assignmentFile)
     }
 
+    // Fetch data from the API on load
     useEffect(() => {
         //TODO: fetch data from api
-        console.log(assignmentFile);
-    }, [assignmentFile]);
-
-    useEffect(() => {
-        if (restriction.type === '' || restriction.value === undefined) {
-            return;
-        }
-        setRestrictions(prevRestrictions => [...prevRestrictions, restriction]);
-    }, [restriction]);
+    }, []);
 
     return (
         <>
@@ -288,10 +291,12 @@ export function AddChangeAssignmentPage() {
                 </Stack>
                 <RestrictionPopup open={open} setOpen={setOpen}
                                   type={type} setType={setType}
-                                  setRestriction={setRestriction}
+                                  restrictions={restrictions} setRestrictions={setRestrictions}
                                   allowedFileTypes={allowedFileTypes} setAllowedFileTypes={setAllowedFileTypes}
                                   dockerfile={dockerfile} setDockerFile={setDockerFile}
-                                  maxSize={maxSize} setMaxSize={setMaxSize}/>
+                                  maxSize={maxSize} setMaxSize={setMaxSize}
+                                  allowedTypes={allowedTypes}
+                />
             </Stack>
         </>
     );
