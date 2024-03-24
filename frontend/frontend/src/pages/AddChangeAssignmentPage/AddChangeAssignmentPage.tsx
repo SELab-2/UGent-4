@@ -33,6 +33,8 @@ import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
  * The form should also contain a button to upload the assignment file for ease of use.
  */
 
+const initialAllowedTypes: restrictionType[] = ['dockerTest', 'fileSize', 'fileType'];
+
 interface assignment {
     title: string,
     description: string,
@@ -77,7 +79,8 @@ export function AddChangeAssignmentPage() {
     const [dockerfile, setDockerFile] = useState<File>();
     const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
     const [maxSize, setMaxSize] = useState<number>();
-    const [allowedTypes, setAllowedTypes] = useState<restrictionType[]>(['dockerTest', 'fileSize', 'fileType']);
+    const [allowedTypes, setAllowedTypes] = useState<restrictionType[]>(initialAllowedTypes);
+
     /**
      * Function to upload the details of the assignment through a text file
      * @param {ChangeEvent<HTMLInputElement>} event - The event object
@@ -94,9 +97,11 @@ export function AddChangeAssignmentPage() {
     const handleAddRestriction = () => {
         //found at https://upmostly.com/typescript/typescripts-array-filter-method-explained
         const currentRestrictionTypes = restrictions.map((restriction) => restriction.type as restrictionType);
-        setAllowedTypes(allowedTypes.filter((type) => !currentRestrictionTypes.includes(type)));
-        setType(allowedTypes[0])
-        setOpen(true);
+        setAllowedTypes(initialAllowedTypes.filter((type) => !currentRestrictionTypes.includes(type)));
+        if (allowedTypes.length !== 0) {
+            setType(allowedTypes[0])
+            setOpen(true);
+        }
     }
 
     // Remove the restriction at the given index, tied to the remove button in the restriction list.
@@ -129,10 +134,13 @@ export function AddChangeAssignmentPage() {
         console.info('Form submitted', title, description, dueDate, restrictions, groups, visible, assignmentFile)
     }
 
-    // Fetch data from the API on load
+    // Remove the types of restrictions that are already added to the assignment from the allowed types.
     useEffect(() => {
-        //TODO: fetch data from api
-    }, []);
+        const currentRestrictionTypes = restrictions.map((restriction) => restriction.type as restrictionType);
+        setAllowedTypes(initialAllowedTypes.filter((type) => !currentRestrictionTypes.includes(type)));
+        setType(allowedTypes[0]);
+        console.log(allowedTypes)
+    }, [restrictions]);
 
     return (
         <>
@@ -239,6 +247,7 @@ export function AddChangeAssignmentPage() {
                             <Box width={'100%'} display={'flex'} justifyContent={'flex-end'}>
                                 <Tooltip title={t('add_restriction')}>
                                     <IconButton color={"primary"}
+                                                disabled={allowedTypes.length === 0}
                                                 onClick={handleAddRestriction}><AddIcon/></IconButton>
                                 </Tooltip>
                             </Box>
