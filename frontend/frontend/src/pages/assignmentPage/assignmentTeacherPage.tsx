@@ -40,6 +40,7 @@ export function Restriction({type, details}: restrictionProps) {
     );
 }
 
+const deadline = "02/04/2024";
 
 export function AssignmentTeacherPage() {
     return (
@@ -48,53 +49,17 @@ export function AssignmentTeacherPage() {
             <Stack marginTop={15} direction={"column"} spacing={4}
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
 
-                {/*opdracht and upload button*/}
+                {/*deadline and groep button */}
                 <Box sx={{
                     padding: '20px',
                     backgroundColor: "background.default",
                 }}
                 >
-                    <Stack direction={"row"}>
-                        <Grid container spacing={2} alignItems="center">
-                            <Grid item>
-                                <Typography variant="h6" sx={{ fontWeight: 'bold'}} color="text.primary">
-                                    Naam Opdracht
-                                </Typography>
-                            </Grid>
-                            <Grid item>
-                                <TextField variant="outlined"/>
-                            </Grid>
-                        </Grid>
-                        <div style={{flexGrow: 1}}/>
-                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                            <Typography color="secondary.contrastText">upload opgavebestand</Typography>
-                            <UploadIcon></UploadIcon>
-                        </Button>
-                    </Stack>
+                    <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{deadline}</Typography>
                 </Box>
 
-                {/*Deadline*/}
-                <Box sx={{
-                    padding: '20px',
-                    backgroundColor: "background.default",
-                }}
-                >
-                    <Grid container spacing={2} alignItems="center">
-                        <Grid item>
-                            <Typography variant="h6" sx={{ fontWeight: 'bold'}} color="text.primary">
-                                Deadline
-                            </Typography>
-                        </Grid>
-                        <Grid item>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker/>
-                            </LocalizationProvider>
-                        </Grid>
-                    </Grid>
-                </Box>
-
-                {/*Opgave*/}
-                <Card elevation={1} sx={{
+               {/*Opgave*/}
+               <Card elevation={1} sx={{
                     color: "text.primary",
                     padding: '20px',
                     backgroundColor: "background.default",
@@ -103,51 +68,9 @@ export function AssignmentTeacherPage() {
                 >
                     <Stack direction={"column"}>
                         <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>Opgave</Typography>
-                        <TextField multiline variant="outlined" defaultValue={text}/>
+                        <Typography>{text}</Typography>
                     </Stack>
                 </Card>
-
-                {/*Restricties*/}
-                <Card elevation={1} sx={{
-                    color: "text.primary",
-                    backgroundColor: "background.default",
-                    borderRadius: 5,
-                    padding: '20px'
-                }}
-                >
-                    <List>
-                        <ListItem>
-                            <ListItemText><strong>Type restrictie</strong></ListItemText>
-                            <ListItemText><strong>Details</strong></ListItemText>
-                        </ListItem>
-                        <Divider/>
-
-                        {restrictions.map((res) =>
-                            <Restriction type={res.type} details={res.details}></Restriction>
-                        )}
-
-                    </List>
-
-                    <Button sx={{bgcolor: 'secondary.main'}}>
-                        <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
-                    </Button>
-                </Card>
-                
-                <Box sx={{
-                    padding: '20px',
-                    backgroundColor: "background.default",
-                }}
-                >
-                    <Stack direction={"row"}>
-                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                            <Typography color="secondary.contrastText">groepen</Typography>
-                        </Button>
-                        <div style={{flexGrow: 1}}/>
-                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                            <SaveIcon sx={{color: "secondary.contrastText"}}></SaveIcon>
-                        </Button>
-                    </Stack>
-                </Box>
             </Stack>
         </>
     );
