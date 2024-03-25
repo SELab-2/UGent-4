@@ -1,4 +1,4 @@
-import {Card,ListItem, ListItemText} from "@mui/material";
+import {Card,ListItem, ListItemText, Select} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 
@@ -40,7 +40,9 @@ export function GroupListItem({id, studentName, groupMemberNames}: GroupListItem
                     borderRadius: 2,
                 }}>
                     <ListItemText sx={{maxWidth: 100}} primary={studentName}/>
-                    <ListItemText sx={{maxWidth: 120}} primary={groupMemberNames.join(", ")}/>
+                    <Select>
+                        <ListItemText primary={groupMemberNames.join(", ")}/>
+                    </Select>
                 </ListItem>
             </ListItem>
             </Card>
