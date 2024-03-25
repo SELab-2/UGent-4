@@ -5,7 +5,7 @@ import {AssignmentListItem} from "./AssignmentListItem";
 import {useNavigate} from "react-router-dom";
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { getProjecten, getVakken } from '../axiosConfig';
 /*
 * CourseCard component displays a card with course information and a list of assignments
 * @param courseId: string, the id of the course
@@ -42,32 +42,12 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const navigate = useNavigate(); 
 
-    useEffect(() => {
-        const fetchCourse = async () => {
-            try {
-                const response = await axios.get(`https://sel2-4.ugent.be/api/vakken/${courseId}`);
-                setCourse(response.data);
-            } catch (error) {
-                console.error("Error fetching course:", error);
-            }
-        };
-
-        const fetchAssignments = async () => {
-            try {
-                const assignmentPromises = course?.assignments.map(async (assignmentId: string) => {
-                    const response = await axios.get(`https://sel2-4.ugent.be/api/projecten/${assignmentId}`);
-                    return response.data;
-                });
-
-                const assignmentData = await Promise.all(assignmentPromises || []);
-                setAssignments(assignmentData);
-            } catch (error) {
-                console.error("Error fetching assignments:", error);
-            }
-        };
-
-        fetchCourse();
-    }, [courseId]);
+    // hier zijn nog problemen bij
+    Promise.all([getVakken(), getProjecten()])
+        .then(function (results) {
+        const course = results[0];
+        const assignments = results[1];
+    });
 
     const handleCardClick = () => {
         console.log("Card clicked");

@@ -4,7 +4,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../axiosConfig";
 
 interface AssignmentListItemProps {
     id: string;
@@ -32,8 +32,7 @@ export function AssignmentListItem({id, projectName, dueDate, status, isStudent}
     useEffect(() => {
         const fetchData = async () => {
           try {
-            // Make API request to fetch status
-            const response = await axios.get(`https://sel2-4.ugent.be/api/projecten/${id}`);
+            const response = await axios.get(`/projecten/${id}`);
             setStatus(response.data.status);
             setLoading(false);
           } catch (error) {

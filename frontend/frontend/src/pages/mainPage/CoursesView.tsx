@@ -1,7 +1,7 @@
 import {IconButton, Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
 import AddIcon from "@mui/icons-material/Add";
-import axios from "axios";
+import axios from "../../axiosConfig.ts";
 import { useEffect, useState } from "react";
 interface CourseCardProps {
     isStudent: boolean;
@@ -13,7 +13,7 @@ export function CoursesView({isStudent}: CourseCardProps) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get("https://sel2-4.ugent.be/api/vakken/");
+                const response = await axios.get("/vakken/");
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
