@@ -1,4 +1,4 @@
-import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
+import {ListItem, ListItemText, Divider, ListItemIcon} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import DownloadIcon from '@mui/icons-material/Download';
 import {t} from "i18next";
@@ -19,15 +19,19 @@ interface AssignmentListItemTeacherPageProps {
 
 export function AssignmentListItemTeacherPage({id,studentName,submitted, score}:AssignmentListItemTeacherPageProps) {
     const navigate = useNavigate();
-    const handleProjectClick = () => {
+    const handleStudentClick = () => {
         console.log("Project clicked");
         navigate(`/${id}`)
+    }
+    const handleStudentDownloadClick = () => {
+        console.log("Project clicked");
+        navigate(`/${id}/download/`)
     }
 
     return (
         <>
             <ListItem id={studentName} sx={{margin:0}} disablePadding={true}>
-                <ListItemButton onClick={handleProjectClick} sx={{
+                <ListItem sx={{
                     width: "100%",
                     height: 30,
                     display: "flex",
@@ -37,11 +41,30 @@ export function AssignmentListItemTeacherPage({id,studentName,submitted, score}:
                     paddingY: 3,
                     borderRadius:2,
                 }}>
-                    <ListItemText sx={{maxWidth:10}} primary={studentName}/>
-                    <ListItemText sx={{maxWidth:40}} primary={submitted? submitted.toLocaleDateString() : t("nog niet ingediend")}/>
-                    <ListItemText sx={{maxWidth:50}} primary={score + "/20"}/>
-                    <DownloadIcon></DownloadIcon>
-                </ListItemButton>
+                    <ListItemText onClick={handleStudentClick} sx={{
+                                                                    maxWidth: 10,
+                                                                    color: 'primary.main',
+                                                                    '&:hover': {
+                                                                    color: 'primary.light',
+                                                                    },
+                                                                }} primary={studentName}/>
+                    <ListItemText sx={{maxWidth:40}} primary={submitted? submitted.toLocaleDateString() : t("niet ingediend")}/>
+                    <ListItemText sx={{maxWidth:50}} primary={submitted? score+ "/20": t("-")}/>
+                    <ListItemIcon sx={{minWidth: 35}}>
+                    {submitted  ? (
+                            <DownloadIcon  onClick={handleStudentDownloadClick} 
+                                sx={{ 
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                    color: 'primary.light',
+                                    }
+                                }} 
+                                />
+                            ) : (
+                        <DownloadIcon sx={{ color: 'gray' }} />
+                        )}
+                    </ListItemIcon>
+                </ListItem>
             </ListItem>
             <Divider color={"text.main"}></Divider>
         </>
