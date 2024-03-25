@@ -24,6 +24,20 @@ const dutch = {
     submit: "Bevestig",
     cancel: "Annuleer",
     add_restriction: "Voeg restrictie toe",
+    is_required: "is verplicht",
+    name: "Naam",
+    descriptionName: "Beschrijving",
+    restrictionType: "Restrictietype",
+    upload_container: "Upload een .tar bestand",
+    dockerfile: "Docker bestand (Dockerfile)",
+    restrictiontype: "Restrictietype",
+    dockerTest: "Docker test",
+    maxSize: "Maximale bestandsgrootte",
+    fileType: "Toegestane bestandstypes",
+    fileSize: "Maximale bestandsgrootte",
+    allowed_file_types: "Toegestane bestandstypes",
+    dockerfile_error: "Gelieve een Docker bestand te uploaden.",
+    filetype_error: "Gelieve minstens één bestandstype te selecteren.",
 };
 
 export default dutch;
