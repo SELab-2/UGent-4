@@ -1,5 +1,5 @@
 import {Header} from "../../components/Header.tsx";
-import {Box, Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextField, Typography} from "@mui/material";
+import {Box, Divider, Grid, List, Stack, TextField, Typography} from "@mui/material";
 import Switch from '@mui/material/Switch';
 import { GroupListItem } from "../../components/GroupListItem.tsx";
 
@@ -7,7 +7,7 @@ const groups = [
     {
       id: '1',
       name: 'Jane',
-      members: ['Josh', 'Alice']
+      members: ['Josh', 'Alice','Joost','Michiel','Andy']
     },
     {
       id: '2',
