@@ -1,6 +1,6 @@
 import {Header} from "../../components/Header.tsx";
 import {AssignmentListItem} from "../../components/AssignmentListItem.tsx";
-import {TextField,Paper, Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
+import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
 
 const text = "Lorem ipsum dolor sit amet consectetur. Nisi magna dolor et nisi nibh et velit phasellus. Aliquam semper justo posuere suspendisse amet amet nam nec. Tellus magna in proin tempor hac sit. Faucibus laoreet nulla commodo quis. Porttitor sit facilisis sit dignissim quis. Malesuada etiam tempor donec et ante. Aliquam massa donec augue aliquam semper amet blandit sed faucibus. Et elementum duis adipiscing turpis mi. Senectus eu rutrum accumsan convallis metus mattis risus. Quam eget sapien tellus aliquam facilisi sit volutpat. Scelerisque auctor purus nam sit lacus amet ullamcorper amet. Turpis nulla quis in pretium. Maecenas aliquam ac ullamcorper suspendisse morbi cras. Mi nibh aliquet massa sit eget tristique a. Posuere pretium auctor tellus massa et eu egestas. Sit lorem proin aenean tortor morbi condimentum. Leo eu enim cursus tempus sed viverra laoreet. Nisl ornare velit molestie suspendisse. Hendrerit nibh mauris vulputate sit vitae. Tellus quisque non nibh proin nunc lacus scelerisque dui. Aliquam fermentum libero aliquet volutpat at. Vestibulum ultrices nec felis leo nibh viverra. Hendrerit ut nunc porta egestas sit velit dictumst dis porta. Donec quam aliquam commodo mattis purus. Tellus nulla lectus fusce in fames scelerisque at."
 
@@ -57,7 +57,7 @@ const deadline = "02/04/2024";
 export function AssignmentStudentPage() {
     return (
         <>
-            <Header variant={"default"} title={"Naam Opdracht"}></Header>
+            <Header variant={"not_main"} title={"Naam Opdracht"}></Header>
             <Stack marginTop={15} direction={"column"} spacing={4}
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
                 
@@ -91,11 +91,6 @@ export function AssignmentStudentPage() {
                 </Card>
 
                 {/*Indieningen*/}
-                <Box 
-                    sx={{
-                        width: "80%",
-                    }}
-                >
                 <Card elevation={1} sx={{
                     color: "text.primary",
                     backgroundColor: "background.default",
@@ -104,10 +99,10 @@ export function AssignmentStudentPage() {
                     
                 }}
                 >
-                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} paddingLeft={10}
-                         paddingRight={19}>
-                        <Typography sx={{ fontWeight: 'bold' }} width={30}>Indiening</Typography>
-                        <Typography sx={{ fontWeight: 'bold' }} width={30}>Datum</Typography>
+                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
+                        <Typography sx={{fontWeight: 'bold'}}>Indiening</Typography>
+                        <Typography sx={{fontWeight: 'bold'}}>Tijdstip</Typography>
+                        <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
                     </Box>
                     <Box style={{maxHeight: 300, overflow: 'auto'}}>
                         <Divider color={"text.main"}></Divider>
@@ -115,19 +110,17 @@ export function AssignmentStudentPage() {
                             {assignments.map((assignment) => (
                                 <Box key={assignment.id}>
                                     <Divider color={"text.main"}></Divider>
-                                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} paddingLeft={10}
-                                        paddingRight={10}>
+                                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
                                     <AssignmentListItem id={assignment.id} projectName={assignment.name}
                                                         dueDate={assignment.deadline}
-                                                        status={assignment.id === "assignment1"}
-                                                        isStudent={false}/>
+                                                        status={true}
+                                                        isStudent={true}/>
                                     </Box>
                                 </Box>
                             ))}
                         </List>
                     </Box>
                 </Card>
-                </Box>
 
                 {/*Upload knop*/}
                 <Box sx={{
@@ -145,7 +138,6 @@ export function AssignmentStudentPage() {
                         </Button>
                     </Stack>
                 </Box>
-
             </Stack>
         </>
     );
