@@ -1,6 +1,6 @@
 import {Box, Button, Card, Divider, IconButton, ListItem, Stack, TextField, Tooltip, Typography} from "@mui/material";
 import {Header} from "../../components/Header.tsx";
-import {ChangeEvent, useEffect, useState} from "react";
+import {ChangeEvent, FormEvent, useEffect, useState} from "react";
 import {Dayjs} from "dayjs";
 import {t} from "i18next";
 import {DateTimePicker, LocalizationProvider, renderTimeViewClock} from "@mui/x-date-pickers";
@@ -15,10 +15,10 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
+import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
 
 //TODO: fix api integration
-//TODO: add logic for all form state manipulations
-
+//TODO: add restriction functionality
 /**
  * This page is used to add or change an assignment.
  * The page should only be accessible to teachers of the course.
@@ -33,19 +33,27 @@ import SaveIcon from '@mui/icons-material/Save';
  * The form should also contain a button to upload the assignment file for ease of use.
  */
 
+const initialAllowedTypes: restrictionType[] = ['dockerTest', 'fileSize', 'fileType'];
+
 interface assignment {
     title: string,
     description: string,
-    assignmentFile: File,
+    assignmentFile: File | null,
     dueDate: Dayjs,
     restrictions: restriction[],
     groups: boolean,
     visible: boolean,
 }
 
-interface restriction {
+export interface restriction {
     type: string,
-    value: string,
+    value: string[] | number | File | undefined,
+}
+
+interface errorChecks {
+    title: boolean,
+    description: boolean,
+    dueDate: boolean,
 }
 
 export function AddChangeAssignmentPage() {
@@ -58,6 +66,21 @@ export function AddChangeAssignmentPage() {
     const [visible, setVisible] = useState(false);
     const [assignmentFile, setAssignmentFile] = useState<File>();
 
+    // State for the error checks of the assignment
+    const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
+        title: false,
+        description: false,
+        dueDate: false
+    });
+
+    // State for the restriction popup
+    const [open, setOpen] = useState(false);
+    const [type, setType] = useState<restrictionType>('dockerTest');
+    const [dockerfile, setDockerFile] = useState<File>();
+    const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
+    const [maxSize, setMaxSize] = useState<number>();
+    const [allowedTypes, setAllowedTypes] = useState<restrictionType[]>(initialAllowedTypes);
+
     /**
      * Function to upload the details of the assignment through a text file
      * @param {ChangeEvent<HTMLInputElement>} event - The event object
@@ -69,24 +92,61 @@ export function AddChangeAssignmentPage() {
         }
     };
 
+    // Limit the types of restrictions that can be added by one for each type and set the type to the first allowed type,
+    // then open the restriction popup.
     const handleAddRestriction = () => {
-
+        //found at https://upmostly.com/typescript/typescripts-array-filter-method-explained
+        const currentRestrictionTypes = restrictions.map((restriction) => restriction.type as restrictionType);
+        setAllowedTypes(initialAllowedTypes.filter((type) => !currentRestrictionTypes.includes(type)));
+        if (allowedTypes.length !== 0) {
+            setType(allowedTypes[0])
+            setOpen(true);
+        }
     }
 
+    // Remove the restriction at the given index, tied to the remove button in the restriction list.
+    const removeRestriction = (index: number) => {
+        setRestrictions(restrictions.filter((_, i) => i !== index));
+    }
+
+// Handle the submission of the form, check if all required fields are filled in, and send the data to the API.
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setAssignmentErrors({title: title === "", description: description === "", dueDate: dueDate === null});
+        if (title === "" || description === "" || dueDate === null) {
+            return;
+        }
+        let optionalFile: File | null = null;
+        if (assignmentFile !== undefined) {
+            optionalFile = assignmentFile;
+        }
+        const newAssignment: assignment = {
+            title: title,
+            description: description,
+            assignmentFile: optionalFile,
+            dueDate: dueDate,
+            restrictions: restrictions,
+            groups: groups,
+            visible: visible,
+        }
+        //TODO: send data to api
+        alert("Form Submitted");
+        console.info('Form submitted', title, description, dueDate, restrictions, groups, visible, assignmentFile)
+    }
+
+    // Remove the types of restrictions that are already added to the assignment from the allowed types.
     useEffect(() => {
-        //TODO: fetch data from api
-        console.log(assignmentFile);
-        setRestrictions([{type: "test", value: "test"}, {type: "test2", value: "test2"}, {
-            type: "test3",
-            value: "test3"
-        }, {type: "test4", value: "test4"}])
-    }, [assignmentFile]);
+        const currentRestrictionTypes = restrictions.map((restriction) => restriction.type as restrictionType);
+        setAllowedTypes(initialAllowedTypes.filter((type) => !currentRestrictionTypes.includes(type)));
+        setType(allowedTypes[0]);
+        console.log(allowedTypes)
+    }, [restrictions]);
 
     return (
         <>
             <Stack direction={"column"} paddingX={2}>
                 <Header variant={"default"} title={title}/>
-                <Stack direction={"column"} marginTop={11}>
+                <Stack direction={"column"} marginTop={11} component={"form"} onSubmit={handleSubmit}>
                     <Box aria-label={"title_and_upload"}
                          padding={2}
                          paddingRight={0}
@@ -95,10 +155,12 @@ export function AddChangeAssignmentPage() {
                          flexDirection={"row"}
                          width={'98%'}
                          justifyContent={"space-between"}>
-                        <Box aria-label={'title'} display={'flex'} flexDirection={"row"} gap={2} alignItems={"center"}>
+                        <Box aria-label={'title'} display={'flex'} flexDirection={"row"} gap={2}
+                             alignItems={"center"}>
                             <Typography variant={'h6'} color={"text.primary"}
                                         fontWeight={"bold"}>{t('assignmentName')}</Typography>
-                            <TextField type="text" placeholder={"Title"}
+                            <TextField type="text" placeholder={"Title"} error={assignmentErrors.title}
+                                       helperText={assignmentErrors.title ? t('name') + " " + t('is_required') : ""}
                                        onChange={(event) => setTitle(event.target.value)}/>
                         </Box>
                         <Box padding={0} marginRight={3} display={"flex"} flexDirection={"column"}
@@ -115,12 +177,18 @@ export function AddChangeAssignmentPage() {
                         <Typography variant={'h6'} color={"text.primary"}
                                     fontWeight={"bold"}>Deadline:</Typography>
                         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
-                            <DateTimePicker value={dueDate}
+                            <DateTimePicker value={dueDate} disablePast
                                             sx={{width: 230}}
                                             viewRenderers={{
                                                 hours: renderTimeViewClock,
                                                 minutes: renderTimeViewClock,
                                                 seconds: renderTimeViewClock,
+                                            }}
+                                            slotProps={{
+                                                textField: {
+                                                    error: assignmentErrors.dueDate,
+                                                    helperText: assignmentErrors.dueDate ? "Deadline" + " " + t('is_required') : "",
+                                                },
                                             }}
                                             onChange={(newValue) => setDueDate(newValue)}/>
                         </LocalizationProvider>
@@ -133,6 +201,8 @@ export function AddChangeAssignmentPage() {
                             <TextField type="text" placeholder={"Description"} variant={'standard'} multiline
                                        value={description} onChange={(event) => setDescription(event.target.value)}
                                        fullWidth
+                                       error={assignmentErrors.description}
+                                       helperText={assignmentErrors.description ? t("descriptionName") + " " + t('is_required') : ""}
                                        sx={{overflowY: 'auto', maxHeight: '25svh'}}/>
                         </Box>
                     </Card>
@@ -158,8 +228,10 @@ export function AddChangeAssignmentPage() {
                                                         <Box display={'flex'} flexDirection={'row'}
                                                              alignItems={'center'} gap={1}>
                                                             <Typography
-                                                                variant={"body1"}>{restriction.value}</Typography>
-                                                            <IconButton size={'small'}>
+                                                                variant={"body1"}>{restriction.value instanceof File ? restriction.value.name : restriction.value instanceof Array ? restriction.value.join(', ') : typeof restriction.value === 'number' ? restriction.value.toString() + 'mb' : ''
+                                                            }</Typography>
+                                                            <IconButton size={'small'}
+                                                                        onClick={() => removeRestriction(index)}>
                                                                 <ClearIcon fontSize={'small'}
                                                                            color={'error'}></ClearIcon>
                                                             </IconButton>
@@ -174,12 +246,14 @@ export function AddChangeAssignmentPage() {
                             </Box>
                             <Box width={'100%'} display={'flex'} justifyContent={'flex-end'}>
                                 <Tooltip title={t('add_restriction')}>
-                                    <IconButton color={"primary"} onClick={handleAddRestriction}><AddIcon/></IconButton>
+                                    <IconButton color={"primary"}
+                                                disabled={allowedTypes.length === 0}
+                                                onClick={handleAddRestriction}><AddIcon/></IconButton>
                                 </Tooltip>
                             </Box>
                         </Card>
                     </Box>
-                    <Box aria-label={'main actions'} marginTop={5} display={"flex"} flexDirection={'row'}
+                    <Box aria-label={'main actions'} marginTop={3} display={"flex"} flexDirection={'row'}
                          width={'100%'} justifyContent={'space-between'}>
                         <Box aria-label={'visibility_and_groups'} display={'flex'} flexDirection={'row'} gap={1}
                              alignItems={'center'}
@@ -209,21 +283,29 @@ export function AddChangeAssignmentPage() {
                                         fontSize={'medium'}/></IconButton>
                             </Tooltip>
                             <Tooltip title={t('submit')}>
-                                <IconButton
-                                    sx={{
-                                        backgroundColor: 'primary.main', borderRadius: 2,
-                                        color: 'background.default',
-                                        "&:hover": {
-                                            backgroundColor: 'secondary.main',
-                                            color: 'text.primary'
-                                        },
-                                    }}>
+                                <IconButton type="submit" aria-label={"submit"}
+                                            sx={{
+                                                backgroundColor: 'primary.main', borderRadius: 2,
+                                                color: 'background.default',
+                                                "&:hover": {
+                                                    backgroundColor: 'secondary.main',
+                                                    color: 'text.primary'
+                                                },
+                                            }}>
                                     <SaveIcon
                                         fontSize={'medium'}/></IconButton>
                             </Tooltip>
                         </Box>
                     </Box>
                 </Stack>
+                <RestrictionPopup open={open} setOpen={setOpen}
+                                  type={type} setType={setType}
+                                  restrictions={restrictions} setRestrictions={setRestrictions}
+                                  allowedFileTypes={allowedFileTypes} setAllowedFileTypes={setAllowedFileTypes}
+                                  dockerfile={dockerfile} setDockerFile={setDockerFile}
+                                  maxSize={maxSize} setMaxSize={setMaxSize}
+                                  allowedTypes={allowedTypes}
+                />
             </Stack>
         </>
     );
