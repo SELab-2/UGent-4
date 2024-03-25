@@ -3,6 +3,8 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 interface AssignmentListItemProps {
     id: string;
@@ -23,6 +25,27 @@ interface AssignmentListItemProps {
 
 export function AssignmentListItem({id, projectName, dueDate, status, isStudent}: AssignmentListItemProps) {
     const navigate = useNavigate();
+    const [stat, setStatus] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        const fetchData = async () => {
+          try {
+            // Make API request to fetch status
+            const response = await axios.get(`https://sel2-4.ugent.be/api/projecten/${id}`);
+            setStatus(response.data.status);
+            setLoading(false);
+          } catch (error) {
+            const errorMessage = (error as Error).message;
+            setError(errorMessage);
+            setLoading(false);
+          }
+        };
+    
+        fetchData();
+      }, [id]);
+
     const handleProjectClick = () => {
         console.log("Project clicked");
         navigate(`/${id}`)
