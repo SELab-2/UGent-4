@@ -4,19 +4,12 @@ import {t} from "i18next";
 import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
 
 interface ProjectsViewProps {
-    courseId: string;
     isStudent: boolean;
     archived: boolean;
-}
-
-interface Course {
-    id: string;
-    name: string;
-    teacher: string;
-    students: string[];
-    //list of assignment ids
-    assignments: string[];
-    archived: boolean;
+    assignments: Assignment[];
+    deleteAssignment: (index: number) => void;
+    archiveAssignment: (index: number) => void;
+    changeVisibilityAssignment: (index: number) => void;
 }
 
 interface Assignment {
@@ -29,10 +22,7 @@ interface Assignment {
     archived: boolean;
 }
 
-export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps) {
-    const course = getCourse(courseId);
-    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
-
+export function ProjectsView({isStudent, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
     return (
         <>
             <Box aria-label={"courseHeader"}
@@ -61,7 +51,7 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
             </Box>
             <Box aria-label={"assignmentList"}
                 sx={{backgroundColor: "background.default",
-                    height: 350,
+                    height: 340,
                     display: "flex",
                     flexDirection: "column",
                     padding:1,
@@ -69,11 +59,18 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
                     paddingBottom:0
                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 330, overflow:"auto"}}>
+                    <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {assignments.filter((assignment) => assignment.archived == archived)
+                            {assignments
+                            .map((assignment, index) => ({...assignment, index}))
+                            .filter((assignment) => assignment.archived == archived)
                             .map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent} visible={assignment.visible}/>
+                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
+                                        dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
+                                        isStudent={isStudent} archived={archived} visible={assignment.visible}
+                                        deleteEvent={() => deleteAssignment(assignment.index)}
+                                        archiveEvent={() => archiveAssignment(assignment.index)}
+                                        visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
                             ))}
                         </List>
                     </Box>
@@ -81,28 +78,4 @@ export function ProjectsView({courseId, isStudent, archived}: ProjectsViewProps)
             </Box>
         </>
     );
-}
-
-//TODO: use api to get data, for now use mock data
-function getCourse(courseId: string): Course {
-    return {
-        id: courseId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2"],
-        archived: false,
-        assignments: ["assignment1", "assignment2", "assignment3", "assignment4", "assignment5", "assignment6", "assignment7", "assignment8", "assignment9"]
-    }
-}
-
-function getAssignment(assignmentId: string): Assignment {
-    return {
-        id: assignmentId,
-        name: "assignmentName",
-        deadline: new Date(2022, 11, 17),
-        submissions: 2,
-        score: 10,
-        visible: true,
-        archived: false,
-    }
 }
