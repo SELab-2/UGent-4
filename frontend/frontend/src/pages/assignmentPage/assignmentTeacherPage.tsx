@@ -10,52 +10,67 @@ import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 
 const text = "Lorem ipsum dolor sit amet consectetur. Nisi magna dolor et nisi nibh et velit phasellus. Aliquam semper justo posuere suspendisse amet amet nam nec. Tellus magna in proin tempor hac sit. Faucibus laoreet nulla commodo quis. Porttitor sit facilisis sit dignissim quis. Malesuada etiam tempor donec et ante. Aliquam massa donec augue aliquam semper amet blandit sed faucibus. Et elementum duis adipiscing turpis mi. Senectus eu rutrum accumsan convallis metus mattis risus. Quam eget sapien tellus aliquam facilisi sit volutpat. Scelerisque auctor purus nam sit lacus amet ullamcorper amet. Turpis nulla quis in pretium. Maecenas aliquam ac ullamcorper suspendisse morbi cras. Mi nibh aliquet massa sit eget tristique a. Posuere pretium auctor tellus massa et eu egestas. Sit lorem proin aenean tortor morbi condimentum. Leo eu enim cursus tempus sed viverra laoreet. Nisl ornare velit molestie suspendisse. Hendrerit nibh mauris vulputate sit vitae. Tellus quisque non nibh proin nunc lacus scelerisque dui. Aliquam fermentum libero aliquet volutpat at. Vestibulum ultrices nec felis leo nibh viverra. Hendrerit ut nunc porta egestas sit velit dictumst dis porta. Donec quam aliquam commodo mattis purus. Tellus nulla lectus fusce in fames scelerisque at."
 
-const assignments = [
+const students = [
     {
-        id: '1',
-        name: '#1',
-        deadline: new Date(2024, 11, 17)
+      id: '1',
+      name: 'Lucas',
+      submitted: new Date(2024, 11, 17),
+      score: 12,
     },
     {
-        id: '2',
-        name: '#2',
-        deadline: new Date(2024, 10, 25)
+      id: '2',
+      name: 'Sophia',
+      submitted: undefined,
+      score: 15,
     },
     {
-        id: '3',
-        name: '#3',
-        deadline: new Date(2024, 9, 30)
+      id: '3',
+      name: 'Ethan',
+      submitted: new Date(2024, 11, 19),
+      score: 18,
     },
     {
-        id: '4',
-        name: '#4',
-        deadline: new Date(2024, 8, 12)
+      id: '4',
+      name: 'Emma',
+      submitted: new Date(2024, 11, 20),
+      score: 10,
     },
     {
-        id: '5',
-        name: '#5',
-        deadline: new Date(2024, 7, 8)
+      id: '5',
+      name: 'Liam',
+      submitted: undefined,
+      score: 17,
     },
     {
-        id: '6',
-        name: '#6',
-        deadline: new Date(2024, 6, 15)
+      id: '6',
+      name: 'Olivia',
+      submitted: new Date(2024, 11, 22),
+      score: 14,
     },
     {
-        id: '7',
-        name: '#7',
-        deadline: new Date(2024, 5, 20)
+      id: '7',
+      name: 'Noah',
+      submitted: undefined,
+      score: 9,
     },
     {
-        id: '8',
-        name: '#8',
-        deadline: new Date(2024, 4, 10)
+      id: '8',
+      name: 'Ava',
+      submitted: undefined,
+      score: 16,
     },
     {
-        id: '9',
-        name: '#9',
-        deadline: new Date(2024, 3, 28)
-    }
+      id: '9',
+      name: 'Mia',
+      submitted: new Date(2024, 11, 25),
+      score: 11,
+    },
+    {
+      id: '10',
+      name: 'William',
+      submitted: undefined,
+      score: 19,
+    },
 ];
 
 const deadline = "02/04/2024";
@@ -108,15 +123,15 @@ export function AssignmentTeacherPage() {
                     <Box style={{maxHeight: 300, overflow: 'auto'}}>
                         <Divider color={"text.main"}></Divider>
                         <List disablePadding={true} >
-                                {assignments.map((assignment) => (
-                                    <Box key={assignment.id}>
+                                {students.map((student) => (
+                                    <Box key={student.id}>
                                         <Divider color={"text.main"}></Divider>
                                         <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
                                         <AssignmentListItemTeacherPage
-                                            id={assignment.id} 
-                                            studentName={assignment.name}
-                                            submitted={assignment.deadline}
-                                            score={12}
+                                            id={student.id} 
+                                            studentName={student.name}
+                                            submitted={student.submitted}
+                                            score={student.score}
                                             />
                                         </Box>
                                     </Box>
