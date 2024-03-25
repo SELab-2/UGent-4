@@ -1,67 +1,67 @@
 import {Header} from "../../components/Header.tsx";
 import {Box, Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextField, Typography} from "@mui/material";
 import Switch from '@mui/material/Switch';
-
+import { GroupListItem } from "../../components/GroupListItem.tsx";
 
 const groups = [
     {
-        name: 'Jane'
+      id: '1',
+      name: 'Jane',
+      members: ['Josh', 'Alice']
     },
     {
-        name: 'John'
+      id: '2',
+      name: 'John',
+      members: ['Emily', 'Michael']
     },
     {
-        name: 'Alice'
+      id: '3',
+      name: 'Emma',
+      members: ['James', 'Olivia']
     },
     {
-        name: 'Bob'
+      id: '4',
+      name: 'Jack',
+      members: ['Sophia', 'William']
     },
     {
-        name: 'Emily'
+      id: '5',
+      name: 'Ava',
+      members: ['Alexander', 'Charlotte']
     },
     {
-        name: 'David'
+      id: '6',
+      name: 'Liam',
+      members: ['Grace', 'Henry']
     },
     {
-        name: 'Sophia'
+      id: '7',
+      name: 'Ella',
+      members: ['Daniel', 'Chloe']
     },
     {
-        name: 'Michael'
+      id: '8',
+      name: 'Noah',
+      members: ['Mia', 'Samuel']
     },
     {
-        name: 'Olivia'
+      id: '9',
+      name: 'Sophie',
+      members: ['Ethan', 'Madison']
     },
     {
-        name: 'William'
+      id: '10',
+      name: 'Luke',
+      members: ['Avery', 'Benjamin']
     },
+    {
+      id: '11',
+      name: 'Mila',
+      members: ['Jackson', 'Victoria']
+    }
 ];
-
-
-interface GroupListItemProps {
-    name: string,
-}
-
-export function GroupListItem({name}: GroupListItemProps) {
-    return (
-        <>
-            <Card elevation={1} sx={{
-                color: "text.primary",
-                padding: 0,
-                backgroundColor: "background.default",
-                borderRadius: 5,
-                margin: 1
-            }}
-            >
-                <ListItem>
-                    <ListItemText>{name}</ListItemText>
-                    <ListItemText>student1, student2..</ListItemText>
-                </ListItem>
-            </Card>
-        </>
-    );
-}
-
-
+  
+  
 export function GroupsPage() {
     return (
         <>
@@ -99,7 +99,7 @@ export function GroupsPage() {
                         <Switch/>
                     </Stack>
                 </Box>
-
+                
                 <Box 
                     sx={{
                         overflowY: "auto",
@@ -107,19 +107,24 @@ export function GroupsPage() {
                         backgroundColor: "background.default",
                     }}
                 >
-                    <List sx={{'& > :not(style)': {marginBottom: '8px', width: "150vh"}}}>
-                        <ListItem>
-                            <ListItemText sx={{ color:"text.primary" }}><strong>Naam Student</strong></ListItemText>
-                            <ListItemText sx={{ color:"text.primary" }}><strong>Ingeschreven groep</strong></ListItemText>
-                        </ListItem>
-                        <Divider/>
+                    <List>
+                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
+                        <Typography sx={{fontWeight: 'bold'}}>Indiening</Typography>
+                        <Typography sx={{fontWeight: 'bold'}}>Ingeschreven groep</Typography>
+                    </Box>
+                    <Box style={{maxHeight: 300, overflow: 'auto'}}>
+                            <Divider/>
 
-                        {groups.map((res) =>
-                            <GroupListItem name={res.name}></GroupListItem>
-                        )}
+                            {groups.map((group) =>
+                                <GroupListItem 
+                                    id={group.id}
+                                    studentName={group.name}
+                                    groupMemberNames={group.members}
+                                    ></GroupListItem>
+                            )}
+                    </Box>
                     </List>
                 </Box>
-
             </Stack>
         </>
     );
