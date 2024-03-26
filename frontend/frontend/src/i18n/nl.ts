@@ -24,6 +24,7 @@ const dutch = {
     time: "Tijdstip",
     no_submissions: "Geen indieningen",
     edit: "Aanpassen",
+    upload_scores: "Upload Scores"
 };
 
 export default dutch;
