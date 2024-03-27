@@ -22,6 +22,7 @@ import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
 import {AddChangeAssignmentPage} from "./pages/AddChangeAssignmentPage/AddChangeAssignmentPage.tsx";
 
+import {AddChangeSubjectPage} from "./pages/SubjectsPage/AddChangeSubjectPage.tsx";
 
 const router = createBrowserRouter([
     {
@@ -76,6 +77,12 @@ const router = createBrowserRouter([
     {
         path: "/add_change_assignment",
         element: <AddChangeAssignmentPage/>,
+        errorElement: <ErrorPage/>,
+
+    },
+    {
+        path: "/add_change_subject",
+        element: <AddChangeSubjectPage/>,
         errorElement: <ErrorPage/>,
 
     },
