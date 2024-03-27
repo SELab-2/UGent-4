@@ -72,7 +72,7 @@ export function AddChangeSubjectPage() {
           <Box display={"flex"} flexDirection={"column"} padding={2}>
             <Typography>students:</Typography>
             <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
-              <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "150vh"}}}>
+              <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
                 {students.map((id) => {
                   const [open, setOpen] = useState(false);
 
@@ -102,7 +102,7 @@ export function AddChangeSubjectPage() {
                       <ClearIcon color={'error'}/>
                   </IconButton>
                   <Dialog onClose={handleClose} open={open}>
-                    <Box>
+                    <Box padding={2} alignItems={'center'} gap={1}>
                       <Typography> {"delete student?"} </Typography>
                       <Typography> {"this can not be undone"} </Typography>
                       <Box display={'flex'} flexDirection={"row"}>
