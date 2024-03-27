@@ -139,27 +139,72 @@ export function AddChangeSubjectPage() {
           </Box>
 
 
-          <Box display={"flex"} flexDirection={"column"}>
+          <Box display={"flex"} flexDirection={"column"} padding={2}>
             <Typography>teachers:</Typography>
-            <List disablePadding={true}>
-              {teachers.map((id) => (
-                <>
-                <ListItemButton sx={{
-                    width: "100%",
-                    height: 30,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    paddingX: 1,
-                    paddingY: 3,
-                    borderRadius:2,
-                }}>
-                <ListItemText sx={{maxWidth:100}} primary={getteacher(id).name}/>
-                </ListItemButton>
-                <Divider color={"text.main"}></Divider>
-                </>
-              ))}
-            </List>
+            <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
+              <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
+                {teachers.map((id) => {
+                  const [open, setOpen] = useState(false);
+
+                  const handleClickOpen = () => {
+                    setOpen(true);
+                  };
+                  const handleClose = (value: string) => {
+                    setOpen(false);
+                    setSelectedValue(value);
+                  };
+
+                  return (<>
+                  <ListItemButton sx={{
+                      width: "100%",
+                      height: 30,
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      paddingX: 1,
+                      paddingY: 3,
+                      borderRadius:2,
+                  }}>
+                  <ListItemText sx={{maxWidth:100}} primary={getteacher(id).name}/>
+                  <IconButton aria-label={'delete_file'} size={'small'} onClick={handleClickOpen}
+                              sx={{marginBottom: 1}}>
+                      <ClearIcon color={'error'}/>
+                  </IconButton>
+                  <Dialog onClose={handleClose} open={open}>
+                    <Box padding={2} alignItems={'center'} gap={1}>
+                      <Typography> {"delete student?"} </Typography>
+                      <Typography> {"this can not be undone"} </Typography>
+                      <Box display={'flex'} flexDirection={"row"}>
+                        <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleClose}>
+                          {"cancel"}
+                        </Button>
+                        <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
+                          {"delete"}
+                        </Button>
+                      </Box>
+                    </Box>
+
+                  </Dialog>
+
+                  </ListItemButton>
+                  <Divider color={"text.main"}></Divider>
+                  </>
+                )})}
+              </List>
+              <Box display={"flex"} flexDirection={"column"}>
+                <FileUploadButton name={"upload teachers"}
+                                  fileTypes={['.pdf', '.zip']}
+                                  tooltip={t('uploadToolTip')}
+                />
+                <Box display={"flex"} flexDirection={"row"}>
+                  <TextField type="text" placeholder={"Teacher"}
+                           onChange={(event) => setNum(event.target.value)}/>
+                  <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
+                  {"add"}
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
           </Box>
 
         </Stack>
