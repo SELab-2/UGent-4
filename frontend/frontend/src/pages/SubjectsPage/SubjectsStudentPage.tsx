@@ -4,33 +4,43 @@ import TabSwitcher from "../../components/TabSwitcher.tsx";
 import {ProjectsView} from "./ProjectsView.tsx";
 import { useParams } from "react-router-dom";
 
-interface Course {
-    id: string;
-    name: string;
-    teacher: string;
-    students: string[];
-    //list of assignment ids
-    assignments: string[];
-    archived: boolean;
+interface Vak {
+    vak_id: number,
+    naam: string,
+    studenten: number[],
+    lesgevers: number[],
 }
 
-interface Assignment {
-    id: string;
-    name: string;
-    deadline?: Date;
-    submissions: number;
-    score: number;
-    visible: boolean;
-    archived: boolean;
+interface Project {
+    project_id: number,
+    titel: string,
+    beschrijving: string,
+    opgave_bestand: File | null,
+    vak: number,
+    max_score: number,
+    deadline: Date,
+    extra_deadline: Date,
+    zichtbaar: boolean,
+    gearchiveerd: boolean,
+}
+
+interface Gebruiker {
+    user: number,
+    is_lesgever: boolean,
+    first_name: string,
+    last_name: string,
+    email: string,
 }
 
 export function SubjectsStudentPage() {
     let { courseId } = useParams();
     courseId = String(courseId);
 
-    const course = getCourse(courseId);
+    const course = getVak(Number(courseId));
     
-    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
+    const assignments = getProjectenVoorVak(course.vak_id);
+
+    const user = getGebruiker();
     
     return (
         <>
@@ -38,10 +48,10 @@ export function SubjectsStudentPage() {
                 <Header variant={"default"} title={"Naam Vak"} />
                 <Box sx={{ width: '100%', height:"70%", marginTop:10 }}>
                     <TabSwitcher titles={["current_projects","archived"]}
-                                 nodes={[<ProjectsView isStudent={true} archived={false} assignments={assignments}
+                                 nodes={[<ProjectsView gebruiker={user} archived={false} assignments={assignments}
                                  deleteAssignment={() => undefined} archiveAssignment={() => undefined}
                                  changeVisibilityAssignment={() => undefined}/>,
-                                 <ProjectsView isStudent={true} archived={true} assignments={assignments}
+                                 <ProjectsView gebruiker={user} archived={true} assignments={assignments}
                                  deleteAssignment={() => undefined} archiveAssignment={() => undefined}
                                  changeVisibilityAssignment={() => undefined}/>]}/>
                 </Box>
@@ -51,25 +61,96 @@ export function SubjectsStudentPage() {
 }
 
 //TODO: use api to get data, for now use mock data
-function getCourse(courseId: string): Course {
+function getVak(courseId: number): Vak {
     return {
-        id: courseId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2"],
-        archived: false,
-        assignments: ["assignment1", "assignment2", "assignment3", "assignment4", "assignment5", "assignment6", "assignment7", "assignment8", "assignment9"]
+        vak_id: courseId,
+        naam: "courseName",
+        studenten: [0, 1, 2, 3],
+        lesgevers: [0, 1],
     }
 }
 
-function getAssignment(assignmentId: string): Assignment {
+function getGebruiker(): Gebruiker {
     return {
-        id: assignmentId,
-        name: assignmentId,
-        deadline: new Date(2022, 11, 17),
-        submissions: 2,
-        score: 10,
-        visible: true,
-        archived: Number(assignmentId.slice(-1))%2==0,
+        user: 0,
+        is_lesgever: false,
+        first_name: "flinke",
+        last_name: "student",
+        email: "flinke.student@ugent.be",
     }
+}
+
+function getProjectenVoorVak(courseId: number): Project[] {
+    return [{
+        project_id: 0,
+        titel: "project 1",
+        beschrijving: "eerste project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 1,
+        titel: "project 2",
+        beschrijving: "tweede project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 2,
+        titel: "project 3",
+        beschrijving: "derde project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 3,
+        titel: "project 4",
+        beschrijving: "project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 4,
+        titel: "project 5",
+        beschrijving: "project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 5,
+        titel: "project 6",
+        beschrijving: "project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    }]
 }
