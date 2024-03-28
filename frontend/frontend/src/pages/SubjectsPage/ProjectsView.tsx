@@ -108,8 +108,8 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                             .map((assignment) => (
                                 <AssignmentListItemSubjectsPage key={assignment.project_id} projectName={assignment.titel}
                                         dueDate={assignment.deadline} submission={submissions[assignment.index]}
-                                        score={scores[assignment.index]} isStudent={!gebruiker.is_lesgever}
-                                        archived={archived} visible={assignment.zichtbaar}
+                                        score={scores[assignment.index]} maxScore={assignment.max_score}
+                                        isStudent={!gebruiker.is_lesgever} archived={archived} visible={assignment.zichtbaar}
                                         deleteEvent={() => deleteAssignment(assignment.index)}
                                         archiveEvent={() => archiveAssignment(assignment.index)}
                                         visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>

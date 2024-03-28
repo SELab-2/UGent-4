@@ -12,6 +12,7 @@ interface AssignmentListItemSubjectsPageProps {
     dueDate?: Date;
     submission: Indiening;
     score: Score;
+    maxScore: number;
     isStudent: boolean;
     archived: boolean;
     visible: boolean;
@@ -54,7 +55,7 @@ interface Indiening {
 * @param visibilityEvent: () => void - event to call to change visibility of assignment
 */
 
-export function AssignmentListItemSubjectsPage({projectName, dueDate, submission, score, isStudent, archived, visible,
+export function AssignmentListItemSubjectsPage({projectName, dueDate, submission, score, maxScore, isStudent, archived, visible,
     deleteEvent, archiveEvent, visibilityEvent}:AssignmentListItemSubjectsPageProps) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
@@ -84,7 +85,7 @@ export function AssignmentListItemSubjectsPage({projectName, dueDate, submission
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
                             <ListItemText sx={{maxWidth:150}} primary={t("last_submission") + " " + submission.tijdstip.toLocaleDateString()}/>
-                            <ListItemText sx={{maxWidth:50}} primary={score.score + "/20"}/>
+                            <ListItemText sx={{maxWidth:100}} primary={score.score + "/" + maxScore + " " + (100 * score.score / maxScore) + "%"}/>
                         </>
                         :
                         <>
