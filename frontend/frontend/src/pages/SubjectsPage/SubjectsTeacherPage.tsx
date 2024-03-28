@@ -113,7 +113,7 @@ function getProjectenVoorVak(courseId: number): Project[] {
         beschrijving: "eerste project",
         opgave_bestand: null,
         vak: courseId,
-        max_score: 20,
+        max_score: 10,
         deadline: new Date(2022, 11, 17),
         extra_deadline: new Date(2022, 11, 17),
         zichtbaar: true,
