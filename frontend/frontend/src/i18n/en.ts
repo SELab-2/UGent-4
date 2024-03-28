@@ -24,7 +24,9 @@ const english = {
     time: "Time",
     no_submissions: "No submissions",
     edit: "Edit",
-    upload_scores: "Upload Scores"
+    upload_scores: "Upload Scores",
+    group: "Group",
+    last_submission: "Last Submission:",
 };
 
 export default english;
