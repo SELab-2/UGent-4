@@ -38,6 +38,10 @@ const english = {
     allowed_file_types: "Allowed file types",
     dockerfile_error: "Please upload a Dockerfile.",
     filetype_error: "Please select at least one file type.",
+    export_submissions: "Export submissions",
+    time: "Time",
+    no_submissions: "No submissions",
+    edit: "Edit",
 
 };
 
