@@ -68,5 +68,5 @@ export function MainPage() {
  * @returns {string} - The role of the user
  */
 function getRole(id: string): string {
-    return "teacher";
+
 }
