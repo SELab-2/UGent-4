@@ -1,6 +1,7 @@
 import {Box, Button, Typography} from "@mui/material";
 import {t} from "i18next";
-import {useNavigate} from "react-router-dom";
+import {useMsal} from "@azure/msal-react";
+import {loginRequest} from "../../authConfig/authConfig.ts";
 
 /*
 LoginPage component is a simple page with a logo and a login button.
@@ -9,11 +10,11 @@ The page is styled with mui components
  */
 
 export function LoginPage() {
-    const navigate = useNavigate()
+    const {instance} = useMsal();
+
     const handleLogin = () => {
         //TODO: implement authentication trough backend
-        navigate("/main") //absolute path, so it will redirect to localhost:3000/main
-        //navigate("main") //relative path, so it will redirect to localhost:3000/login/main
+        instance.loginRedirect(loginRequest).catch((error) => console.error(error));
     }
 
     return (
@@ -90,7 +91,7 @@ export function LoginPage() {
                                 maxHeight: "20%",
                             }}
                         >
-                            Naam Platform
+                            Pigeonhole
                         </Typography>
                     </Box>
                     <Box
