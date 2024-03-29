@@ -68,7 +68,7 @@ export const Header = ({variant, title}: Props) => {
     return (
         <>
             <AppBar
-                position="fixed"
+                position="absolute"
                 sx={{margin: "auto", flexGrow: 1, alignItems: "space-between", width: "100%"}}
             >
                 <Toolbar>

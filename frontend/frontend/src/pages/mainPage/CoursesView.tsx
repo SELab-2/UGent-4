@@ -25,11 +25,12 @@ export function CoursesView({isStudent}: CourseCardProps) {
     return (
         <>
             <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
-                <Stack direction={"column"} spacing={1} width={"100%"}>
-                    <Stack flexDirection={"row"} flexWrap={"wrap"} width={"100%"}
+                <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
+                    <Stack flexDirection={"row"} flexWrap={"wrap"} width={'90%'}
                            sx={{
-                               overflowY: {sm: "auto"},
-                               maxHeight: "65vh",
+                               gap: 2,
+                               overflowY: {md: "auto"},
+                               maxHeight: "72svh",
                            }}>
                         {courses.map((course: any) => (
                         <CourseCard key={course.vak_id} courseId={course.vak_id} archived={false} isStudent={isStudent} />
