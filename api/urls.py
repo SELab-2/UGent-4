@@ -26,6 +26,7 @@ from .views.project import project_list, project_detail
 from .views.indiening import indiening_list, indiening_detail
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
+from .views.restrictie import restrictie_list, restrictie_detail
 
 urlpatterns = [
     path(
@@ -49,6 +50,8 @@ urlpatterns = [
     path("api/scores/<int:id>/", score_detail, name="score_detail"),
     path("api/groepen/", groep_list, name="groep_list"),
     path("api/groepen/<int:id>/", groep_detail, name="groep_detail"),
+    path("api/restricties/", restrictie_list, name="restrictie_list"),
+    path("api/restricties/<int:id>/", restrictie_detail, name="restrictie_detail"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

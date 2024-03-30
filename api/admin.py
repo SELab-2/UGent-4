@@ -5,6 +5,7 @@ from api.models.groep import Groep
 from api.models.project import Project
 from api.models.indiening import Indiening, IndieningBestand
 from api.models.score import Score
+from api.models.restrictie import Restrictie
 
 admin.site.register(Gebruiker)
 admin.site.register(Vak)
@@ -13,3 +14,4 @@ admin.site.register(Project)
 admin.site.register(Indiening)
 admin.site.register(Score)
 admin.site.register(IndieningBestand)
+admin.site.register(Restrictie)
