@@ -6,3 +6,7 @@ venv
 __pycache__
 migrations
 ./api/.env
+
+frontend/frontend/src/authConfig/authSecrets.ts
+
+api/.env
