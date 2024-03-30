@@ -25,25 +25,6 @@ interface Teacher {
   name:string;
 }
 
-// <Button variant="outlined" onClick={handleClickOpen}>
-//   Open simple dialog
-// </Button>
-// <Dialog onClose={handleClose} open={open}>
-//   <Box>
-//     <Typography> {"delete student?"} </Typography>
-//     <Typography> {"this can not be undone"} </Typography>
-//     <Box display={'flex'} flexDirection={"row"}>
-//       <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleClose}>
-//         {"cancel"}
-//       </Button>
-//       <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
-//         {"delete"}
-//       </Button>
-//     </Box>
-//   </Box>
-//
-// </Dialog>
-
 export function AddChangeSubjectPage() {
   // State for the different fields of the subject
   const [title, setTitle] = useState("");
