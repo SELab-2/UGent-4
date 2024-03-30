@@ -59,9 +59,9 @@ def validate_lesgever_change(instance):
         raise serializers.ValidationError(
             f"De lesgever {instance} moet eerst verwijderd worden \
             als lesgever in zijn huidige vakken"
-            )
+        )
     elif not instance.is_lesgever and Vak.objects.filter(studenten=instance):
         raise serializers.ValidationError(
             f"De student {instance} moet eerst verwijderd worden \
             als student in zijn huidige vakken"
-            )
+        )
