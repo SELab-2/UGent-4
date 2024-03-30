@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models.project import Project
 from django.utils import timezone
+from api.serializers.restrictie import RestrictieSerializer
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -17,9 +18,14 @@ class ProjectSerializer(serializers.ModelSerializer):
         update(self, instance, validated_data): Werkt een bestaand project bij in de database.
     """
 
+    restricties = RestrictieSerializer(many=True, read_only=True)
+
     class Meta:
         model = Project
-        fields = "__all__"
+        fields = [
+            'project_id', 'titel', 'beschrijving', 'opgave_bestand', 'vak', 'deadline',
+            'extra_deadline', 'max_score', 'zichtbaar', 'gearchiveerd', 'restricties'
+            ]
 
     def create(self, validated_data):
         """
@@ -52,6 +58,9 @@ class ProjectSerializer(serializers.ModelSerializer):
         extra_deadline = validated_data.pop("extra_deadline")
         validate_deadlines(deadline, extra_deadline)
 
+        new_vak = validated_data.get('vak')
+        validate_vak(instance, new_vak)
+
         super().update(instance=instance, validated_data=validated_data)
         instance.deadline = deadline
         instance.extra_deadline = extra_deadline
@@ -76,3 +85,12 @@ def validate_deadlines(deadline, extra_deadline):
         raise serializers.ValidationError(
             "Extra deadline moet na de eerste deadline liggen"
         )
+
+
+def validate_vak(instance, new_vak):
+    """
+    TODO
+    """
+
+    if instance.vak != new_vak:
+        raise serializers.ValidationError('Het vak van een project kan niet aangepast worden')
