@@ -16,7 +16,7 @@ import {AssignmentTeacherPage} from "./pages/assignmentPage/AssignmentTeacherPag
 import {AssignmentStudentPage} from "./pages/assignmentPage/AssignmentStudentPage.tsx";
 import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
-import {AddChangeSubjectPage} from "./pages/SubjectsPage/AddChangeSubjectPage.tsx";
+import {AddChangeSubjectPage} from "./pages/subjectsPage/AddChangeSubjectPage.tsx";
 import {ProjectScoresPage} from "./pages/scoresPage/ProjectScoresPage.tsx";
 import {SubjectsTeacherPage} from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
 import {AddChangeAssignmentPage} from "./pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
@@ -69,7 +69,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage/>,
     },
     {
-        path: "/add_change_subject",
+        path: "/course_teacher/edit/:courseId?",
         element: <AddChangeSubjectPage/>,
         errorElement: <ErrorPage/>,
 
