@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 from api.serializers.groep import GroepSerializer
 from api.tests.factories.groep import GroepFactory
 from api.tests.factories.gebruiker import GebruikerFactory
+from api.tests.factories.project import ProjectFactory
 
 
 class GroepSerializerTest(APITestCase):
@@ -97,6 +98,15 @@ class GroepSerializerTest(APITestCase):
         self.assertEqual(
             [student.user.id for student in groep.studenten.all()], data["studenten"]
         )
+    
+    def test_update_invalid_project(self):
+        project = ProjectFactory.create(vak=self.groep.project.vak)
+        data = self.serializer.data
+        data['project'] = project.project_id
+        serializer = GroepSerializer(instance=self.groep, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+
 
     def test_update_invalid_user_already_in_this_group(self):
         data = self.serializer.data
