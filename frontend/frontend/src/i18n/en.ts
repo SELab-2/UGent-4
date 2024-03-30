@@ -19,6 +19,26 @@ const english = {
     description: "Description assignment:",
     uploadToolTip: 'upload a .zip or .pdf file',
     noFile: "No file chosen",
+    groups: "Groups",
+    remove: "Remove",
+    submit: "Submit",
+    cancel: "Cancel",
+    add_restriction: "Add restriction",
+    is_required: "is required",
+    name: "Name",
+    descriptionName: "Description",
+    restrictionType: "Restriction type",
+    upload_container: "Upload a .tar file",
+    dockerfile: "Dockerfile",
+    restrictiontype: "Restriction type",
+    dockerTest: "Docker test",
+    maxSize: "Max file size",
+    fileType: "Allowed file types",
+    fileSize: "Max file size",
+    allowed_file_types: "Allowed file types",
+    dockerfile_error: "Please upload a Dockerfile.",
+    filetype_error: "Please select at least one file type.",
+
 };
 
 export default english;
