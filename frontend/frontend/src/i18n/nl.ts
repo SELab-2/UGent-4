@@ -9,6 +9,7 @@ const dutch = {
     no_deadline: "Geen deadline",
     add_admin: "Voeg admin toe",
     submission: "Indiening",
+    submissions: "Indieningen",
     error: "Er is iets misgegaan.",
     assignment: "Opgave:",
     filename: "Ingediend bestand:",
@@ -52,6 +53,10 @@ const dutch = {
     studentnumber: "Studentennummer",
     teacher: "Leerkracht",
     title: "Titel",
+    export_submissions: "Exporteer Indieningen",
+    time: "Tijdstip",
+    no_submissions: "Geen indieningen",
+    edit: "Aanpassen",
 };
 
 export default dutch;

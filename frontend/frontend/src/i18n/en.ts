@@ -52,6 +52,10 @@ const english = {
     studentnumber: "Studentnumber",
     teacher: "Teacher",
     title: "Title",
+    export_submissions: "Export submissions",
+    time: "Time",
+    no_submissions: "No submissions",
+    edit: "Edit",
 };
 
 export default english;
