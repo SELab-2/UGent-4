@@ -39,7 +39,8 @@ export function MainPage() {
                     gap: 5,
                 }}>
                     <TabSwitcher titles={["current_courses", "archived"]}
-                                 nodes={[<CoursesView isStudent={true}/>, <ArchivedView isStudent/>]}/>
+                                 nodes={[<CoursesView isStudent={role == 'student'}/>,
+                                     <ArchivedView isStudent={role == 'student'}/>]}/>
                     <Box aria-label={"calendarView"} display={"flex"} flexDirection={"row"} alignContent={"center"}
                          height={"50%"}>
                         <DeadlineCalendar deadlines={[dayjs()]}/>
@@ -68,5 +69,5 @@ export function MainPage() {
  * @returns {string} - The role of the user
  */
 function getRole(id: string): string {
-    return "teacher";
+
 }

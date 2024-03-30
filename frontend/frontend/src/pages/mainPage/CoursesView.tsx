@@ -1,7 +1,7 @@
 import {IconButton, Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
 import AddIcon from "@mui/icons-material/Add";
-import axios from "axios";
+import axios from "../../axiosConfig.ts";
 import { useEffect, useState } from "react";
 interface CourseCardProps {
     isStudent: boolean;
@@ -13,7 +13,7 @@ export function CoursesView({isStudent}: CourseCardProps) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const response = await axios.get("https://sel2-4.ugent.be/api/vakken/");
+                const response = await axios.get("/vakken/");
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
@@ -25,14 +25,20 @@ export function CoursesView({isStudent}: CourseCardProps) {
     return (
         <>
             <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
-                <Stack direction={"column"} spacing={1} width={"100%"}>
-                    <Stack flexDirection={"row"} flexWrap={"wrap"} width={"100%"}
+                <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
+                    <Stack flexDirection={"row"} flexWrap={"wrap"} width={'90%'}
                            sx={{
-                               overflowY: {sm: "auto"},
-                               maxHeight: "65vh",
+                               gap: 2,
+                               overflowY: {md: "auto"},
+                               maxHeight: "72svh",
                            }}>
+                        <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
+                        <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
+                        <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
+                        <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
                         {courses.map((course: any) => (
                         <CourseCard key={course.vak_id} courseId={course.vak_id} archived={false} isStudent={isStudent} />
+                        // eerste dummy's tijdelijk houden (courses fetchen werkt nog niet)
                     ))}
                     </Stack>
                     {!isStudent &&
