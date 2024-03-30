@@ -45,13 +45,13 @@ export function AddChangeSubjectPage() {
 
           <Box aria-label={'title'} display={'flex'} flexDirection={"row"} gap={2} alignItems={"center"}>
               <Typography variant={'h6'} color={"text.primary"}
-                          fontWeight={"bold"}>subject name:</Typography>
-              <TextField type="text" placeholder={"Title"}
+                          fontWeight={"bold"}>{t("subject_name")+":"}</Typography>
+              <TextField type="text" placeholder={t("title")}
                          onChange={(event) => setTitle(event.target.value)}/>
           </Box>
 
           <Box display={"flex"} flexDirection={"column"} padding={2}>
-            <Typography>students:</Typography>
+            <Typography>{t("students")+":"}</Typography>
             <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
               <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
                 {students.map((id) => {
@@ -84,18 +84,17 @@ export function AddChangeSubjectPage() {
                   </IconButton>
                   <Dialog onClose={handleClose} open={open}>
                     <Box padding={2} alignItems={'center'} gap={1}>
-                      <Typography> {"delete student?"} </Typography>
-                      <Typography> {"this can not be undone"} </Typography>
+                      <Typography> {t("delete_student")+"?"} </Typography>
+                      <Typography> {t("this_can_not_be_undone")} </Typography>
                       <Box display={'flex'} flexDirection={"row"}>
                         <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleClose}>
-                          {"cancel"}
+                          {t("cancel")}
                         </Button>
                         <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
-                          {"delete"}
+                          {t("delete")}
                         </Button>
                       </Box>
                     </Box>
-
                   </Dialog>
 
                   </ListItemButton>
@@ -104,15 +103,15 @@ export function AddChangeSubjectPage() {
                 )})}
               </List>
               <Box display={"flex"} flexDirection={"column"}>
-                <FileUploadButton name={"upload studenten"}
+                <FileUploadButton name={t("upload_students")}
                                   fileTypes={['.pdf', '.zip']}
                                   tooltip={t('uploadToolTip')}
                 />
                 <Box display={"flex"} flexDirection={"row"}>
-                  <TextField type="text" placeholder={"Studentnumber"}
+                  <TextField type="text" placeholder={t("studentnumber")}
                            onChange={(event) => setNum(event.target.value)}/>
                   <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
-                  {"add"}
+                  {t("add")}
                   </Button>
                 </Box>
               </Box>
@@ -121,7 +120,7 @@ export function AddChangeSubjectPage() {
 
 
           <Box display={"flex"} flexDirection={"column"} padding={2}>
-            <Typography>teachers:</Typography>
+            <Typography>{t("teachers")+":"}</Typography>
             <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
               <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
                 {teachers.map((id) => {
@@ -153,18 +152,17 @@ export function AddChangeSubjectPage() {
                   </IconButton>
                   <Dialog onClose={handleClose} open={open}>
                     <Box padding={2} alignItems={'center'} gap={1}>
-                      <Typography> {"delete student?"} </Typography>
-                      <Typography> {"this can not be undone"} </Typography>
+                      <Typography> {t("delete_teacher")+"?"} </Typography>
+                      <Typography> {t("this_can_not_be_undone")} </Typography>
                       <Box display={'flex'} flexDirection={"row"}>
                         <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleClose}>
-                          {"cancel"}
+                          {t("cancel")}
                         </Button>
                         <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
-                          {"delete"}
+                          {t("delete")}
                         </Button>
                       </Box>
                     </Box>
-
                   </Dialog>
 
                   </ListItemButton>
@@ -173,12 +171,12 @@ export function AddChangeSubjectPage() {
                 )})}
               </List>
               <Box display={"flex"} flexDirection={"column"}>
-                <FileUploadButton name={"upload teachers"}
+                <FileUploadButton name={t("upload_teachers")}
                                   fileTypes={['.pdf', '.zip']}
                                   tooltip={t('uploadToolTip')}
                 />
                 <Box display={"flex"} flexDirection={"row"}>
-                  <TextField type="text" placeholder={"Teacher"}
+                  <TextField type="text" placeholder={t("teacher")}
                            onChange={(event) => setNum(event.target.value)}/>
                   <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
                   {"add"}
