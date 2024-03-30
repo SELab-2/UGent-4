@@ -16,15 +16,15 @@ class RestrictieSerializer(serializers.ModelSerializer):
         TODO
         """
 
-        validate_script(validated_data.get('script'))
+        validate_script(validated_data.get("script"))
         return Restrictie.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         """
         TODO
         """
-        validate_project(instance, validated_data.get('project'))
-        validate_script(instance, validated_data.get('script'))
+        validate_project(instance, validated_data.get("project"))
+        validate_script(validated_data.get("script"))
 
         super().update(instance=instance, validated_data=validated_data)
         instance.save()
@@ -32,8 +32,10 @@ class RestrictieSerializer(serializers.ModelSerializer):
 
 
 def validate_script(new_script):
-    if not str(new_script).endswith('.sh') or not str(new_script).endswith('.py'):
-        raise serializers.ValidationError('Het restrictie script moet een Python of Shell script zijn')
+    if not (str(new_script).endswith(".sh") or str(new_script).endswith(".py")):
+        raise serializers.ValidationError(
+            "Het restrictie script moet een Python of Shell script zijn"
+        )
 
 
 def validate_project(instance, new_project):
@@ -42,4 +44,6 @@ def validate_project(instance, new_project):
     """
 
     if instance.project != new_project:
-        raise serializers.ValidationError('Het project van een restrictie kan niet aangepast worden')
+        raise serializers.ValidationError(
+            "Het project van een restrictie kan niet aangepast worden"
+        )

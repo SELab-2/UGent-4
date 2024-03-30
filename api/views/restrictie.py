@@ -23,7 +23,9 @@ def restrictie_list(request, format=None):
                 except NameError:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-            if "moet_slagen" in request.GET and request.GET.get("moet_slagen").lower() in [
+            if "moet_slagen" in request.GET and request.GET.get(
+                "moet_slagen"
+            ).lower() in [
                 "true",
                 "false",
             ]:
