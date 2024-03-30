@@ -27,6 +27,12 @@ const english = {
     upload_scores: "Upload Scores",
     group: "Group",
     last_submission: "Last Submission:",
+    cancel: "Cancel",
+    delete_project_warning: "Delete Project?",
+    archive_project_warning: "Archive Project?",
+    cant_be_undone: "This cannot be undone.",
+    delete: "Delete",
+    archive: "Archive",
 };
 
 export default english;

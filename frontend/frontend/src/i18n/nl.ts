@@ -27,6 +27,12 @@ const dutch = {
     upload_scores: "Upload Scores",
     group: "Groep",
     last_submission: "Laatste Indiening:",
+    cancel: "Annuleer",
+    delete_project_warning: "Opdracht Verwijderen?",
+    archive_project_warning: "Opdracht Archiveren?",
+    cant_be_undone: "Dit kan niet ongedaan gemaakt worden.",
+    delete: "Verwijder",
+    archive: "Archiveer",
 };
 
 export default dutch;
