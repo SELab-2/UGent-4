@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Assignment } from './components/CourseCard';
 
 
 const instance = axios.create({
@@ -26,12 +27,12 @@ export function getVak(vakId: string) {
     return instance.get('/vakken/' + vakId);
 }
 
-export function addVak(assignment: assignment) {
+export function addVak(assignment: Assignment) { // waarom een assignment en geen vak meegeven?
     return instance.post('/vakken', assignment);
 }
 
 //mogelijk/nodig?
-export function changeVak(vakId: string, assignment: assignment) {
+export function changeVak(vakId: string, assignment: Assignment) {
     return instance.put('/vakken/' + vakId, assignment);
 }
 

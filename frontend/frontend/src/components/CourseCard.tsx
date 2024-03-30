@@ -31,7 +31,7 @@ interface Course {
     archived: boolean;
 }
 
-interface Assignment {
+export interface Assignment {
     id: string;
     name: string;
     deadline?: Date;
