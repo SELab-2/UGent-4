@@ -1,7 +1,7 @@
 import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
 import {t} from "i18next";
-import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
+import {AssignmentListItemSubjectsPage} from "./AssignmentListItemSubjectsPage.tsx";
 
 interface ProjectsViewProps {
     gebruiker: Gebruiker;

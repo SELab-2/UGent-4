@@ -1,12 +1,13 @@
 import {Divider, IconButton, ListItem, ListItemText, TextField} from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { t } from "i18next";
+import { useState } from "react";
 
 interface StudentScoreListItemProps {
     key: number;
     groepName: string;
     submissionFiles: Bestand[];
-    score: number;
+    startScore: number;
     maxScore: number;
 }
 
@@ -23,7 +24,9 @@ interface Bestand {
 * @param submissionFiles: string[] - a list of all files submitted by this student
 */
 
-export function StudentScoreListItem({key, groepName, submissionFiles, score, maxScore}: StudentScoreListItemProps) {
+export function StudentScoreListItem({key, groepName, submissionFiles, startScore, maxScore}: StudentScoreListItemProps) {
+    const [score, setScore] = useState(startScore.toString());
+
     return (
         <>
             <ListItem key={key} sx={{margin: 0}} disablePadding={true}>
@@ -42,7 +45,8 @@ export function StudentScoreListItem({key, groepName, submissionFiles, score, ma
                         <ListItemText sx={{maxWidth: 150}}
                                       primary={submissionFiles.length ? submissionFiles.length + " " + t("submissions") : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
-                            <TextField hiddenLabel defaultValue={score} variant="filled" size="small"/>
+                            <TextField hiddenLabel defaultValue={score} onChange={(event) => setScore(event.target.value)}
+                            variant="filled" size="small"/>
                             <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
                         </ListItem>
                         <ListItem sx={{maxWidth: 100}}>

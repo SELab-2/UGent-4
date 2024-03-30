@@ -5,6 +5,8 @@ import {ProjectsView} from "./ProjectsView.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from "react";
+import WarningPopup from "../../components/WarningPopup.tsx";
+import {t} from "i18next";
 
 interface Vak {
     vak_id: number,
@@ -48,14 +50,26 @@ export function SubjectsTeacherPage() {
     const course = getVak(Number(courseId));
     
     const [assignments, setAssignments] = useState<Project[]>(getProjectenVoorVak(course.vak_id));
+    const [openDeletePopup, setOpenDeletePopup] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(0);
+    const [openArchivePopup, setOpenArchivePopup] = useState(false);
+    const [archiveIndex, setArchiveIndex] = useState(0);
 
     const user = getGebruiker();
 
     const deleteAssignment = (index: number) => {
-        setAssignments(assignments.filter((_, i) => i !== index));
+        setDeleteIndex(index);
+        setOpenDeletePopup(true);
+    }
+    const doDelete = () => {
+        setAssignments(assignments.filter((_, i) => i !== deleteIndex));
     }
     const archiveAssignment = (index: number) => {
-        const newAssignments = assignments.map((a, i) => i==index? archiveSingleAssignment(a): a);
+        setArchiveIndex(index);
+        setOpenArchivePopup(true);
+    }
+    const doArchive = () => {
+        const newAssignments = assignments.map((a, i) => i==archiveIndex? archiveSingleAssignment(a): a);
         setAssignments(newAssignments);
     }
     const changeVisibilityAssignment = (index: number) => {
@@ -81,6 +95,10 @@ export function SubjectsTeacherPage() {
                         <AddCircleIcon sx={{fontSize: 60, height: "100%"}} />
                     </IconButton>
                 </Box>
+                <WarningPopup title={t("delete_project_warning")} content={t("cant_be_undone")}
+                buttonName={t("delete")} open={openDeletePopup} handleClose={() => setOpenDeletePopup(false)} doAction={doDelete}/>
+                <WarningPopup title={t("archive_project_warning")} content={t("cant_be_undone")}
+                buttonName={t("archive")} open={openArchivePopup} handleClose={() => setOpenArchivePopup(false)} doAction={doArchive}/>
             </Stack>
         </>
     );
