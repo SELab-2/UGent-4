@@ -143,12 +143,6 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
     },
     {
-        path: "/subjects_student",
-        element: <SubjectsStudentPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
         path: "/add_change_assignment",
         element: <addChangeAssignmentPage/>,
         errorElement: <ErrorPage/>,

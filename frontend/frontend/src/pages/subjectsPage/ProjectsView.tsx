@@ -1,20 +1,15 @@
 import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
+import {t} from "i18next";
 import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
 
 interface ProjectsViewProps {
-    courseId: string;
     isStudent: boolean;
-}
-
-interface Course {
-    id: string;
-    name: string;
-    teacher: string;
-    students: string[];
-    //list of assignment ids
-    assignments: string[];
     archived: boolean;
+    assignments: Assignment[];
+    deleteAssignment: (index: number) => void;
+    archiveAssignment: (index: number) => void;
+    changeVisibilityAssignment: (index: number) => void;
 }
 
 interface Assignment {
@@ -23,12 +18,11 @@ interface Assignment {
     deadline?: Date;
     submissions: number;
     score: number;
+    visible: boolean;
+    archived: boolean;
 }
 
-export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
-    const course = getCourse(courseId);
-    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
-
+export function ProjectsView({isStudent, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
     return (
         <>
             <Box aria-label={"courseHeader"}
@@ -44,20 +38,20 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
-                        <Typography variant={"h4"}>Submissions</Typography>
+                        <Typography variant={"h4"}>{t("submissions")}</Typography>
                         <Typography variant={"h4"}>Score</Typography>
                     </>
                     :
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
-                        <Typography variant={"h4"}>Edit</Typography>
+                        <Typography variant={"h4"}>{t("edit")}</Typography>
                     </>
                 }
             </Box>
             <Box aria-label={"assignmentList"}
                 sx={{backgroundColor: "background.default",
-                    height: 400,
+                    height: 340,
                     display: "flex",
                     flexDirection: "column",
                     padding:1,
@@ -65,10 +59,18 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
                     paddingBottom:0
                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 380, overflow:"auto"}}>
+                    <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {assignments.map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent}/>
+                            {assignments
+                            .map((assignment, index) => ({...assignment, index}))
+                            .filter((assignment) => assignment.archived == archived)
+                            .map((assignment) => (
+                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name}
+                                        dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score}
+                                        isStudent={isStudent} archived={archived} visible={assignment.visible}
+                                        deleteEvent={() => deleteAssignment(assignment.index)}
+                                        archiveEvent={() => archiveAssignment(assignment.index)}
+                                        visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
                             ))}
                         </List>
                     </Box>
@@ -76,26 +78,4 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
             </Box>
         </>
     );
-}
-
-//TODO: use api to get data, for now use mock data
-function getCourse(courseId: string): Course {
-    return {
-        id: courseId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2"],
-        archived: false,
-        assignments: ["assignment1", "assignment2", "assignment3", "assignment4", "assignment5", "assignment6", "assignment7", "assignment8", "assignment9"]
-    }
-}
-
-function getAssignment(assignmentId: string): Assignment {
-    return {
-        id: assignmentId,
-        name: "assignmentName",
-        deadline: new Date(2022, 11, 17),
-        submissions: 2,
-        score: 10
-    }
 }
