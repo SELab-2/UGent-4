@@ -5,25 +5,35 @@ import {ProjectsView} from "./ProjectsView.tsx";
 import { useNavigate, useParams } from "react-router-dom";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useState } from "react";
+import WarningPopup from "../../components/WarningPopup.tsx";
+import {t} from "i18next";
 
-interface Course {
-    id: string;
-    name: string;
-    teacher: string;
-    students: string[];
-    //list of assignment ids
-    assignments: string[];
-    archived: boolean;
+interface Vak {
+    vak_id: number,
+    naam: string,
+    studenten: number[],
+    lesgevers: number[],
 }
 
-interface Assignment {
-    id: string;
-    name: string;
-    deadline?: Date;
-    submissions: number;
-    score: number;
-    visible: boolean;
-    archived: boolean;
+interface Project {
+    project_id: number,
+    titel: string,
+    beschrijving: string,
+    opgave_bestand: File | null,
+    vak: number,
+    max_score: number,
+    deadline: Date,
+    extra_deadline: Date,
+    zichtbaar: boolean,
+    gearchiveerd: boolean,
+}
+
+interface Gebruiker {
+    user: number,
+    is_lesgever: boolean,
+    first_name: string,
+    last_name: string,
+    email: string,
 }
 
 export function SubjectsTeacherPage() {
@@ -37,15 +47,29 @@ export function SubjectsTeacherPage() {
         navigate("/add_change_assignment");
     }
 
-    const course = getCourse(courseId);
+    const course = getVak(Number(courseId));
     
-    const [assignments, setAssignments] = useState<Assignment[]>(course.assignments.map((assignmentId) => getAssignment(assignmentId)));
+    const [assignments, setAssignments] = useState<Project[]>(getProjectenVoorVak(course.vak_id));
+    const [openDeletePopup, setOpenDeletePopup] = useState(false);
+    const [deleteIndex, setDeleteIndex] = useState(0);
+    const [openArchivePopup, setOpenArchivePopup] = useState(false);
+    const [archiveIndex, setArchiveIndex] = useState(0);
+
+    const user = getGebruiker();
 
     const deleteAssignment = (index: number) => {
-        setAssignments(assignments.filter((_, i) => i !== index));
+        setDeleteIndex(index);
+        setOpenDeletePopup(true);
+    }
+    const doDelete = () => {
+        setAssignments(assignments.filter((_, i) => i !== deleteIndex));
     }
     const archiveAssignment = (index: number) => {
-        const newAssignments = assignments.map((a, i) => i==index? archiveSingleAssignment(a): a);
+        setArchiveIndex(index);
+        setOpenArchivePopup(true);
+    }
+    const doArchive = () => {
+        const newAssignments = assignments.map((a, i) => i==archiveIndex? archiveSingleAssignment(a): a);
         setAssignments(newAssignments);
     }
     const changeVisibilityAssignment = (index: number) => {
@@ -59,10 +83,10 @@ export function SubjectsTeacherPage() {
                 <Header variant={"editable"} title={"Naam Vak"} />
                 <Box sx={{ width: '100%', height:"70%", marginTop:10 }}>
                     <TabSwitcher titles={["current_projects","archived"]}
-                                 nodes={[<ProjectsView isStudent={false} archived={false} assignments={assignments}
+                                 nodes={[<ProjectsView gebruiker={user} archived={false} assignments={assignments}
                                     deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
                                     changeVisibilityAssignment={changeVisibilityAssignment}/>,
-                                    <ProjectsView isStudent={false} archived={true} assignments={assignments}
+                                    <ProjectsView gebruiker={user} archived={true} assignments={assignments}
                                     deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
                                     changeVisibilityAssignment={changeVisibilityAssignment}/>]}/>
                 </Box>
@@ -71,55 +95,136 @@ export function SubjectsTeacherPage() {
                         <AddCircleIcon sx={{fontSize: 60, height: "100%"}} />
                     </IconButton>
                 </Box>
+                <WarningPopup title={t("delete_project_warning")} content={t("cant_be_undone")}
+                buttonName={t("delete")} open={openDeletePopup} handleClose={() => setOpenDeletePopup(false)} doAction={doDelete}/>
+                <WarningPopup title={t("archive_project_warning")} content={t("cant_be_undone")}
+                buttonName={t("archive")} open={openArchivePopup} handleClose={() => setOpenArchivePopup(false)} doAction={doArchive}/>
             </Stack>
         </>
     );
 }
 
 //TODO: use api to get data, for now use mock data
-function getCourse(courseId: string): Course {
+function getVak(courseId: number): Vak {
     return {
-        id: courseId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2"],
-        archived: false,
-        assignments: ["assignment1", "assignment2", "assignment3", "assignment4", "assignment5", "assignment6", "assignment7", "assignment8", "assignment9"]
+        vak_id: courseId,
+        naam: "courseName",
+        studenten: [0, 1, 2, 3],
+        lesgevers: [0, 1],
     }
 }
 
-function getAssignment(assignmentId: string): Assignment {
+function getGebruiker(): Gebruiker {
     return {
-        id: assignmentId,
-        name: assignmentId,
+        user: 0,
+        is_lesgever: true,
+        first_name: "goede",
+        last_name: "leerkracht",
+        email: "goede.leerkracht@ugent.be",
+    }
+}
+
+function getProjectenVoorVak(courseId: number): Project[] {
+    return [{
+        project_id: 0,
+        titel: "project 1",
+        beschrijving: "eerste project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 10,
         deadline: new Date(2022, 11, 17),
-        submissions: 2,
-        score: 10,
-        visible: true,
-        archived: Number(assignmentId.slice(-1))%2==0,
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 1,
+        titel: "project 2",
+        beschrijving: "tweede project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 2,
+        titel: "project 3",
+        beschrijving: "derde project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 3,
+        titel: "project 4",
+        beschrijving: "project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 4,
+        titel: "project 5",
+        beschrijving: "project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    },
+    {
+        project_id: 5,
+        titel: "project 6",
+        beschrijving: "project",
+        opgave_bestand: null,
+        vak: courseId,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
+    }]
+}
+
+function archiveSingleAssignment(assignment: Project): Project {
+    return {
+        project_id: assignment.project_id,
+        titel: assignment.titel,
+        beschrijving: assignment.beschrijving,
+        opgave_bestand: assignment.opgave_bestand,
+        vak: assignment.vak,
+        max_score: assignment.max_score,
+        deadline: assignment.deadline,
+        extra_deadline: assignment.extra_deadline,
+        zichtbaar: assignment.zichtbaar,
+        gearchiveerd: true,
     }
 }
 
-function archiveSingleAssignment(assignment: Assignment): Assignment {
+function changeVisibilitySingleAssignment(assignment: Project): Project {
     return {
-        id: assignment.id,
-        name: assignment.name,
+        project_id: assignment.project_id,
+        titel: assignment.titel,
+        beschrijving: assignment.beschrijving,
+        opgave_bestand: assignment.opgave_bestand,
+        vak: assignment.vak,
+        max_score: assignment.max_score,
         deadline: assignment.deadline,
-        submissions: assignment.submissions,
-        score: assignment.score,
-        visible: assignment.visible,
-        archived: true,
-    }
-}
-
-function changeVisibilitySingleAssignment(assignment: Assignment): Assignment {
-    return {
-        id: assignment.id,
-        name: assignment.name,
-        deadline: assignment.deadline,
-        submissions: assignment.submissions,
-        score: assignment.score,
-        visible: !assignment.visible,
-        archived: assignment.archived,
+        extra_deadline: assignment.extra_deadline,
+        zichtbaar: !assignment.zichtbaar,
+        gearchiveerd: assignment.gearchiveerd,
     }
 }

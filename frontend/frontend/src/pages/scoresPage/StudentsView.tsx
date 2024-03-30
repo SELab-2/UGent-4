@@ -4,36 +4,68 @@ import { StudentScoreListItem } from "../../components/StudentScoreListItem.tsx"
 import {t} from "i18next";
 
 interface StudentsViewProps {
-    projectId: string;
+    projectId: number;
 }
 
-interface Assignment {
-    id: string;
-    name: string;
-    teacher: string;
-    //list of student ids
-    students: string[];
+interface Vak {
+    vak_id: number,
+    naam: string,
+    studenten: number[],
+    lesgevers: number[],
 }
 
-interface Student {
-    id: string;
-    name: string;
+interface Project {
+    project_id: number,
+    titel: string,
+    beschrijving: string,
+    opgave_bestand: File | null,
+    vak: number,
+    max_score: number,
+    deadline: Date,
+    extra_deadline: Date,
+    zichtbaar: boolean,
+    gearchiveerd: boolean,
 }
 
-interface StudentProject {
-    id: string;
-    studentId: string;
-    submissions: string[];
+interface Groep {
+    groep_id: number,
+    studenten: number[],
+    project: number,
 }
 
-interface Submission {
-    id: string;
-    file: string;
+interface Score {
+    score_id: number,
+    score: number,
+    indiening: number,
 }
+
+interface Gebruiker {
+    user: number,
+    is_lesgever: boolean,
+    first_name: string,
+    last_name: string,
+    email: string,
+}
+
+interface Indiening {
+    indiening_id: number,
+    groep: number,
+    tijdstip: Date,
+    status: boolean,
+    indiening_bestanden: Bestand[],
+ }
+
+ interface Bestand {
+    indiening_bestand_id: number,
+    indiening: number,
+    bestand: File | null,
+ }
 
 export function StudentsView({projectId}: StudentsViewProps) {   
     const project = getProject(projectId);
-    const students = project.students.map((studentProjectId) => getStudentOnProject(studentProjectId));
+    const groepen = getGroepenVoorProject(projectId);
+    const indieningen = groepen.map((groep) => getLaatseIndieningVanGroep(groep.groep_id));
+    const scores = indieningen.map((indiening) => getScoreVoorIndiening(indiening.indiening_id));
 
     return (
         <>
@@ -47,7 +79,7 @@ export function StudentsView({projectId}: StudentsViewProps) {
                     padding:3,
                 }}>
                 <>
-                    <Typography maxWidth={100}>Student</Typography>
+                    <Typography maxWidth={100}>{t("group")}</Typography>
                     <Typography maxWidth={100}>{t("time")}</Typography>
                     <Typography maxWidth={100}>Score</Typography>
                     <Typography maxWidth={100}>Download</Typography>
@@ -66,8 +98,10 @@ export function StudentsView({projectId}: StudentsViewProps) {
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width:"100%", height: 430, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {students.map((studentOnProject) => (
-                                <StudentScoreListItem key={studentOnProject.id} studentName={getStudent(studentOnProject.studentId).name} submissionFiles={studentOnProject.submissions.map((submissionId) => getSubmission(submissionId).file)}/>
+                            {groepen.map((groep, index) => (
+                                <StudentScoreListItem key={groep.groep_id} groepName={String(groep.groep_id)}
+                                submissionFiles={indieningen[index].indiening_bestanden} score={scores[index].score}
+                                maxScore={project.max_score}/>
                             ))}
                         </List>
                     </Box>
@@ -78,33 +112,65 @@ export function StudentsView({projectId}: StudentsViewProps) {
 }
 
 //TODO: use api to get data, for now use mock data
-function getProject(projectId: string): Assignment {
+function getProject(projectId: number): Project {
     return {
-        id: projectId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2", "student3"],
+        project_id: projectId,
+        titel: "courseName",
+        beschrijving: "project beschrijving",
+        opgave_bestand: null,
+        vak: 0,
+        max_score: 20,
+        deadline: new Date(2022, 11, 17),
+        extra_deadline: new Date(2022, 11, 17),
+        zichtbaar: true,
+        gearchiveerd: false,
     }
 }
 
-function getStudentOnProject(studentProjectId: string): StudentProject {
-    return {
-        id: studentProjectId,
-        studentId: "student",
-        submissions: ["submission1", "submission2"],
-    }
+function getGroepenVoorProject(projectId: number): Groep[] {
+    return [{
+        groep_id: 0,
+        studenten: [0, 1, 2, 3],
+        project: projectId,
+    },
+    {
+        groep_id: 1,
+        studenten: [4, 5, 6, 7],
+        project: projectId,
+    },
+    {
+        groep_id: 2,
+        studenten: [8, 9, 10, 11],
+        project: projectId,
+    },
+    ]
 }
 
-function getStudent(studentId: string): Student {
+function getLaatseIndieningVanGroep(groepId: number): Indiening {
     return {
-        id: studentId,
-        name: "studentName",
-    }
+        indiening_id: 0,
+        groep: groepId,
+        tijdstip: new Date(2022, 11, 17),
+        status: true,
+        indiening_bestanden: [
+            {
+                indiening_bestand_id: 0,
+                indiening: 0,
+                bestand: null,
+            },
+            {
+                indiening_bestand_id: 1,
+                indiening: 0,
+                bestand: null,
+            }
+        ],
+     }
 }
 
-function getSubmission(submissionId: string): Submission {
+function getScoreVoorIndiening(indieningId: number): Score {
     return {
-        id: submissionId,
-        file: "file",
+        score_id: 0,
+        score: 10,
+        indiening: indieningId,
     }
 }

@@ -16,6 +16,10 @@ export function ProjectScoresPage() {
         console.log("export submissions");
     }
 
+    const uploadScores = () => {
+        console.log("upload scores");
+    }
+
     const saveScores = () => {
         console.log("save scores");
         navigate("/assignment_teacher");
@@ -36,6 +40,7 @@ export function ProjectScoresPage() {
                 <Box display="flex" flexDirection="row" sx={{ width: '100%', height:"30%", marginTop:5 }}>
                     <Box display="flex" flexDirection="row" sx={{ width: '50%', height:"auto" }}>
                         <Button onClick={exportSubmissions} variant="contained" color="secondary">{t("export_submissions")}</Button>
+                        <Button onClick={uploadScores} variant="contained" color="secondary">{t("upload_scores")}</Button>
                     </Box>
                     <Box display="flex" flexDirection="row-reverse" sx={{ width: '50%', height:"auto" }}>
                         <Button onClick={saveScores} variant="contained" startIcon={<SaveIcon />}/>
