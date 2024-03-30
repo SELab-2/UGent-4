@@ -1,4 +1,3 @@
-# test_indiening.py
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from api.serializers.indiening import IndieningSerializer, IndieningBestandSerializer
@@ -14,20 +13,21 @@ class IndieningSerializerTest(TestCase):
     def test_indiening_serializer_fields(self):
         data = self.serializer.data
         self.assertEqual(
-            set(data.keys()), set(["indiening_id", "groep", "tijdstip"])
-        )  # Add other fields
+            set(data.keys()),
+            set(["indiening_id", "groep", "tijdstip", "status", "indiening_bestanden"]),
+        )
 
     def test_indiening_serializer_create(self):
-        # can't check tijdstip because it's auto_now_add
         groep = GroepFactory.create()
         data = {"groep": groep.groep_id}
         serializer = IndieningSerializer(data=data)
+        if not serializer.is_valid():
+            print(serializer.errors)
         self.assertTrue(serializer.is_valid())
         indiening = serializer.save()
         self.assertEqual(indiening.groep, groep)
 
     def test_indiening_serializer_update(self):
-        # can't check tijdstip because it's auto_now_add
         new_data = {"groep": self.indiening.groep.groep_id}
         serializer = IndieningSerializer(
             instance=self.indiening, data=new_data, partial=True
@@ -55,7 +55,7 @@ class IndieningBestandSerializerTest(TestCase):
         data = {
             "indiening": indiening.indiening_id,
             "bestand": SimpleUploadedFile("file.txt", b"file_content"),
-        }  # Add other fields
+        }
         serializer = IndieningBestandSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         indiening_bestand = serializer.save()
@@ -65,7 +65,7 @@ class IndieningBestandSerializerTest(TestCase):
         new_data = {
             "indiening": self.indiening_bestand.indiening.indiening_id,
             "bestand": SimpleUploadedFile("file.txt", b"file_content"),
-        }  # Add other fields
+        }
         serializer = IndieningBestandSerializer(
             instance=self.indiening_bestand, data=new_data, partial=True
         )
