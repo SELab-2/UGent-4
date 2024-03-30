@@ -62,8 +62,11 @@ export const Header = ({variant, title}: Props) => {
      * Function to handle logout action
      */
     const logout = () => {
-        instance.logoutRedirect().catch((error: Error) => console.error(error));
-        navigate("/");
+        instance.logoutRedirect({
+            postLogoutRedirectUri: "/",
+        }).catch((e) => {
+            console.error(e)
+        });
     };
 
     return (

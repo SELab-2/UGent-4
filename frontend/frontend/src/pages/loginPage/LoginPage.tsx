@@ -14,7 +14,9 @@ export function LoginPage() {
 
     const handleLogin = () => {
         //TODO: implement authentication trough backend
-        instance.loginRedirect(loginRequest).catch((error) => console.error(error));
+        instance.loginRedirect(loginRequest).catch((e) => {
+            console.log(e);
+        });
     }
 
     return (
