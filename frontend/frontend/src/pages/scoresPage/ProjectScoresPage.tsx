@@ -7,8 +7,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
 
 export function ProjectScoresPage() {
-    let { projectId } = useParams();
-    projectId = String(projectId);
+    let { assigmentId } = useParams();
+    const projectId = Number(assigmentId);
 
     const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ export function ProjectScoresPage() {
                 <Box display="flex" flexDirection="row" sx={{ width: '100%', height:"30%", marginTop:5 }}>
                     <Box display="flex" flexDirection="row" sx={{ width: '50%', height:"auto" }}>
                         <Button onClick={exportSubmissions} variant="contained" color="secondary">{t("export_submissions")}</Button>
-                        <Button onClick={uploadScores} variant="contained" color="secondary">{t("upload_scores")}</Button>
+                        <Button onClick={uploadScores} variant="contained" color="secondary">{t("export_submissions")}</Button>
                     </Box>
                     <Box display="flex" flexDirection="row-reverse" sx={{ width: '50%', height:"auto" }}>
                         <Button onClick={saveScores} variant="contained" startIcon={<SaveIcon />}/>

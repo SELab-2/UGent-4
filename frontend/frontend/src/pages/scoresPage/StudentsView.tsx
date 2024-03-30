@@ -100,7 +100,7 @@ export function StudentsView({projectId}: StudentsViewProps) {
                         <List disablePadding={true}>
                             {groepen.map((groep, index) => (
                                 <StudentScoreListItem key={groep.groep_id} groepName={String(groep.groep_id)}
-                                submissionFiles={indieningen[index].indiening_bestanden} score={scores[index].score}
+                                submissionFiles={indieningen[index].indiening_bestanden} startScore={scores[index].score}
                                 maxScore={project.max_score}/>
                             ))}
                         </List>
