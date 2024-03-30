@@ -9,6 +9,7 @@ const dutch = {
     no_deadline: "Geen deadline",
     add_admin: "Voeg admin toe",
     submission: "Indiening",
+    submissions: "Indieningen",
     error: "Er is iets misgegaan.",
     assignment: "Opgave:",
     filename: "Ingediend bestand:",
@@ -38,6 +39,10 @@ const dutch = {
     allowed_file_types: "Toegestane bestandstypes",
     dockerfile_error: "Gelieve een Docker bestand te uploaden.",
     filetype_error: "Gelieve minstens één bestandstype te selecteren.",
+    export_submissions: "Exporteer Indieningen",
+    time: "Tijdstip",
+    no_submissions: "Geen indieningen",
+    edit: "Aanpassen",
 };
 
 export default dutch;
