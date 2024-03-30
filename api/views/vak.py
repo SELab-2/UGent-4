@@ -6,8 +6,6 @@ from api.models.vak import Vak
 from api.serializers.vak import VakSerializer
 from api.utils import is_lesgever, contains
 
-from django.core.exceptions import ValidationError
-
 
 @api_view(["GET", "POST"])
 def vak_list(request, format=None):
@@ -68,14 +66,11 @@ def vak_detail(request, id, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
     if is_lesgever(request.user):
         if request.method == "PUT":
-            try:
-                serializer = VakSerializer(vak, data=request.data)
-                if serializer.is_valid():
-                    serializer.save()
-                    return Response(serializer.data)
-                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-            except ValidationError as e:
-                return Response({"error": e}, status=status.HTTP_400_BAD_REQUEST)
+            serializer = VakSerializer(vak, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         elif request.method == "DELETE":
             vak.delete()

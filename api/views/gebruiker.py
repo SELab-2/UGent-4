@@ -23,23 +23,22 @@ def gebruiker_list(request):
     Returns:
         Response: Een lijst van gebruikers.
     """
-    if request.method == "GET":
-        if is_lesgever(request.user):
-            gebruikers = Gebruiker.objects.all()
-        else:
-            gebruikers = Gebruiker.objects.filter(user=request.user.id)
 
-        if "is_lesgever" in request.GET and request.GET.get("is_lesgever").lower() in [
-            "true",
-            "false",
-        ]:
-            gebruikers = gebruikers.filter(
-                is_lesgever=(request.GET.get("is_lesgever").lower() == "true")
-            )
+    if is_lesgever(request.user):
+        gebruikers = Gebruiker.objects.all()
+    else:
+        gebruikers = Gebruiker.objects.filter(user=request.user.id)
 
-        serializer = GebruikerSerializer(gebruikers, many=True)
-        return Response(serializer.data)
-    return Response(status=status.HTTP_403_FORBIDDEN)
+    if "is_lesgever" in request.GET and request.GET.get("is_lesgever").lower() in [
+        "true",
+        "false",
+    ]:
+        gebruikers = gebruikers.filter(
+            is_lesgever=(request.GET.get("is_lesgever").lower() == "true")
+        )
+
+    serializer = GebruikerSerializer(gebruikers, many=True)
+    return Response(serializer.data)
 
 
 @api_view(["GET", "PUT"])
@@ -60,7 +59,7 @@ def gebruiker_detail(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if is_lesgever(request.user) or id == request.user.id:
+        if is_lesgever(request.user) or int(id) == request.user.id:
             serializer = GebruikerSerializer(gebruiker)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
@@ -71,4 +70,4 @@ def gebruiker_detail(request, id):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_403_FORBIDDEN)
+    return Response(status=status.HTTP_403_FORBIDDEN)
