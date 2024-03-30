@@ -87,6 +87,7 @@ if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0
 msalInstance.addEventCallback((event: EventMessage) => {
     if (event.eventType === EventType.LOGIN_SUCCESS) {
         // Cast event.payload to AuthenticationResult to access the account property
+        console.log("login success");
         const authResult = event.payload as AuthenticationResult;
         if (authResult.account) {
             const account = authResult.account;
@@ -103,18 +104,18 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
             </Helmet>
 
             <React.Suspense fallback={<div>Loading...</div>}>
-                <ThemeProvider theme={theme}>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <MsalProvider instance={msalInstance}>
+                <MsalProvider instance={msalInstance}>
+                    <ThemeProvider theme={theme}>
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <AuthenticatedTemplate>
                                 <RouterProvider router={router}/>
                             </AuthenticatedTemplate>
                             <UnauthenticatedTemplate>
                                 <LoginPage/>
                             </UnauthenticatedTemplate>
-                        </MsalProvider>
-                    </LocalizationProvider>
-                </ThemeProvider>
+                        </LocalizationProvider>
+                    </ThemeProvider>
+                </MsalProvider>
             </React.Suspense>
         </HelmetProvider>
     </React.StrictMode>
