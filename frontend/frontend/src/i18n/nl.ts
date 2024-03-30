@@ -57,6 +57,14 @@ const dutch = {
     time: "Tijdstip",
     no_submissions: "Geen indieningen",
     edit: "Aanpassen",
+    upload_scores: "Upload Scores",
+    group: "Groep",
+    last_submission: "Laatste Indiening:",
+    delete_project_warning: "Opdracht Verwijderen?",
+    archive_project_warning: "Opdracht Archiveren?",
+    cant_be_undone: "Dit kan niet ongedaan gemaakt worden.",
+    delete: "Verwijder",
+    archive: "Archiveer",
 };
 
 export default dutch;
