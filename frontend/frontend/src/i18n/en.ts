@@ -38,6 +38,20 @@ const english = {
     allowed_file_types: "Allowed file types",
     dockerfile_error: "Please upload a Dockerfile.",
     filetype_error: "Please select at least one file type.",
+    upload_students: "Upload students",
+    upload_teachers: "Upload teachers",
+    subject_name: "Subject name",
+    students: "Students",
+    teachers: "Teachers",
+    cancel: "Cancel",
+    delete: "Delete",
+    this_can_not_be_undone: "This can not be undone",
+    delete_student: "Delete student",
+    delete_teacher: "Delete teacher",
+    add: "Add",
+    studentnumber: "Studentnumber",
+    teacher: "Teacher",
+    title: "Title",
     export_submissions: "Export submissions",
     time: "Time",
     no_submissions: "No submissions",
@@ -50,6 +64,7 @@ const english = {
     cant_be_undone: "This cannot be undone.",
     delete: "Delete",
     archive: "Archive",
+
 };
 
 export default english;
