@@ -1,13 +1,23 @@
-import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
+import {ListItem, ListItemButton, ListItemText, Divider, IconButton} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { useState } from "react";
+
 interface AssignmentListItemSubjectsPageProps {
-    key: string;
     projectName: string;
     dueDate?: Date;
     submissions: number;
     score: number;
     isStudent: boolean;
+    archived: boolean;
+    visible: boolean;
+    deleteEvent: () => void;
+    archiveEvent: () => void;
+    visibilityEvent: () => void;
 }
 
 /*
@@ -20,11 +30,16 @@ interface AssignmentListItemSubjectsPageProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submissions, score, isStudent}:AssignmentListItemSubjectsPageProps) {
+export function AssignmentListItemSubjectsPage({projectName, dueDate, submissions, score, isStudent, archived, visible,
+    deleteEvent, archiveEvent, visibilityEvent}:AssignmentListItemSubjectsPageProps) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
-        navigate(`/${key}`)
+        if(isStudent){
+            navigate("/assignment_student");
+        } else {
+            navigate("/assignment_teacher");
+        }
     }
 
     return (
@@ -44,14 +59,15 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:100}} primary={submissions + " indieningen"}/>
+                            <ListItemText sx={{maxWidth:110}} primary={submissions + " " + t("submissions")}/>
                             <ListItemText sx={{maxWidth:50}} primary={score + "/20"}/>
                         </>
                         :
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:40}} primary={"edit"}/>
+                            <ButtonActions archived={archived} startVisible={visible} deleteEvent={deleteEvent}
+                            archiveEvent={archiveEvent} visibilityEvent={visibilityEvent}/>
                         </>
                     }
                 </ListItemButton>
@@ -59,4 +75,57 @@ export function AssignmentListItemSubjectsPage({key,projectName, dueDate, submis
             <Divider color={"text.main"}></Divider>
         </>
     );
+}
+
+interface ButtonActionsProps {
+    archived: boolean;
+    startVisible: boolean;
+    deleteEvent: () => void;
+    archiveEvent: () => void;
+    visibilityEvent: () => void;
+}
+
+function ButtonActions({archived, startVisible, deleteEvent, archiveEvent, visibilityEvent}: ButtonActionsProps){
+    const [visible, setVisible] = useState(startVisible);
+
+    const handleIconClick = (e, icon: string) => {
+        e.stopPropagation();
+        console.log(icon + " clicked");
+        switch (icon) {
+            case 'visible':
+                setVisible(!visible);
+                visibilityEvent();
+                break;
+            case 'archive':
+                archiveEvent();
+                break;
+            case 'delete':
+                deleteEvent();
+                break;
+            default:
+                break;
+        }
+    }
+
+    return(
+        <ListItem sx={{maxWidth:110}}>
+            {visible?
+                <IconButton onClick={(e) => handleIconClick(e, "visible")} edge="end" aria-label="visible">
+                    <VisibilityOutlinedIcon/>
+                </IconButton>
+                :
+                <IconButton onClick={(e) => handleIconClick(e, "visible")} edge="end" aria-label="not-visible">
+                    <VisibilityOffOutlinedIcon/>
+                </IconButton>
+            }
+            {!archived &&
+                <IconButton onClick={(e) => handleIconClick(e, "archive")} edge="end" aria-label="archive">
+                    <ArchiveOutlinedIcon/>
+                </IconButton>
+            }
+            <IconButton onClick={(e) => handleIconClick(e, "delete")} edge="end" aria-label="delete">
+                <DeleteOutlinedIcon/>
+            </IconButton>
+        </ListItem>
+    )
 }

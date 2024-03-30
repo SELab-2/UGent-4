@@ -1,7 +1,6 @@
 import {Divider, IconButton, ListItem, ListItemText, TextField} from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-
-//TODO: take care of internationalization
+import { t } from "i18next";
 
 interface StudentScoreListItemProps {
     key: string;
@@ -33,7 +32,7 @@ export function StudentScoreListItem({key, studentName, submissionFiles}: Studen
                     <>
                         <ListItemText sx={{maxWidth: 100}} primary={studentName}/>
                         <ListItemText sx={{maxWidth: 110}}
-                                      primary={submissionFiles.length ? submissionFiles.length + " indieningen" : "geen indieningen"}/>
+                                      primary={submissionFiles.length ? submissionFiles.length + " " + t("submissions") : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
                             <TextField hiddenLabel defaultValue="0" variant="filled" size="small"/>
                             <ListItemText sx={{maxWidth: 100}} primary="/20"/>

@@ -1,6 +1,7 @@
 import {Box, Typography, Divider} from "@mui/material";
 import List from '@mui/material/List';
 import { StudentScoreListItem } from "../../components/StudentScoreListItem.tsx";
+import {t} from "i18next";
 
 interface StudentsViewProps {
     projectId: string;
@@ -47,7 +48,7 @@ export function StudentsView({projectId}: StudentsViewProps) {
                 }}>
                 <>
                     <Typography maxWidth={100}>Student</Typography>
-                    <Typography maxWidth={100}>Time</Typography>
+                    <Typography maxWidth={100}>{t("time")}</Typography>
                     <Typography maxWidth={100}>Score</Typography>
                     <Typography maxWidth={100}>Download</Typography>
                 </>
