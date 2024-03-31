@@ -55,7 +55,7 @@ class GebruikerSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         self.gebruiker = serializer.save()
         self.assertTrue(self.gebruiker.is_lesgever)
-    
+
     def test_update_invalid_teacher(self):
         vak = VakFactory.create()
         vak.studenten.add(self.gebruiker)
@@ -78,7 +78,7 @@ class GebruikerSerializerTest(APITestCase):
             instance=self.gebruiker, data=data, partial=True
         )
         self.assertTrue(serializer.is_valid())
-        self.assertRaises(ValidationError, serializer.save, raise_exception=True)    
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
     def test_validation_for_blank_items(self):
         serializer = GebruikerSerializer(data={"user": "", "is_lesgever": []})
