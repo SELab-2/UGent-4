@@ -2,6 +2,7 @@ import {Header} from "../../components/Header.tsx";
 import {Box, Divider, Grid, List, Stack, TextField, Typography} from "@mui/material";
 import Switch from '@mui/material/Switch';
 import { GroupListItem } from "../../components/GroupListItem.tsx";
+import {t} from "i18next";
 
 const groups = [
     {
@@ -74,13 +75,13 @@ export function GroupsPage() {
                 }}
                 >
                 <Typography variant="h6" sx={{fontWeight: 'bold'}} color="text.primary">
-                    Groepen
+                    {t("groups")}
                 </Typography>
                     <Stack direction={"row"}>
                         <Grid container spacing={2} alignItems="center">
                             <Grid item>
                                 <Typography color="text.primary">
-                                    Leden per groep
+                                   {t("amount")} {t("members")}/{t("group")}
                                 </Typography>
                             </Grid>
                             <Grid item minWidth={3}>
@@ -90,11 +91,11 @@ export function GroupsPage() {
                     </Stack>
                     <Stack direction="row" alignItems="center" spacing={2}>
                         <Typography color="text.primary">
-                            Willekeurige groepen
+                            {t("random")} {t("groups")}
                         </Typography>
                         <Switch/>
                         <Typography color="text.primary">
-                            Studenten kunnen kiezen
+                          {t("students_choose")}
                         </Typography>
                         <Switch/>
                     </Stack>
@@ -109,8 +110,8 @@ export function GroupsPage() {
                 >
                     <List>
                     <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                        <Typography sx={{fontWeight: 'bold'}}>Indiening</Typography>
-                        <Typography sx={{fontWeight: 'bold'}}>Ingeschreven groep</Typography>
+                        <Typography sx={{fontWeight: 'bold'}}>Student</Typography>
+                        <Typography sx={{fontWeight: 'bold'}}>{t("group_members")}</Typography>
                     </Box>
                     <Box style={{maxHeight: 300, overflow: 'auto'}}>
                             <Divider/>

@@ -48,8 +48,8 @@ export function AssignmentListItemTeacherPage({id,studentName,submitted, score}:
                                                                     color: 'primary.light',
                                                                     },
                                                                 }} primary={studentName}/>
-                    <ListItemText sx={{maxWidth:40}} primary={submitted? submitted.toLocaleDateString() : t("niet ingediend")}/>
-                    <ListItemText sx={{maxWidth:50}} primary={submitted? score+ "/20": t("-")}/>
+                    <ListItemText sx={{maxWidth:40}} primary={submitted? submitted.toLocaleDateString() : t("no_submission")}/>
+                    <ListItemText sx={{maxWidth:50}} primary={submitted? score+ "/20": "-"}/>
                     <ListItemIcon sx={{minWidth: 35}}>
                     {submitted  ? (
                             <DownloadIcon  onClick={handleStudentDownloadClick} 
