@@ -9,7 +9,7 @@ import RestrictionsDialog from './RestrictionsDialog';
 
 
 
-export default function AddRestrictionButton() {
+export default function AddRestrictionButton(){
   const [open, setOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
 
@@ -46,7 +46,7 @@ export default function AddRestrictionButton() {
     >
         <DialogTitle id="scroll-dialog-title">Add restriction</DialogTitle>
         <DialogContent dividers={scroll === 'paper'}>
-                <RestrictionsDialog onClose={handleClose}></RestrictionsDialog>
+                <RestrictionsDialog closeParentDialog={handleClose}></RestrictionsDialog>
         </DialogContent>
         <DialogActions>
             <Button onClick={handleClose}>Cancel</Button>

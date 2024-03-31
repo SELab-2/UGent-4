@@ -19,7 +19,7 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function RestrictionsDialog(){
+export default function RestrictionsDialog({ closeParentDialog }: { closeParentDialog: () => void }) {
   const [open, setOpen] = React.useState(false);
     const fileInput = React.useRef<HTMLInputElement>(null);
 
@@ -33,26 +33,26 @@ export default function RestrictionsDialog(){
                 key="Upload"
                 onClick={()=> {
                     fileInput.current?.click();
-                    /*closeParentDialog();*/
+                    closeParentDialog();
                 }}
         >Upload</Button>,
         <Button key="New_Script"
         onClick={() => {
-            handleClickOpen();
-            /*closeParentDialog();*/}}>New Script</Button>,
+            handleClickOpen();}}>New Script</Button>,
         <Button key="FileExtensionCheck"
         onClick={() => {
             handleClickOpen();
-            /*closeParentDialog();*/}}>File Extension Check</Button>,
+            }}>File Extension Check</Button>,
         <Button key="FilesPresentCheck" onClick={() => {
             handleClickOpen();
-            /*closeParentDialog();*/}}>Files Present Check</Button>,
+            }}>Files Present Check</Button>,
     ];
 
     
 
   const handleClose = () => {
     setOpen(false);
+    closeParentDialog();
   };
 
   return (
@@ -95,10 +95,6 @@ export default function RestrictionsDialog(){
           multiline
           variant="filled"
         />
-
-        {/*<Textarea
-            maxRows={4}
-  />*/}
       </Dialog>
     </React.Fragment>
   );
