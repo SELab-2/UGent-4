@@ -22,7 +22,7 @@ import authSecrets from "./authSecrets.ts";
 export const msalConfig = {
     auth: {
         clientId: authSecrets.clientId,
-        authority: authSecrets.authority,
+        authority: "https://login.microsoftonline.com/" + authSecrets.authority,
         redirectUri: window.location.origin + "/", // This redirectUri is the default for single-page applications
     },
     cache: {
