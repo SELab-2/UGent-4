@@ -154,12 +154,12 @@ class ProjectSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         project = serializer.save()
         self.assertEqual(project.deadline, parse(data["deadline"]))
-    
+
     def test_update_invalid_vak(self):
         vak = VakFactory.create()
         data = self.serializer.data
-        data['vak'] = vak.vak_id
-        data['opgave_bestand'] = SimpleUploadedFile("file.txt", b"file_content")
+        data["vak"] = vak.vak_id
+        data["opgave_bestand"] = SimpleUploadedFile("file.txt", b"file_content")
         serializer = ProjectSerializer(instance=self.project, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)

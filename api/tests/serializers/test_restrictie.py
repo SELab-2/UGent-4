@@ -54,7 +54,7 @@ class RestrictieSerializerTest(TestCase):
             + str(data["script"]),
         )
         self.assertEqual(restrictie.moet_slagen, data["moet_slagen"])
-    
+
     def test_create_invalid_script(self):
         data = {
             "project": self.restrictie.project.project_id,
@@ -75,7 +75,7 @@ class RestrictieSerializerTest(TestCase):
         self.assertTrue(serializer.is_valid())
         self.restrictie = serializer.save()
         self.assertEqual(self.restrictie.moet_slagen, data["moet_slagen"])
-    
+
     def test_update_invalid_project(self):
         project = ProjectFactory.create()
         data = self.serializer.data
@@ -86,7 +86,6 @@ class RestrictieSerializerTest(TestCase):
         )
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-
 
     def test_validation_for_blank_items(self):
         serializer = RestrictieSerializer(
