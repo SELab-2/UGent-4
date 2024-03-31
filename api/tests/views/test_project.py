@@ -48,7 +48,7 @@ class ProjectListViewTest(APITestCase):
             "beschrijving": "Dit is een test project.",
             "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
             "vak": vak,
-            "deadline": "2024-03-31T12:40:05.317980Z",
+            "deadline": "2024-12-31T00:00:00.000000Z",
             "extra_deadline": "",
             "max_score": 20,
             "zichtbaar": "true",
