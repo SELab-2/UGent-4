@@ -1,5 +1,6 @@
 from django.test import TestCase
 from api.tests.factories.project import ProjectFactory
+from api.models.project import upload_to
 
 
 class ProjectModelTest(TestCase):
@@ -29,3 +30,8 @@ class ProjectModelTest(TestCase):
 
     def test_project_opgave_bestand(self):
         self.assertEqual(self.project.opgave_bestand.read(), b"file content")
+
+    def test_upload_to(self):
+        filename = "test_opgave.txt"
+        expected_path = f"data/opgaves/vak_{self.project.vak.vak_id}/{filename}"
+        self.assertEqual(upload_to(self.project, filename), expected_path)

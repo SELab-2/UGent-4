@@ -28,4 +28,4 @@ class Restrictie(models.Model):
     moet_slagen = models.BooleanField(default=False, blank=True)
 
     def __str__(self):
-        return self.project.titel + ', restrictie: ' + str(self.script)
+        return self.project.titel + ", restrictie: " + str(self.script)
