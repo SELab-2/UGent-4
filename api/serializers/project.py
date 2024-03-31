@@ -23,9 +23,18 @@ class ProjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Project
         fields = [
-            'project_id', 'titel', 'beschrijving', 'opgave_bestand', 'vak', 'deadline',
-            'extra_deadline', 'max_score', 'zichtbaar', 'gearchiveerd', 'restricties'
-            ]
+            "project_id",
+            "titel",
+            "beschrijving",
+            "opgave_bestand",
+            "vak",
+            "deadline",
+            "extra_deadline",
+            "max_score",
+            "zichtbaar",
+            "gearchiveerd",
+            "restricties",
+        ]
 
     def create(self, validated_data):
         """
@@ -58,7 +67,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         extra_deadline = validated_data.pop("extra_deadline")
         validate_deadlines(deadline, extra_deadline)
 
-        new_vak = validated_data.get('vak')
+        new_vak = validated_data.get("vak")
         validate_vak(instance, new_vak)
 
         super().update(instance=instance, validated_data=validated_data)
@@ -93,4 +102,6 @@ def validate_vak(instance, new_vak):
     """
 
     if instance.vak != new_vak:
-        raise serializers.ValidationError('Het vak van een project kan niet aangepast worden')
+        raise serializers.ValidationError(
+            "Het vak van een project kan niet aangepast worden"
+        )

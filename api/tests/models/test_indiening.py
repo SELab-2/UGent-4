@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
 from api.tests.factories.indiening import IndieningFactory, IndieningBestandFactory
+from api.models.indiening import upload_to
 
 
 class IndieningModelTest(TestCase):
@@ -21,6 +22,13 @@ class IndieningModelTest(TestCase):
 
     def test_indiening_bestanden(self):
         self.assertEqual(self.indiening.indiening_bestanden.count(), 1)
+
+    def test_upload_to(self):
+        filename = "test_indiening.txt"
+        expected_path = (
+            f"data/indieningen/indiening_{self.indiening.indiening_id}/{filename}"
+        )
+        self.assertEqual(upload_to(self.indiening, filename), expected_path)
 
 
 class IndieningBestandModelTest(TestCase):
