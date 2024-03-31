@@ -25,6 +25,7 @@ class RedirectAnonymousUserMiddleware:
         if request.user.is_anonymous and request.path not in [
             "/oauth2/login",
             "/oauth2/callback",
+            "/.well-known/microsoft-identity-association.json"
         ]:
             # Redirect to the login page
             return redirect(settings.LOGIN_URL)
