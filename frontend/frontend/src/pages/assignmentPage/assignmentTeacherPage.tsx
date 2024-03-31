@@ -1,12 +1,7 @@
 import {Header} from "../../components/Header.tsx";
 import { AssignmentListItemTeacherPage } from "../../components/AssignmentListItemTeacherPage.tsx";
 import { Box, Button, Card, Divider, Grid, List, ListItem, ListItemText, ListSubheader, Stack, TextField, Typography} from "@mui/material";
-import DownloadIcon from '@mui/icons-material/Download';
-import SaveIcon from '@mui/icons-material/Save';
-import AddIcon from '@mui/icons-material/Add';
-import {LocalizationProvider} from '@mui/x-date-pickers';
-import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs'
-import {DatePicker} from '@mui/x-date-pickers/DatePicker';
+import {t} from "i18next";
 
 const text = "Lorem ipsum dolor sit amet consectetur. Nisi magna dolor et nisi nibh et velit phasellus. Aliquam semper justo posuere suspendisse amet amet nam nec. Tellus magna in proin tempor hac sit. Faucibus laoreet nulla commodo quis. Porttitor sit facilisis sit dignissim quis. Malesuada etiam tempor donec et ante. Aliquam massa donec augue aliquam semper amet blandit sed faucibus. Et elementum duis adipiscing turpis mi. Senectus eu rutrum accumsan convallis metus mattis risus. Quam eget sapien tellus aliquam facilisi sit volutpat. Scelerisque auctor purus nam sit lacus amet ullamcorper amet. Turpis nulla quis in pretium. Maecenas aliquam ac ullamcorper suspendisse morbi cras. Mi nibh aliquet massa sit eget tristique a. Posuere pretium auctor tellus massa et eu egestas. Sit lorem proin aenean tortor morbi condimentum. Leo eu enim cursus tempus sed viverra laoreet. Nisl ornare velit molestie suspendisse. Hendrerit nibh mauris vulputate sit vitae. Tellus quisque non nibh proin nunc lacus scelerisque dui. Aliquam fermentum libero aliquet volutpat at. Vestibulum ultrices nec felis leo nibh viverra. Hendrerit ut nunc porta egestas sit velit dictumst dis porta. Donec quam aliquam commodo mattis purus. Tellus nulla lectus fusce in fames scelerisque at."
 
@@ -100,7 +95,7 @@ export function AssignmentTeacherPage() {
                 }}
                 >
                     <Stack direction={"column"}>
-                        <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>Opgave</Typography>
+                        <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>{t("assignment")}</Typography>
                         <Typography>{text}</Typography>
                     </Stack>
                 </Card>
@@ -116,9 +111,9 @@ export function AssignmentTeacherPage() {
                 >
                     <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
                         <Typography sx={{ fontWeight: 'bold' }}>Student</Typography>
-                        <Typography sx={{ fontWeight: 'bold' }}>Tijdstip</Typography>
+                        <Typography sx={{ fontWeight: 'bold' }}>{t("time")}</Typography>
                         <Typography sx={{ fontWeight: 'bold' }}>Score</Typography>
-                        <Typography sx={{ fontWeight: 'bold' }}>Download</Typography>
+                        <Typography sx={{ fontWeight: 'bold' }}>{t("download")}</Typography>
                     </Box>
                     <Box style={{maxHeight: 300, overflow: 'auto'}}>
                         <Divider color={"text.main"}></Divider>
@@ -149,11 +144,11 @@ export function AssignmentTeacherPage() {
                 >
                     <Stack direction={"row"}>
                         <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                            <Typography color="secondary.contrastText">Exporteer Indieningen</Typography>
+                            <Typography color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
                         </Button>
                         <div style={{flexGrow: 1}}/>
                         <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                            <Typography color="secondary.contrastText">Pas scores aan</Typography>
+                            <Typography color="secondary.contrastText">{t("adjust_scores")}</Typography>
                         </Button>
                     </Stack>
                 </Box>
