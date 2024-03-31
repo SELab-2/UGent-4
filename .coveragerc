@@ -1,0 +1,10 @@
+[run]
+omit=
+    */tests/*
+    */migrations/*
+    */__init__.py
+    */__pycache__/*
+    */data/*
+    */frontend/*
+    */static/*
+    */.github/*

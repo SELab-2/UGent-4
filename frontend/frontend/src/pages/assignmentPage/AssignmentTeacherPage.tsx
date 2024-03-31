@@ -3,6 +3,7 @@ import {Button, Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextFi
 import UploadIcon from '@mui/icons-material/Upload';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
+import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {LocalizationProvider} from '@mui/x-date-pickers';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs'
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
@@ -116,9 +117,11 @@ export function AssignmentTeacherPage() {
 
                     </List>
 
-                    <Button sx={{bgcolor: 'secondary.main'}}>
+                    <AddRestrictionButton></AddRestrictionButton>
+
+                    {/* <Button sx={{bgcolor: 'secondary.main'}}>
                         <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
-                    </Button>
+                    </Button> */}
 
                 </Card>
 
