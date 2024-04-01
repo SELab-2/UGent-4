@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from api.docker.python_entrypoint import run_tests_on
 
 
 def upload_to(instance, filename):
@@ -67,3 +70,13 @@ class IndieningBestand(models.Model):
 
     def __str__(self):
         return str(self.bestand.name)
+    
+
+@receiver(post_save, sender=Indiening)
+def indiening_post_init(sender, instance, created, **kwargs):
+    """
+    TODO
+    """
+    if created:
+        print(instance.indiening_id, instance.groep.project.project_id)
+        print(run_tests_on(20, 12)[1])
