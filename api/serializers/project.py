@@ -85,7 +85,6 @@ class ProjectSerializer(serializers.ModelSerializer):
         return instance
 
 
-
 def validate_deadlines(deadline, extra_deadline):
     """
     Controleert of de opgegeven deadline in de toekomst ligt.
@@ -115,8 +114,8 @@ def validate_vak(instance, new_vak):
 
     Raises:
         serializers.ValidationError: Wordt opgegooid als het vak van een project wordt aangepast.
-    """    
-    
+    """
+
     if instance.vak != new_vak:
         raise serializers.ValidationError(
             "Het vak van een project kan niet aangepast worden"
