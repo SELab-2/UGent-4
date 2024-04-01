@@ -9,11 +9,28 @@ const english = {
     no_deadline: "No deadline",
     add_admin: "Add admin",
     submission: "Submission",
+    submissions: "Submissions",
+    no_submission: "no submission",
     error: "Something went wrong.",
     assignment: "Assignment:",
     filename: "Submitted file:",
     restrictions: "Restrictions:",
     current_projects: "Current projects",
+<<<<<<< HEAD
+    time: "Time",
+    upload: "Upload",
+    passed: "Passed",
+    download: "Download",
+    export: "Export",
+    adjust_scores: "Adjust Scores",
+    group: "Group",
+    groups: "Groups",
+    amount: "Amount Of",
+    students_choose: "Students Can Choose",
+    random: "Random",
+    members: "Members",
+    group_members: "Members Of The Group",
+=======
     assignmentName: "Name assignment:",
     upload: "Upload assignment",
     description: "Description assignment:",
@@ -65,6 +82,7 @@ const english = {
     delete: "Delete",
     archive: "Archive",
 
+>>>>>>> frontend
 };
 
 export default english;
