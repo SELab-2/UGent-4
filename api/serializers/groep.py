@@ -63,7 +63,14 @@ class GroepSerializer(serializers.ModelSerializer):
 
 def validate_project(instance, new_project):
     """
-    TODO
+    Valideert of het project van een groep niet kan worden aangepast.
+
+    Args:
+        instance: De huidige instantie van het project.
+        new_project: Het nieuwe project waaraan de groep wil worden gekoppeld.
+
+    Raises:
+        serializers.ValidationError: Wordt opgegooid als het project van een groep wordt aangepast.
     """
 
     if instance.project != new_project:
