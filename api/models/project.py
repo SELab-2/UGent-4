@@ -36,7 +36,7 @@ class Project(models.Model):
         Kan optioneel zijn (null=True).
         max_score (IntegerField): Een veld voor het instellen van de maximale score voor het project.
         Standaard ingesteld op 20.
-        max_groep_grootte (IntegerField): Een veld voor het instellen van de maximale grootte van de groep voor het project.
+        max_groep_grootte (IntegerField): Een veld voor het instellen van de max grootte van de groep voor het project.
         Standaard ingesteld op 1.
         zichtbaar (BooleanField): Een veld om aan te geven of het project zichtbaar is of niet.
         Standaard ingesteld op True.

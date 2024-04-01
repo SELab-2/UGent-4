@@ -22,7 +22,7 @@ class Restrictie(models.Model):
     Model voor het definiëren van restricties/tests voor projectinzendingen.
 
     Velden:
-        restrictie_id (AutoField): Een automatisch gegenereerd veld dat fungeert als de primaire sleutel voor de restrictie.
+        restrictie_id (AutoField): Automatisch gegenereerd veld dat fungeert als primaire sleutel voor de restrictie.
         project (ForeignKey): Een ForeignKey relatie met het 'Project' model,
         waarmee wordt aangegeven welk project deze restrictie betreft.
         Als het bijbehorende project wordt verwijderd, worden ook de bijbehorende restricties verwijderd.
