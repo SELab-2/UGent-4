@@ -19,7 +19,20 @@ def upload_to(instance, filename):
 
 class Restrictie(models.Model):
     """
-    TODO
+    Model voor het definiëren van restricties/tests voor projectinzendingen.
+
+    Velden:
+        restrictie_id (AutoField): Een automatisch gegenereerd veld dat fungeert als de primaire sleutel voor de restrictie.
+        project (ForeignKey): Een ForeignKey relatie met het 'Project' model,
+        waarmee wordt aangegeven welk project deze restrictie betreft.
+        Als het bijbehorende project wordt verwijderd, worden ook de bijbehorende restricties verwijderd.
+        script (FileField): Een veld voor het uploaden van het script van de restrictie/test.
+        moet_slagen (BooleanField): Een veld om aan te geven of de inzending aan de restrictie/test moet voldoen.
+        Standaard ingesteld op False.
+
+    Methoden:
+        __str__(): Geeft een representatie van het model als een string terug,
+        die het titel van het bijbehorende project en de beschrijving van de restrictie bevat.
     """
 
     restrictie_id = models.AutoField(primary_key=True)
