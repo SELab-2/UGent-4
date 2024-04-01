@@ -1,5 +1,6 @@
 from django.test import TestCase
 from api.tests.factories.project import ProjectFactory
+from api.models.project import upload_to
 
 
 class ProjectModelTest(TestCase):
@@ -15,6 +16,9 @@ class ProjectModelTest(TestCase):
     def test_project_max_score(self):
         self.assertTrue(10 <= self.project.max_score <= 100)
 
+    def test_project_max_groep_grootte(self):
+        self.assertTrue(1 <= self.project.max_groep_grootte)
+
     def test_project_zichtbaar(self):
         self.assertIsNotNone(self.project.zichtbaar)
 
@@ -29,3 +33,8 @@ class ProjectModelTest(TestCase):
 
     def test_project_opgave_bestand(self):
         self.assertEqual(self.project.opgave_bestand.read(), b"file content")
+
+    def test_upload_to(self):
+        filename = "test_opgave.txt"
+        expected_path = f"data/opgaves/vak_{self.project.vak.vak_id}/{filename}"
+        self.assertEqual(upload_to(self.project, filename), expected_path)

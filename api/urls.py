@@ -19,20 +19,16 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from .views.views import microsoft_association, login_redirect, home
+from .views.views import login_redirect, home
 from .views.gebruiker import gebruiker_list, gebruiker_detail
 from .views.vak import vak_list, vak_detail
 from .views.project import project_list, project_detail
 from .views.indiening import indiening_list, indiening_detail
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
+from .views.restrictie import restrictie_list, restrictie_detail
 
 urlpatterns = [
-    path(
-        ".well-known/microsoft-identity-association.json",
-        microsoft_association,
-        name="microsoft_association",
-    ),
     path("admin/", admin.site.urls),
     path("oauth2/", include("django_auth_adfs.urls")),
     path("login_redirect/", login_redirect, name="login_redirect"),
@@ -49,6 +45,8 @@ urlpatterns = [
     path("api/scores/<int:id>/", score_detail, name="score_detail"),
     path("api/groepen/", groep_list, name="groep_list"),
     path("api/groepen/<int:id>/", groep_detail, name="groep_detail"),
+    path("api/restricties/", restrictie_list, name="restrictie_list"),
+    path("api/restricties/<int:id>/", restrictie_detail, name="restrictie_detail"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
