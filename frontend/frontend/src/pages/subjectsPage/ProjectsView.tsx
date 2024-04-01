@@ -1,34 +1,69 @@
 import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
-import {AssignmentListItemSubjectsPage} from "../../components/AssignmentListItemSubjectsPage.tsx";
+import {t} from "i18next";
+import { AssignmentListItemSubjectsPage } from "../subjectsPage/AssignmentListItemSubjectsPage";
 
 interface ProjectsViewProps {
-    courseId: string;
-    isStudent: boolean;
-}
-
-interface Course {
-    id: string;
-    name: string;
-    teacher: string;
-    students: string[];
-    //list of assignment ids
-    assignments: string[];
+    gebruiker: Gebruiker;
     archived: boolean;
+    assignments: Project[];
+    deleteAssignment: (index: number) => void;
+    archiveAssignment: (index: number) => void;
+    changeVisibilityAssignment: (index: number) => void;
 }
 
-interface Assignment {
-    id: string;
-    name: string;
-    deadline?: Date;
-    submissions: number;
-    score: number;
+interface Project {
+    project_id: number,
+    titel: string,
+    beschrijving: string,
+    opgave_bestand: File | null,
+    vak: number,
+    max_score: number,
+    deadline: Date,
+    extra_deadline: Date,
+    zichtbaar: boolean,
+    gearchiveerd: boolean,
 }
 
-export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
-    const course = getCourse(courseId);
-    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId));
+interface Groep {
+    groep_id: number,
+    studenten: number[],
+    project: number,
+}
 
+interface Score {
+    score_id: number,
+    score: number,
+    indiening: number,
+}
+
+interface Gebruiker {
+    user: number,
+    is_lesgever: boolean,
+    first_name: string,
+    last_name: string,
+    email: string,
+}
+
+interface Indiening {
+    indiening_id: number,
+    groep: number,
+    tijdstip: Date,
+    status: boolean,
+    indiening_bestanden: Bestand[],
+ }
+
+ interface Bestand {
+    indiening_bestand_id: number,
+    indiening: number,
+    bestand: File | null,
+ }
+
+export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
+    const groups = assignments.map((assignment) => getGroepVanStudentVoorProject(gebruiker.user, assignment.project_id));
+    const submissions = groups.map((group) => getLaatseIndieningVanGroep(group.groep_id));
+    const scores = submissions.map((submission) => getScoreVoorIndiening(submission.indiening_id));
+    
     return (
         <>
             <Box aria-label={"courseHeader"}
@@ -40,24 +75,24 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
                     justifyContent: "space-between",
                     padding:3,
                 }}>
-                {isStudent?
+                {!gebruiker.is_lesgever?
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
-                        <Typography variant={"h4"}>Submissions</Typography>
+                        <Typography variant={"h4"}>{t("submissions")}</Typography>
                         <Typography variant={"h4"}>Score</Typography>
                     </>
                     :
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
-                        <Typography variant={"h4"}>Edit</Typography>
+                        <Typography variant={"h4"}>{t("edit")}</Typography>
                     </>
                 }
             </Box>
             <Box aria-label={"assignmentList"}
                 sx={{backgroundColor: "background.default",
-                    height: 400,
+                    height: 340,
                     display: "flex",
                     flexDirection: "column",
                     padding:1,
@@ -65,10 +100,19 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
                     paddingBottom:0
                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 380, overflow:"auto"}}>
+                    <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {assignments.map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.id} projectName={assignment.name} dueDate={assignment.deadline} submissions={assignment.submissions} score={assignment.score} isStudent={isStudent}/>
+                            {assignments
+                            .map((assignment, index) => ({...assignment, index}))
+                            .filter((assignment) => assignment.gearchiveerd == archived)
+                            .map((assignment) => (
+                                <AssignmentListItemSubjectsPage key={assignment.project_id} projectName={assignment.titel}
+                                        dueDate={assignment.deadline} submission={submissions[assignment.index]}
+                                        score={scores[assignment.index]} maxScore={assignment.max_score}
+                                        isStudent={!gebruiker.is_lesgever} archived={archived} visible={assignment.zichtbaar}
+                                        deleteEvent={() => deleteAssignment(assignment.index)}
+                                        archiveEvent={() => archiveAssignment(assignment.index)}
+                                        visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
                             ))}
                         </List>
                     </Box>
@@ -78,24 +122,39 @@ export function ProjectsView({courseId, isStudent}: ProjectsViewProps) {
     );
 }
 
-//TODO: use api to get data, for now use mock data
-function getCourse(courseId: string): Course {
+function getGroepVanStudentVoorProject(gebruikerId: number, projectId: number): Groep {
     return {
-        id: courseId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2"],
-        archived: false,
-        assignments: ["assignment1", "assignment2", "assignment3", "assignment4", "assignment5", "assignment6", "assignment7", "assignment8", "assignment9"]
+        groep_id: 0,
+        studenten: [gebruikerId, 1, 2, 3],
+        project: projectId,
     }
 }
 
-function getAssignment(assignmentId: string): Assignment {
+function getLaatseIndieningVanGroep(groepId: number): Indiening {
     return {
-        id: assignmentId,
-        name: "assignmentName",
-        deadline: new Date(2022, 11, 17),
-        submissions: 2,
-        score: 10
+        indiening_id: 0,
+        groep: groepId,
+        tijdstip: new Date(2022, 11, 17),
+        status: true,
+        indiening_bestanden: [
+            {
+                indiening_bestand_id: 0,
+                indiening: 0,
+                bestand: null,
+            },
+            {
+                indiening_bestand_id: 1,
+                indiening: 0,
+                bestand: null,
+            }
+        ],
+     }
+}
+
+function getScoreVoorIndiening(indieningId: number): Score {
+    return {
+        score_id: 0,
+        score: 10,
+        indiening: indieningId,
     }
 }
