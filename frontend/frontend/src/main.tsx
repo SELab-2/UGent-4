@@ -15,6 +15,8 @@ import {SubjectsStudentPage} from "./pages/subjectsPage/SubjectsStudentPage.tsx"
 import {AssignmentTeacherPage} from "./pages/assignmentPage/AssignmentTeacherPage.tsx";
 import {AssignmentStudentPage} from "./pages/assignmentPage/AssignmentStudentPage.tsx";
 import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
+import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
+import {AddChangeSubjectPage} from "./pages/subjectsPage/AddChangeSubjectPage.tsx";
 import {ProjectScoresPage} from "./pages/scoresPage/ProjectScoresPage.tsx";
 import {SubjectsTeacherPage} from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
 import {AddChangeAssignmentPage} from "./pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
@@ -65,6 +67,12 @@ const router = createBrowserRouter([
         path: '/course_teacher/:courseId/assignment/edit/:assignmentId?',
         element: <AddChangeAssignmentPage/>,
         errorElement: <ErrorPage/>,
+    },
+    {
+        path: "/course_teacher/edit/:courseId?",
+        element: <AddChangeSubjectPage/>,
+        errorElement: <ErrorPage/>,
+
     },
     {
         path: '*',
@@ -135,14 +143,14 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
     },
     {
-        path: "/subjects_student",
-        element: <SubjectsStudentPage/>,
+        path: "/add_change_assignment",
+        element: <addChangeAssignmentPage/>,
         errorElement: <ErrorPage/>,
 
     },
     {
-        path: "/add_change_assignment",
-        element: <addChangeAssignmentPage/>,
+        path: "/add_change_subject",
+        element: <AddChangeSubjectPage/>,
         errorElement: <ErrorPage/>,
 
     },
