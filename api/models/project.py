@@ -21,7 +21,7 @@ class Project(models.Model):
     """
     Model voor een project binnen een vak.
 
-    Fields:
+    Velden:
         project_id (AutoField): Een automatisch gegenereerd veld dat fungeert als de primaire sleutel voor het project.
         titel (CharField): Titel van het project.
         beschrijving (TextField): Beschrijving van het project.
@@ -32,11 +32,18 @@ class Project(models.Model):
         Als het bijbehorende vak wordt verwijderd, worden ook de bijbehorende projecten verwijderd.
         deadline (DateTimeField): Een veld voor het instellen van de deadline voor het project.
         Kan optioneel zijn (null=True).
+        extra_deadline (DateTimeField): Een extra veld voor het instellen van een extra deadline voor het project.
+        Kan optioneel zijn (null=True).
         max_score (IntegerField): Een veld voor het instellen van de maximale score voor het project.
         Standaard ingesteld op 20.
-        # indiening restricties (TODO): Restricties/tests bij indiening moeten nog toegevoegd worden.
+        max_groep_grootte (IntegerField): Een veld voor het instellen van de maximale grootte van de groep voor het project.
+        Standaard ingesteld op 1.
+        zichtbaar (BooleanField): Een veld om aan te geven of het project zichtbaar is of niet.
+        Standaard ingesteld op True.
+        gearchiveerd (BooleanField): Een veld om aan te geven of het project gearchiveerd is of niet.
+        Standaard ingesteld op False.
 
-    Methods:
+    Methoden:
         __str__(): Geeft een representatie van het model als een string terug,
         die de titel van het project bevat.
     """
@@ -49,6 +56,7 @@ class Project(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     extra_deadline = models.DateTimeField(null=True, blank=True, default=None)
     max_score = models.IntegerField(default=20)
+    max_groep_grootte = models.IntegerField(default=1)
     zichtbaar = models.BooleanField(default=True, blank=True)
     gearchiveerd = models.BooleanField(default=False, blank=True)
 

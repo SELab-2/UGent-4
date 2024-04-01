@@ -9,9 +9,12 @@ class ProjectSerializer(serializers.ModelSerializer):
     Serializer voor het serialiseren en deserialiseren van Project objecten.
 
     Fields:
-        Meta.model (Project): Het model waarop de serializer is gebaseerd.
-        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer.
-        Hier wordt '__all__' gebruikt om alle velden op te nemen.
+        restricties (RestrictieSerializer): Serializer voor het serialiseren van restricties.
+            Veelvoudig, alleen-lezen veld.
+
+    Meta:
+        model (Project): Het model waarop de serializer is gebaseerd.
+        fields (list): De velden die moeten worden opgenomen in de serializer.
 
     Methods:
         create(self, validated_data): Maakt een nieuw project aan en voegt deze toe aan de database.
@@ -31,6 +34,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "deadline",
             "extra_deadline",
             "max_score",
+            "max_groep_grootte",
             "zichtbaar",
             "gearchiveerd",
             "restricties",
@@ -38,6 +42,8 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
+        Creëert een nieuw project en voegt deze toe aan de database.
+
         Args:
             validated_data (dict): Gevalideerde gegevens over het project.
 
@@ -56,6 +62,8 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
+        Werkt een bestaand project bij in de database.
+
         Args:
             instance (Project): Het project dat moet worden bijgewerkt.
             validated_data (dict): Gevalideerde gegevens over het project.
@@ -75,6 +83,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         instance.extra_deadline = extra_deadline
         instance.save()
         return instance
+
 
 
 def validate_deadlines(deadline, extra_deadline):
@@ -98,9 +107,16 @@ def validate_deadlines(deadline, extra_deadline):
 
 def validate_vak(instance, new_vak):
     """
-    TODO
-    """
+    Valideert of het vak van een project niet kan worden aangepast.
 
+    Parameters:
+        instance: De huidige instantie van het project.
+        new_vak: Het nieuwe vak waaraan het project moet worden gekoppeld.
+
+    Raises:
+        serializers.ValidationError: Wordt opgegooid als het vak van een project wordt aangepast.
+    """    
+    
     if instance.vak != new_vak:
         raise serializers.ValidationError(
             "Het vak van een project kan niet aangepast worden"

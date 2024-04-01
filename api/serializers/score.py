@@ -71,7 +71,14 @@ def validate_score(data):
 
 def validate_indiening(instance, new_indiening):
     """
-    TODO
+    Valideert of de indiening van een score niet kan worden aangepast.
+
+    Args:
+        instance: De huidige instantie van de score.
+        new_indiening: De nieuwe indiening waaraan de score moet worden gekoppeld.
+
+    Raises:
+        serializers.ValidationError: Wordt opgegooid als de indiening van een score wordt aangepast.
     """
     if instance.indiening != new_indiening:
         raise serializers.ValidationError(
