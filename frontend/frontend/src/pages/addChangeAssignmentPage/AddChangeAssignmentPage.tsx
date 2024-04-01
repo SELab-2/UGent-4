@@ -184,7 +184,7 @@ export function AddChangeAssignmentPage() {
                                                 minutes: renderTimeViewClock,
                                                 seconds: renderTimeViewClock,
                                             }}
-                                            slotProps={{
+slotProps={{
                                                 textField: {
                                                     error: assignmentErrors.dueDate,
                                                     helperText: assignmentErrors.dueDate ? "Deadline" + " " + t('is_required') : "",
@@ -201,7 +201,7 @@ export function AddChangeAssignmentPage() {
                             <TextField type="text" placeholder={"Description"} variant={'standard'} multiline
                                        value={description} onChange={(event) => setDescription(event.target.value)}
                                        fullWidth
-                                       error={assignmentErrors.description}
+error={assignmentErrors.description}
                                        helperText={assignmentErrors.description ? t("descriptionName") + " " + t('is_required') : ""}
                                        sx={{overflowY: 'auto', maxHeight: '25svh'}}/>
                         </Box>
@@ -298,7 +298,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                 </Stack>
-                <RestrictionPopup open={open} setOpen={setOpen}
+<RestrictionPopup open={open} setOpen={setOpen}
                                   type={type} setType={setType}
                                   restrictions={restrictions} setRestrictions={setRestrictions}
                                   allowedFileTypes={allowedFileTypes} setAllowedFileTypes={setAllowedFileTypes}
