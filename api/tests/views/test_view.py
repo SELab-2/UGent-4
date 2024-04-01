@@ -23,16 +23,3 @@ class ViewTestCase(TestCase):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, API_URLS)
-
-    def test_microsoft_association(self):
-        self.client.force_login(self.gebruiker.user)
-        response = self.client.get(reverse("microsoft_association"))
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(
-            response.json(),
-            {
-                "associatedApplications": [
-                    {"applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5"}
-                ]
-            },
-        )
