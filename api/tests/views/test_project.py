@@ -51,6 +51,7 @@ class ProjectListViewTest(APITestCase):
             "deadline": "2024-12-31T00:00:00.000000Z",
             "extra_deadline": "",
             "max_score": 20,
+            "max_groep_grootte": 1,
             "zichtbaar": "true",
             "gearchiveerd": "false",
         }
@@ -67,6 +68,7 @@ class ProjectListViewTest(APITestCase):
             "vak": vak,
             "deadline": "2024-03-31T12:40:05.317980Z",
             "max_score": 20,
+            "max_groep_grootte": 1,
             "zichtbaar": "true",
             "gearchiveerd": "false",
         }
@@ -82,6 +84,7 @@ class ProjectListViewTest(APITestCase):
             "deadline": "2024-03-31T12:40:05.317980Z",
             "extra_deadline": "2024-03-31T12:40:05.317980Z",
             "max_score": 20,
+            "max_groep_grootte": 1,
             "zichtbaar": "true",
             "gearchiveerd": "false",
         }
@@ -130,6 +133,7 @@ class ProjectDetailViewTest(APITestCase):
             "deadline": self.project.deadline,
             "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
+            "max_groep_grootte": self.project.max_groep_grootte,
             "zichtbaar": self.project.zichtbaar,
             "gearchiveerd": self.project.gearchiveerd,
         }
@@ -149,6 +153,7 @@ class ProjectDetailViewTest(APITestCase):
             "deadline": self.project.deadline,
             "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
+            "max_groep_grootte": self.project.max_groep_grootte,
             "zichtbaar": self.project.zichtbaar,
             "gearchiveerd": self.project.gearchiveerd,
         }
@@ -167,6 +172,7 @@ class ProjectDetailViewTest(APITestCase):
             "deadline": self.project.deadline,
             "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
+            "max_groep_grootte": self.project.max_groep_grootte,
             "zichtbaar": "true",
             "gearchiveerd": "false",
         }
