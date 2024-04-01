@@ -10,7 +10,7 @@ RUN apt-get install -y zip \
     python3 \
     && rm -rf /var/lib/apt/lists/*
 # Copy the script to the container
-ADD ./testing_entrypoint.sh /
+ADD ./api/docker/testing_entrypoint.sh /
 RUN chmod +x /testing_entrypoint.sh
 # Set the entrypoint to the script with CMD arguments
 ENTRYPOINT ["/testing_entrypoint.sh"]
