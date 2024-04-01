@@ -46,7 +46,7 @@ class ScoreSerializer(serializers.ModelSerializer):
             Score: De bijgewerkte score.
         """
         validate_score(validated_data)
-        validate_indiening(instance, validated_data)
+        validate_indiening(instance, validated_data.get("indiening"))
         super().update(instance=instance, validated_data=validated_data)
         instance.save()
         return instance
@@ -69,16 +69,18 @@ def validate_score(data):
         )
 
 
-def validate_indiening(instance, data):
+def validate_indiening(instance, new_indiening):
     """
-    Controleert of de indiening_id niet wordt aangepast.
+    Valideert of de indiening van een score niet kan worden aangepast.
 
     Args:
-        instance (Score): De score die moet worden bijgewerkt.
-        data (dict): Gevalideerde gegevens over de score.
+        instance: De huidige instantie van de score.
+        new_indiening: De nieuwe indiening waaraan de score moet worden gekoppeld.
 
     Raises:
-        serializers.ValidationError: Als de indiening_id wordt aangepast.
+        serializers.ValidationError: Wordt opgegooid als de indiening van een score wordt aangepast.
     """
-    if instance.indiening != data.get("indiening"):
-        raise serializers.ValidationError("indiening_id kan niet aangepast worden")
+    if instance.indiening != new_indiening:
+        raise serializers.ValidationError(
+            "De indiening van een score kan niet aangepast worden"
+        )

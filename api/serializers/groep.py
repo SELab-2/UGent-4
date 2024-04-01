@@ -51,11 +51,32 @@ class GroepSerializer(serializers.ModelSerializer):
         validate_students(
             students_data, validated_data["project"], current_group=instance
         )
+        new_project = validated_data.get("project")
+        validate_project(instance, new_project)
+
         super().update(instance=instance, validated_data=validated_data)
         instance.studenten.set(students_data)
         instance.save()
 
         return instance
+
+
+def validate_project(instance, new_project):
+    """
+    Valideert of het project van een groep niet kan worden aangepast.
+
+    Args:
+        instance: De huidige instantie van het project.
+        new_project: Het nieuwe project waaraan de groep wil worden gekoppeld.
+
+    Raises:
+        serializers.ValidationError: Wordt opgegooid als het project van een groep wordt aangepast.
+    """
+
+    if instance.project != new_project:
+        raise serializers.ValidationError(
+            "Het project van een groep kan niet aangepast worden"
+        )
 
 
 def validate_students(students_data, project, current_group=None):
