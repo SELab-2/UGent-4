@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from django.shortcuts import redirect
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -44,22 +43,3 @@ def home(request):
         Response: Een HTTP-respons met de URL's van de API.
     """
     return Response(data=API_URLS)
-
-
-def microsoft_association(request):
-    """
-    Een view die wordt gebruikt om de associatie met Microsoft-applicaties te bevestigen.
-
-    Args:
-        request (HttpRequest): Het HTTP-verzoek dat naar de view is gestuurd.
-
-    Returns:
-        JsonResponse: Een JSON-respons met de geassocieerde applicaties.
-    """
-    return JsonResponse(
-        {
-            "associatedApplications": [
-                {"applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5"}
-            ]
-        }
-    )

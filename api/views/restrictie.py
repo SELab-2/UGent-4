@@ -10,7 +10,16 @@ from api.utils import is_lesgever
 @api_view(["GET", "POST"])
 def restrictie_list(request, format=None):
     """
-    TODO
+    API-weergave voor het ophalen en maken van restricties.
+
+    GET: Haalt alle restricties op, optioneel gefilterd op project en moet_slagen.
+    POST: Maakt een nieuwe restrictie.
+
+    Args:
+        request (HttpRequest): Het http-verzoek dat is ontvangen.
+
+    Returns:
+        Response: Een http-respons met de opgevraagde of gemaakte restricties.
     """
     if is_lesgever(request.user):
         if request.method == "GET":
@@ -48,7 +57,23 @@ def restrictie_list(request, format=None):
 @api_view(["GET", "PUT", "DELETE"])
 def restrictie_detail(request, id, format=None):
     """
-    TODO
+    Een view om de details van een restrictie op te halen, bij te werken of te verwijderen.
+
+    GET:
+    Haalt de details van een restrictie op als de gebruiker een lesgever is.
+
+    PUT:
+    Werkt de details van een restrictie bij als de gebruiker een lesgever is.
+
+    DELETE:
+    Verwijdert een restrictie als de gebruiker een lesgever is.
+
+    Args:
+        request (HttpRequest): Het http-verzoek dat is ontvangen.
+        id (int): Het identificatienummer van de restrictie.
+
+    Returns:
+        Response: Een http-respons met de opgevraagde, bijgewerkte of verwijderde restrictie.
     """
     try:
         restrictie = Restrictie.objects.get(pk=id)
