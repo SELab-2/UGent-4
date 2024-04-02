@@ -1,17 +1,45 @@
-from django.http import JsonResponse
-from api.utils import get_graph_token
 from django.shortcuts import redirect
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from api.serializers.gebruiker import GebruikerSerializer
+from api.utils import API_URLS
 
 
 def login_redirect(request):
     """
-        Get user details from microsoft graph apis.
+    Een view die wordt gebruikt voor het verwerken van een login redirect.
+    Deze view controleert of de gebruiker is ingelogd, en maakt vervolgens een
+    nieuwe gebruiker aan in het systeem voor de ingelogde gebruiker,
+    indien deze nog niet bestaat.
+
+    Args:
+        request (HttpRequest): Het HTTP-verzoek dat naar de view is gestuurd.
+
+    Returns:
+        HttpResponseRedirect: Een HTTP-verzoek naar de startpagina na het verwerken van de login-redirect.
     """
-    graph_token = get_graph_token()
 
-    #HttpResponse(f"Logged in as {request.user.first_name} {request.user.last_name}, with email: {request.user.username} \nWith token: {graph_token['access_token']}")
+    gebruiker_post_data = {
+        "user": request.user.id,
+        "subjects": [],
+        "is_lesgever": False,
+    }
+    serializer = GebruikerSerializer(data=gebruiker_post_data)
+    if serializer.is_valid():
+        serializer.save()
 
-    return redirect("https://sel2-4.be")
+    return redirect(home)
 
-def microsoft_association(request):
-    return JsonResponse({"associatedApplications": [{ "applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5" }]})
+
+@api_view(["GET"])
+def home(request):
+    """
+    Een view die de startpagina van de API retourneert.
+
+    Args:
+        request (HttpRequest): Het HTTP-verzoek dat naar de view is gestuurd.
+
+    Returns:
+        Response: Een HTTP-respons met de URL's van de API.
+    """
+    return Response(data=API_URLS)
