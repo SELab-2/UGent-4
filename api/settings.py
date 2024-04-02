@@ -44,17 +44,19 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django_auth_adfs",
     "api",
+    "corsheaders",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "api.middleware.RedirectAnonymousUserMiddleware",
+    "api.middleware.AuthenticationUserMiddleware",
 ]
 
 ROOT_URLCONF = "api.urls"
@@ -165,4 +167,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_URL = "django_auth_adfs:login"
-LOGIN_REDIRECT_URL = "/login_redirect"
+LOGIN_REDIRECT_URL = "/api"
+
+
+CORS_ALLOW_ALL_ORIGINS = True

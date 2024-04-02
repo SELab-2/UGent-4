@@ -3,7 +3,8 @@ import {Assignment} from './components/CourseCard';
 
 
 const instance = axios.create({
-    baseURL: 'https://sel2-4.ugent.be/api/',
+    //baseURL: 'https://sel2-4.ugent.be/api/',
+    baseURL: 'http://localhost:8000/api/',
     headers: {'Content-Type': 'application/json'}
 });
 
