@@ -19,7 +19,7 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.urlpatterns import format_suffix_patterns
 
-from .views.views import login_redirect, home
+from .views.views import home
 from .views.gebruiker import gebruiker_list, gebruiker_detail
 from .views.vak import vak_list, vak_detail
 from .views.project import project_list, project_detail
@@ -31,7 +31,6 @@ from .views.restrictie import restrictie_list, restrictie_detail
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("oauth2/", include("django_auth_adfs.urls")),
-    path("login_redirect/", login_redirect, name="login_redirect"),
     path("api/", home, name="home"),
     path("api/gebruikers/", gebruiker_list, name="gebruiker_list"),
     path("api/gebruikers/<int:id>/", gebruiker_detail, name="gebruiker_detail"),
