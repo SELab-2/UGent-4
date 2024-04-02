@@ -5,7 +5,6 @@ const english = {
     back: "Back",
     current_courses: "Current courses",
     archived: "Archived",
-    students: "Students: ",
     no_deadline: "No deadline",
     add_admin: "Add admin",
     submission: "Submission",
@@ -16,7 +15,6 @@ const english = {
     filename: "Submitted file:",
     restrictions: "Restrictions:",
     current_projects: "Current projects",
-<<<<<<< HEAD
     time: "Time",
     upload: "Upload",
     passed: "Passed",
@@ -30,13 +28,11 @@ const english = {
     random: "Random",
     members: "Members",
     group_members: "Members Of The Group",
-=======
     assignmentName: "Name assignment:",
-    upload: "Upload assignment",
+    upload_assignment: "Upload assignment",
     description: "Description assignment:",
     uploadToolTip: 'upload a .zip or .pdf file',
     noFile: "No file chosen",
-    groups: "Groups",
     remove: "Remove",
     submit: "Submit",
     cancel: "Cancel",
@@ -60,7 +56,6 @@ const english = {
     subject_name: "Subject name",
     students: "Students",
     teachers: "Teachers",
-    cancel: "Cancel",
     delete: "Delete",
     this_can_not_be_undone: "This can not be undone",
     delete_student: "Delete student",
@@ -70,19 +65,14 @@ const english = {
     teacher: "Teacher",
     title: "Title",
     export_submissions: "Export submissions",
-    time: "Time",
     no_submissions: "No submissions",
     edit: "Edit",
     upload_scores: "Upload Scores",
-    group: "Group",
     last_submission: "Last Submission:",
     delete_project_warning: "Delete Project?",
     archive_project_warning: "Archive Project?",
     cant_be_undone: "This cannot be undone.",
-    delete: "Delete",
     archive: "Archive",
-
->>>>>>> frontend
 };
 
 export default english;
