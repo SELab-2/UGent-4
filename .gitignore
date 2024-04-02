@@ -4,7 +4,11 @@ venv
 .idea
 /venv/
 **/__pycache__/
-migrations
+migrations/
+./api/.env
+__pycache__/
+frontend/frontend/src/authConfig/authSecrets.ts
+api/.env
 .env
 htmlcov
 data
