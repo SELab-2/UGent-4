@@ -1,17 +1,18 @@
-from django.http import JsonResponse
-from api.utils import get_graph_token
-from django.shortcuts import redirect
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from api.utils import API_URLS
 
 
-def login_redirect(request):
+
+@api_view(["GET"])
+def home(request):
     """
-        Get user details from microsoft graph apis.
+    Een view die de startpagina van de API retourneert.
+
+    Args:
+        request (HttpRequest): Het HTTP-verzoek dat naar de view is gestuurd.
+
+    Returns:
+        Response: Een HTTP-respons met de URL's van de API.
     """
-    graph_token = get_graph_token()
-
-    #HttpResponse(f"Logged in as {request.user.first_name} {request.user.last_name}, with email: {request.user.username} \nWith token: {graph_token['access_token']}")
-
-    return redirect("https://sel2-4.be")
-
-def microsoft_association(request):
-    return JsonResponse({"associatedApplications": [{ "applicationId": "239ce609-e362-4cf6-919f-97e6935ef5f5" }]})
+    return Response(data=API_URLS)

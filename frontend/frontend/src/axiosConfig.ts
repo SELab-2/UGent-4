@@ -1,14 +1,14 @@
 import axios from 'axios';
-import { Assignment } from './components/CourseCard';
+import {Assignment} from './components/CourseCard';
 
 
 const instance = axios.create({
-    baseURL: 'https://sel2-4.ugent.be/api/',
+    //baseURL: 'https://sel2-4.ugent.be/api/',
+    baseURL: 'http://localhost:8000/api/',
     headers: {'Content-Type': 'application/json'}
 });
 
-instance.defaults.headers.common['Authorization'] = 'AUTH TOKEN FROM INSTANCE';
-
+//TODO constant logging better only for development
 instance.interceptors.request.use((request) => {
     console.log(request);
     return request;
