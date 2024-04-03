@@ -81,7 +81,7 @@ class GebruikerDetailViewTest(APITestCase):
         }
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-    
+
 
 class GebruikerDetailMeViewTest(APITestCase):
     def setUp(self):
@@ -90,8 +90,8 @@ class GebruikerDetailMeViewTest(APITestCase):
         self.url = reverse("gebruiker_detail_me")
         self.client = APIClient()
         self.client.force_login(self.student.user)
-    
+
     def test_gebruiker_detail_me_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['user'], self.student.user.id)
+        self.assertEqual(response.data["user"], self.student.user.id)

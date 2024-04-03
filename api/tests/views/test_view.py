@@ -1,8 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from rest_framework import status
-from api.models.gebruiker import Gebruiker
-from api.tests.factories.gebruiker import GebruikerFactory, UserFactory
+from api.tests.factories.gebruiker import GebruikerFactory
 from api.utils import API_URLS
 
 

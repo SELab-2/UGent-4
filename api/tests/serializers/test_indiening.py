@@ -21,8 +21,6 @@ class IndieningSerializerTest(TestCase):
         groep = GroepFactory.create()
         data = {"groep": groep.groep_id}
         serializer = IndieningSerializer(data=data)
-        if not serializer.is_valid():
-            print(serializer.errors)
         self.assertTrue(serializer.is_valid())
         indiening = serializer.save()
         self.assertEqual(indiening.groep, groep)
