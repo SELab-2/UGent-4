@@ -2,6 +2,7 @@ import {Box, Card, Stack, TextField, Typography, IconButton,Grid} from "@mui/mat
 import Button from '@mui/material/Button';
 import {Header} from "../../components/Header.tsx";
 import {ChangeEvent, useState} from "react";
+import { useParams } from "react-router-dom";
 import List from '@mui/material/List';
 import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
 //import {Dayjs} from "dayjs";
@@ -13,6 +14,8 @@ import FileUploadButton from "../../components/FileUploadButton";
 import ClearIcon from '@mui/icons-material/Clear';
 
 import Dialog from '@mui/material/Dialog';
+
+import instance from '../../axiosConfig.ts';
 
 interface Student {
   id: number;
@@ -26,11 +29,43 @@ interface Teacher {
 }
 
 export function AddChangeSubjectPage() {
+  const params = useParams()
   // State for the different fields of the subject
   const [title, setTitle] = useState("");
   const [num, setNum] = useState("");
-  const students = [1,2,3].map((id) => getstudent(id));
-  const teachers = [1,2,3].map((id) => getteacher(id));
+  const [students, setStudents]  = useState({list:[1,2,3]});
+  //const students = [1,2,3].map((id) => getstudent(id));
+  const [teachers, setTeachers]  = useState([4,5,6]);
+  //const teachers = [1,2,3].map((id) => getteacher(id));
+
+  instance.get('vakken/').then((res) => {
+
+    setTitle("success");
+    console.log("success");
+    //setStudents([10,11]);
+    console.log(res);
+  }).catch((err) => {
+    setTitle("zever");
+    //setStudents({list:[1,2,7]});
+    console.log("vvvvvvv");
+    console.log(err);
+    console.log("^^^^^^^");
+    // console.log(params.courseId);
+  }
+  );
+
+
+
+  // instance.get('/vakken/' + params.courseId).then((res) => {
+  //   //setStudents([10,11]);
+  //   console.log(res);
+  // }).catch((err) => {
+  //   setTitle("zever");
+  //   //setStudents({list:[1,2,7]});
+  //   console.log(err);
+  //   console.log(params.courseId);
+  // }
+  // );
 
 
 
@@ -54,7 +89,7 @@ export function AddChangeSubjectPage() {
             <Typography>{t("students")+":"}</Typography>
             <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
               <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
-                {students.map((id) => {
+                {students.list.map((id) => {
                   const [open, setOpen] = useState(false);
 
                   const handleClickOpen = () => {
@@ -78,6 +113,7 @@ export function AddChangeSubjectPage() {
                   }}>
                   <ListItemText sx={{maxWidth:100}} primary={getstudent(id).name}/>
                   <ListItemText sx={{maxWidth:100}} primary={getstudent(id).studentnumber}/>
+                  <ListItemText sx={{maxWidth:100}} primary={id}/>
                   <IconButton aria-label={'delete_file'} size={'small'} onClick={handleClickOpen}
                               sx={{marginBottom: 1}}>
                       <ClearIcon color={'error'}/>
@@ -146,6 +182,7 @@ export function AddChangeSubjectPage() {
                       borderRadius:2,
                   }}>
                   <ListItemText sx={{maxWidth:100}} primary={getteacher(id).name}/>
+                  <ListItemText sx={{maxWidth:100}} primary={id}/>
                   <IconButton aria-label={'delete_file'} size={'small'} onClick={handleClickOpen}
                               sx={{marginBottom: 1}}>
                       <ClearIcon color={'error'}/>
