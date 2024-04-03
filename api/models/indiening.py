@@ -105,7 +105,7 @@ def run_tests_async(instance):
         instance.save()
 
 
-@receiver(post_save, sender=Indiening)
+# @receiver(post_save, sender=Indiening)
 def indiening_post_init(sender, instance, created, **kwargs):
     """
     Een signaalhandler die wordt geactiveerd na het maken van een nieuwe indiening.

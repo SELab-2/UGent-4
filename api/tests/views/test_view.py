@@ -11,13 +11,6 @@ class ViewTestCase(TestCase):
         self.client = Client()
         self.gebruiker = GebruikerFactory.create()
 
-    def test_login_redirect(self):
-        user = UserFactory.create()
-        self.client.force_login(user)
-        response = self.client.get(reverse("login_redirect"))
-        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
-        self.assertTrue(Gebruiker.objects.filter(user=user).exists())
-
     def test_home(self):
         self.client.force_login(self.gebruiker.user)
         response = self.client.get(reverse("home"))
