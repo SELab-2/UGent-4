@@ -3,7 +3,6 @@ from rest_framework.decorators import api_view
 from api.utils import API_URLS
 
 
-
 @api_view(["GET"])
 def home(request):
     """
