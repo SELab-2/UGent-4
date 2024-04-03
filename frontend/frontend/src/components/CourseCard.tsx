@@ -21,46 +21,38 @@ interface CourseCardProps {
     isStudent: boolean;
 }
 
-interface Course {
-    id: string;
-    name: string;
-    students: string[];
-    teachers: string[];
-    archived: boolean;
-}
-
-interface Assignment {
-    project_id: string;
-    name: string;
-    deadline?: Date;
-    status: boolean;
-}
-
 export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
-    const [course, setCourse] = useState<Course | null>(null);
-    const [assignments, setAssignments] = useState<Assignment[]>([]);
+    const [course, setCourse] = useState(null);
+    const [assignments, setAssignments] = useState([]);
+    const [teachers, setTeachers] = useState<any[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        async function fetchCourse(){
+        async function fetchData() {
             try {
-                const response = await instance.get(`/vakken/${courseId}/`);
-                setCourse(response.data);
-            } catch (e) {
-                console.error("Error fetching course:", e);
+                const courseResponse = await instance.get(`/vakken/${courseId}/`);
+                const assignmentsResponse = await instance.get(`/projecten/?vak=${courseId}`);
+    
+                setCourse(courseResponse.data);
+                setAssignments(assignmentsResponse.data);
+    
+                if (courseResponse.data && courseResponse.data.lesgevers) {
+                    const lesgevers = [];
+                    for (const teacherId of courseResponse.data.lesgevers) {
+                        try {
+                            const response = await instance.get(`/gebruikers/${teacherId}`);
+                            lesgevers.push(response.data);
+                        } catch (error) {
+                            console.error("Error fetching teacher:", error);
+                        }
+                    }
+                    setTeachers(lesgevers);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
             }
         }
-        async function fetchAssignments() {
-            try {
-                const response = await instance.get(`/projecten/?vak=${courseId}`);
-                setAssignments(response.data);
-            } catch (e) {
-                console.error("Error fetching assingments from course:", e);
-            }
-            
-        }
-        fetchCourse();
-        fetchAssignments();
+        fetchData();
     }, []);
 
     const handleCardClick = () => {
@@ -109,12 +101,14 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                  }}>
                                 <Box width={"50%"} height={"100%"} display={"flex"} flexDirection={"column"}
                                      justifyContent={"center"}>
-                                    <Typography variant={"h4"}>{course.name}</Typography>
-                                    <Typography variant={"subtitle1"}>{course.teachers}</Typography>
+                                    <Typography variant={"h4"}>{course.naam}</Typography>
+                                    {teachers.map((teacher) => (
+                                        <Typography variant={"subtitle1"}>{"lesgever(s): "}{teacher.first_name + " " + teacher.last_name}</Typography>
+                                    ))}
                                 </Box>
                                 <Box>
                                     <Typography
-                                        variant={"subtitle1"}>{t("students")}{course?.students?.length || 0}</Typography>
+                                        variant={"subtitle1"}>{t("students: ")}{course.studenten.length || 0}</Typography>
                                 </Box>
                             </Box>
                         </CardActionArea>
@@ -159,9 +153,9 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                         <List disablePadding={true}>
                                             {assignments.map((assignment) => (
                                                 <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
-                                                                    projectName={assignment.name}
-                                                                    dueDate={assignment.deadline}
-                                                                    status={assignment.project_id === "assignment1"}
+                                                                    projectName={assignment.titel}
+                                                                    dueDate={new Date(assignment.deadline) || null}
+                                                                    status={assignment.project_id === "assignment1"} // dit moet nog aangepast worden
                                                                     isStudent={isStudent}/>
                                             ))}
                                         </List>
@@ -171,8 +165,8 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                             <List disablePadding={true}>
                                                 {assignments.map((assignment) => (
                                                     <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
-                                                                        projectName={assignment.name}
-                                                                        dueDate={assignment.deadline}
+                                                                        projectName={assignment.titel}
+                                                                        dueDate={new Date(assignment.deadline) || null}
                                                                         status={assignment.project_id === "assignment1"}
                                                                         isStudent={isStudent}/>
                                                 ))}
@@ -182,8 +176,8 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                             <List disablePadding={true}>
                                                 {assignments.map((assignment) => (
                                                     <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
-                                                                        projectName={assignment.name}
-                                                                        dueDate={assignment.deadline}
+                                                                        projectName={assignment.titel}
+                                                                        dueDate={new Date(assignment.deadline) || null}
                                                                         status={assignment.project_id === "assignment1"}
                                                                         isStudent={isStudent}/>
                                                 ))}
