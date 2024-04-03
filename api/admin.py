@@ -1,11 +1,17 @@
 from django.contrib import admin
-from .models import *
+from api.models.gebruiker import Gebruiker
+from api.models.vak import Vak
+from api.models.groep import Groep
+from api.models.project import Project
+from api.models.indiening import Indiening, IndieningBestand
+from api.models.score import Score
+from api.models.restrictie import Restrictie
 
-
-admin.site.register(Student)
-admin.site.register(Lesgever)
+admin.site.register(Gebruiker)
 admin.site.register(Vak)
 admin.site.register(Groep)
 admin.site.register(Project)
 admin.site.register(Indiening)
 admin.site.register(Score)
+admin.site.register(IndieningBestand)
+admin.site.register(Restrictie)
