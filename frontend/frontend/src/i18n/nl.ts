@@ -6,7 +6,7 @@ const dutch = {
     current_courses: "Huidige vakken",
     archived: "Gearchiveerd",
     no_deadline: "Geen deadline",
-    add_admin: "Voeg admin toe",
+    add_teacher: "Voeg lesgever toe",
     submission: "Indiening",
     submissions: "Indieningen",
     no_submission: "niet ingediend",

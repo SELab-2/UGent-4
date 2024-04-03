@@ -6,7 +6,7 @@ const english = {
     current_courses: "Current courses",
     archived: "Archived",
     no_deadline: "No deadline",
-    add_admin: "Add admin",
+    add_teacher: "Add teacher",
     submission: "Submission",
     submissions: "Submissions",
     no_submission: "no submission",
