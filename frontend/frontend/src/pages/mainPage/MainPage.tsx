@@ -35,17 +35,23 @@ export function MainPage() {
         }).catch((e: AxiosError) => {
             console.error(e);
         });
+
+
+        async function fetchData() {
+            try {
+                const response = await instance.get("/vakken/");
+                setCourses(response.data);
+            } catch (error) {
+                console.error("Error fetching courses:", error);
+            }
+        }
+
+        fetchData().catch((e) => {
+            console.error(e)
+        });
+
     }, []);
 
-    useEffect(() => {
-        console.log('requesting courses');
-        instance.get(`/vakken/`).then((response: AxiosResponse) => {
-            console.log(response.data);
-            setCourses(response.data);
-        }).catch((e: AxiosError) => {
-            console.error(e);
-        });
-    }, [role]);
 
     return (
         <>
@@ -82,4 +88,3 @@ export function MainPage() {
             </Stack>
         </>
     );
-}
