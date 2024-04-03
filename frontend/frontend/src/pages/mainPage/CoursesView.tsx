@@ -20,14 +20,9 @@ export function CoursesView({isStudent, activecourses}: CourseCardProps) {
                                overflowY: {md: "auto"},
                                maxHeight: "72svh",
                            }}>
-                        <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
-                        <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
                         {activecourses.map((course: course) => (
-                            <CourseCard key={course.vak_id} courseId={course.naam} archived={false}
+                            <CourseCard key={course.naam} courseId={course.vak_id.toString()} archived={false}
                                         isStudent={isStudent}/>
-                            // eerste dummy's tijdelijk houden (courses fetchen werkt nog niet)
                         ))}
                     </Stack>
                     {!isStudent &&
