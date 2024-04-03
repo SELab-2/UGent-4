@@ -103,12 +103,12 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                      justifyContent={"center"}>
                                     <Typography variant={"h4"}>{course.naam}</Typography>
                                     {teachers.map((teacher) => (
-                                        <Typography variant={"subtitle1"}>{"lesgever(s): "}{teacher.first_name + " " + teacher.last_name}</Typography>
+                                        <Typography variant={"subtitle1"}>{t("teachers") + ": "}{teacher.first_name + " " + teacher.last_name}</Typography>
                                     ))}
                                 </Box>
                                 <Box>
                                     <Typography
-                                        variant={"subtitle1"}>{t("students: ")}{course.studenten.length || 0}</Typography>
+                                        variant={"subtitle1"}>{t("students") + ": "}{course.studenten.length || 0}</Typography>
                                 </Box>
                             </Box>
                         </CardActionArea>
