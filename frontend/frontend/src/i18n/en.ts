@@ -16,7 +16,6 @@ const english = {
     filename: "Submitted file:",
     restrictions: "Restrictions:",
     current_projects: "Current projects",
-<<<<<<< HEAD
     time: "Time",
     upload: "Upload",
     passed: "Passed",
@@ -30,7 +29,6 @@ const english = {
     random: "Random",
     members: "Members",
     group_members: "Members Of The Group",
-=======
     assignmentName: "Name assignment:",
     upload: "Upload assignment",
     description: "Description assignment:",
@@ -81,8 +79,6 @@ const english = {
     cant_be_undone: "This cannot be undone.",
     delete: "Delete",
     archive: "Archive",
-
->>>>>>> frontend
 };
 
 export default english;
