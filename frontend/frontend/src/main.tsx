@@ -3,80 +3,26 @@ import ReactDOM from "react-dom/client";
 import {ThemeProvider} from "@mui/material";
 import theme from "./Theme.ts";
 import "./i18n/config.ts";
-import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import {AuthenticationResult, EventMessage, EventType, PublicClientApplication} from "@azure/msal-browser";
+import {RouterProvider} from "react-router-dom";
+import {
+    AuthenticationResult,
+    EventMessage,
+    EventType,
+    InteractionRequiredAuthError,
+    PublicClientApplication
+} from "@azure/msal-browser";
 import {msalConfig} from "./authConfig/authConfig.ts";
 
-import ErrorPage from "./pages/ErrorPage.tsx";
-import {MainPage} from "./pages/mainPage/MainPage.tsx";
+
 import {Helmet, HelmetProvider} from "react-helmet-async";
 import {LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs/AdapterDayjs';
 import {LoginPage} from "./pages/loginPage/LoginPage.tsx";
-import {SubjectsStudentPage} from "./pages/subjectsPage/SubjectsStudentPage.tsx";
-import {AssignmentTeacherPage} from "./pages/assignmentPage/AssignmentTeacherPage.tsx";
-import {AssignmentStudentPage} from "./pages/assignmentPage/AssignmentStudentPage.tsx";
-import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
-import {SimpleRequestsPage} from "./pages/simpleRequestsPage/SimpleRequestsPage.tsx";
-import {AddChangeSubjectPage} from "./pages/subjectsPage/AddChangeSubjectPage.tsx";
-import {ProjectScoresPage} from "./pages/scoresPage/ProjectScoresPage.tsx";
-import {SubjectsTeacherPage} from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
-import {AddChangeAssignmentPage} from "./pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
+
 import {AuthenticatedTemplate, MsalProvider, UnauthenticatedTemplate} from "@azure/msal-react";
+import router from "./routes.tsx";
+import instance from "./axiosConfig.ts";
 
-//TODO: add change/add course page when implemented
-const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <MainPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_student/:courseId',
-        element: <SubjectsStudentPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_teacher/:courseId',
-        element: <SubjectsTeacherPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_teacher/:courseId/assignment/:assignmentId',
-        element: <AssignmentTeacherPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_student/:courseId/assignment/:assignmentId',
-        element: <AssignmentStudentPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_student/:courseId/assignment/:assignmentId/submission/:submissionId',
-        element: <SubmissionPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_teacher/:courseId/assignment/:assignmentId/scoring',
-        element: <ProjectScoresPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_teacher/:courseId/assignment/edit/:assignmentId?',
-        element: <AddChangeAssignmentPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: "/course_teacher/edit/:courseId?",
-        element: <AddChangeSubjectPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: '*',
-        element: <ErrorPage/>,
-    },
-]);
 
 /**
  * MSAL should be instantiated outside the component tree to prevent it from being re-instantiated on re-renders.
@@ -89,6 +35,51 @@ if (!msalInstance.getActiveAccount() && msalInstance.getAllAccounts().length > 0
     // Account selection logic is app dependent. Adjust as needed for different use cases.
     msalInstance.setActiveAccount(msalInstance.getActiveAccount() || msalInstance.getAllAccounts()[0])
 }
+
+
+// Function to acquire access token
+const acquireAccessToken = async () => {
+    const accounts = msalInstance.getAllAccounts();
+    if (accounts.length === 0) {
+        // User is not signed in. Redirect to login page or throw an error.
+        throw new Error("User is not signed in");
+    }
+
+    const request = {
+        scopes: ["user.read"],
+        account: accounts[0],
+    };
+
+    try {
+        const response = await msalInstance.acquireTokenSilent(request);
+        return response.accessToken;
+    } catch (error) {
+        if (error instanceof InteractionRequiredAuthError) {
+            // Fallback to interaction when silent call fails
+            // This could be a redirect or a popup, depending on your application's flow
+            await msalInstance.acquireTokenRedirect(request);
+        } else {
+            console.error(error);
+        }
+    }
+};
+
+// Acquire token on app load
+instance.interceptors.request.use(async (config) => {
+    try {
+        const token = await acquireAccessToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+            console.log('auth token set')
+        }
+        return config;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+}, (error) => {
+    return Promise.reject(error);
+});
 
 
 // Listen for sign-in event and set active account
@@ -128,73 +119,3 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </HelmetProvider>
     </React.StrictMode>
 );
-
-/* old routes, to be deleted TODO: fix routes
-{
-        path: "/",
-        element: <MainPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/subjects_student/:courseId",
-        element: <SubjectsStudentPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-
-        path: "/subjects_teacher/:courseId",
-        element: <SubjectsTeacherPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/scores",
-        element: <ProjectScoresPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/assignment_student",
-        element: <AssignmentStudentPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/assignment_teacher",
-        element: <AssignmentTeacherPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/groups",
-        element: <GroupsPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/add_change_assignment",
-        element: <addChangeAssignmentPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/add_change_subject",
-        element: <AddChangeSubjectPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/submission/:project",
-        element: <SubmissionPage/>,
-        errorElement: <ErrorPage/>,
-
-    },
-    {
-        path: "/test_requests",
-        element: <SimpleRequestsPage/>,
-        errorElement: <ErrorPage/>,
-
-    }
- */

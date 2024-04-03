@@ -3,8 +3,6 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
-import { useState, useEffect } from "react";
-import axios from "../axiosConfig";
 
 interface AssignmentListItemProps {
     id: string;
@@ -25,25 +23,6 @@ interface AssignmentListItemProps {
 
 export function AssignmentListItem({id, projectName, dueDate, status, isStudent}: AssignmentListItemProps) {
     const navigate = useNavigate();
-    const [stat, setStatus] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
-
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await axios.get(`/projecten/${id}`);
-            setStatus(response.data.status);
-            setLoading(false);
-          } catch (error) {
-            const errorMessage = (error as Error).message;
-            setError(errorMessage);
-            setLoading(false);
-          }
-        };
-    
-        fetchData();
-      }, [id]);
 
     const handleProjectClick = () => {
         console.log("Project clicked");
@@ -65,7 +44,7 @@ export function AssignmentListItem({id, projectName, dueDate, status, isStudent}
                 }}>
                     <ListItemText sx={{maxWidth: 100}} primary={projectName}/>
                     <ListItemText sx={{maxWidth: 110}}
-                                  primary={dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
+                                  primary={dueDate instanceof Date && dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
                     {isStudent && <ListItemIcon sx={{minWidth: 35}}>{status ?
                         <CheckCircleOutlineIcon sx={{color: "success.main"}}/> :
                         <HighlightOffIcon sx={{color: "error.main"}}/>}</ListItemIcon>}

@@ -1,16 +1,17 @@
 import {Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
+import course from "./MainPage.tsx";
 
 interface CourseCardProps {
     isStudent: boolean;
+    archivedCourses: course[];
 }
 
-export function ArchivedView({isStudent}: CourseCardProps) {
+export function ArchivedView({isStudent, archivedCourses}: CourseCardProps) {
     //TODO: get courses from state
-    const courses = getCourses();
     return (
         <>
-            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
+            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
                 <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
                     <Stack flexDirection={"row"} flexWrap={"wrap"} width={{xs: '100%', md: "90%"}}
                            sx={{
@@ -18,18 +19,13 @@ export function ArchivedView({isStudent}: CourseCardProps) {
                                overflowY: {sm: "auto"},
                                maxHeight: "78svh",
                            }}>
-                        <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
-                        <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
+                        {archivedCourses.map((course) => {
+                            return <CourseCard courseId={course.vak_id.toString()} archived={true}
+                                               isStudent={isStudent}/>
+                        })}
                     </Stack>
                 </Stack>
             </Stack>
         </>
     );
-}
-
-//fix courses with state
-function getCourses(): string[] {
-    return []
 }
