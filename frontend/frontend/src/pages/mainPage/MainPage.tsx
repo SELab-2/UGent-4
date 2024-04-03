@@ -8,7 +8,6 @@ import dayjs from "dayjs";
 import {t} from "i18next";
 import {useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
-import axios from "../../axiosConfig.ts";
 import {AxiosError, AxiosResponse} from "axios";
 
 export default interface course {
@@ -25,11 +24,11 @@ export default interface course {
  */
 export function MainPage() {
     // State for role
-    const [role, setRole] = useState(getRole("1"));
+    const [role, setRole] = useState(getRole());
     const [courses, setCourses] = useState<course[]>([]);
 
     useEffect(() => {
-        instance.get().then((response: AxiosResponse) => {
+        instance.get("").then((response: AxiosResponse) => {
             console.log(response.data);
         }).catch((e: AxiosError) => {
             console.error(e);
@@ -37,7 +36,7 @@ export function MainPage() {
 
         async function fetchData() {
             try {
-                const response = await axios.get("/vakken/");
+                const response = await instance.get("/vakken/");
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
@@ -54,7 +53,7 @@ export function MainPage() {
      */
     useEffect(() => {
 
-        setRole(getRole("2"));
+        setRole(getRole());
         console.log("current user is: " + role);
     }, []);
 
@@ -95,14 +94,12 @@ export function MainPage() {
     );
 }
 
-//TODO: implement api integration
 /**
  * Function to get the role of the user
- * @param {string} id - The id of the user
  * @returns {string} - The role of the user
  */
-function getRole(id: string): string {
-    instance.get('/gebruikers/' + id).then((response: AxiosResponse) => {
+function getRole(): string {
+    instance.get('/gebruikers/me/').then((response: AxiosResponse) => {
         return response.data.is_lesgever ? "teacher" : "student";
     }).catch((e: AxiosError) => {
         console.error(e);
