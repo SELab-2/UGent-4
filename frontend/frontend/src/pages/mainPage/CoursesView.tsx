@@ -12,7 +12,7 @@ export function CoursesView({isStudent, activecourses}: CourseCardProps) {
 
     return (
         <>
-            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
+            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
                 <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
                     <Stack flexDirection={"row"} flexWrap={"wrap"} width={'90%'}
                            sx={{
