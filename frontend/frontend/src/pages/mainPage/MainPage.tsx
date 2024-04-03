@@ -8,7 +8,6 @@ import dayjs from "dayjs";
 import {t} from "i18next";
 import {useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
-import axios from "../../axiosConfig.ts";
 import {AxiosError, AxiosResponse} from "axios";
 
 export default interface course {
@@ -25,38 +24,28 @@ export default interface course {
  */
 export function MainPage() {
     // State for role
-    const [role, setRole] = useState(getRole("1"));
+    const [role, setRole] = useState<string>('');
     const [courses, setCourses] = useState<course[]>([]);
 
     useEffect(() => {
-        instance.get().then((response: AxiosResponse) => {
+        console.log("requesting api")
+        instance.get("/gebruikers/me/").then((response: AxiosResponse) => {
             console.log(response.data);
+            setRole(response.data.is_lesgever ? "teacher" : "student");
         }).catch((e: AxiosError) => {
             console.error(e);
         });
-
-        async function fetchData() {
-            try {
-                const response = await axios.get("/vakken/");
-                setCourses(response.data);
-            } catch (error) {
-                console.error("Error fetching courses:", error);
-            }
-        }
-
-        fetchData().catch((e) => {
-            console.error(e)
-        });
     }, []);
 
-    /**
-     * useEffect hook to set the role of the user and log it
-     */
     useEffect(() => {
-
-        setRole(getRole("2"));
-        console.log("current user is: " + role);
-    }, []);
+        console.log('requesting courses');
+        instance.get(`/vakken/`).then((response: AxiosResponse) => {
+            console.log(response.data);
+            setCourses(response.data);
+        }).catch((e: AxiosError) => {
+            console.error(e);
+        });
+    }, [role]);
 
     return (
         <>
@@ -93,20 +82,4 @@ export function MainPage() {
             </Stack>
         </>
     );
-}
-
-//TODO: implement api integration
-/**
- * Function to get the role of the user
- * @param {string} id - The id of the user
- * @returns {string} - The role of the user
- */
-function getRole(id: string): string {
-    instance.get('/gebruikers/' + id).then((response: AxiosResponse) => {
-        return response.data.is_lesgever ? "teacher" : "student";
-    }).catch((e: AxiosError) => {
-        console.error(e);
-
-    })
-    return "student";
 }
