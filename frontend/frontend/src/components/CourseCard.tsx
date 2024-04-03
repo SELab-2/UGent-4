@@ -2,7 +2,7 @@ import {Box, Card, CardActionArea, CardContent, Divider, IconButton, Skeleton, T
 import {t} from "i18next";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
-import {getProjecten, getVakken} from '../axiosConfig';
+import instance from "../axiosConfig.ts";
 import {AssignmentListItem} from "./AssignmentListItem.tsx";
 import List from "@mui/material/List";
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
@@ -24,15 +24,13 @@ interface CourseCardProps {
 interface Course {
     id: string;
     name: string;
-    teacher: string;
     students: string[];
-    //list of assignment ids
-    assignments: string[];
+    teachers: string[];
     archived: boolean;
 }
 
-export interface Assignment {
-    id: string;
+interface Assignment {
+    project_id: string;
     name: string;
     deadline?: Date;
     status: boolean;
@@ -43,15 +41,26 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
     const [assignments, setAssignments] = useState<Assignment[]>([]);
     const navigate = useNavigate();
 
-    // hier zijn nog problemen bij
-    // geen idee of dit werkt
     useEffect(() => {
-        Promise.all([getVakken(), getProjecten()])
-            .then(function (results) {
-                //Use setCourse and setAssignments to update the state
-                setCourse(results[0] as unknown as Course);
-                setAssignments(results[1] as unknown as Assignment[]);
-            });
+        async function fetchCourse(){
+            try {
+                const response = await instance.get(`/vakken/${courseId}/`);
+                setCourse(response.data);
+            } catch (e) {
+                console.error("Error fetching course:", e);
+            }
+        }
+        async function fetchAssignments() {
+            try {
+                const response = await instance.get(`/projecten/?vak=${courseId}`);
+                setAssignments(response.data);
+            } catch (e) {
+                console.error("Error fetching assingments from course:", e);
+            }
+            
+        }
+        fetchCourse();
+        fetchAssignments();
     }, []);
 
     const handleCardClick = () => {
@@ -101,11 +110,11 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                 <Box width={"50%"} height={"100%"} display={"flex"} flexDirection={"column"}
                                      justifyContent={"center"}>
                                     <Typography variant={"h4"}>{course.name}</Typography>
-                                    <Typography variant={"subtitle1"}>{course.teacher}</Typography>
+                                    <Typography variant={"subtitle1"}>{course.teachers}</Typography>
                                 </Box>
                                 <Box>
                                     <Typography
-                                        variant={"subtitle1"}>{t("students")}{course.students.length}</Typography>
+                                        variant={"subtitle1"}>{t("students")}{course?.students?.length || 0}</Typography>
                                 </Box>
                             </Box>
                         </CardActionArea>
@@ -149,10 +158,10 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                     <Box sx={{width: "100%", height: 130, overflow: "auto"}}>
                                         <List disablePadding={true}>
                                             {assignments.map((assignment) => (
-                                                <AssignmentListItem key={assignment.id} id={assignment.id}
+                                                <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
                                                                     projectName={assignment.name}
                                                                     dueDate={assignment.deadline}
-                                                                    status={assignment.id === "assignment1"}
+                                                                    status={assignment.project_id === "assignment1"}
                                                                     isStudent={isStudent}/>
                                             ))}
                                         </List>
@@ -161,10 +170,10 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                         <Box sx={{width: "90%", height: 130}}>
                                             <List disablePadding={true}>
                                                 {assignments.map((assignment) => (
-                                                    <AssignmentListItem key={assignment.id} id={assignment.id}
+                                                    <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
                                                                         projectName={assignment.name}
                                                                         dueDate={assignment.deadline}
-                                                                        status={assignment.id === "assignment1"}
+                                                                        status={assignment.project_id === "assignment1"}
                                                                         isStudent={isStudent}/>
                                                 ))}
                                             </List>
@@ -172,10 +181,10 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                         <Box sx={{width: "100%", height: 130}}>
                                             <List disablePadding={true}>
                                                 {assignments.map((assignment) => (
-                                                    <AssignmentListItem key={assignment.id} id={assignment.id}
+                                                    <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
                                                                         projectName={assignment.name}
                                                                         dueDate={assignment.deadline}
-                                                                        status={assignment.id === "assignment1"}
+                                                                        status={assignment.project_id === "assignment1"}
                                                                         isStudent={isStudent}/>
                                                 ))}
                                             </List>
