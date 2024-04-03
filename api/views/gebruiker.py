@@ -71,3 +71,20 @@ def gebruiker_detail(request, id):
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def gebruiker_detail_me(request):
+    """
+    Een view om de gegevens van de huidige gebruiker op te halen (GET).
+
+    Returns:
+        Response: Gegevens van de gebruiker of een foutmelding als de gebruiker niet bestaat.
+    """
+    try:
+        gebruiker = Gebruiker.objects.get(pk=request.user.id)
+    except Gebruiker.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = GebruikerSerializer(gebruiker)
+    return Response(serializer.data)
