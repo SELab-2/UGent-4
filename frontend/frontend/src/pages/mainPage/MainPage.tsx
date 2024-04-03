@@ -24,15 +24,18 @@ export default interface course {
  */
 export function MainPage() {
     // State for role
-    const [role, setRole] = useState(getRole());
+    const [role, setRole] = useState<string>('');
     const [courses, setCourses] = useState<course[]>([]);
 
     useEffect(() => {
-        instance.get("").then((response: AxiosResponse) => {
+        console.log("requesting api")
+        instance.get("/gebruikers/me/").then((response: AxiosResponse) => {
             console.log(response.data);
+            setRole(response.data.is_lesgever ? "teacher" : "student");
         }).catch((e: AxiosError) => {
             console.error(e);
         });
+
 
         async function fetchData() {
             try {
@@ -46,16 +49,9 @@ export function MainPage() {
         fetchData().catch((e) => {
             console.error(e)
         });
+
     }, []);
 
-    /**
-     * useEffect hook to set the role of the user and log it
-     */
-    useEffect(() => {
-
-        setRole(getRole());
-        console.log("current user is: " + role);
-    }, []);
 
     return (
         <>
@@ -92,18 +88,3 @@ export function MainPage() {
             </Stack>
         </>
     );
-}
-
-/**
- * Function to get the role of the user
- * @returns {string} - The role of the user
- */
-function getRole(): string {
-    instance.get('/gebruikers/me/').then((response: AxiosResponse) => {
-        return response.data.is_lesgever ? "teacher" : "student";
-    }).catch((e: AxiosError) => {
-        console.error(e);
-
-    })
-    return "student";
-}
