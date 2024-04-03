@@ -6,6 +6,7 @@ import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {ProjectScoresPage} from "./pages/scoresPage/ProjectScoresPage.tsx";
 import {SubjectsTeacherPage} from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
 import {AddChangeAssignmentPage} from "./pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
+import {AddChangeSubjectPage} from "./pages/subjectsPage/AddChangeSubjectPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
 
@@ -50,6 +51,11 @@ const router = createBrowserRouter([
     {
         path: '/course_teacher/:courseId/assignment/edit/:assignmentId?',
         element: <AddChangeAssignmentPage/>,
+        errorElement: <ErrorPage/>,
+    },
+    {
+        path: '/course_teacher/edit/:courseId',
+        element: <AddChangeSubjectPage/>,
         errorElement: <ErrorPage/>,
     },
     {
