@@ -31,4 +31,4 @@ class IndieningSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Indiening
-        fields = ["indiening_id", "groep", "tijdstip", "status", "indiening_bestanden"]
+        fields = ["indiening_id", "groep", "tijdstip", "status", "result", "indiening_bestanden"]
