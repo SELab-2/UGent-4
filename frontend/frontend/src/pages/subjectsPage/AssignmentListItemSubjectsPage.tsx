@@ -84,8 +84,8 @@ export function AssignmentListItemSubjectsPage({projectName, dueDate, submission
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:150}} primary={t("last_submission") + " " + submission.tijdstip.toLocaleDateString()}/>
-                            <ListItemText sx={{maxWidth:100}} primary={score.score + "/" + maxScore + " " + (100 * score.score / maxScore) + "%"}/>
+                            <ListItemText sx={{maxWidth:150}} primary={submission? t("last_submission") + " " + new Date(submission.tijdstip).toLocaleDateString() : "nog geen submission"}/>
+                            <ListItemText sx={{maxWidth:100}} primary={score? Number(score.score) + "/" + maxScore + " " + (100 * Number(score.score) / maxScore) + "%" : "nog geen score"}/>
                         </>
                         :
                         <>

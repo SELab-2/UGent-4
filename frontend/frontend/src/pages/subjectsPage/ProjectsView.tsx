@@ -2,6 +2,8 @@ import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
 import {t} from "i18next";
 import { AssignmentListItemSubjectsPage } from "../subjectsPage/AssignmentListItemSubjectsPage";
+import instance from "../../axiosConfig";
+import { useState, useEffect } from "react";
 
 interface ProjectsViewProps {
     gebruiker: Gebruiker;
@@ -25,17 +27,17 @@ interface Project {
     gearchiveerd: boolean,
 }
 
-interface Groep {
+/*interface Groep {
     groep_id: number,
     studenten: number[],
     project: number,
-}
+}*/
 
-interface Score {
+/*interface Score {
     score_id: number,
     score: number,
     indiening: number,
-}
+}*/
 
 interface Gebruiker {
     user: number,
@@ -45,24 +47,75 @@ interface Gebruiker {
     email: string,
 }
 
-interface Indiening {
+/*interface Indiening {
     indiening_id: number,
     groep: number,
     tijdstip: Date,
     status: boolean,
     indiening_bestanden: Bestand[],
- }
+ }*/
 
- interface Bestand {
+ /*interface Bestand {
     indiening_bestand_id: number,
     indiening: number,
     bestand: File | null,
- }
+ }*/
 
 export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
-    const groups = assignments.map((assignment) => getGroepVanStudentVoorProject(gebruiker.user, assignment.project_id));
-    const submissions = groups.map((group) => getLaatseIndieningVanGroep(group.groep_id));
-    const scores = submissions.map((submission) => getScoreVoorIndiening(submission.indiening_id));
+    const [groups, setGroups] = useState<any[]>([]);
+    const [submissions, setSubmissions] = useState<any[]>([]);
+    const [scores, setScores] = useState<any[]>([]);
+
+    useEffect(() => {
+        async function fetchGroup(projectId: String) {
+            try {
+                const groupResponse = await instance.get(`/groepen/?project=${projectId}`);
+                return groupResponse.data;
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return [];
+            }
+        }
+        async function fetchSubmission(groupId: String) {
+            try {
+                const submissionsResponse = await instance.get(`/indieningen/?groep=${groupId}`);
+                const lastSubmission = submissionsResponse.data[submissionsResponse.data.length - 1];
+                return lastSubmission;
+            } catch (e) {
+                console.error("Error fetching data:", e);
+                return [];
+            }
+        }
+        async function fetchScore(submissionId: String){
+            try {
+                const scoreResponse = await instance.get(`/scores/?indiening=${submissionId}`);
+                return scoreResponse.data
+            } catch (e) {
+                console.error("Error fetching data:", e);
+                return [];
+            }
+        }
+
+        async function fetchData() {
+            try {
+                const filteredGroupsPromises = assignments.map((assignment) => fetchGroup(assignment.project_id.toString()));
+                const filteredGroupsArray = await Promise.all(filteredGroupsPromises);
+                const allGroups = filteredGroupsArray.flat();
+                setGroups(allGroups);
+            
+                const submissionPromises = groups.map((group) => fetchSubmission(group.groep_id.toString()));
+                const submissionsArray = await Promise.all(submissionPromises);
+                setSubmissions(submissionsArray);
+                
+                const scorePromises = submissions.map((submission) => fetchScore(submission.indiening_id.toString()));
+                const scoresArray = await Promise.all(scorePromises);
+                setScores(scoresArray);
+            } catch (e) {
+                console.error("Error fetching all data:", e);
+            }
+        }
+        fetchData();
+    }, [assignments, submissions, scores]);
     
     return (
         <>
@@ -105,56 +158,22 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                             {assignments
                             .map((assignment, index) => ({...assignment, index}))
                             .filter((assignment) => assignment.gearchiveerd == archived)
-                            .map((assignment) => (
+                            .map((assignment) => {
+                                const submission = submissions[assignment.index];
+                                const score = scores[assignment.index];
+                                return (
                                 <AssignmentListItemSubjectsPage key={assignment.project_id} projectName={assignment.titel}
-                                        dueDate={assignment.deadline} submission={submissions[assignment.index]}
-                                        score={scores[assignment.index]} maxScore={assignment.max_score}
+                                        dueDate={new Date(assignment.deadline)} submission={submission}
+                                        score={score} maxScore={Number(assignment.max_score)}
                                         isStudent={!gebruiker.is_lesgever} archived={archived} visible={assignment.zichtbaar}
                                         deleteEvent={() => deleteAssignment(assignment.index)}
                                         archiveEvent={() => archiveAssignment(assignment.index)}
                                         visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
-                            ))}
+                            )})}
                         </List>
                     </Box>
                 </Box>
             </Box>
         </>
     );
-}
-
-function getGroepVanStudentVoorProject(gebruikerId: number, projectId: number): Groep {
-    return {
-        groep_id: 0,
-        studenten: [gebruikerId, 1, 2, 3],
-        project: projectId,
-    }
-}
-
-function getLaatseIndieningVanGroep(groepId: number): Indiening {
-    return {
-        indiening_id: 0,
-        groep: groepId,
-        tijdstip: new Date(2022, 11, 17),
-        status: true,
-        indiening_bestanden: [
-            {
-                indiening_bestand_id: 0,
-                indiening: 0,
-                bestand: null,
-            },
-            {
-                indiening_bestand_id: 1,
-                indiening: 0,
-                bestand: null,
-            }
-        ],
-     }
-}
-
-function getScoreVoorIndiening(indieningId: number): Score {
-    return {
-        score_id: 0,
-        score: 10,
-        indiening: indieningId,
-    }
 }
