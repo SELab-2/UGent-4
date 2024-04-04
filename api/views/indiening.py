@@ -42,7 +42,7 @@ def indiening_list(request, format=None):
                 indieningen = indieningen.filter(groep=groep)
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-            
+
         if "project" in request.GET:
             try:
                 project = Project.objects.get(pk=eval(request.GET.get("project")))
@@ -50,12 +50,12 @@ def indiening_list(request, format=None):
                 indieningen = indieningen.filter(groep__in=groepen)
             except (NameError, Project.DoesNotExist):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-            
+
         if "vak" in request.GET:
             try:
                 vak = Vak.objects.get(pk=eval(request.GET.get("vak")))
-                projecten = Project.objects.filter(vak = vak)
-                groepen = Groep.objects.filter(project__in = projecten)
+                projecten = Project.objects.filter(vak=vak)
+                groepen = Groep.objects.filter(project__in=projecten)
                 indieningen = indieningen.filter(groep__in=groepen)
             except (NameError, Vak.DoesNotExist):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
