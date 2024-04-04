@@ -5,61 +5,6 @@ import { AssignmentListItemSubjectsPage } from "../subjectsPage/AssignmentListIt
 import instance from "../../axiosConfig";
 import { useState, useEffect } from "react";
 
-interface ProjectsViewProps {
-    gebruiker: Gebruiker;
-    archived: boolean;
-    assignments: Project[];
-    deleteAssignment: (index: number) => void;
-    archiveAssignment: (index: number) => void;
-    changeVisibilityAssignment: (index: number) => void;
-}
-
-interface Project {
-    project_id: number,
-    titel: string,
-    beschrijving: string,
-    opgave_bestand: File | null,
-    vak: number,
-    max_score: number,
-    deadline: Date,
-    extra_deadline: Date,
-    zichtbaar: boolean,
-    gearchiveerd: boolean,
-}
-
-/*interface Groep {
-    groep_id: number,
-    studenten: number[],
-    project: number,
-}*/
-
-/*interface Score {
-    score_id: number,
-    score: number,
-    indiening: number,
-}*/
-
-interface Gebruiker {
-    user: number,
-    is_lesgever: boolean,
-    first_name: string,
-    last_name: string,
-    email: string,
-}
-
-/*interface Indiening {
-    indiening_id: number,
-    groep: number,
-    tijdstip: Date,
-    status: boolean,
-    indiening_bestanden: Bestand[],
- }*/
-
- /*interface Bestand {
-    indiening_bestand_id: number,
-    indiening: number,
-    bestand: File | null,
- }*/
 
 export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
     const [groups, setGroups] = useState<any[]>([]);
@@ -89,7 +34,8 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
         async function fetchScore(submissionId: String){
             try {
                 const scoreResponse = await instance.get(`/scores/?indiening=${submissionId}`);
-                return scoreResponse.data
+                console.log(scoreResponse.data);
+                return scoreResponse.data;
             } catch (e) {
                 console.error("Error fetching data:", e);
                 return [];
@@ -105,11 +51,11 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
             
                 const submissionPromises = groups.map((group) => fetchSubmission(group.groep_id.toString()));
                 const submissionsArray = await Promise.all(submissionPromises);
-                setSubmissions(submissionsArray);
+                setSubmissions(submissionsArray.flat());
                 
                 const scorePromises = submissions.map((submission) => fetchScore(submission.indiening_id.toString()));
                 const scoresArray = await Promise.all(scorePromises);
-                setScores(scoresArray);
+                setScores(scoresArray.flat());
             } catch (e) {
                 console.error("Error fetching all data:", e);
             }

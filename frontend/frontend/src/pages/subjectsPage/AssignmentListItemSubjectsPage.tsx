@@ -7,40 +7,6 @@ import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useState } from "react";
 
-interface AssignmentListItemSubjectsPageProps {
-    projectName: string;
-    dueDate?: Date;
-    submission: Indiening;
-    score: Score;
-    maxScore: number;
-    isStudent: boolean;
-    archived: boolean;
-    visible: boolean;
-    deleteEvent: () => void;
-    archiveEvent: () => void;
-    visibilityEvent: () => void;
-}
-
-interface Indiening {
-    indiening_id: number,
-    groep: number,
-    tijdstip: Date,
-    status: boolean,
-    indiening_bestanden: Bestand[],
- }
-
- interface Bestand {
-    indiening_bestand_id: number,
-    indiening: number,
-    bestand: File | null,
- }
-
- interface Score {
-    score_id: number,
-    score: number,
-    indiening: number,
-}
-
 /*
 * This component is used to display a single assignment in the list of assignments
 * @param projectName: string - the name of the project
@@ -56,7 +22,7 @@ interface Indiening {
 */
 
 export function AssignmentListItemSubjectsPage({projectName, dueDate, submission, score, maxScore, isStudent, archived, visible,
-    deleteEvent, archiveEvent, visibilityEvent}:AssignmentListItemSubjectsPageProps) {
+    deleteEvent, archiveEvent, visibilityEvent}) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
@@ -85,7 +51,7 @@ export function AssignmentListItemSubjectsPage({projectName, dueDate, submission
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
                             <ListItemText sx={{maxWidth:150}} primary={submission? t("last_submission") + " " + new Date(submission.tijdstip).toLocaleDateString() : "nog geen submission"}/>
-                            <ListItemText sx={{maxWidth:100}} primary={score? Number(score.score) + "/" + maxScore + " " + (100 * Number(score.score) / maxScore) + "%" : "nog geen score"}/>
+                            <ListItemText sx={{maxWidth:100}} primary={score?.score ? `${score.score}/${maxScore} (${(100 * score.score / maxScore)}%)` : "nog geen score"}/>
                         </>
                         :
                         <>
