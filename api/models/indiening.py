@@ -105,7 +105,6 @@ def run_tests_async(instance):
         result = result[1]
         status = -1
 
-
     with transaction.atomic():
         instance.status = status
         instance.result = result
