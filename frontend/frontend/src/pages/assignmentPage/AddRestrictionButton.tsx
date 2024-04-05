@@ -6,6 +6,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import AddIcon from '@mui/icons-material/Add';
 import RestrictionsDialog from './RestrictionsDialog';
+import {t} from "i18next";
 
 
 
@@ -44,12 +45,12 @@ export default function AddRestrictionButton(){
         aria-labelledby="scroll-dialog-title"
         aria-describedby="scroll-dialog-description"
     >
-        <DialogTitle id="scroll-dialog-title">Add restriction</DialogTitle>
+        <DialogTitle id="scroll-dialog-title">{t('add_restriction')}</DialogTitle>
         <DialogContent dividers={scroll === 'paper'}>
                 <RestrictionsDialog closeParentDialog={handleClose}></RestrictionsDialog>
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>{t('cancel')}</Button>
         </DialogActions>
     </Dialog>
     </React.Fragment>
