@@ -165,7 +165,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                         <Box padding={0} marginRight={3} display={"flex"} flexDirection={"column"}
                              alignItems={"flex-start"}>
-                            <FileUploadButton name={t('upload')} path={assignmentFile}
+                            <FileUploadButton name={t('upload_assignment')} path={assignmentFile}
                                               onFileChange={handleFileChange}
                                               fileTypes={['.pdf', '.zip']}
                                               tooltip={t('uploadToolTip')}
