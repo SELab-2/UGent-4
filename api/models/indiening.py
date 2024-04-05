@@ -95,7 +95,7 @@ def run_tests_async(instance):
     indiening_id = instance.indiening_id
     project_id = instance.groep.project.project_id
     result = run_tests_on(indiening_id, project_id)
-
+    print(f"Tests for indiening {indiening_id} finished.")
     matches = re.findall(r"Testing \./.*", result[1])
     first_match_index = result[1].find(matches[0])
 
@@ -105,7 +105,7 @@ def run_tests_async(instance):
         instance.save()
 
 
-# @receiver(post_save, sender=Indiening)
+@receiver(post_save, sender=Indiening)
 def indiening_post_init(sender, instance, created, **kwargs):
     """
     Een signaalhandler die wordt geactiveerd na het maken van een nieuwe indiening.
