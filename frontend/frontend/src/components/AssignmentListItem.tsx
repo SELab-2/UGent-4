@@ -23,6 +23,7 @@ interface AssignmentListItemProps {
 
 export function AssignmentListItem({id, projectName, dueDate, status, isStudent}: AssignmentListItemProps) {
     const navigate = useNavigate();
+
     const handleProjectClick = () => {
         console.log("Project clicked");
         navigate(`/${id}`)
@@ -43,7 +44,7 @@ export function AssignmentListItem({id, projectName, dueDate, status, isStudent}
                 }}>
                     <ListItemText sx={{maxWidth: 100}} primary={projectName}/>
                     <ListItemText sx={{maxWidth: 110}}
-                                  primary={dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
+                                  primary={dueDate instanceof Date && dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
                     {isStudent && <ListItemIcon sx={{minWidth: 35}}>{status ?
                         <CheckCircleOutlineIcon sx={{color: "success.main"}}/> :
                         <HighlightOffIcon sx={{color: "error.main"}}/>}</ListItemIcon>}

@@ -1,17 +1,18 @@
 import {IconButton, Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
 import AddIcon from "@mui/icons-material/Add";
+import course from "./MainPage.tsx";
 
 interface CourseCardProps {
     isStudent: boolean;
+    activecourses: course[];
 }
 
-export function CoursesView({isStudent}: CourseCardProps) {
-    //TODO: get courses from state
-    const courses = getCourses();
+export function CoursesView({isStudent, activecourses}: CourseCardProps) {
+
     return (
         <>
-            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
+            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
                 <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
                     <Stack flexDirection={"row"} flexWrap={"wrap"} width={'90%'}
                            sx={{
@@ -19,10 +20,10 @@ export function CoursesView({isStudent}: CourseCardProps) {
                                overflowY: {md: "auto"},
                                maxHeight: "72svh",
                            }}>
-                        <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
-                        <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
+                        {activecourses.map((course: course) => (
+                            <CourseCard key={course.naam} courseId={course.vak_id.toString()} archived={false}
+                                        isStudent={isStudent}/>
+                        ))}
                     </Stack>
                     {!isStudent &&
                         <Stack flexDirection={"row"} justifyContent={"end"} width={"100%"} padding={0}>
@@ -34,9 +35,4 @@ export function CoursesView({isStudent}: CourseCardProps) {
             </Stack>
         </>
     );
-}
-
-//fix courses with state
-function getCourses(): string[] {
-    return []
 }

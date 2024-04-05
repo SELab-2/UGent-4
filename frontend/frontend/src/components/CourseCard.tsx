@@ -1,9 +1,11 @@
-import {Box, Card, CardActionArea, CardContent, Divider, IconButton, Typography} from "@mui/material";
+import {Box, Card, CardActionArea, CardContent, Divider, IconButton, Skeleton, Typography} from "@mui/material";
 import {t} from "i18next";
-import List from '@mui/material/List';
-import {AssignmentListItem} from "./AssignmentListItem";
 import {useNavigate} from "react-router-dom";
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
+import {useEffect, useState} from "react";
+import instance from "../axiosConfig.ts";
+import {AssignmentListItem} from "./AssignmentListItem.tsx";
+import List from "@mui/material/List";
+import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
 /*
 * CourseCard component displays a card with course information and a list of assignments
 * @param courseId: string, the id of the course
@@ -19,30 +21,43 @@ interface CourseCardProps {
     isStudent: boolean;
 }
 
-interface Course {
-    id: string;
-    name: string;
-    teacher: string;
-    students: string[];
-    //list of assignment ids
-    assignments: string[];
-    archived: boolean;
-}
-
-interface Assignment {
-    id: string;
-    name: string;
-    deadline?: Date;
-}
-
 export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
-    const course = getCourse(courseId)
-    const assignments = course.assignments.map((assignmentId) => getAssignment(assignmentId))
+    const [course, setCourse] = useState(null);
+    const [assignments, setAssignments] = useState([]);
+    const [teachers, setTeachers] = useState<any[]>([]);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const courseResponse = await instance.get(`/vakken/${courseId}/`);
+                const assignmentsResponse = await instance.get(`/projecten/?vak=${courseId}`);
+    
+                setCourse(courseResponse.data);
+                setAssignments(assignmentsResponse.data);
+    
+                if (courseResponse.data && courseResponse.data.lesgevers) {
+                    const lesgevers = [];
+                    for (const teacherId of courseResponse.data.lesgevers) {
+                        try {
+                            const response = await instance.get(`/gebruikers/${teacherId}`);
+                            lesgevers.push(response.data);
+                        } catch (error) {
+                            console.error("Error fetching teacher:", error);
+                        }
+                    }
+                    setTeachers(lesgevers);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        fetchData();
+    }, []);
 
     const handleCardClick = () => {
         console.log("Card clicked");
-        navigate(`/${courseId}`);
+        navigate(`/subjects_student/${courseId}`);
     }
 
     const archive = () => {
@@ -52,144 +67,140 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
 
     return (
         <>
-            <Card elevation={1}
-                  sx={{
-                      width: {xs: "100%", md: "60%"},
-                      minWidth: 350,
-                      maxWidth: 420,
-                      backgroundColor: "background.default",
-                      borderRadius: 5,
-                      padding: 0,
-                      margin: 1,
-                  }}
-            >
-                <CardContent sx={{margin: 0, padding: 0}}>
-                    <CardActionArea onClick={handleCardClick}>
-                        <Box aria-label={"courseHeader"}
+            {!course ? <Skeleton variant={"rectangular"} sx={{
+                    width: {xs: "100%", md: "60%"},
+                    minWidth: 350,
+                    maxWidth: 420,
+                    backgroundColor: "background.default",
+                    borderRadius: 5,
+                    padding: 0,
+                    margin: 1,
+                }}/> :
+                <Card elevation={1}
+                      sx={{
+                          width: {xs: "100%", md: "60%"},
+                          minWidth: 350,
+                          maxWidth: 420,
+                          backgroundColor: "background.default",
+                          borderRadius: 5,
+                          padding: 0,
+                          margin: 1,
+                      }}
+                >
+                    <CardContent sx={{margin: 0, padding: 0}}>
+                        <CardActionArea onClick={handleCardClick}>
+                            <Box aria-label={"courseHeader"}
+                                 sx={{
+                                     backgroundColor: "secondary.main",
+                                     margin: 0,
+                                     height: 50,
+                                     display: "flex",
+                                     flexDirection: "row",
+                                     justifyContent: "space-between",
+                                     padding: 3,
+                                 }}>
+                                <Box width={"50%"} height={"100%"} display={"flex"} flexDirection={"column"}
+                                     justifyContent={"center"}>
+                                    <Typography variant={"h4"}>{course.naam}</Typography>
+                                    {teachers.map((teacher) => (
+                                        <Typography variant={"subtitle1"}>{"lesgever(s): "}{teacher.first_name + " " + teacher.last_name}</Typography>
+                                    ))}
+                                </Box>
+                                <Box>
+                                    <Typography
+                                        variant={"subtitle1"}>{t("students: ")}{course.studenten.length || 0}</Typography>
+                                </Box>
+                            </Box>
+                        </CardActionArea>
+                        <Box aria-label={"assignmentList"}
                              sx={{
-                                 backgroundColor: "secondary.main",
-                                 margin: 0,
-                                 height: 50,
+                                 backgroundColor: "background.default",
+                                 height: 150,
                                  display: "flex",
-                                 flexDirection: "row",
-                                 justifyContent: "space-between",
-                                 padding: 3,
+                                 flexDirection: "column",
+                                 padding: 1,
+                                 borderRadius: 2,
+                                 paddingBottom: 0
                              }}>
-                            <Box width={"50%"} height={"100%"} display={"flex"} flexDirection={"column"}
-                                 justifyContent={"center"}>
-                                <Typography variant={"h4"}>{course.name}</Typography>
-                                <Typography variant={"subtitle1"}>{course.teacher}</Typography>
-                            </Box>
-                            <Box>
-                                <Typography variant={"subtitle1"}>{t("students")}{course.students.length}</Typography>
-                            </Box>
-                        </Box>
-                    </CardActionArea>
-                    <Box aria-label={"assignmentList"}
-                         sx={{
-                             backgroundColor: "background.default",
-                             height: 150,
-                             display: "flex",
-                             flexDirection: "column",
-                             padding: 1,
-                             borderRadius: 2,
-                             paddingBottom: 0
-                         }}>
-                        {isStudent ?
-                            <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                <Typography width={30}>Project</Typography>
-                                <Typography width={30}>Deadline</Typography>
-                                <Typography width={30}>Status</Typography>
-                            </Box> :
-                            <>
-                                {archived ?
-                                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3}
-                                         pr={3} width={{xs: "81%", sm: "85%"}}>
-                                        <Typography maxWidth={100}>Project</Typography>
-                                        <Typography minWidth={50}>Deadline</Typography>
-                                    </Box>
-                                    :
-                                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3}
-                                         pr={3} width={{xs: "71%", sm: "75%"}}>
-                                        <Typography maxWidth={100}>Project</Typography>
-                                        <Typography minWidth={50}>Deadline</Typography>
-                                    </Box>
-                                }</>
-                        }
-                        <Divider color={"text.main"}></Divider>
-                        <Box display={"flex"} flexDirection={"row"}>
                             {isStudent ?
-                                <Box sx={{width: "100%", height: 130, overflow: "auto"}}>
-                                    <List disablePadding={true}>
-                                        {assignments.map((assignment) => (
-                                            <AssignmentListItem key={assignment.id} id={assignment.id}
-                                                                projectName={assignment.name}
-                                                                dueDate={assignment.deadline}
-                                                                status={assignment.id === "assignment1"}
-                                                                isStudent={isStudent}/>
-                                        ))}
-                                    </List>
+                                <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3}
+                                     pr={3}>
+                                    <Typography width={30}>Project</Typography>
+                                    <Typography width={30}>Deadline</Typography>
+                                    <Typography width={30}>Status</Typography>
                                 </Box> :
-                                <>{!archived ?
-                                    <Box sx={{width: "90%", height: 130}}>
+                                <>
+                                    {archived ?
+                                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}
+                                             pl={3}
+                                             pr={3} width={{xs: "81%", sm: "85%"}}>
+                                            <Typography maxWidth={100}>Project</Typography>
+                                            <Typography minWidth={50}>Deadline</Typography>
+                                        </Box>
+                                        :
+                                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}
+                                             pl={3}
+                                             pr={3} width={{xs: "71%", sm: "75%"}}>
+                                            <Typography maxWidth={100}>Project</Typography>
+                                            <Typography minWidth={50}>Deadline</Typography>
+                                        </Box>
+                                    }</>
+                            }
+                            <Divider color={"text.main"}></Divider>
+                            <Box display={"flex"} flexDirection={"row"}>
+                                {isStudent ?
+                                    <Box sx={{width: "100%", height: 130, overflow: "auto"}}>
                                         <List disablePadding={true}>
                                             {assignments.map((assignment) => (
-                                                <AssignmentListItem key={assignment.id} id={assignment.id}
-                                                                    projectName={assignment.name}
-                                                                    dueDate={assignment.deadline}
-                                                                    status={assignment.id === "assignment1"}
+                                                <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
+                                                                    projectName={assignment.titel}
+                                                                    dueDate={new Date(assignment.deadline) || null}
+                                                                    status={assignment.project_id === "assignment1"} // dit moet nog aangepast worden
                                                                     isStudent={isStudent}/>
                                             ))}
                                         </List>
                                     </Box> :
-                                    <Box sx={{width: "100%", height: 130}}>
-                                        <List disablePadding={true}>
-                                            {assignments.map((assignment) => (
-                                                <AssignmentListItem key={assignment.id} id={assignment.id}
-                                                                    projectName={assignment.name}
-                                                                    dueDate={assignment.deadline}
-                                                                    status={assignment.id === "assignment1"}
-                                                                    isStudent={isStudent}/>
-                                            ))}
-                                        </List>
-                                    </Box>
+                                    <>{!archived ?
+                                        <Box sx={{width: "90%", height: 130}}>
+                                            <List disablePadding={true}>
+                                                {assignments.map((assignment) => (
+                                                    <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
+                                                                        projectName={assignment.titel}
+                                                                        dueDate={new Date(assignment.deadline) || null}
+                                                                        status={assignment.project_id === "assignment1"}
+                                                                        isStudent={isStudent}/>
+                                                ))}
+                                            </List>
+                                        </Box> :
+                                        <Box sx={{width: "100%", height: 130}}>
+                                            <List disablePadding={true}>
+                                                {assignments.map((assignment) => (
+                                                    <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
+                                                                        projectName={assignment.titel}
+                                                                        dueDate={new Date(assignment.deadline) || null}
+                                                                        status={assignment.project_id === "assignment1"}
+                                                                        isStudent={isStudent}/>
+                                                ))}
+                                            </List>
+                                        </Box>
+                                    }
+                                        {!archived &&
+                                            <Box display={"flex"} flexDirection={"column"} paddingRight={1}
+                                                 sx={{flexGrow: 1, alignItems: "flex-end", alignSelf: "flex-end"}}>
+                                                <IconButton onClick={archive}
+                                                            sx={{
+                                                                backgroundColor: "secondary.main",
+                                                                borderRadius: 2,
+                                                                alignSelf: "flex-end"
+                                                            }}><ArchiveOutlinedIcon/></IconButton>
+                                            </Box>}
+                                    </>
                                 }
-                                    {!archived &&
-                                        <Box display={"flex"} flexDirection={"column"} paddingRight={1}
-                                             sx={{flexGrow: 1, alignItems: "flex-end", alignSelf: "flex-end"}}>
-                                            <IconButton onClick={archive}
-                                                        sx={{
-                                                            backgroundColor: "secondary.main",
-                                                            borderRadius: 2,
-                                                            alignSelf: "flex-end"
-                                                        }}><ArchiveOutlinedIcon/></IconButton>
-                                        </Box>}
-                                </>
-                            }
+                            </Box>
                         </Box>
-                    </Box>
-                </CardContent>
-            </Card>
+                    </CardContent>
+                </Card>
+            }
         </>
     );
-}
-
-//TODO: use api to get data, for now use mock data
-function getCourse(courseId: string): Course {
-    return {
-        id: courseId,
-        name: "courseName",
-        teacher: "teacher",
-        students: ["student1", "student2"],
-        archived: false,
-        assignments: ["assignment1", "assignment2"]
-    }
-}
-
-function getAssignment(assignmentId: string): Assignment {
-    return {
-        id: assignmentId,
-        name: "assignmentName",
-        deadline: new Date(2022, 11, 17)
-    }
 }

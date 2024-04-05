@@ -6,6 +6,8 @@ import React from "react";
 import {AccountCircle} from "@mui/icons-material";
 import {useNavigate} from "react-router-dom";
 import {LanguageSwitcher} from "./LanguageSwitcher.tsx";
+import {useMsal} from "@azure/msal-react";
+import axios from "axios";
 
 /**
  * Header component
@@ -31,7 +33,7 @@ interface Props {
 export const Header = ({variant, title}: Props) => {
     const {t} = useTranslation();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
+    const {instance} = useMsal();
     /**
      * Function to handle menu opening
      * @param {React.MouseEvent<HTMLElement>} event - The event object
@@ -61,8 +63,13 @@ export const Header = ({variant, title}: Props) => {
      * Function to handle logout action
      */
     const logout = () => {
-        localStorage.removeItem("token");
-        navigate("/");
+        // Clear the token from the cache so axios can't get access to the api
+        axios.defaults.headers.common['Authorization'] = null;
+        instance.logoutRedirect({
+            postLogoutRedirectUri: "/",
+        }).catch((e) => {
+            console.error(e)
+        });
     };
 
     return (
