@@ -8,3 +8,4 @@ omit=
     */frontend/*
     */static/*
     */.github/*
+    */usr/*
