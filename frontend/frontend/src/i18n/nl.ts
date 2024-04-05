@@ -38,6 +38,7 @@ const dutch = {
     allowed_file_types: "Toegestane bestandstypes",
     dockerfile_error: "Gelieve een Docker bestand te uploaden.",
     filetype_error: "Gelieve minstens één bestandstype te selecteren.",
+    new_script: "Nieuw script",
 };
 
 export default dutch;

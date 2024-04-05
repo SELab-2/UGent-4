@@ -9,6 +9,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { ButtonGroup, TextField } from '@mui/material';
+import {t} from "i18next";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -38,7 +39,7 @@ export default function RestrictionsDialog({ closeParentDialog }: { closeParentD
         >Upload</Button>,
         <Button key="New_Script"
         onClick={() => {
-            handleClickOpen();}}>New Script</Button>,
+            handleClickOpen();}}>{t('new_script')}</Button>,
         <Button key="FileExtensionCheck"
         onClick={() => {
             handleClickOpen();
