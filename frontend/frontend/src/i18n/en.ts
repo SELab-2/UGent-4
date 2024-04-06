@@ -73,6 +73,7 @@ const english = {
     archive_project_warning: "Archive Project?",
     cant_be_undone: "This cannot be undone.",
     archive: "Archive",
+    no_score_yet: "No score yet",
 };
 
 export default english;

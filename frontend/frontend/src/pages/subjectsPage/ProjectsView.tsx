@@ -5,63 +5,129 @@ import { AssignmentListItemSubjectsPage } from "../subjectsPage/AssignmentListIt
 import instance from "../../axiosConfig";
 import { useState, useEffect } from "react";
 
+interface ProjectStudent {
+    assignment: any,
+    group: any,
+    lastSubmission: any,
+    submissions: any,
+    score: any,
+}
 
 export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}) {
-    const [groups, setGroups] = useState<any[]>([]);
-    const [submissions, setSubmissions] = useState<any[]>([]);
-    const [scores, setScores] = useState<any[]>([]);
+    const [projects, setProjects] = useState<ProjectStudent[]>([]);
 
     useEffect(() => {
-        async function fetchGroup(projectId: String) {
+        async function fetchGroup(assignment): Promise<ProjectStudent> {
             try {
-                const groupResponse = await instance.get(`/groepen/?project=${projectId}`);
-                return groupResponse.data;
+                //TODO vul bij student gebruiker.user in
+                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=6`);
+                if(groupResponse.data.length == 0){
+                    return {
+                        assignment: assignment,
+                        group: null,
+                        lastSubmission: null,
+                        submissions: null,
+                        score: null,
+                    };
+                }
+                return {
+                    assignment: assignment,
+                    group: groupResponse.data[0],
+                    lastSubmission: null,
+                    submissions: null,
+                    score: null,
+                };
             } catch (error) {
                 console.error("Error fetching data:", error);
-                return [];
+                return {
+                    assignment: assignment,
+                    group: null,
+                    lastSubmission: null,
+                    submissions: null,
+                    score: null,
+                };
             }
         }
-        async function fetchSubmission(groupId: String) {
+        async function fetchSubmission(projectstudent: ProjectStudent): Promise<ProjectStudent> {
+            if(projectstudent.group == null){
+                return {
+                    assignment: projectstudent.assignment,
+                    group: projectstudent.group,
+                    lastSubmission: null,
+                    submissions: null,
+                    score: null,
+                };
+            }
             try {
-                const submissionsResponse = await instance.get(`/indieningen/?groep=${groupId}`);
+                const submissionsResponse = await instance.get(`/indieningen/?groep=${projectstudent.group.groep_id.toString()}&project=${projectstudent.assignment.project_id.toString()}`);
                 const lastSubmission = submissionsResponse.data[submissionsResponse.data.length - 1];
-                return lastSubmission;
+                return {
+                    assignment: projectstudent.assignment,
+                    group: projectstudent.group,
+                    lastSubmission: lastSubmission,
+                    submissions: submissionsResponse.data.length,
+                    score: null,
+                };
             } catch (e) {
                 console.error("Error fetching data:", e);
-                return [];
+                return {
+                    assignment: projectstudent.assignment,
+                    group: projectstudent.group,
+                    lastSubmission: null,
+                    submissions: null,
+                    score: null,
+                };
             }
         }
-        async function fetchScore(submissionId: String){
+        async function fetchScore(projectstudent: ProjectStudent): Promise<ProjectStudent> {
+            if(projectstudent.group == null || projectstudent.lastSubmission == null){
+                return {
+                    assignment: projectstudent.assignment,
+                    group: projectstudent.group,
+                    lastSubmission: projectstudent.lastSubmission,
+                    submissions: projectstudent.submissions,
+                    score: null,
+                };
+            }
             try {
-                const scoreResponse = await instance.get(`/scores/?indiening=${submissionId}`);
-                console.log(scoreResponse.data);
-                return scoreResponse.data;
+                const scoreResponse = await instance.get(`/scores/?indiening=${projectstudent.lastSubmission.indiening_id.toString()}`);
+                return {
+                    assignment: projectstudent.assignment,
+                    group: projectstudent.group,
+                    lastSubmission: projectstudent.lastSubmission,
+                    submissions: projectstudent.submissions,
+                    score: scoreResponse.data[0],
+                };
             } catch (e) {
                 console.error("Error fetching data:", e);
-                return [];
+                return {
+                    assignment: projectstudent.assignment,
+                    group: projectstudent.group,
+                    lastSubmission: projectstudent.lastSubmission,
+                    submissions: projectstudent.submissions,
+                    score: null,
+                };
             }
         }
 
         async function fetchData() {
             try {
-                const filteredGroupsPromises = assignments.map((assignment) => fetchGroup(assignment.project_id.toString()));
-                const filteredGroupsArray = await Promise.all(filteredGroupsPromises);
-                const allGroups = filteredGroupsArray.flat();
-                setGroups(allGroups);
-            
-                const submissionPromises = groups.map((group) => fetchSubmission(group.groep_id.toString()));
-                const submissionsArray = await Promise.all(submissionPromises);
-                setSubmissions(submissionsArray.flat());
-                
-                const scorePromises = submissions.map((submission) => fetchScore(submission.indiening_id.toString()));
-                const scoresArray = await Promise.all(scorePromises);
-                setScores(scoresArray.flat());
+                const groupPromises = assignments.map((assignment) => fetchGroup(assignment));
+                const groupArray = await Promise.all(groupPromises);
+
+                const submissionPromises = groupArray.map((projectstudent) => fetchSubmission(projectstudent));
+                const submissionArray = await Promise.all(submissionPromises);
+
+                const scorePromises = submissionArray.map((projectstudent) => fetchScore(projectstudent));
+                const scoreArray = await Promise.all(scorePromises);
+
+                setProjects(scoreArray);
             } catch (e) {
                 console.error("Error fetching all data:", e);
             }
         }
         fetchData();
-    }, [assignments, submissions, scores]);
+    }, [assignments]);
     
     return (
         <>
@@ -101,21 +167,18 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {assignments
-                            .map((assignment, index) => ({...assignment, index}))
-                            .filter((assignment) => assignment.gearchiveerd == archived)
-                            .map((assignment) => {
-                                const submission = submissions[assignment.index];
-                                const score = scores[assignment.index];
-                                return (
-                                <AssignmentListItemSubjectsPage key={assignment.project_id} projectName={assignment.titel}
-                                        dueDate={new Date(assignment.deadline)} submission={submission}
-                                        score={score} maxScore={Number(assignment.max_score)}
-                                        isStudent={!gebruiker.is_lesgever} archived={archived} visible={assignment.zichtbaar}
-                                        deleteEvent={() => deleteAssignment(assignment.index)}
-                                        archiveEvent={() => archiveAssignment(assignment.index)}
-                                        visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
-                            )})}
+                            {projects
+                            .map((project, index) => ({...project, index}))
+                            .filter((project) => project.assignment.gearchiveerd == archived)
+                            .map((project) => 
+                                <AssignmentListItemSubjectsPage key={project.assignment.project_id} projectName={project.assignment.titel}
+                                    dueDate={new Date(project.assignment.deadline)} submissions={project.submissions}
+                                    score={project.score} maxScore={Number(project.assignment.max_score)}
+                                    isStudent={!gebruiker.is_lesgever} archived={archived} visible={project.assignment.zichtbaar}
+                                    deleteEvent={() => deleteAssignment(project.index)}
+                                    archiveEvent={() => archiveAssignment(project.index)}
+                                    visibilityEvent={() => changeVisibilityAssignment(project.index)}/>
+                            )}
                         </List>
                     </Box>
                 </Box>
