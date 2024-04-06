@@ -73,6 +73,7 @@ const dutch = {
     archive_project_warning: "Opdracht Archiveren?",
     cant_be_undone: "Dit kan niet ongedaan gemaakt worden.",
     archive: "Archiveer",
+    no_score_yet: "Nog geen score",
 };
 
 export default dutch;

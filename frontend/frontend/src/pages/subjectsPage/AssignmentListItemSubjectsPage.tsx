@@ -21,7 +21,7 @@ import { useState } from "react";
 * @param visibilityEvent: () => void - event to call to change visibility of assignment
 */
 
-export function AssignmentListItemSubjectsPage({projectName, dueDate, submission, score, maxScore, isStudent, archived, visible,
+export function AssignmentListItemSubjectsPage({projectName, dueDate, submissions, score, maxScore, isStudent, archived, visible,
     deleteEvent, archiveEvent, visibilityEvent}) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
@@ -50,8 +50,8 @@ export function AssignmentListItemSubjectsPage({projectName, dueDate, submission
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:150}} primary={submission? t("last_submission") + " " + new Date(submission.tijdstip).toLocaleDateString() : "nog geen submission"}/>
-                            <ListItemText sx={{maxWidth:100}} primary={score?.score ? `${score.score}/${maxScore} (${(100 * score.score / maxScore)}%)` : "nog geen score"}/>
+                            <ListItemText sx={{maxWidth:150}} primary={submissions>0? (submissions>1? submissions + " " + t('submissions'): submissions + " " + t('submission')) : t('no_submissions')}/>
+                            <ListItemText sx={{maxWidth:100}} primary={score?.score ? `${score.score}/${maxScore} (${(100 * score.score / maxScore)}%)` : t('no_score_yet')}/>
                         </>
                         :
                         <>
