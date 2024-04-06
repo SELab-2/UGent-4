@@ -6,7 +6,7 @@ import instance from "../../axiosConfig";
 import { useState, useEffect } from "react";
 
 
-export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
+export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}) {
     const [groups, setGroups] = useState<any[]>([]);
     const [submissions, setSubmissions] = useState<any[]>([]);
     const [scores, setScores] = useState<any[]>([]);

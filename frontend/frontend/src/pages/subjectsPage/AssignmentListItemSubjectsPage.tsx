@@ -27,9 +27,9 @@ export function AssignmentListItemSubjectsPage({projectName, dueDate, submission
     const handleProjectClick = () => {
         console.log("Project clicked");
         if(isStudent){
-            navigate("/assignment_student");
+            navigate(`/course_student/:courseId/assignment/:assignmentId`);
         } else {
-            navigate("/assignment_teacher");
+            navigate(`/course_teacher/:courseId/assignment/:assignmentId`);
         }
     }
 
