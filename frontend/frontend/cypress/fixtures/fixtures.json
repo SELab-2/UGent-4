@@ -1,0 +1,17 @@
+{
+  "id": "1",
+  "name": "Test Name",
+  "project": "Test Project",
+  "score": "10",
+  "tooltip": "Test Tooltip",
+  "groupMemberNames": ["Test Student 1", "Test Student 2", "Test Student 3"],
+  "title": "Test Title",
+  "itemList": [{"opdracht": "test 1", "deadline": "12-12-2025","status": "fail", "score": "8"}, 
+    {"opdracht": "test 2", "deadline": "12-12-2026","status": "pass", "score": "10"}, 
+    {"opdracht": "test 3", "deadline": "12-12-2027","status": "excellent", "score": "19"}
+    ],
+  "maxScore": "100",
+  "warning": "This Is A Test Warning",
+  "button": "Test Button"
+
+}
