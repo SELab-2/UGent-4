@@ -7,10 +7,10 @@ import { useState, useEffect } from "react";
 
 interface ProjectStudent {
     assignment: any,
-    group: any,
-    lastSubmission: any,
-    submissions: any,
-    score: any,
+    group?: any,
+    lastSubmission?: any,
+    submissions?: any,
+    score?: any,
 }
 
 export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}) {
@@ -24,38 +24,24 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                 if(groupResponse.data.length == 0){
                     return {
                         assignment: assignment,
-                        group: null,
-                        lastSubmission: null,
-                        submissions: null,
-                        score: null,
                     };
                 }
                 return {
                     assignment: assignment,
                     group: groupResponse.data[0],
-                    lastSubmission: null,
-                    submissions: null,
-                    score: null,
                 };
             } catch (error) {
                 console.error("Error fetching data:", error);
                 return {
                     assignment: assignment,
-                    group: null,
-                    lastSubmission: null,
-                    submissions: null,
-                    score: null,
                 };
             }
         }
         async function fetchSubmission(projectstudent: ProjectStudent): Promise<ProjectStudent> {
-            if(projectstudent.group == null){
+            if(!projectstudent.group){
                 return {
                     assignment: projectstudent.assignment,
                     group: projectstudent.group,
-                    lastSubmission: null,
-                    submissions: null,
-                    score: null,
                 };
             }
             try {
@@ -66,27 +52,22 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                     group: projectstudent.group,
                     lastSubmission: lastSubmission,
                     submissions: submissionsResponse.data.length,
-                    score: null,
                 };
             } catch (e) {
                 console.error("Error fetching data:", e);
                 return {
                     assignment: projectstudent.assignment,
                     group: projectstudent.group,
-                    lastSubmission: null,
-                    submissions: null,
-                    score: null,
                 };
             }
         }
         async function fetchScore(projectstudent: ProjectStudent): Promise<ProjectStudent> {
-            if(projectstudent.group == null || projectstudent.lastSubmission == null){
+            if(!projectstudent.group || !projectstudent.lastSubmission){
                 return {
                     assignment: projectstudent.assignment,
                     group: projectstudent.group,
                     lastSubmission: projectstudent.lastSubmission,
                     submissions: projectstudent.submissions,
-                    score: null,
                 };
             }
             try {
@@ -105,7 +86,6 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                     group: projectstudent.group,
                     lastSubmission: projectstudent.lastSubmission,
                     submissions: projectstudent.submissions,
-                    score: null,
                 };
             }
         }
