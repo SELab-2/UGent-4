@@ -1,5 +1,4 @@
 import {Header} from "../../components/Header.tsx";
-import {Button, Card, Divider, Grid, List, ListItem, ListItemText, Stack, TextField, Typography} from "@mui/material";
 import UploadIcon from '@mui/icons-material/Upload';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
