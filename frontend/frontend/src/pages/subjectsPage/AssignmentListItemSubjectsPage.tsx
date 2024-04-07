@@ -22,14 +22,14 @@ import { useState } from "react";
 */
 
 export function AssignmentListItemSubjectsPage({projectName, dueDate, submissions, score, maxScore, isStudent, archived, visible,
-    deleteEvent, archiveEvent, visibilityEvent}) {
+    deleteEvent, archiveEvent, visibilityEvent, courseId, assignmentId}) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
         if(isStudent){
-            navigate(`/course_student/:courseId/assignment/:assignmentId`);
+            navigate(`/course_student/${courseId}/assignment/${assignmentId}`);
         } else {
-            navigate(`/course_teacher/:courseId/assignment/:assignmentId`);
+            navigate(`/course_teacher/${courseId}/assignment/${assignmentId}`);
         }
     }
 

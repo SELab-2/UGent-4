@@ -13,7 +13,7 @@ interface ProjectStudent {
     score?: any,
 }
 
-export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}) {
+export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment, courseId}) {
     const [projects, setProjects] = useState<ProjectStudent[]>([]);
 
     useEffect(() => {
@@ -157,7 +157,8 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                                     isStudent={!gebruiker.is_lesgever} archived={archived} visible={project.assignment.zichtbaar}
                                     deleteEvent={() => deleteAssignment(project.index)}
                                     archiveEvent={() => archiveAssignment(project.index)}
-                                    visibilityEvent={() => changeVisibilityAssignment(project.index)}/>
+                                    visibilityEvent={() => changeVisibilityAssignment(project.index)}
+                                    courseId={courseId} assignmentId={project.assignment.project_id}/>
                             )}
                         </List>
                     </Box>
