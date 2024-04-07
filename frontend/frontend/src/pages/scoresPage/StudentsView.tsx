@@ -1,71 +1,78 @@
 import {Box, Typography, Divider} from "@mui/material";
 import List from '@mui/material/List';
-import { StudentScoreListItem } from "../../components/StudentScoreListItem.tsx";
+import { StudentScoreListItem } from "./StudentScoreListItem.tsx";
 import {t} from "i18next";
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import instance from "../../axiosConfig.ts";
 
-interface StudentsViewProps {
-    projectId: number;
+interface ScoreGroep {
+    group: any,
+    lastSubmission?: any,
+    score?: any,
 }
 
-interface Vak {
-    vak_id: number,
-    naam: string,
-    studenten: number[],
-    lesgevers: number[],
-}
+export function StudentsView({project}) {
+    const [groepen, setGroepen] = useState<ScoreGroep[]>([]); 
 
-interface Project {
-    project_id: number,
-    titel: string,
-    beschrijving: string,
-    opgave_bestand: File | null,
-    vak: number,
-    max_score: number,
-    deadline: Date,
-    extra_deadline: Date,
-    zichtbaar: boolean,
-    gearchiveerd: boolean,
-}
+    useEffect(() => {
+        async function fetchGroups(assignment): Promise<ScoreGroep[]> {
+            try {
+                const groupsResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}`);
+                return groupsResponse.data.map((group) => ({
+                    group: group,
+                }));
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return [];
+            }
+        }
+        async function fetchSubmission(scoregroep: ScoreGroep): Promise<ScoreGroep> {
+            try {
+                const submissionResponse = await instance.get(`/indieningen/?groep=${scoregroep.group.groep_id.toString()}`);
+                const lastSubmission = submissionResponse.data[submissionResponse.data.length - 1];
+                return {
+                    ...scoregroep,
+                    lastSubmission: lastSubmission,
+                };
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return scoregroep;
+            }
+        }
+        async function fetchScore(scoregroep: ScoreGroep): Promise<ScoreGroep> {
+            if(!scoregroep.lastSubmission){
+                return scoregroep;
+            }
+            try {
+                const scoreResponse = await instance.get(`/scores/?indiening=${scoregroep.lastSubmission.indiening_id.toString()}`);
+                return {
+                    ...scoregroep,
+                    score: scoreResponse.data[0],
+                };
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return scoregroep;
+            }
+        }
 
-interface Groep {
-    groep_id: number,
-    studenten: number[],
-    project: number,
-}
+        async function fetchData() {
+            try {
+                const groupArray = await fetchGroups(project);
 
-interface Score {
-    score_id: number,
-    score: number,
-    indiening: number,
-}
+                const submissionPromises = groupArray.map((scoregroep) => fetchSubmission(scoregroep));
+                const submissionArray = await Promise.all(submissionPromises);
 
-interface Gebruiker {
-    user: number,
-    is_lesgever: boolean,
-    first_name: string,
-    last_name: string,
-    email: string,
-}
+                const scorePromises = submissionArray.map((scoregroep) => fetchScore(scoregroep));
+                const scoreArray = await Promise.all(scorePromises);
 
-interface Indiening {
-    indiening_id: number,
-    groep: number,
-    tijdstip: Date,
-    status: boolean,
-    indiening_bestanden: Bestand[],
- }
-
- interface Bestand {
-    indiening_bestand_id: number,
-    indiening: number,
-    bestand: File | null,
- }
-
-export function StudentsView({projectId}: StudentsViewProps) {   
-    const project = getProject(projectId);
-    const groepen = getGroepenVoorProject(projectId);
-    const indieningen = groepen.map((groep) => getLaatseIndieningVanGroep(groep.groep_id));
-    const scores = indieningen.map((indiening) => getScoreVoorIndiening(indiening.indiening_id));
+                setGroepen(scoreArray);
+            } catch(error) {
+                console.error("Error fetching all data:", error);
+            }
+        }
+        fetchData();
+    }, [project]);
 
     return (
         <>
@@ -98,9 +105,9 @@ export function StudentsView({projectId}: StudentsViewProps) {
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width:"100%", height: 430, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {groepen.map((groep, index) => (
-                                <StudentScoreListItem key={groep.groep_id} groepName={String(groep.groep_id)}
-                                submissionFiles={indieningen[index].indiening_bestanden} startScore={scores[index].score}
+                            {groepen.map((groep) => (
+                                <StudentScoreListItem key={groep.group.groep_id} groepName={String(groep.group.groep_id)}
+                                lastSubmission={groep.lastSubmission} startScore={groep.score.score}
                                 maxScore={project.max_score}/>
                             ))}
                         </List>
@@ -109,68 +116,4 @@ export function StudentsView({projectId}: StudentsViewProps) {
             </Box>
         </>
     );
-}
-
-//TODO: use api to get data, for now use mock data
-function getProject(projectId: number): Project {
-    return {
-        project_id: projectId,
-        titel: "courseName",
-        beschrijving: "project beschrijving",
-        opgave_bestand: null,
-        vak: 0,
-        max_score: 20,
-        deadline: new Date(2022, 11, 17),
-        extra_deadline: new Date(2022, 11, 17),
-        zichtbaar: true,
-        gearchiveerd: false,
-    }
-}
-
-function getGroepenVoorProject(projectId: number): Groep[] {
-    return [{
-        groep_id: 0,
-        studenten: [0, 1, 2, 3],
-        project: projectId,
-    },
-    {
-        groep_id: 1,
-        studenten: [4, 5, 6, 7],
-        project: projectId,
-    },
-    {
-        groep_id: 2,
-        studenten: [8, 9, 10, 11],
-        project: projectId,
-    },
-    ]
-}
-
-function getLaatseIndieningVanGroep(groepId: number): Indiening {
-    return {
-        indiening_id: 0,
-        groep: groepId,
-        tijdstip: new Date(2022, 11, 17),
-        status: true,
-        indiening_bestanden: [
-            {
-                indiening_bestand_id: 0,
-                indiening: 0,
-                bestand: null,
-            },
-            {
-                indiening_bestand_id: 1,
-                indiening: 0,
-                bestand: null,
-            }
-        ],
-     }
-}
-
-function getScoreVoorIndiening(indieningId: number): Score {
-    return {
-        score_id: 0,
-        score: 10,
-        indiening: indieningId,
-    }
 }

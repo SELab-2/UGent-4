@@ -39,54 +39,34 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
         }
         async function fetchSubmission(projectstudent: ProjectStudent): Promise<ProjectStudent> {
             if(!projectstudent.group){
-                return {
-                    assignment: projectstudent.assignment,
-                    group: projectstudent.group,
-                };
+                return projectstudent;
             }
             try {
                 const submissionsResponse = await instance.get(`/indieningen/?groep=${projectstudent.group.groep_id.toString()}&project=${projectstudent.assignment.project_id.toString()}`);
                 const lastSubmission = submissionsResponse.data[submissionsResponse.data.length - 1];
                 return {
-                    assignment: projectstudent.assignment,
-                    group: projectstudent.group,
+                    ...projectstudent,
                     lastSubmission: lastSubmission,
                     submissions: submissionsResponse.data.length,
                 };
             } catch (e) {
                 console.error("Error fetching data:", e);
-                return {
-                    assignment: projectstudent.assignment,
-                    group: projectstudent.group,
-                };
+                return projectstudent;
             }
         }
         async function fetchScore(projectstudent: ProjectStudent): Promise<ProjectStudent> {
             if(!projectstudent.group || !projectstudent.lastSubmission){
-                return {
-                    assignment: projectstudent.assignment,
-                    group: projectstudent.group,
-                    lastSubmission: projectstudent.lastSubmission,
-                    submissions: projectstudent.submissions,
-                };
+                return projectstudent;
             }
             try {
                 const scoreResponse = await instance.get(`/scores/?indiening=${projectstudent.lastSubmission.indiening_id.toString()}`);
                 return {
-                    assignment: projectstudent.assignment,
-                    group: projectstudent.group,
-                    lastSubmission: projectstudent.lastSubmission,
-                    submissions: projectstudent.submissions,
+                    ...projectstudent,
                     score: scoreResponse.data[0],
                 };
             } catch (e) {
                 console.error("Error fetching data:", e);
-                return {
-                    assignment: projectstudent.assignment,
-                    group: projectstudent.group,
-                    lastSubmission: projectstudent.lastSubmission,
-                    submissions: projectstudent.submissions,
-                };
+                return projectstudent;
             }
         }
 

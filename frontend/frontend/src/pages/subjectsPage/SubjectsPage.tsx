@@ -87,9 +87,15 @@ export function SubjectsPage() {
             console.error("Error updating data:", error);
         }
     }
-    const changeVisibilityAssignment = (index: number) => {
-        const newAssignments = assignments.map((a, i) => i==index? changeVisibilitySingleAssignment(a): a);
-        setAssignments(newAssignments);
+    const changeVisibilityAssignment = async (index: number) => {
+        //const newAssignments = assignments.map((a, i) => i==index? changeVisibilitySingleAssignment(a): a);
+        //setAssignments(newAssignments);
+        try {
+            const changedVisibilityAssignment = changeVisibilitySingleAssignment(assignments[index]);
+            await instance.put(`/projecten/${changedVisibilityAssignment.project_id}/`, changedVisibilityAssignment);
+        } catch(error) {
+            console.error("Error updating data:", error);
+        }
     }
     
     if (!course) {
