@@ -64,16 +64,28 @@ export function SubjectsPage() {
         setDeleteIndex(index);
         setOpenDeletePopup(true);
     }
-    const doDelete = () => {
-        setAssignments(assignments.filter((_, i) => i !== deleteIndex));
+    const doDelete = async () => {
+        //setAssignments(assignments.filter((_, i) => i !== deleteIndex));
+        try {
+            const deletedAssignment = assignments[deleteIndex];
+            await instance.delete(`/projecten/${deletedAssignment.project_id}/`);
+        } catch(error) {
+            console.error("Error deleting data:", error);
+        }
     }
     const archiveAssignment = (index: number) => {
         setArchiveIndex(index);
         setOpenArchivePopup(true);
     }
-    const doArchive = () => {
-        const newAssignments = assignments.map((a, i) => i==archiveIndex? archiveSingleAssignment(a): a);
-        setAssignments(newAssignments);
+    const doArchive = async () => {
+        //const newAssignments = assignments.map((a, i) => i==archiveIndex? archiveSingleAssignment(a): a);
+        //setAssignments(newAssignments);
+        try {
+            const archivedAssignment = archiveSingleAssignment(assignments[archiveIndex]);
+            await instance.put(`/projecten/${archivedAssignment.project_id}/`, archivedAssignment);
+        } catch(error) {
+            console.error("Error updating data:", error);
+        }
     }
     const changeVisibilityAssignment = (index: number) => {
         const newAssignments = assignments.map((a, i) => i==index? changeVisibilitySingleAssignment(a): a);
@@ -93,10 +105,10 @@ export function SubjectsPage() {
                         <TabSwitcher titles={["current_projects","archived"]}
                                     nodes={[<ProjectsView gebruiker={user} archived={false} assignments={assignments}
                                         deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
-                                        changeVisibilityAssignment={changeVisibilityAssignment}/>,
+                                        changeVisibilityAssignment={changeVisibilityAssignment} courseId={courseId}/>,
                                         <ProjectsView gebruiker={user} archived={true} assignments={assignments}
                                         deleteAssignment={deleteAssignment} archiveAssignment={archiveAssignment}
-                                        changeVisibilityAssignment={changeVisibilityAssignment}/>]}/>
+                                        changeVisibilityAssignment={changeVisibilityAssignment} courseId={courseId}/>]}/>
                     </Box>
                     <Box display="flex" flexDirection="row-reverse" sx={{ width: '100%', height:"30%" }}>
                         <IconButton onClick={addProject} color="primary" edge="end" aria-label="add-project" >
@@ -115,10 +127,10 @@ export function SubjectsPage() {
                     <TabSwitcher titles={["current_projects","archived"]}
                                 nodes={[<ProjectsView gebruiker={user} archived={false} assignments={assignments}
                                 deleteAssignment={() => undefined} archiveAssignment={() => undefined}
-                                changeVisibilityAssignment={() => undefined}/>,
+                                changeVisibilityAssignment={() => undefined} courseId={courseId}/>,
                                 <ProjectsView gebruiker={user} archived={true} assignments={assignments}
                                 deleteAssignment={() => undefined} archiveAssignment={() => undefined}
-                                changeVisibilityAssignment={() => undefined}/>]}/>
+                                changeVisibilityAssignment={() => undefined} courseId={courseId}/>]}/>
                 </Box>
             </Stack>
             }
@@ -129,30 +141,14 @@ export function SubjectsPage() {
 
 function archiveSingleAssignment(assignment: Project): Project {
     return {
-        project_id: assignment.project_id,
-        titel: assignment.titel,
-        beschrijving: assignment.beschrijving,
-        opgave_bestand: assignment.opgave_bestand,
-        vak: assignment.vak,
-        max_score: assignment.max_score,
-        deadline: assignment.deadline,
-        extra_deadline: assignment.extra_deadline,
-        zichtbaar: assignment.zichtbaar,
+        ...assignment,
         gearchiveerd: true,
     }
 }
 
 function changeVisibilitySingleAssignment(assignment: Project): Project {
     return {
-        project_id: assignment.project_id,
-        titel: assignment.titel,
-        beschrijving: assignment.beschrijving,
-        opgave_bestand: assignment.opgave_bestand,
-        vak: assignment.vak,
-        max_score: assignment.max_score,
-        deadline: assignment.deadline,
-        extra_deadline: assignment.extra_deadline,
+        ...assignment,
         zichtbaar: !assignment.zichtbaar,
-        gearchiveerd: assignment.gearchiveerd,
     }
 }
