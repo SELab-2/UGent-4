@@ -3,14 +3,6 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { t } from "i18next";
 import { useState } from "react";
 
-interface StudentScoreListItemProps {
-    key: number;
-    groepName: string;
-    submissionFiles: Bestand[];
-    startScore: number;
-    maxScore: number;
-}
-
 interface Bestand {
     indiening_bestand_id: number,
     indiening: number,
@@ -24,7 +16,7 @@ interface Bestand {
 * @param submissionFiles: string[] - a list of all files submitted by this student
 */
 
-export function StudentScoreListItem({key, groepName, submissionFiles, startScore, maxScore}: StudentScoreListItemProps) {
+export function StudentScoreListItem({key, groepName, lastSubmission, startScore, maxScore}) {
     const [score, setScore] = useState(startScore.toString());
 
     return (
@@ -42,8 +34,9 @@ export function StudentScoreListItem({key, groepName, submissionFiles, startScor
                 }}>
                     <>
                         <ListItemText sx={{maxWidth: 100}} primary={groepName}/>
-                        <ListItemText sx={{maxWidth: 150}}
-                                      primary={submissionFiles.length ? submissionFiles.length + " " + t("submissions") : t("no_submissions")}/>
+                        <ListItemText sx={{maxWidth: 300}}
+                        //TODO time of last submission
+                                      primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
                             <TextField hiddenLabel defaultValue={score} onChange={(event) => setScore(event.target.value)}
                             variant="filled" size="small"/>
