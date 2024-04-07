@@ -1,7 +1,7 @@
 import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
 import {t} from "i18next";
-import { AssignmentListItemSubjectsPage } from "../subjectsPage/AssignmentListItemSubjectsPage";
+import {AssignmentListItemSubjectsPage} from "./AssignmentListItemSubjectsPage.tsx";
 
 interface ProjectsViewProps {
     gebruiker: Gebruiker;
@@ -51,31 +51,39 @@ interface Indiening {
     tijdstip: Date,
     status: boolean,
     indiening_bestanden: Bestand[],
- }
+}
 
- interface Bestand {
+interface Bestand {
     indiening_bestand_id: number,
     indiening: number,
     bestand: File | null,
- }
+}
 
-export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
+export function ProjectsView({
+                                 gebruiker,
+                                 archived,
+                                 assignments,
+                                 deleteAssignment,
+                                 archiveAssignment,
+                                 changeVisibilityAssignment
+                             }: ProjectsViewProps) {
     const groups = assignments.map((assignment) => getGroepVanStudentVoorProject(gebruiker.user, assignment.project_id));
     const submissions = groups.map((group) => getLaatseIndieningVanGroep(group.groep_id));
     const scores = submissions.map((submission) => getScoreVoorIndiening(submission.indiening_id));
-    
+
     return (
         <>
             <Box aria-label={"courseHeader"}
-                sx={{backgroundColor: "secondary.main",
-                    margin:0,
-                    height: 50,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    padding:3,
-                }}>
-                {!gebruiker.is_lesgever?
+                 sx={{
+                     backgroundColor: "secondary.main",
+                     margin: 0,
+                     height: 50,
+                     display: "flex",
+                     flexDirection: "row",
+                     justifyContent: "space-between",
+                     padding: 3,
+                 }}>
+                {!gebruiker.is_lesgever ?
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
@@ -91,29 +99,34 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                 }
             </Box>
             <Box aria-label={"assignmentList"}
-                sx={{backgroundColor: "background.default",
-                    height: 340,
-                    display: "flex",
-                    flexDirection: "column",
-                    padding:1,
-                    borderRadius:2,
-                    paddingBottom:0
-                }}>
+                 sx={{
+                     backgroundColor: "background.default",
+                     height: 340,
+                     display: "flex",
+                     flexDirection: "column",
+                     padding: 1,
+                     borderRadius: 2,
+                     paddingBottom: 0
+                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
+                    <Box sx={{width: "100%", height: 320, overflow: "auto"}}>
                         <List disablePadding={true}>
                             {assignments
-                            .map((assignment, index) => ({...assignment, index}))
-                            .filter((assignment) => assignment.gearchiveerd == archived)
-                            .map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.project_id} projectName={assignment.titel}
-                                        dueDate={assignment.deadline} submission={submissions[assignment.index]}
-                                        score={scores[assignment.index]} maxScore={assignment.max_score}
-                                        isStudent={!gebruiker.is_lesgever} archived={archived} visible={assignment.zichtbaar}
-                                        deleteEvent={() => deleteAssignment(assignment.index)}
-                                        archiveEvent={() => archiveAssignment(assignment.index)}
-                                        visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
-                            ))}
+                                .map((assignment, index) => ({...assignment, index}))
+                                .filter((assignment) => assignment.gearchiveerd == archived)
+                                .map((assignment) => (
+                                    <AssignmentListItemSubjectsPage key={assignment.project_id}
+                                                                    projectName={assignment.titel}
+                                                                    dueDate={assignment.deadline}
+                                                                    submission={submissions[assignment.index]}
+                                                                    score={scores[assignment.index]}
+                                                                    maxScore={assignment.max_score}
+                                                                    isStudent={!gebruiker.is_lesgever}
+                                                                    archived={archived} visible={assignment.zichtbaar}
+                                                                    deleteEvent={() => deleteAssignment(assignment.index)}
+                                                                    archiveEvent={() => archiveAssignment(assignment.index)}
+                                                                    visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
+                                ))}
                         </List>
                     </Box>
                 </Box>
@@ -148,7 +161,7 @@ function getLaatseIndieningVanGroep(groepId: number): Indiening {
                 bestand: null,
             }
         ],
-     }
+    }
 }
 
 function getScoreVoorIndiening(indieningId: number): Score {

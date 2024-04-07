@@ -1,4 +1,4 @@
-import { Box, Button, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
+import {Button, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import Dialog from "@mui/material/Dialog";
 import {t} from "i18next";
 
@@ -11,7 +11,7 @@ interface WarningPopupProps {
     doAction: () => void,
 }
 
-export default function WarningPopup({title, content, buttonName, open, handleClose, doAction}: WarningPopupProps){
+export default function WarningPopup({title, content, buttonName, open, handleClose, doAction}: WarningPopupProps) {
     const hanldeAction = () => {
         doAction();
         handleClose();
