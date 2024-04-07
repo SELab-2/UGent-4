@@ -22,7 +22,7 @@ export interface project {
     project_id: number;
     titel: string;
     beschrijving: string;
-    opgave_bestand: string;
+    opgave_bestand: File | null;
     vak_id: number;
     deadline: string;
     extra_deadline: string | null;

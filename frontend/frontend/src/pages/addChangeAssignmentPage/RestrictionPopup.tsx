@@ -2,7 +2,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import {ChangeEvent, Dispatch, SetStateAction, useEffect, useState} from "react";
+import {ChangeEvent, Dispatch, FormEvent, SetStateAction, useEffect, useState} from "react";
 import {t} from "i18next";
 import {
     Autocomplete,
@@ -96,7 +96,7 @@ export default function RestrictionPopup({
     // Function for submitting the restriction
     // Checks if the restriction is valid by checking if the required fields are filled, if not it sets the submitError
     // to true, and it does not submit the restriction.
-    const submitRestriction = (event: formEvent<HTMLFormElement>) => {
+    const submitRestriction = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         let restriction: restriction;
         if (type === 'dockerTest') {

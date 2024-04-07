@@ -73,6 +73,12 @@ const english = {
     archive_project_warning: "Archive Project?",
     cant_be_undone: "This cannot be undone.",
     archive: "Archive",
+    optional: "Optional",
+    deadlineCheck: "extra deadline must be after the first deadline",
+    not_before_now: "Deadline must be in the future",
+    noStudentsYet: "No students yet",
+    change_groups: "Change groups?",
+    confirm: "Confirm",
 };
 
 export default english;

@@ -73,6 +73,12 @@ const dutch = {
     archive_project_warning: "Opdracht Archiveren?",
     cant_be_undone: "Dit kan niet ongedaan gemaakt worden.",
     archive: "Archiveer",
+    optional: "Optioneel",
+    deadlineCheck: "extra deadline moet na de eerste deadline liggen",
+    not_before_now: "Datum moet in de toekomst liggen",
+    noStudentsYet: "Nog geen studenten",
+    change_groups: "Groepen aanpassen?",
+    confirm: "Bevestig",
 };
 
 export default dutch;

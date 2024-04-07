@@ -1,9 +1,9 @@
 import {Box, Button, Card, Divider, IconButton, ListItem, Stack, TextField, Tooltip, Typography} from "@mui/material";
 import {Header} from "../../components/Header.tsx";
-import {ChangeEvent, FormEvent, useEffect, useState} from "react";
-import {Dayjs} from "dayjs";
+import {ChangeEvent, FormEvent, useEffect, useMemo, useState} from "react";
+import dayjs, {Dayjs} from "dayjs";
 import {t} from "i18next";
-import {DateTimePicker, LocalizationProvider, renderTimeViewClock} from "@mui/x-date-pickers";
+import {DateTimePicker, DateTimeValidationError, LocalizationProvider, renderTimeViewClock} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs/AdapterDayjs";
 import 'dayjs/locale/nl';
 import FileUploadButton from "../../components/FileUploadButton";
@@ -16,9 +16,13 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
+import {useParams} from "react-router-dom";
+import instance from "../../axiosConfig.ts";
+import {GroupsPage} from "../groupsPage/GroupsPage.tsx";
 
-//TODO: fix api integration
+//TODO: call api to get current data
 //TODO: add restriction functionality
+//TODO: handle group changes, when existing project, save groups, when new project, ignore when project changes are canceled
 /**
  * This page is used to add or change an assignment.
  * The page should only be accessible to teachers of the course.
@@ -27,22 +31,30 @@ import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
  * - Title
  * - Description
  * - Due date with datepicker
+ * - Extra deadline with datepicker
  * - Restrictions
  * - Groups
  * - Visible
+ * - Max score
  * The form should also contain a button to upload the assignment file for ease of use.
+ * Groups are managed with a popup, should be managed with a different api call.
+ * restrictions use a different api call as well.
  */
 
 const initialAllowedTypes: restrictionType[] = ['dockerTest', 'fileSize', 'fileType'];
 
-interface assignment {
+interface Newassignment {
+    project_id?: number,
     title: string,
     description: string,
     assignmentFile: File | null,
-    dueDate: Dayjs,
-    restrictions: restriction[],
-    groups: boolean,
-    visible: boolean,
+    course_id: number,
+    maxPoints?: number,
+    maxGroupSize?: number,
+    dueDate?: string,
+    extraDeadline?: string,
+    visible?: boolean,
+    archived?: boolean,
 }
 
 export interface restriction {
@@ -53,7 +65,14 @@ export interface restriction {
 interface errorChecks {
     title: boolean,
     description: boolean,
-    dueDate: boolean,
+    deadlineCheck: boolean,
+}
+
+interface group {
+    id?: number,
+    students: number[],
+    project?: number,
+
 }
 
 export function AddChangeAssignmentPage() {
@@ -61,17 +80,21 @@ export function AddChangeAssignmentPage() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [dueDate, setDueDate] = useState<Dayjs | null>(null);
+    const [extraDueDate, setExtraDueDate] = useState<Dayjs | null>(null);
     const [restrictions, setRestrictions] = useState<restriction[]>([]);
-    const [groups, setGroups] = useState(false);
+    const [allowGroups, setAllowGroups] = useState(false);
     const [visible, setVisible] = useState(false);
     const [assignmentFile, setAssignmentFile] = useState<File>();
+    const [maxScore, SetMaxScore] = useState<number>(20);
+    const [cleared, setCleared] = useState<boolean>(false);
 
     // State for the error checks of the assignment
     const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
         title: false,
         description: false,
-        dueDate: false
+        deadlineCheck: false
     });
+    const [deadlineError, SetDeadlineError] = useState<DateTimeValidationError | null>(null);
 
     // State for the restriction popup
     const [open, setOpen] = useState(false);
@@ -80,6 +103,60 @@ export function AddChangeAssignmentPage() {
     const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
     const [maxSize, setMaxSize] = useState<number>();
     const [allowedTypes, setAllowedTypes] = useState<restrictionType[]>(initialAllowedTypes);
+
+    // State for groups
+    const [groupOpen, setGroupOpen] = useState(false);
+    const [groupSize, setGroupSize] = useState(1);
+    const [groups, setGroups] = useState<group[]>([]);
+
+    const handleGroupOpen = () => {
+        setGroupOpen(true);
+    }
+
+    //url parameters
+    const {courseId, assignmentId} = useParams();
+
+    //set the initial values of the assignment if it is an edit
+    useEffect(() => {
+            if (assignmentId !== undefined) {
+                instance.get(`/projecten/?project=${assignmentId}`).then((response) => {
+                    const assignment = response.data;
+                    setTitle(assignment.title);
+                    setDescription(assignment.description);
+                    if (assignment.dueDate !== null) {
+                        setDueDate(dayjs(assignment.dueDate, 'YYYY-MM-DDTHH:mm:ss'));
+                    }
+                    if (assignment.extraDeadline !== null) {
+                        setExtraDueDate(dayjs(assignment.extraDeadline, 'YYYY-MM-DDTHH:mm:ss'));
+                    }
+                    if (assignment.maxPoints !== null) {
+                        SetMaxScore(assignment.maxPoints);
+                    }
+                    if (assignment.visible !== null) {
+                        setVisible(assignment.visible);
+                    }
+                    if (assignment.assignmentFile !== null) {
+                        setAssignmentFile(assignment.assignmentFile);
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                });
+            }
+        }
+        , [assignmentId]);
+
+    // make the datepickers clearable
+    useEffect(() => {
+        if (cleared) {
+            const timeout = setTimeout(() => {
+                setCleared(false);
+            }, 1500);
+
+            return () => clearTimeout(timeout);
+        }
+        return () => {
+        };
+    }, [cleared]);
 
     /**
      * Function to upload the details of the assignment through a text file
@@ -109,37 +186,87 @@ export function AddChangeAssignmentPage() {
         setRestrictions(restrictions.filter((_, i) => i !== index));
     }
 
+    function deadlineCheck() {
+        if (dueDate === null && extraDueDate === null) {
+            return false;
+        } else if (dueDate !== null && extraDueDate !== null) {
+            return extraDueDate.isAfter(dueDate);
+        } else if (dueDate !== null && extraDueDate === null) {
+            return false;
+        }
+        return true;
+    }
+
 // Handle the submission of the form, check if all required fields are filled in, and send the data to the API.
-    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setAssignmentErrors({title: title === "", description: description === "", dueDate: dueDate === null});
-        if (title === "" || description === "" || dueDate === null) {
+        //Don't make api calls if the form is not filled in correctly.
+        setAssignmentErrors({title: title === "", description: description === "", deadlineCheck: deadlineCheck()});
+        if (title === "" || description === "") {
             return;
         }
         let optionalFile: File | null = null;
         if (assignmentFile !== undefined) {
             optionalFile = assignmentFile;
         }
-        const newAssignment: assignment = {
+        const newAssignment: Newassignment = {
             title: title,
             description: description,
+            course_id: parseInt(courseId as string),
             assignmentFile: optionalFile,
-            dueDate: dueDate,
-            restrictions: restrictions,
-            groups: groups,
             visible: visible,
+        }
+
+        // add optional fields
+        if (maxScore !== 20) {
+            newAssignment.maxPoints = maxScore;
+        }
+        if (dueDate !== null) {
+            newAssignment.dueDate = dueDate.format();
+        }
+        if (extraDueDate !== null) {
+            newAssignment.extraDeadline = extraDueDate.format();
+        }
+        if (assignmentId !== undefined) {
+            newAssignment.project_id = parseInt(assignmentId);
+            await instance.put('/projecten/', newAssignment).catch((error) => {
+                console.error(error)
+            });
+        } else {
+            //if there is no assignmentId, it is a new assignment
+            await instance.post('/projecten/', newAssignment).catch((error) => {
+                console.error(error)
+            });
         }
         //TODO: send data to api
         alert("Form Submitted");
-        console.info('Form submitted', title, description, dueDate, restrictions, groups, visible, assignmentFile)
+        console.info('Form submitted', title, description, dueDate, restrictions, allowGroups, visible, assignmentFile)
     }
+
+    // Handle the error messages for the date picker.
+    const errorMessage = useMemo(() => {
+        switch (deadlineError) {
+            case 'disablePast': {
+                return t('not_before_now')
+            }
+
+            default: {
+                return '';
+            }
+        }
+    }, [deadlineError]);
 
     // Remove the types of restrictions that are already added to the assignment from the allowed types.
     useEffect(() => {
+
         const currentRestrictionTypes = restrictions.map((restriction) => restriction.type as restrictionType);
-        setAllowedTypes(initialAllowedTypes.filter((type) => !currentRestrictionTypes.includes(type)));
-        setType(allowedTypes[0]);
-        console.log(allowedTypes)
+        const newAllowedRestrictions = initialAllowedTypes.filter((type) => !currentRestrictionTypes.includes(type));
+        setAllowedTypes(newAllowedRestrictions);
+
+        if (newAllowedRestrictions.length !== 0) {
+            setType(newAllowedRestrictions[0]);
+        }
+
     }, [restrictions]);
 
     return (
@@ -172,26 +299,56 @@ export function AddChangeAssignmentPage() {
                             />
                         </Box>
                     </Box>
-                    <Box aria-label={'deadline'} padding={2} display={'flex'} flexDirection={'row'}
-                         alignItems={'center'} gap={2}>
-                        <Typography variant={'h6'} color={"text.primary"}
-                                    fontWeight={"bold"}>Deadline:</Typography>
-                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
-                            <DateTimePicker value={dueDate} disablePast
-                                            sx={{width: 230}}
-                                            viewRenderers={{
-                                                hours: renderTimeViewClock,
-                                                minutes: renderTimeViewClock,
-                                                seconds: renderTimeViewClock,
-                                            }}
-                                            slotProps={{
-                                                textField: {
-                                                    error: assignmentErrors.dueDate,
-                                                    helperText: assignmentErrors.dueDate ? "Deadline" + " " + t('is_required') : "",
-                                                },
-                                            }}
-                                            onChange={(newValue) => setDueDate(newValue)}/>
-                        </LocalizationProvider>
+                    <Box aria-label={'deadline'} padding={2} display={'flex'}
+                         flexDirection={{xs: 'column', sm: 'column', md: 'row'}}
+                         gap={5}>
+                        <Box aria-label={'initial_deadline'} display={'flex'} flexDirection={'row'} gap={2}
+                             alignItems={'center'}>
+                            <Typography variant={'h6'} color={"text.primary"}
+                                        fontWeight={"bold"}>Deadline:</Typography>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
+                                <DateTimePicker value={dueDate} disablePast
+                                                label={t('optional')}
+                                                sx={{width: 230}}
+                                                viewRenderers={{
+                                                    hours: renderTimeViewClock,
+                                                    minutes: renderTimeViewClock,
+                                                    seconds: renderTimeViewClock,
+                                                }}
+                                                onError={(newError) => SetDeadlineError(newError)}
+                                                slotProps={{
+                                                    field: {clearable: true, onClear: () => setCleared(true)},
+                                                    textField: {
+                                                        helperText: errorMessage,
+                                                    },
+                                                }
+                                                }
+                                                onChange={(newValue) => setDueDate(newValue)}/>
+                            </LocalizationProvider>
+                        </Box>
+                        <Box aria-label={'secondary_deadline'} display={'flex'} flexDirection={'row'} gap={2}
+                             alignItems={'center'}>
+                            <Typography variant={'h6'} color={"text.primary"}
+                                        fontWeight={"bold"}>Extra Deadline:</Typography>
+                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
+                                <DateTimePicker value={extraDueDate} disablePast
+                                                label={t('optional')}
+                                                sx={{width: 230}}
+                                                viewRenderers={{
+                                                    hours: renderTimeViewClock,
+                                                    minutes: renderTimeViewClock,
+                                                    seconds: renderTimeViewClock,
+                                                }}
+                                                slotProps={{
+                                                    field: {clearable: true, onClear: () => setCleared(true)},
+                                                    textField: {
+                                                        error: deadlineCheck(),
+                                                        helperText: deadlineCheck() ? t('deadlineCheck') : ''
+                                                    },
+                                                }}
+                                                onChange={(newValue) => setExtraDueDate(newValue)}/>
+                            </LocalizationProvider>
+                        </Box>
                     </Box>
                     <Card aria-label={'description'} elevation={1}
                           sx={{backgroundColor: 'background.default'}}>
@@ -255,24 +412,48 @@ export function AddChangeAssignmentPage() {
                     </Box>
                     <Box aria-label={'main actions'} marginTop={3} display={"flex"} flexDirection={'row'}
                          width={'100%'} justifyContent={'space-between'}>
-                        <Box aria-label={'visibility_and_groups'} display={'flex'} flexDirection={'row'} gap={1}
+                        <Box aria-label={'visibility_and_groups'} display={'flex'} flexDirection={'row'} gap={10}
                              alignItems={'center'}
                              padding={2}>
-                            {groups ?
-                                <Button variant={"contained"} disableElevation
-                                        color={"secondary"}>{t('groups')}</Button> :
-                                <Typography color={'text.primary'} variant={"body1"}>{t('groups')}</Typography>}
-                            <Switch checked={groups} onChange={() => setGroups(!groups)} color={'primary'}/>
-                            {visible ?
-                                <IconButton color={"info"}
-                                            onClick={() => setVisible(!visible)}><VisibilityIcon
-                                    fontSize={'medium'}/></IconButton> :
-                                <IconButton color={"info"}
-                                            onClick={() => setVisible(!visible)}><VisibilityOffIcon
-                                    fontSize={'medium'}/></IconButton>}
-                            <Tooltip title={t('remove')}>
-                                <IconButton color={"info"}><DeleteForeverIcon fontSize={'medium'}/></IconButton>
-                            </Tooltip>
+                            <Box aria-label={'main actions'} display={'flex'} flexDirection={'row'}
+                                 alignItems={'center'}>
+                                {allowGroups ?
+                                    <Button variant={"contained"} disableElevation
+                                            onClick={handleGroupOpen}
+                                            color={"secondary"}>{t('groups')}</Button> :
+                                    <Typography color={'text.primary'} variant={"body1"}>{t('groups')}</Typography>}
+                                <Switch checked={allowGroups} onChange={() => setAllowGroups(!allowGroups)}
+                                        color={'primary'}/>
+                                {visible ?
+                                    <IconButton color={"info"}
+                                                onClick={() => setVisible(!visible)}><VisibilityIcon
+                                        fontSize={'medium'}/></IconButton> :
+                                    <IconButton color={"info"}
+                                                onClick={() => setVisible(!visible)}><VisibilityOffIcon
+                                        fontSize={'medium'}/></IconButton>}
+                                <Tooltip title={t('remove')}>
+                                    <IconButton color={"info"}><DeleteForeverIcon fontSize={'medium'}/></IconButton>
+                                </Tooltip>
+                            </Box>
+                            <Box aria-label={'maxScore'} display={'flex'} flexDirection={'row'} gap={1}
+                                 alignItems={'center'}>
+                                <Typography fontWeight={'bold'} color={"text.primary"}>Max Score</Typography>
+                                <TextField
+                                    sx={{width: 80}}
+                                    required
+                                    label={"Max Score"}
+                                    type={'number'}
+                                    value={maxScore}
+                                    onChange={(event) => {
+                                        if (event.target.value !== '') {
+                                            const newScore = Math.max(parseInt(event.target.value), 0);
+                                            SetMaxScore ? SetMaxScore(newScore) : undefined;
+                                        } else {
+                                            SetMaxScore ? SetMaxScore(parseInt(event.target.value)) : undefined;
+                                        }
+                                    }}
+                                />
+                            </Box>
                         </Box>
                         <Box aria-label={'submit_and_cancel'} display={'flex'} flexDirection={'row'} gap={1}
                              alignItems={'center'}>
@@ -306,6 +487,9 @@ export function AddChangeAssignmentPage() {
                                   maxSize={maxSize} setMaxSize={setMaxSize}
                                   allowedTypes={allowedTypes}
                 />
+                <GroupsPage groups={groups} setGroups={setGroups} groupSize={groupSize} setGroupSize={setGroupSize}
+                            open={groupOpen}
+                            setOpen={setGroupOpen}/>
             </Stack>
         </>
     );
