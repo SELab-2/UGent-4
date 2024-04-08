@@ -16,13 +16,12 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import SaveIcon from '@mui/icons-material/Save';
 import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import instance from "../../axiosConfig.ts";
 import {GroupsPage} from "../groupsPage/GroupsPage.tsx";
+import WarningPopup from "../../components/WarningPopup.tsx";
 
-//TODO: call api to get current data
 //TODO: add restriction functionality
-//TODO: handle group changes, when existing project, save groups, when new project, ignore when project changes are canceled
 /**
  * This page is used to add or change an assignment.
  * The page should only be accessible to teachers of the course.
@@ -43,18 +42,18 @@ import {GroupsPage} from "../groupsPage/GroupsPage.tsx";
 
 const initialAllowedTypes: restrictionType[] = ['dockerTest', 'fileSize', 'fileType'];
 
-interface Newassignment {
-    project_id?: number,
-    title: string,
-    description: string,
-    assignmentFile: File | null,
-    course_id: number,
-    maxPoints?: number,
-    maxGroupSize?: number,
-    dueDate?: string,
-    extraDeadline?: string,
-    visible?: boolean,
-    archived?: boolean,
+interface getAssignment {
+    project_id: number,
+    titel: string,
+    beschrijving: string,
+    opgave_bestand: File,
+    vak: number,
+    max_score: number,
+    max_groep_grootte: number,
+    deadline: string | null,
+    extra_deadline: string | null,
+    zichtbaar: boolean,
+    gearchiveerd: boolean,
 }
 
 export interface restriction {
@@ -68,14 +67,16 @@ interface errorChecks {
     deadlineCheck: boolean,
 }
 
-interface group {
-    id?: number,
-    students: number[],
+export interface group {
+    groep_id?: number,
+    studenten: number[],
     project?: number,
 
 }
 
 export function AddChangeAssignmentPage() {
+    const navigate = useNavigate();
+
     // State for the different fields of the assignment
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -113,30 +114,96 @@ export function AddChangeAssignmentPage() {
         setGroupOpen(true);
     }
 
+    //confirmation dialogs
+    const [deleteConfirmation, setDeleteConfirmation] = useState(false);
+    const [saveConfirmation, setSaveConfirmation] = useState(false);
+
+    const closeSaveConfirmation = () => {
+        setSaveConfirmation(false);
+    }
+
+    //open the delete confirmation dialog
+    const openDeleteConfirmation = () => {
+        setDeleteConfirmation(true);
+    }
+
+    const closeDeletion = () => {
+        setDeleteConfirmation(false);
+    }
+
+    const handleRemove = async () => {
+        if (assignmentId !== undefined) {
+            await instance.delete(`/projecten/${assignmentId}`).catch((error) => {
+                console.error(error);
+            });
+        }
+        alert("Assignment Removed");
+        navigate(-1);
+    }
+
     //url parameters
     const {courseId, assignmentId} = useParams();
+
+    //handle the cancelation of changes, should save the groups if they are changed
+    const handleCancel = () => {
+        if (assignmentId !== undefined) {
+            if (groups[0].groep_id !== undefined) {
+                for (const group of groups) {
+                    instance.put('/groepen/' + group.groep_id + "/", group).catch((error) => {
+                        console.error(error);
+                    });
+                }
+            } else {
+                instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
+                    for (const group of response.data) {
+                        instance.delete(`/groepen/${group.groep_id}`).catch((error) => {
+                            console.error(error);
+                        });
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                });
+
+                for (const group of groups) {
+                    instance.post('/groepen/', group).catch((error) => {
+                        console.error(error);
+                    });
+                }
+            }
+        }
+        if (assignmentId !== undefined) {
+            navigate('/course_teacher/' + courseId + '/assignment/' + assignmentId);
+        } else {
+            navigate('/course_teacher/' + courseId);
+        }
+    }
 
     //set the initial values of the assignment if it is an edit
     useEffect(() => {
             if (assignmentId !== undefined) {
-                instance.get(`/projecten/?project=${assignmentId}`).then((response) => {
+                instance.get<getAssignment>(`/projecten/${assignmentId}`).then((response) => {
                     const assignment = response.data;
-                    setTitle(assignment.title);
-                    setDescription(assignment.description);
-                    if (assignment.dueDate !== null) {
-                        setDueDate(dayjs(assignment.dueDate, 'YYYY-MM-DDTHH:mm:ss'));
+                    console.log("returned assignment " + assignment.titel + " " + assignment.beschrijving);
+                    setTitle(assignment.titel);
+                    setDescription(assignment.beschrijving);
+                    //TODO: file from api is not a file but string
+                    //setAssignmentFile(assignment.opgave_bestand);
+                    console.log('bestand' + assignment.opgave_bestand);
+                    SetMaxScore(assignment.max_score);
+                    console.log('max score' + assignment.max_score);
+                    setGroupSize(assignment.max_groep_grootte);
+                    console.log('group size' + assignment.max_groep_grootte);
+                    if (assignment.max_groep_grootte > 1) {
+                        setAllowGroups(true);
                     }
-                    if (assignment.extraDeadline !== null) {
-                        setExtraDueDate(dayjs(assignment.extraDeadline, 'YYYY-MM-DDTHH:mm:ss'));
+                    setVisible(assignment.zichtbaar);
+                    if (assignment.deadline !== null) {
+                        setDueDate(dayjs(assignment.deadline, 'YYYY-MM-DDTHH:mm:ss'));
+                        console.log('deadline' + assignment.deadline);
                     }
-                    if (assignment.maxPoints !== null) {
-                        SetMaxScore(assignment.maxPoints);
-                    }
-                    if (assignment.visible !== null) {
-                        setVisible(assignment.visible);
-                    }
-                    if (assignment.assignmentFile !== null) {
-                        setAssignmentFile(assignment.assignmentFile);
+                    if (assignment.extra_deadline !== null) {
+                        setExtraDueDate(dayjs(assignment.extra_deadline, 'YYYY-MM-DDTHH:mm:ss'));
+                        console.log('extra deadline' + assignment.extra_deadline);
                     }
                 }).catch((error) => {
                     console.error(error);
@@ -157,6 +224,24 @@ export function AddChangeAssignmentPage() {
         return () => {
         };
     }, [cleared]);
+
+    // Get groups from api if groups are allowed / clear groups if groups are not allowed
+    useEffect(() => {
+        if (allowGroups) {
+            if (assignmentId !== undefined) {
+                instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
+                    setGroups(response.data);
+                }).catch((error) => {
+                    console.error(error);
+                });
+            } else {
+                setGroups([]);
+            }
+        } else {
+            setGroups([]);
+        }
+    }, [allowGroups, assignmentId]);
+
 
     /**
      * Function to upload the details of the assignment through a text file
@@ -198,49 +283,141 @@ export function AddChangeAssignmentPage() {
     }
 
 // Handle the submission of the form, check if all required fields are filled in, and send the data to the API.
-    const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         //Don't make api calls if the form is not filled in correctly.
         setAssignmentErrors({title: title === "", description: description === "", deadlineCheck: deadlineCheck()});
         if (title === "" || description === "") {
             return;
         }
+        setSaveConfirmation(true)
+    }
+
+    // Upload the assignment to the API.
+    //TODO: put/post does not work yet
+    const uploadAssignment = async () => {
         let optionalFile: File | null = null;
         if (assignmentFile !== undefined) {
             optionalFile = assignmentFile;
         }
-        const newAssignment: Newassignment = {
-            title: title,
-            description: description,
-            course_id: parseInt(courseId as string),
-            assignmentFile: optionalFile,
-            visible: visible,
+        const formData = new FormData();
+        formData.append('titel', title);
+        formData.append('beschrijving', description);
+        formData.append('vak', parseInt(courseId as string).toString());
+        if (optionalFile) {
+            formData.append('opgave_bestand', optionalFile);
+        }
+        formData.append('zichtbaar', visible.toString());
+
+        if (allowGroups) {
+            formData.append('max_groep_grootte', groupSize.toString());
+        } else {
+            formData.append('max_groep_grootte', '1');
         }
 
-        // add optional fields
+        // Add optional fields
         if (maxScore !== 20) {
-            newAssignment.maxPoints = maxScore;
+            formData.append('max_score', maxScore.toString());
         }
         if (dueDate !== null) {
-            newAssignment.dueDate = dueDate.format();
+            formData.append('deadline', dueDate.format());
         }
         if (extraDueDate !== null) {
-            newAssignment.extraDeadline = extraDueDate.format();
+            formData.append('extra_deadline', extraDueDate.format());
         }
+
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        };
         if (assignmentId !== undefined) {
-            newAssignment.project_id = parseInt(assignmentId);
-            await instance.put('/projecten/', newAssignment).catch((error) => {
+            formData.append('project_id', assignmentId);
+            await instance.put('/projecten/' + parseInt(assignmentId) + "/", formData, config).catch((error) => {
                 console.error(error)
             });
+
+            if (allowGroups) {
+                for (const group of groups) {
+                    if (group.groep_id !== undefined) {
+                        await instance.put('/groepen/' + group.groep_id + '/', group).catch((error) => {
+                            console.error(error);
+                        });
+                    } else {
+                        await instance.post('/groepen/', group).catch((error) => {
+                            console.error(error);
+                        });
+                    }
+                }
+            } else {
+                await instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
+                    for (const group of response.data) {
+                        instance.delete(`/groepen/${group.groep_id}`).catch((error) => {
+                            console.error(error);
+                        });
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                });
+
+                await instance.get('/vakken/' + courseId).then((response) => {
+                    const course = response.data;
+                    for (const student of course.studenten) {
+                        const newGroup: group = {
+                            studenten: [student],
+                            project: parseInt(assignmentId),
+                        }
+                        instance.post('/groepen/', newGroup).catch((error) => {
+                            console.error(error);
+                        });
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                });
+            }
+
         } else {
             //if there is no assignmentId, it is a new assignment
-            await instance.post('/projecten/', newAssignment).catch((error) => {
+            let newAssgnmentId: number;
+            await instance.post('/projecten/', formData, config).then((response) => {
+                    newAssgnmentId = response.data.project_id;
+                }
+            ).catch((error) => {
                 console.error(error)
             });
+
+
+            if (allowGroups) {
+                for (const group of groups) {
+                    await instance.post('/groepen/', group).catch((error) => {
+                        console.error(error);
+                    });
+                }
+            } else {
+                await instance.get('/vakken/' + courseId).then((response) => {
+                    const course = response.data;
+                    for (const student of course.studenten) {
+                        const newGroup: group = {
+                            studenten: [student],
+                            project: newAssgnmentId,
+                        }
+                        instance.post('/groepen/', newGroup).catch((error) => {
+                            console.error(error);
+                        });
+                    }
+                }).catch((error) => {
+                    console.error(error);
+                });
+            }
         }
-        //TODO: send data to api
-        alert("Form Submitted");
+
         console.info('Form submitted', title, description, dueDate, restrictions, allowGroups, visible, assignmentFile)
+        setSaveConfirmation(false);
+        if (assignmentId !== undefined) {
+            navigate('/course_teacher/' + courseId + '/assignment/' + assignmentId);
+        } else {
+            navigate('/course_teacher/' + courseId);
+        }
     }
 
     // Handle the error messages for the date picker.
@@ -287,6 +464,7 @@ export function AddChangeAssignmentPage() {
                             <Typography variant={'h6'} color={"text.primary"}
                                         fontWeight={"bold"}>{t('assignmentName')}</Typography>
                             <TextField type="text" placeholder={"Title"} error={assignmentErrors.title}
+                                       value={title}
                                        helperText={assignmentErrors.title ? t('name') + " " + t('is_required') : ""}
                                        onChange={(event) => setTitle(event.target.value)}/>
                         </Box>
@@ -432,7 +610,8 @@ export function AddChangeAssignmentPage() {
                                                 onClick={() => setVisible(!visible)}><VisibilityOffIcon
                                         fontSize={'medium'}/></IconButton>}
                                 <Tooltip title={t('remove')}>
-                                    <IconButton color={"info"}><DeleteForeverIcon fontSize={'medium'}/></IconButton>
+                                    <IconButton color={"info"} onClick={openDeleteConfirmation}><DeleteForeverIcon
+                                        fontSize={'medium'}/></IconButton>
                                 </Tooltip>
                             </Box>
                             <Box aria-label={'maxScore'} display={'flex'} flexDirection={'row'} gap={1}
@@ -458,8 +637,8 @@ export function AddChangeAssignmentPage() {
                         <Box aria-label={'submit_and_cancel'} display={'flex'} flexDirection={'row'} gap={1}
                              alignItems={'center'}>
                             <Tooltip title={t('cancel')}>
-                                <IconButton
-                                    sx={{backgroundColor: 'secondary.main', borderRadius: 2}}>
+                                <IconButton onClick={handleCancel}
+                                            sx={{backgroundColor: 'secondary.main', borderRadius: 2}}>
                                     <ClearIcon
                                         fontSize={'medium'}/></IconButton>
                             </Tooltip>
@@ -490,6 +669,12 @@ export function AddChangeAssignmentPage() {
                 <GroupsPage groups={groups} setGroups={setGroups} groupSize={groupSize} setGroupSize={setGroupSize}
                             open={groupOpen}
                             setOpen={setGroupOpen}/>
+                <WarningPopup title={t('remove') + ' Project?'} content={t('cant_be_undone')}
+                              buttonName={t('remove')} open={deleteConfirmation} handleClose={closeDeletion}
+                              doAction={handleRemove}/>
+                <WarningPopup title={t('save_project_warning')} content={t('visible_for_everyone')}
+                              buttonName={t('confirm')} open={saveConfirmation}
+                              handleClose={closeSaveConfirmation} doAction={uploadAssignment}/>
             </Stack>
         </>
     );

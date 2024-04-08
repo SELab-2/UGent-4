@@ -79,6 +79,8 @@ const english = {
     noStudentsYet: "No students yet",
     change_groups: "Change groups?",
     confirm: "Confirm",
+    save_project_warning: "Save Project?",
+    visible_for_everyone: "These changes are visible for everyone.",
 };
 
 export default english;

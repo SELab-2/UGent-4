@@ -79,6 +79,8 @@ const dutch = {
     noStudentsYet: "Nog geen studenten",
     change_groups: "Groepen aanpassen?",
     confirm: "Bevestig",
+    save_project_warning: "Project Opslaan?",
+    visible_for_everyone: "Deze wijzigingen zijn zichtbaar voor iedereen.",
 };
 
 export default dutch;

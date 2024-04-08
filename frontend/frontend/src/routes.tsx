@@ -48,7 +48,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage/>,
     },
     {
-        path: '/course_teacher/:courseId/assignment/edit/:assignmentId?',
+        path: '/course_teacher/:courseId/assignment/:assignmentId?/edit',
         element: <AddChangeAssignmentPage/>,
         errorElement: <ErrorPage/>,
     },
