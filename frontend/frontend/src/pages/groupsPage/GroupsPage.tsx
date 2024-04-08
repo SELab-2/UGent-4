@@ -32,8 +32,7 @@ import {Add} from "@mui/icons-material";
 import ClearIcon from "@mui/icons-material/Clear";
 import SaveIcon from "@mui/icons-material/Save";
 import WarningPopup from "../../components/WarningPopup.tsx";
-
-// TODO FIX TODO'S
+import {group} from "../addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
 
 // Typescript typing for hashmap
 type Hashmap = Map<number, string>;
@@ -41,16 +40,8 @@ type Hashmap = Map<number, string>;
 // Props for the GroupsPage component, used to pass state to parent component. Is necessery for when a project does
 // not have a project id yet, then the project adding page will handle the state.
 interface groupProps {
-    groups: {
-        id?: number,
-        students: number[],
-        project?: number,
-    }[],
-    setGroups: (groups: {
-        id?: number,
-        students: number[],
-        project?: number,
-    }[]) => void,
+    groups: group[],
+    setGroups: (groups: group[]) => void,
     groupSize: number,
     setGroupSize: (groupSize: number) => void,
     open: boolean,
@@ -74,7 +65,7 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
     const [newGroups, setNewGroups] = useState(groups);
     const [newGroupSize, setNewGroupSize] = useState(groupSize);
     const [currentGroup, setCurrentGroup] = useState('');
-    const [availableStudents, setAvailableStudents] = useState([...studentNames.keys()]);
+    const [availableStudents, setAvailableStudents] = useState<number[]>([]);
 
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false);
@@ -115,7 +106,7 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
             const newGroups = [];
             for (let i = 0; i < Math.ceil(availableStudents.length / newValue); i++) {
                 newGroups.push({
-                    students: [],
+                    studenten: [],
                 });
             }
             return newGroups;
@@ -138,10 +129,10 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
                 });
             }
             let newAvailableStudenten = response.data.studenten;
-            newAvailableStudenten = newAvailableStudenten.filter((student: number) => !newGroups.some((group) => group.students.includes(student)));
+            newAvailableStudenten = newAvailableStudenten.filter((student: number) => !newGroups.some((group) => group.studenten.includes(student)));
             setAvailableStudents(newAvailableStudenten);
         });
-    }, [courseId, newGroups, studentNames]);
+    }, [courseId, newGroups]);
 
     useEffect(() => {
         if (newGroups.length === 0) {
@@ -149,7 +140,7 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
                 const newGroups = [];
                 for (let i = 0; i < Math.ceil(availableStudents.length / newGroupSize); i++) {
                     newGroups.push({
-                        students: [],
+                        studenten: [],
                     });
                 }
                 return newGroups;
@@ -159,6 +150,11 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
 
     }, [availableStudents.length, newGroupSize, newGroups.length]);
 
+    useEffect(() => {
+        setNewGroups(groups);
+        setNewGroupSize(groupSize);
+    }, [groups, groupSize]);
+
 
     //Handle current group change
     const handleCurrentGroupChange = (event: SelectChangeEvent) => {
@@ -167,7 +163,22 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
 
     // Randomise groups
     const randomGroups = () => {
-        // TODO implement random groups
+        const students = Array.from(studentNames.keys());
+        const newGroups: group[] = [];
+        for (let i = 0; i < Math.ceil(students.length / newGroupSize); i++) {
+            newGroups.push({
+                studenten: [],
+            });
+        }
+        for (let i = 0; i < students.length; i++) {
+            let randomGroup = Math.floor(Math.random() * newGroups.length);
+            while (newGroups[randomGroup].studenten.length >= newGroupSize) {
+                randomGroup = Math.floor(Math.random() * newGroups.length);
+            }
+            newGroups[randomGroup].studenten.push(students[i]);
+        }
+
+        setNewGroups(newGroups);
     };
 
     const clearState = () => {
@@ -184,11 +195,11 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
         // Then, create a new copy of the newGroups array with the updated group
         const updatedNewGroups = newGroups.map((group, index) => {
             if (index === groupId) {
-                // Create a new copy of the group with the updated students array
-                console.log("group.students: " + group.students);
+                // Create a new copy of the group with the updated studenten array
+                console.log("group.studenten: " + group.studenten);
                 return {
                     ...group,
-                    students: [...group.students, studentId]
+                    studenten: [...group.studenten, studentId]
                 };
             }
             return group;
@@ -208,10 +219,10 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
         // Then, create a new copy of the newGroups array with the updated group
         const updatedNewGroups = newGroups.map((group, index) => {
             if (index === groupId) {
-                // Create a new copy of the group with the updated students array
+                // Create a new copy of the group with the updated studenten array
                 return {
                     ...group,
-                    students: group.students.filter((student) => student !== studentId)
+                    studenten: group.studenten.filter((student) => student !== studentId)
                 };
             }
             return group;
@@ -308,7 +319,7 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
                                         <TableHead>
                                             <TableRow>
                                                 <TableCell>
-                                                    <Typography fontWeight={'bold'}>{t('students')}</Typography>
+                                                    <Typography fontWeight={'bold'}>{t('studenten')}</Typography>
                                                 </TableCell>
                                             </TableRow>
                                         </TableHead>
@@ -343,7 +354,7 @@ export function GroupsPage({groups, groupSize, setGroups, setGroupSize, open, se
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
-                                            {(newGroups.length > 0) && newGroups[parseInt(currentGroup)].students.map((student) => (
+                                            {(newGroups.length > 0) && newGroups[parseInt(currentGroup)].studenten.map((student) => (
                                                 <TableRow key={student}>
                                                     <TableCell>{studentNames.get(student)}
                                                         <IconButton onClick={() => {

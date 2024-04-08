@@ -12,7 +12,6 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 * The deadlines are displayed as a badge on the day of the deadline.
  */
 
-//TODO: fix highlights for day with deadlines in the displayed month
 
 function fakeFetch(date: Dayjs, {signal}: { signal: AbortSignal }, deadlines: Dayjs[]) {
     return new Promise<{ deadlinesToDisplay: Dayjs[] }>((resolve, reject) => {
@@ -81,6 +80,7 @@ export function DeadlineCalendar({deadlines}: DeadlineCalendarProps) {
         fetchHighlightedDays(dayjs());
         // abort request on unmount
         return () => requestAbortController.current?.abort();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleMonthChange = (date: Dayjs) => {
@@ -109,7 +109,7 @@ export function DeadlineCalendar({deadlines}: DeadlineCalendarProps) {
                           slotProps={{
                               day: {
                                   highlightedDays,
-                              } as any,
+                              } as never,
                           }}
             />
         </>
