@@ -5,9 +5,8 @@ import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
-
-const text = "Lorem ipsum dolor sit amet consectetur. Nisi magna dolor et nisi nibh et velit phasellus. Aliquam semper justo posuere suspendisse amet amet nam nec. Tellus magna in proin tempor hac sit. Faucibus laoreet nulla commodo quis. Porttitor sit facilisis sit dignissim quis. Malesuada etiam tempor donec et ante. Aliquam massa donec augue aliquam semper amet blandit sed faucibus. Et elementum duis adipiscing turpis mi. Senectus eu rutrum accumsan convallis metus mattis risus. Quam eget sapien tellus aliquam facilisi sit volutpat. Scelerisque auctor purus nam sit lacus amet ullamcorper amet. Turpis nulla quis in pretium. Maecenas aliquam ac ullamcorper suspendisse morbi cras. Mi nibh aliquet massa sit eget tristique a. Posuere pretium auctor tellus massa et eu egestas. Sit lorem proin aenean tortor morbi condimentum. Leo eu enim cursus tempus sed viverra laoreet. Nisl ornare velit molestie suspendisse. Hendrerit nibh mauris vulputate sit vitae. Tellus quisque non nibh proin nunc lacus scelerisque dui. Aliquam fermentum libero aliquet volutpat at. Vestibulum ultrices nec felis leo nibh viverra. Hendrerit ut nunc porta egestas sit velit dictumst dis porta. Donec quam aliquam commodo mattis purus. Tellus nulla lectus fusce in fames scelerisque at."
 
 const assignments = [
     {
@@ -47,28 +46,32 @@ const students = [
     },
 ];
 
-const deadline = "02/04/2024";
-
 export function AssignmentPage() {
+    let { assignmentId } = useParams();
+    assignmentId = String(assignmentId);
+
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
+    const [assignment, setAssignment] = useState<any>();
 
     useEffect(() => {
         async function fetchData() {
             try {           
                 const userResponse = await instance.get("/gebruikers/me/");
                 setUser(userResponse.data);
+                const assignmentResponse = await instance.get(`/projecten/${assignmentId}/`);
+                setAssignment(assignmentResponse.data);
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         }
         fetchData();
-    }, []);
+    }, [assignmentId]);
     
     return (
         <>
             {user.is_lesgever ? (
                 <>
-                    <Header variant={"editable"} title={"Teacher Opdracht"}></Header>
+                    <Header variant={"not_main"} title={assignment ? assignment.titel : ""}></Header>
                     <Stack marginTop={15} direction={"column"} spacing={4}
                         sx={{ width: "100%", height: "100%", backgroundColor: "background.default" }}>
 
@@ -78,7 +81,7 @@ export function AssignmentPage() {
                             backgroundColor: "background.default",
                         }}
                         >
-                        <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{deadline}</Typography>
+                        <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}</Typography>
                         </Box>
 
                         {/*Opgave*/}
@@ -91,7 +94,7 @@ export function AssignmentPage() {
                             >
                                 <Stack direction={"column"}>
                                     <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>{t("assignment")}</Typography>
-                                    <Typography>{text}</Typography>
+                                    <Typography>{assignment ? assignment.beschrijving : ""}</Typography>
                                 </Stack>
                             </Card>
 
@@ -150,7 +153,7 @@ export function AssignmentPage() {
                                 </>
             ) : (
                 <>
-                    <Header variant={"not_main"} title={"Student Opdracht"}></Header>
+                    <Header variant={"not_main"} title={assignment ? assignment.titel : ""}></Header>
                     <Stack marginTop={15} direction={"column"} spacing={4}
                         sx={{ width: "100%", height: "100%", backgroundColor: "background.default" }}>
 
@@ -161,7 +164,7 @@ export function AssignmentPage() {
                         }}
                         >
                             <Stack direction={"row"}>
-                                <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{deadline}</Typography>
+                                <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}</Typography>
                                 <div style={{flexGrow: 1}}/>
                                 <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
                                     <Typography color="secondary.contrastText">{t("group")}</Typography>
@@ -179,7 +182,7 @@ export function AssignmentPage() {
                         >
                             <Stack direction={"column"}>
                                 <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>{t("assignment")}</Typography>
-                                <Typography>{text}</Typography>
+                                <Typography>{assignment ? assignment.beschrijving : ""}</Typography>
                             </Stack>
                         </Card>
 
