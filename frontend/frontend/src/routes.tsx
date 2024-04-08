@@ -1,7 +1,6 @@
 import {createBrowserRouter} from "react-router-dom";
 import {SubjectsStudentPage} from "./pages/subjectsPage/SubjectsStudentPage.tsx";
-import {AssignmentTeacherPage} from "./pages/assignmentPage/AssignmentTeacherPage.tsx";
-import {AssignmentStudentPage} from "./pages/assignmentPage/AssignmentStudentPage.tsx";
+import { AssignmentPage } from "./pages/assignmentPage/AssignmentPage.tsx";
 import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {ProjectScoresPage} from "./pages/scoresPage/ProjectScoresPage.tsx";
 import {SubjectsTeacherPage} from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
@@ -28,13 +27,8 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage/>,
     },
     {
-        path: '/course_teacher/:courseId/assignment/:assignmentId',
-        element: <AssignmentTeacherPage/>,
-        errorElement: <ErrorPage/>,
-    },
-    {
-        path: '/course_student/:courseId/assignment/:assignmentId',
-        element: <AssignmentStudentPage/>,
+        path: '/course/:courseId/assignment/:assignmentId',
+        element: <AssignmentPage/>,
         errorElement: <ErrorPage/>,
     },
     {
