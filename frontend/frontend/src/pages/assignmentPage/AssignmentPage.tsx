@@ -1,7 +1,8 @@
 import {Header} from "../../components/Header.tsx";
 import {AssignmentListItemStudentPage} from "../../components/AssignmentListItemStudentPage.tsx";
-import { AssignmentListItemTeacherPage } from "../../components/AssignmentListItemTeacherPage.tsx";
+import {AssignmentListItemTeacherPage } from "../../components/AssignmentListItemTeacherPage.tsx";
 import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
+import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
 import { useEffect, useState } from "react";
@@ -132,6 +133,12 @@ export function AssignmentPage() {
                                     </List>
                                 </Box>
                             </Card>
+
+                            <AddRestrictionButton></AddRestrictionButton>
+
+                            {/* <Button sx={{bgcolor: 'secondary.main'}}>
+                                <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
+                            </Button> */}
 
                             {/*Upload knop*/}
                             <Box sx={{
