@@ -51,6 +51,7 @@ const english = {
     allowed_file_types: "Allowed file types",
     dockerfile_error: "Please upload a Dockerfile.",
     filetype_error: "Please select at least one file type.",
+    new_script: "New script",
     upload_students: "Upload students",
     upload_teachers: "Upload teachers",
     subject_name: "Subject name",
