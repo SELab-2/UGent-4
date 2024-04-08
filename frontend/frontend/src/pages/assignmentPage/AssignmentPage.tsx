@@ -1,6 +1,6 @@
 import {Header} from "../../components/Header.tsx";
-import {AssignmentListItemStudentPage} from "../../components/AssignmentListItemStudentPage.tsx";
-import {AssignmentListItemTeacherPage } from "../../components/AssignmentListItemTeacherPage.tsx";
+import {SubmissionListItemStudentPage} from "../../components/SubmissionListItemStudentPage.tsx";
+import {SubmissionListItemTeacherPage } from "../../components/SubmissionListItemTeacherPage.tsx";
 import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
 import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {t} from "i18next";
@@ -9,21 +9,21 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 
-const assignments = [
+const submissions = [
     {
-        id: '1',
-        name: '#1',
-        deadline: new Date(2024, 11, 17)
+        indiening_id: '1',
+        tijdstip: new Date(2024, 11, 17),
+        status: 0
     },
     {
-        id: '3',
-        name: '#3',
-        deadline: new Date(2024, 9, 30)
+        indiening_id: '3',
+        tijdstip: new Date(2024, 9, 30),
+        status: -1
     },
     {
-        id: '5',
-        name: '#5',
-        deadline: new Date(2024, 7, 8)
+        indiening_id: '5',
+        tijdstip: new Date(2024, 7, 8),
+        status: -1
     },
 ];
 const students = [
@@ -121,7 +121,7 @@ export function AssignmentPage() {
                                                 <Box key={student.id}>
                                                     <Divider color={"text.main"}></Divider>
                                                     <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                                    <AssignmentListItemTeacherPage
+                                                    <SubmissionListItemTeacherPage
                                                         id={student.id} 
                                                         studentName={student.name}
                                                         submitted={student.submitted}
@@ -210,14 +210,13 @@ export function AssignmentPage() {
                         <Box style={{maxHeight: 300, overflow: 'auto'}}>
                             <Divider color={"text.main"}></Divider>
                             <List disablePadding={true} >
-                                {assignments.map((assignment) => (
-                                    <Box key={assignment.id}>
+                                {submissions.map((submission) => (
+                                    <Box key={submission.indiening_id}>
                                         <Divider color={"text.main"}></Divider>
                                         <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                            <AssignmentListItemStudentPage id={assignment.id} 
-                                                                studentName={assignment.name}
-                                                                dueDate={assignment.deadline}
-                                                                status={true}
+                                            <SubmissionListItemStudentPage id={submission.indiening_id} 
+                                                                timestamp={submission.tijdstip}
+                                                                status={!!submission.status}
                                             />
                                             </Box>
                                     </Box>

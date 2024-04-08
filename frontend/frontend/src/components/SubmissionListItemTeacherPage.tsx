@@ -2,7 +2,7 @@ import {ListItem, ListItemText, Divider, ListItemIcon} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import DownloadIcon from '@mui/icons-material/Download';
 import {t} from "i18next";
-interface AssignmentListItemTeacherPageProps {
+interface SubmissionListItemTeacherPageProps {
     id: string;
     studentName: string;
     submitted?: Date;
@@ -10,14 +10,14 @@ interface AssignmentListItemTeacherPageProps {
 }
 
 /*
-* This component is used to display a single assignment in the list of assignments
+* This component is used to display a single submission in the list of submissions
 * @param id: string - the id of the student
 * @param studentName: string - the name of the student
 * @param submitted: Date - the due date of the submission. empty when the student hasn't submitted yet
 * @param score: number - assigned score on the project
 */
 
-export function AssignmentListItemTeacherPage({id,studentName,submitted, score}:AssignmentListItemTeacherPageProps) {
+export function SubmissionListItemTeacherPage({id,studentName,submitted, score}:SubmissionListItemTeacherPageProps) {
     const navigate = useNavigate();
     const handleStudentClick = () => {
         console.log("Project clicked");

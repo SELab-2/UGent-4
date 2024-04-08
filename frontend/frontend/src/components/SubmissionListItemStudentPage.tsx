@@ -1,35 +1,34 @@
-import {ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {ListItem, ListItemIcon, ListItemText} from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {useNavigate} from "react-router-dom";
 import {t} from "i18next";
 
-interface AssignmentListItemStudentPageProps {
+interface SubmissionListItemStudentPageProps {
     id: string;
-    studentName: string;
-    dueDate?: Date;
+    timestamp?: Date;
     status: boolean;
 }
 
 /*
-* This component is used to display a single assignment in the list of assignments
-* @param key: string - the key of the assignment
+* This component is used to display a single submission in the list of submissions
+* @param key: string - the key of the submission
 * @param projectName: string - the name of the project
-* @param dueDate: Date - the due date of the project
+* @param timestamp: Date - the due date of the project
 * @param status: boolean - the status of the project
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItemStudentPage({id, studentName, dueDate, status}: AssignmentListItemStudentPageProps) {
+export function SubmissionListItemStudentPage({id, timestamp, status}: SubmissionListItemStudentPageProps) {
     const navigate = useNavigate();
-    const handleProjectClick = () => {
+    const handleSubmissionClick = () => {
         console.log("Project clicked");
         navigate(`/${id}`)
     }
 
     return (
         <>
-            <ListItem key={studentName} sx={{margin: 0}} disablePadding={true}>
+            <ListItem key={id} sx={{margin: 0}} disablePadding={true}>
                 <ListItem  sx={{
                     width: "100%",
                     height: 30,
@@ -40,14 +39,14 @@ export function AssignmentListItemStudentPage({id, studentName, dueDate, status}
                     paddingY: 3,
                     borderRadius: 2,
                 }}>
-                    <ListItemText onClick={handleProjectClick} sx={{
+                    <ListItemText onClick={handleSubmissionClick} sx={{
                         maxWidth: 110,
                         color: 'primary.main',
                          '&:hover': {
                         color: 'primary.light',
                         },
-                     }} primary={studentName}/>
-                    <ListItemText sx={{maxWidth: 110}} primary={dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
+                     }} primary={id}/>
+                    <ListItemText sx={{maxWidth: 110}} primary={timestamp ? timestamp.toLocaleDateString() : t("no_deadline")}/>
                     <ListItemIcon sx={{minWidth: 35}}>
                         {status ?
                         (<CheckCircleOutlineIcon sx={{color: "success.main"}}/>) :
