@@ -44,8 +44,8 @@ class RestrictieSerializer(serializers.ModelSerializer):
         Returns:
             Restrictie: De bijgewerkte restrictie.
         """
-        validate_project(instance, validated_data.get("project"))
-        validate_script(validated_data.get("script"))
+        validate_project(instance, validated_data.get("project", instance.project))
+        validate_script(validated_data.get("script", instance.script))
 
         super().update(instance=instance, validated_data=validated_data)
         instance.save()

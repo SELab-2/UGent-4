@@ -71,11 +71,11 @@ class ProjectSerializer(serializers.ModelSerializer):
         Returns:
             Project: Het bijgewerkte project.
         """
-        deadline = validated_data.pop("deadline")
-        extra_deadline = validated_data.pop("extra_deadline")
+        deadline = validated_data.pop("deadline", instance.deadline)
+        extra_deadline = validated_data.pop("extra_deadline", instance.extra_deadline)
         validate_deadlines(deadline, extra_deadline)
 
-        new_vak = validated_data.get("vak")
+        new_vak = validated_data.get("vak", instance.vak)
         validate_vak(instance, new_vak)
 
         super().update(instance=instance, validated_data=validated_data)

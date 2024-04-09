@@ -55,11 +55,11 @@ def project_list(request, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
 def project_detail(request, id, format=None):
     """
     Een view om de gegevens van een specifiek project op te halen (GET),
-    bij te werken (PUT) of te verwijderen (DELETE).
+    bij te werken (PUT, PATCH) of te verwijderen (DELETE).
 
     Args:
         id (int): De primaire sleutel van het project.
@@ -80,8 +80,11 @@ def project_detail(request, id, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     if is_lesgever(request.user):
-        if request.method == "PUT":
-            serializer = ProjectSerializer(project, data=request.data)
+        if request.method in ["PUT", "PATCH"]:
+            if request.method == "PUT":
+                serializer = ProjectSerializer(project, data=request.data)
+            else:
+                serializer = ProjectSerializer(project, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
