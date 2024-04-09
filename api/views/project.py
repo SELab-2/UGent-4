@@ -96,13 +96,22 @@ def project_detail(request, id, format=None):
 @api_view(["GET"])
 def project_detail_download_opgave(request, id, format=None):
     """
-    TODO
+    Een view om de opdracht van een specifiek project te downloaden.
+
+    Args:
+        id (int): De primaire sleutel van het project.
+        format (str, optional): Het gewenste formaat voor de respons. Standaard is None.
+
+    Returns:
+        Response: Een bestandsrespons met de opdracht van het project als bijlage,
+        indien de gebruiker een lesgever is of betrokken is bij het vak van het project.
+        Anders wordt een foutmelding geretourneerd.
     """
     try:
         project = Project.objects.get(pk=id)
     except Project.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    
+
     if is_lesgever(request.user) or contains(project.vak.studenten, request.user):
         return FileResponse(project.opgave_bestand.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)

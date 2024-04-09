@@ -20,7 +20,9 @@ class Gebruiker(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     is_lesgever = models.BooleanField(default=False)
-    gepinde_vakken = models.ManyToManyField(Vak, related_name="gebruiker_gepinde_vakken", blank=True)
+    gepinde_vakken = models.ManyToManyField(
+        Vak, related_name="gebruiker_gepinde_vakken", blank=True
+    )
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
