@@ -205,23 +205,27 @@ export function AddChangeAssignmentPage() {
         setRestrictions(restrictions.filter((_, i) => i !== index));
     }
 
-    function deadlineCheck() {
+    const [deadlineCheckError, setDeadlineCheck] = useState<boolean>(false);
+
+    useEffect(() => {
+        
         if (dueDate === null && extraDueDate === null) {
-            return false;
+            setDeadlineCheck(false);
         } else if (dueDate !== null && extraDueDate !== null) {
-            return extraDueDate.isAfter(dueDate);
+            setDeadlineCheck(extraDueDate.diff(dueDate) < 0);
         } else if (dueDate !== null && extraDueDate === null) {
-            return false;
+            setDeadlineCheck(false);
+        } else {
+            setDeadlineCheck(true);
         }
-        return true;
-    }
+    }, [dueDate, extraDueDate]);
 
 // Handle the submission of the form, check if all required fields are filled in, and send the data to the API.
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         //Don't make api calls if the form is not filled in correctly.
-        setAssignmentErrors({title: title === "", description: description === "", deadlineCheck: deadlineCheck()});
-        if (title === "" || description === "") {
+        setAssignmentErrors({title: title === "", description: description === "", deadlineCheck: deadlineCheckError});
+        if (title === "" || description === "" || deadlineCheckError) {
             return;
         }
         setSaveConfirmation(true)
@@ -349,7 +353,7 @@ export function AddChangeAssignmentPage() {
                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
                                 <DateTimePicker value={dueDate} disablePast
                                                 label={t('optional')}
-                                                sx={{width: 230}}
+                                                sx={{width: 250}}
                                                 viewRenderers={{
                                                     hours: renderTimeViewClock,
                                                     minutes: renderTimeViewClock,
@@ -373,7 +377,7 @@ export function AddChangeAssignmentPage() {
                             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="nl">
                                 <DateTimePicker value={extraDueDate} disablePast
                                                 label={t('optional')}
-                                                sx={{width: 230}}
+                                                sx={{width: 250}}
                                                 viewRenderers={{
                                                     hours: renderTimeViewClock,
                                                     minutes: renderTimeViewClock,
@@ -382,8 +386,8 @@ export function AddChangeAssignmentPage() {
                                                 slotProps={{
                                                     field: {clearable: true, onClear: () => setCleared(true)},
                                                     textField: {
-                                                        error: deadlineCheck(),
-                                                        helperText: deadlineCheck() ? t('deadlineCheck') : ''
+                                                        error: deadlineCheckError,
+                                                        helperText: deadlineCheckError ? t('deadlineCheck') : ''
                                                     },
                                                 }}
                                                 onChange={(newValue) => setExtraDueDate(newValue)}/>
