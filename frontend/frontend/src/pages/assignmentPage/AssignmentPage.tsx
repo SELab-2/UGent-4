@@ -86,6 +86,7 @@ export function AssignmentPage() {
                             <Typography sx={{ fontWeight: 'bold' }}>{t("group")}</Typography>
                             <Typography sx={{ fontWeight: 'bold' }}>{t("time")}</Typography>
                             <Typography sx={{ fontWeight: 'bold' }}>Score</Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}>Status</Typography>
                             <Typography sx={{ fontWeight: 'bold' }}>{t("download")}</Typography>
                         </Box>
                         <Box style={{maxHeight: 300, overflow: 'auto'}}>
