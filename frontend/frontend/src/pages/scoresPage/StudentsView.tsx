@@ -8,19 +8,20 @@ import instance from "../../axiosConfig.ts";
 
 interface ScoreGroep {
     group: any,
+    group_number: number,
     lastSubmission?: any,
     score?: any,
 }
 
-export function StudentsView({project}) {
-    const [groepen, setGroepen] = useState<ScoreGroep[]>([]); 
+export function StudentsView({project, groepen, setGroepen}) {
 
     useEffect(() => {
         async function fetchGroups(assignment): Promise<ScoreGroep[]> {
             try {
                 const groupsResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}`);
-                return groupsResponse.data.map((group) => ({
+                return groupsResponse.data.map((group, index) => ({
                     group: group,
+                    group_number: index+1,
                 }));
             } catch (error) {
                 console.error("Error fetching data:", error);
@@ -74,6 +75,18 @@ export function StudentsView({project}) {
         fetchData();
     }, [project]);
 
+    const changeScore = (index: number, score: number) => {
+        let newGroepen = groepen;
+        newGroepen[index] = {
+            ...newGroepen[index],
+            score: {
+                ...newGroepen[index].score,
+                score: score,
+            },
+        }
+        setGroepen(newGroepen);
+    }
+
     return (
         <>
             <Box aria-label={"scoresHeader"}
@@ -105,10 +118,10 @@ export function StudentsView({project}) {
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width:"100%", height: 430, overflow:"auto"}}>
                         <List disablePadding={true}>
-                            {groepen.map((groep) => (
-                                <StudentScoreListItem key={groep.group.groep_id} groepName={String(groep.group.groep_id)}
-                                lastSubmission={groep.lastSubmission} startScore={groep.score.score}
-                                maxScore={project.max_score}/>
+                            {groepen.map((groep, index) => (
+                                <StudentScoreListItem key={groep.group.groep_id} groepName={t('group') + " " + groep.group_number}
+                                lastSubmission={groep.lastSubmission} score={groep.score.score}
+                                maxScore={project.max_score} changeScore={(score: number) => changeScore(index, score)}/>
                             ))}
                         </List>
                     </Box>

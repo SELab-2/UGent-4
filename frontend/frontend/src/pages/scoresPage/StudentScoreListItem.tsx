@@ -16,9 +16,7 @@ interface Bestand {
 * @param submissionFiles: string[] - a list of all files submitted by this student
 */
 
-export function StudentScoreListItem({key, groepName, lastSubmission, startScore, maxScore}) {
-    const [score, setScore] = useState(startScore.toString());
-
+export function StudentScoreListItem({key, groepName, lastSubmission, score, maxScore, changeScore}) {
     return (
         <>
             <ListItem key={key} sx={{margin: 0}} disablePadding={true}>
@@ -38,7 +36,7 @@ export function StudentScoreListItem({key, groepName, lastSubmission, startScore
                         //TODO time of last submission
                                       primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
-                            <TextField hiddenLabel defaultValue={score} onChange={(event) => setScore(event.target.value)}
+                            <TextField hiddenLabel defaultValue={score} onChange={(event) => changeScore(parseInt(event.target.value))}
                             variant="filled" size="small"/>
                             <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
                         </ListItem>
