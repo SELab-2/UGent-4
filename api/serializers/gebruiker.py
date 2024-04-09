@@ -57,12 +57,12 @@ class GebruikerSerializer(serializers.ModelSerializer):
         Returns:
             Gebruiker: De bijgewerkte gebruiker.
         """
-        is_lesgever = validated_data.pop("is_lesgever")
+        is_lesgever = validated_data.pop("is_lesgever", instance.is_lesgever)
         if instance.is_lesgever != is_lesgever:
             validate_lesgever_change(instance)
         instance.is_lesgever = is_lesgever
 
-        gepinde_vakken = validated_data.pop("gepinde_vakken")
+        gepinde_vakken = validated_data.pop("gepinde_vakken", instance.gepinde_vakken)
         validate_gepinde_vakken(instance, gepinde_vakken)
         instance.gepinde_vakken.set(gepinde_vakken)
 

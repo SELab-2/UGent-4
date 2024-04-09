@@ -48,8 +48,8 @@ class VakSerializer(serializers.ModelSerializer):
         Returns:
             Vak: Het bijgewerkte vak.
         """
-        students_data = validated_data.pop("studenten", [])
-        teachers_data = validated_data.pop("lesgevers", [])
+        students_data = validated_data.pop("studenten", instance.studenten)
+        teachers_data = validated_data.pop("lesgevers", instance.lesgevers)
 
         validate_students_teachers(students_data, teachers_data)
 
