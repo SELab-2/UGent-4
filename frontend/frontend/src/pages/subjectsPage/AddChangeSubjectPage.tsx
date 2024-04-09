@@ -1,7 +1,7 @@
 import {Box, Card, Stack, TextField, Typography, IconButton,Grid} from "@mui/material";
 import Button from '@mui/material/Button';
 import {Header} from "../../components/Header.tsx";
-import {ChangeEvent, useState} from "react";
+import {ChangeEvent, useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import List from '@mui/material/List';
 import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
@@ -33,8 +33,9 @@ export function AddChangeSubjectPage() {
   // State for the different fields of the subject
   const [title, setTitle] = useState("");
   const [num, setNum] = useState("");
-  const [students, setStudents]  = useState([1,2,3]);
-  const [teachers, setTeachers]  = useState([4,5,6]);
+  const [students, setStudents]  = useState([]);
+  //const [studentsIds, setStudentsIds]  = useState([]);
+  const [teachers, setTeachers]  = useState([]);
   const [open, setOpen] = useState(false);
 
 
@@ -42,27 +43,78 @@ export function AddChangeSubjectPage() {
     setOpen(false);
   };
 
-  instance.get('vakken/1').then((res) => {
+  useEffect(() =>{
+    console.log("in effect")
+    instance.get('vakken/1').then((res) => {
 
-    console.log(res.data);
+      console.log(res.data);
 
-    setTitle(res.data.naam);
-    console.log(res.data.studenten);
-    setStudents(res.data.studenten);
-    setTeachers(res.data.lesgevers);
+      setTitle(res.data.naam);
+      console.log(res.data.studenten);
+      //setStudents(res.data.studenten);
+      setTeachers(res.data.lesgevers);
+      console.log("for loop");
+      //setStudents([])
+      for (const id of res.data.studenten) {
+        console.log("in for");
+        console.log(id);
+        instance.get('gebruikers/' + id).then((res) => {
+          console.log("in then");
+          //console.log(res.data);
+          console.log(res.data.first_name)
+          console.log(res.data.user);
+          setStudents((oldstudents)=>{
+            //This is like this to prevent the the same user being in the list twice
+            var found=false;
+            const id=res.data.user;
+            for (const student of oldstudents){
+              if (student.user==id){
+                found = true;
+              }
+            }
+            if (found) {
+              return oldstudents
+            }else{
+              return [...oldstudents, res.data]
+            }
 
-  }).catch((err) => {
-        console.log(err);
+          });
+
+        }).catch((err) => {
+              setTitle("miserie");
+              console.log(err);
+            }
+        );
       }
-  );
+    }).catch((err) => {
+          console.log(err);
+        }
+    );
+  },[])
+
+
 
   // const testpress = () => {
   //   instance.get('vakken/1').then((res) => {
   //
+  //     console.log(res.data);
+  //
   //     setTitle(res.data.naam);
   //     console.log(res.data.studenten);
-  //     setStudents([2,4]);
-  //     console.log("test");
+  //     setStudents(res.data.studenten);
+  //     setTeachers(res.data.lesgevers);
+  //     console.log("for loop");
+  //     for (const id in res.data.studenten) {
+  //       console.log("in for");
+  //       instance.get('gebruikers/'+id).then((res)=> {
+  //         console.log("in then");
+  //         console.log(id);
+  //         console.log(res.data);
+  //       }).catch((err) => {
+  //             console.log(err);
+  //           }
+  //       );
+  //     }
   //
   //   }).catch((err) => {
   //         console.log(err);
@@ -92,7 +144,7 @@ export function AddChangeSubjectPage() {
             <Typography>{t("students")+":"}</Typography>
             <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
               <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
-                {students.map((id) => {
+                {students.map((student) => {
 
                   const handleClickOpen = () => {
                     setOpen(true);
@@ -110,9 +162,9 @@ export function AddChangeSubjectPage() {
                       paddingY: 3,
                       borderRadius:2,
                   }}>
-                  <ListItemText sx={{maxWidth:100}} primary={getstudent(id).name}/>
-                  <ListItemText sx={{maxWidth:100}} primary={getstudent(id).studentnumber}/>
-                  <ListItemText sx={{maxWidth:100}} primary={id}/>
+                  <ListItemText sx={{maxWidth:100}} primary={student.first_name}/>
+                  <ListItemText sx={{maxWidth:100}} primary={student.last_name}/>
+                  <ListItemText sx={{maxWidth:100}} primary={student.user}/>
                   <IconButton aria-label={'delete_file'} size={'small'} onClick={handleClickOpen}
                               sx={{marginBottom: 1}}>
                       <ClearIcon color={'error'}/>
