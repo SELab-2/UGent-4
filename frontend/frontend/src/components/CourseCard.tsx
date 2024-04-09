@@ -22,8 +22,8 @@ interface CourseCardProps {
 }
 
 export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
-    const [course, setCourse] = useState(null);
-    const [assignments, setAssignments] = useState([]);
+    const [course, setCourse] = useState<any>(null);
+    const [assignments, setAssignments] = useState<any[]>([]);
     const [teachers, setTeachers] = useState<any[]>([]);
     const navigate = useNavigate();
 
