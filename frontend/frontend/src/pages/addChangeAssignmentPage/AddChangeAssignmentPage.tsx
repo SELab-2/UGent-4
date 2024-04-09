@@ -1,4 +1,4 @@
-import {Box, Button, Card, Divider, IconButton, ListItem, Stack, TextField, Tooltip, Typography} from "@mui/material";
+import {Box, Card, Divider, IconButton, ListItem, Stack, TextField, Tooltip, Typography} from "@mui/material";
 import {Header} from "../../components/Header.tsx";
 import {ChangeEvent, FormEvent, useEffect, useMemo, useState} from "react";
 import dayjs, {Dayjs} from "dayjs";
@@ -10,7 +10,6 @@ import FileUploadButton from "../../components/FileUploadButton";
 import List from "@mui/material/List";
 import ClearIcon from '@mui/icons-material/Clear';
 import AddIcon from "@mui/icons-material/Add";
-import Switch from "@mui/material/Switch";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -18,7 +17,6 @@ import SaveIcon from '@mui/icons-material/Save';
 import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import instance from "../../axiosConfig.ts";
-import {GroupsPage} from "../groupsPage/GroupsPage.tsx";
 import WarningPopup from "../../components/WarningPopup.tsx";
 
 //TODO: add restriction functionality
@@ -67,13 +65,6 @@ interface errorChecks {
     deadlineCheck: boolean,
 }
 
-export interface group {
-    groep_id?: number,
-    studenten: number[],
-    project?: number,
-
-}
-
 export function AddChangeAssignmentPage() {
     const navigate = useNavigate();
 
@@ -83,7 +74,6 @@ export function AddChangeAssignmentPage() {
     const [dueDate, setDueDate] = useState<Dayjs | null>(null);
     const [extraDueDate, setExtraDueDate] = useState<Dayjs | null>(null);
     const [restrictions, setRestrictions] = useState<restriction[]>([]);
-    const [allowGroups, setAllowGroups] = useState(false);
     const [visible, setVisible] = useState(false);
     const [assignmentFile, setAssignmentFile] = useState<File>();
     const [maxScore, SetMaxScore] = useState<number>(20);
@@ -104,15 +94,6 @@ export function AddChangeAssignmentPage() {
     const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
     const [maxSize, setMaxSize] = useState<number>();
     const [allowedTypes, setAllowedTypes] = useState<restrictionType[]>(initialAllowedTypes);
-
-    // State for groups
-    const [groupOpen, setGroupOpen] = useState(false);
-    const [groupSize, setGroupSize] = useState(1);
-    const [groups, setGroups] = useState<group[]>([]);
-
-    const handleGroupOpen = () => {
-        setGroupOpen(true);
-    }
 
     //confirmation dialogs
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
@@ -144,33 +125,8 @@ export function AddChangeAssignmentPage() {
     //url parameters
     const {courseId, assignmentId} = useParams();
 
-    //handle the cancelation of changes, should save the groups if they are changed
+    //handle the cancelation of changes
     const handleCancel = () => {
-        if (assignmentId !== undefined) {
-            if (groups[0].groep_id !== undefined) {
-                for (const group of groups) {
-                    instance.put('/groepen/' + group.groep_id + "/", group).catch((error) => {
-                        console.error(error);
-                    });
-                }
-            } else {
-                instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
-                    for (const group of response.data) {
-                        instance.delete(`/groepen/${group.groep_id}`).catch((error) => {
-                            console.error(error);
-                        });
-                    }
-                }).catch((error) => {
-                    console.error(error);
-                });
-
-                for (const group of groups) {
-                    instance.post('/groepen/', group).catch((error) => {
-                        console.error(error);
-                    });
-                }
-            }
-        }
         if (assignmentId !== undefined) {
             navigate('/course_teacher/' + courseId + '/assignment/' + assignmentId);
         } else {
@@ -191,11 +147,7 @@ export function AddChangeAssignmentPage() {
                     console.log('bestand' + assignment.opgave_bestand);
                     SetMaxScore(assignment.max_score);
                     console.log('max score' + assignment.max_score);
-                    setGroupSize(assignment.max_groep_grootte);
-                    console.log('group size' + assignment.max_groep_grootte);
-                    if (assignment.max_groep_grootte > 1) {
-                        setAllowGroups(true);
-                    }
+
                     setVisible(assignment.zichtbaar);
                     if (assignment.deadline !== null) {
                         setDueDate(dayjs(assignment.deadline, 'YYYY-MM-DDTHH:mm:ss'));
@@ -224,24 +176,6 @@ export function AddChangeAssignmentPage() {
         return () => {
         };
     }, [cleared]);
-
-    // Get groups from api if groups are allowed / clear groups if groups are not allowed
-    useEffect(() => {
-        if (allowGroups) {
-            if (assignmentId !== undefined) {
-                instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
-                    setGroups(response.data);
-                }).catch((error) => {
-                    console.error(error);
-                });
-            } else {
-                setGroups([]);
-            }
-        } else {
-            setGroups([]);
-        }
-    }, [allowGroups, assignmentId]);
-
 
     /**
      * Function to upload the details of the assignment through a text file
@@ -309,12 +243,6 @@ export function AddChangeAssignmentPage() {
         }
         formData.append('zichtbaar', visible.toString());
 
-        if (allowGroups) {
-            formData.append('max_groep_grootte', groupSize.toString());
-        } else {
-            formData.append('max_groep_grootte', '1');
-        }
-
         // Add optional fields
         if (maxScore !== 20) {
             formData.append('max_score', maxScore.toString());
@@ -337,81 +265,15 @@ export function AddChangeAssignmentPage() {
                 console.error(error)
             });
 
-            if (allowGroups) {
-                for (const group of groups) {
-                    if (group.groep_id !== undefined) {
-                        await instance.put('/groepen/' + group.groep_id + '/', group).catch((error) => {
-                            console.error(error);
-                        });
-                    } else {
-                        await instance.post('/groepen/', group).catch((error) => {
-                            console.error(error);
-                        });
-                    }
-                }
-            } else {
-                await instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
-                    for (const group of response.data) {
-                        instance.delete(`/groepen/${group.groep_id}`).catch((error) => {
-                            console.error(error);
-                        });
-                    }
-                }).catch((error) => {
-                    console.error(error);
-                });
-
-                await instance.get('/vakken/' + courseId).then((response) => {
-                    const course = response.data;
-                    for (const student of course.studenten) {
-                        const newGroup: group = {
-                            studenten: [student],
-                            project: parseInt(assignmentId),
-                        }
-                        instance.post('/groepen/', newGroup).catch((error) => {
-                            console.error(error);
-                        });
-                    }
-                }).catch((error) => {
-                    console.error(error);
-                });
-            }
-
         } else {
             //if there is no assignmentId, it is a new assignment
-            let newAssgnmentId: number;
-            await instance.post('/projecten/', formData, config).then((response) => {
-                    newAssgnmentId = response.data.project_id;
-                }
-            ).catch((error) => {
+            await instance.post('/projecten/', formData, config).catch((error) => {
                 console.error(error)
             });
 
-
-            if (allowGroups) {
-                for (const group of groups) {
-                    await instance.post('/groepen/', group).catch((error) => {
-                        console.error(error);
-                    });
-                }
-            } else {
-                await instance.get('/vakken/' + courseId).then((response) => {
-                    const course = response.data;
-                    for (const student of course.studenten) {
-                        const newGroup: group = {
-                            studenten: [student],
-                            project: newAssgnmentId,
-                        }
-                        instance.post('/groepen/', newGroup).catch((error) => {
-                            console.error(error);
-                        });
-                    }
-                }).catch((error) => {
-                    console.error(error);
-                });
-            }
         }
 
-        console.info('Form submitted', title, description, dueDate, restrictions, allowGroups, visible, assignmentFile)
+        console.info('Form submitted', title, description, dueDate, restrictions, visible, assignmentFile)
         setSaveConfirmation(false);
         if (assignmentId !== undefined) {
             navigate('/course_teacher/' + courseId + '/assignment/' + assignmentId);
@@ -595,13 +457,6 @@ export function AddChangeAssignmentPage() {
                              padding={2}>
                             <Box aria-label={'main actions'} display={'flex'} flexDirection={'row'}
                                  alignItems={'center'}>
-                                {allowGroups ?
-                                    <Button variant={"contained"} disableElevation
-                                            onClick={handleGroupOpen}
-                                            color={"secondary"}>{t('groups')}</Button> :
-                                    <Typography color={'text.primary'} variant={"body1"}>{t('groups')}</Typography>}
-                                <Switch checked={allowGroups} onChange={() => setAllowGroups(!allowGroups)}
-                                        color={'primary'}/>
                                 {visible ?
                                     <IconButton color={"info"}
                                                 onClick={() => setVisible(!visible)}><VisibilityIcon
@@ -666,9 +521,6 @@ export function AddChangeAssignmentPage() {
                                   maxSize={maxSize} setMaxSize={setMaxSize}
                                   allowedTypes={allowedTypes}
                 />
-                <GroupsPage groups={groups} setGroups={setGroups} groupSize={groupSize} setGroupSize={setGroupSize}
-                            open={groupOpen}
-                            setOpen={setGroupOpen}/>
                 <WarningPopup title={t('remove') + ' Project?'} content={t('cant_be_undone')}
                               buttonName={t('remove')} open={deleteConfirmation} handleClose={closeDeletion}
                               doAction={handleRemove}/>

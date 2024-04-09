@@ -8,6 +8,7 @@ import {SubjectsTeacherPage} from "./pages/subjectsPage/SubjectsTeacherPage.tsx"
 import {AddChangeAssignmentPage} from "./pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
+import {GroupsPage} from "./pages/groupsPage/GroupsPage.tsx";
 
 
 //TODO: add change/add course page when implemented
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
     {
         path: '/course_teacher/:courseId/assignment/:assignmentId',
         element: <AssignmentTeacherPage/>,
+        errorElement: <ErrorPage/>,
+    },
+    {
+        path: '/course_teacher/:courseId/assignment/:assignmentId/groups',
+        element: <GroupsPage/>,
         errorElement: <ErrorPage/>,
     },
     {
