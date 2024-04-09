@@ -45,14 +45,19 @@ class ScoreSerializer(serializers.ModelSerializer):
         Returns:
             Score: De bijgewerkte score.
         """
-        validate_score(validated_data)
-        validate_indiening(instance, validated_data.get("indiening"))
+        validate_score(
+            validated_data.get("indiening", instance.indiening),
+            validated_data.get("score", instance.score),
+        )
+        validate_indiening(
+            instance, validated_data.get("indiening", instance.indiening)
+        )
         super().update(instance=instance, validated_data=validated_data)
         instance.save()
         return instance
 
 
-def validate_score(data):
+def validate_score(indiening, score):
     """
     Controleert of de opgegeven score niet hoger is dan de maximale score van het bijbehorende project.
 
@@ -62,8 +67,8 @@ def validate_score(data):
     Raises:
         serializers.ValidationError: Als de score hoger is dan de maximale score van het bijbehorende project.
     """
-    max_score = data.get("indiening").groep.project.max_score
-    if data["score"] > max_score:
+    max_score = indiening.groep.project.max_score
+    if score > max_score:
         raise serializers.ValidationError(
             f"Score kan niet hoger zijn dan de maximale score van {max_score}"
         )

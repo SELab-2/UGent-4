@@ -60,10 +60,11 @@ def groep_list(request, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
 def groep_detail(request, id, format=None):
     """
-    Een view om de gegevens van een specifieke groep op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
+    Een view om de gegevens van een specifieke groep op te halen (GET),
+    bij te werken (PUT, PATCH) of te verwijderen (DELETE).
 
     Args:
         id (int): De primaire sleutel van de groep.
@@ -83,8 +84,11 @@ def groep_detail(request, id, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     if is_lesgever(request.user):
-        if request.method == "PUT":
-            serializer = GroepSerializer(groep, data=request.data)
+        if request.method in ["PUT", "PATCH"]:
+            if request.method == "PUT":
+                serializer = GroepSerializer(groep, data=request.data)
+            else:
+                serializer = GroepSerializer(groep, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
