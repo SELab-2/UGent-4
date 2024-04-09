@@ -119,8 +119,8 @@ export function StudentsView({project, groepen, setGroepen}) {
                     <Box sx={{width:"100%", height: 430, overflow:"auto"}}>
                         <List disablePadding={true}>
                             {groepen.map((groep, index) => (
-                                <StudentScoreListItem key={groep.group.groep_id} groepName={t('group') + " " + groep.group_number}
-                                lastSubmission={groep.lastSubmission} score={groep.score.score}
+                                <StudentScoreListItem key={groep.group.groep_id} groupNumber={groep.group_number} studenten={groep.group.studenten}
+                                lastSubmission={groep.lastSubmission} score={groep.score?.score}
                                 maxScore={project.max_score} changeScore={(score: number) => changeScore(index, score)}/>
                             ))}
                         </List>
