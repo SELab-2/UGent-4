@@ -114,3 +114,14 @@ def indiening_detail(request, id, format=None):
             indiening.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def indiening_detail_download_bestanden(request, id, format=None):
+    """
+    TODO
+    """
+    try:
+        indiening = Indiening.objects.get(pk=id)
+    except Indiening.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
