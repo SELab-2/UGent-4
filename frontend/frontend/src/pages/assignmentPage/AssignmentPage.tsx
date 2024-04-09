@@ -25,7 +25,7 @@ const students = [
     {
       id: '5',
       name: 'Liam',
-      submitted: undefined,
+      submitted: new Date(2024, 11, 19),
       score: 17,
     },
 ];
@@ -85,73 +85,73 @@ export function AssignmentPage() {
                                 padding: '20px',
                                 backgroundColor: "background.default",
                                 borderRadius: 5,
-                            }}
-                            >
-                                <Stack direction={"column"}>
-                                    <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>{t("assignment")}</Typography>
-                                    <Typography>{assignment ? assignment.beschrijving : ""}</Typography>
-                                </Stack>
-                            </Card>
+                        }}
+                        >
+                            <Stack direction={"column"}>
+                                <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>{t("assignment")}</Typography>
+                                <Typography>{assignment ? assignment.beschrijving : ""}</Typography>
+                            </Stack>
+                        </Card>
 
-                            {/*Indieningen*/}
-                            <Card elevation={1} sx={{
-                                color: "text.primary",
-                                backgroundColor: "background.default",
-                                borderRadius: 5,
-                                padding: '20px'
+                        {/*Indieningen*/}
+                        <Card elevation={1} sx={{
+                            color: "text.primary",
+                            backgroundColor: "background.default",
+                            borderRadius: 5,
+                            padding: '20px'
                                 
+                        }}
+                        >
+                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
+                            <Typography sx={{ fontWeight: 'bold' }}>Student</Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}>{t("time")}</Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}>Score</Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}>{t("download")}</Typography>
+                        </Box>
+                        <Box style={{maxHeight: 300, overflow: 'auto'}}>
+                            <Divider color={"text.main"}></Divider>
+                            <List disablePadding={true} >
+                                {students.map((student) => (
+                                    <Box key={student.id}>
+                                        <Divider color={"text.main"}></Divider>
+                                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
+                                        <SubmissionListItemTeacherPage
+                                                id={student.id} 
+                                                studentName={student.name}
+                                                submitted={student.submitted}
+                                                score={student.score}
+                                        />
+                                        </Box>
+                                    </Box>
+                                ))}
+                            </List>
+                        </Box>
+                        </Card>
+
+                        <AddRestrictionButton></AddRestrictionButton>
+
+                        {/* <Button sx={{bgcolor: 'secondary.main'}}>
+                            <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
+                        </Button> */}
+
+                        {/*Upload knop*/}
+                        <Box sx={{
+                                padding: '20px',
+                                backgroundColor: "background.default",
                             }}
                             >
-                                <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                    <Typography sx={{ fontWeight: 'bold' }}>Student</Typography>
-                                    <Typography sx={{ fontWeight: 'bold' }}>{t("time")}</Typography>
-                                    <Typography sx={{ fontWeight: 'bold' }}>Score</Typography>
-                                    <Typography sx={{ fontWeight: 'bold' }}>{t("download")}</Typography>
-                                </Box>
-                                <Box style={{maxHeight: 300, overflow: 'auto'}}>
-                                    <Divider color={"text.main"}></Divider>
-                                    <List disablePadding={true} >
-                                            {students.map((student) => (
-                                                <Box key={student.id}>
-                                                    <Divider color={"text.main"}></Divider>
-                                                    <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                                    <SubmissionListItemTeacherPage
-                                                        id={student.id} 
-                                                        studentName={student.name}
-                                                        submitted={student.submitted}
-                                                        score={student.score}
-                                                        />
-                                                    </Box>
-                                                </Box>
-                                            ))}
-                                    </List>
-                                </Box>
-                            </Card>
-
-                            <AddRestrictionButton></AddRestrictionButton>
-
-                            {/* <Button sx={{bgcolor: 'secondary.main'}}>
-                                <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
-                            </Button> */}
-
-                            {/*Upload knop*/}
-                            <Box sx={{
-                                    padding: '20px',
-                                    backgroundColor: "background.default",
-                                }}
-                                >
-                                    <Stack direction={"row"}>
-                                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                                            <Typography color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
-                                        </Button>
-                                        <div style={{flexGrow: 1}}/>
-                                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                                            <Typography color="secondary.contrastText">{t("adjust_scores")}</Typography>
-                                        </Button>
-                                    </Stack>
-                                </Box>
-                                    </Stack>
-                                </>
+                                <Stack direction={"row"}>
+                                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                                        <Typography color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
+                                    </Button>
+                                    <div style={{flexGrow: 1}}/>
+                                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                                        <Typography color="secondary.contrastText">{t("adjust_scores")}</Typography>
+                                    </Button>
+                                </Stack>
+                        </Box>
+                    </Stack>
+                </>
             ) : (
                 <>
                     <Header variant={"not_main"} title={assignment ? assignment.titel : ""}></Header>
@@ -217,7 +217,7 @@ export function AssignmentPage() {
                                 ))}
                             </List>
                         </Box>
-                    </Card>
+                        </Card>
 
                         {/*Upload knop*/}
                         <Box sx={{
