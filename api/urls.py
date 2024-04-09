@@ -30,7 +30,11 @@ from .views.indiening import (
 )
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
-from .views.restrictie import restrictie_list, restrictie_detail
+from .views.restrictie import (
+    restrictie_list,
+    restrictie_detail,
+    restrictie_detail_download_script,
+)
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -61,6 +65,11 @@ urlpatterns = [
     path("api/groepen/<int:id>/", groep_detail, name="groep_detail"),
     path("api/restricties/", restrictie_list, name="restrictie_list"),
     path("api/restricties/<int:id>/", restrictie_detail, name="restrictie_detail"),
+    path(
+        "api/restricties/<int:id>/script/",
+        restrictie_detail_download_script,
+        name="restrictie_detail_download_script",
+    ),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
