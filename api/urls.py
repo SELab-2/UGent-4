@@ -22,7 +22,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from .views.views import home
 from .views.gebruiker import gebruiker_list, gebruiker_detail, gebruiker_detail_me
 from .views.vak import vak_list, vak_detail
-from .views.project import project_list, project_detail
+from .views.project import project_list, project_detail, project_detail_download_opgave
 from .views.indiening import indiening_list, indiening_detail
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
@@ -39,6 +39,7 @@ urlpatterns = [
     path("api/vakken/<int:id>/", vak_detail, name="vak_detail"),
     path("api/projecten/", project_list, name="project_list"),
     path("api/projecten/<int:id>/", project_detail, name="project_detail"),
+    path("api/projecten/<int:id>/opgave/", project_detail_download_opgave, name="project_detail_download_opgave"),
     path("api/indieningen/", indiening_list, name="indiening_list"),
     path("api/indieningen/<int:id>/", indiening_detail, name="indiening_detail"),
     path("api/scores/", score_list, name="score_list"),

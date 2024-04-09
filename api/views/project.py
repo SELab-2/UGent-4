@@ -1,3 +1,4 @@
+from django.http import FileResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -89,4 +90,19 @@ def project_detail(request, id, format=None):
         elif request.method == "DELETE":
             project.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def project_detail_download_opgave(request, id, format=None):
+    """
+    TODO
+    """
+    try:
+        project = Project.objects.get(pk=id)
+    except Project.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    if is_lesgever(request.user) or contains(project.vak.studenten, request.user):
+        return FileResponse(project.opgave_bestand.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)
