@@ -23,7 +23,14 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Gebruiker
-        fields = ["user", "is_lesgever", "first_name", "last_name", "email", "gepinde_vakken"]
+        fields = [
+            "user",
+            "is_lesgever",
+            "first_name",
+            "last_name",
+            "email",
+            "gepinde_vakken",
+        ]
 
     def create(self, validated_data):
         """
@@ -38,7 +45,7 @@ class GebruikerSerializer(serializers.ModelSerializer):
         instance = Gebruiker.objects.create(**validated_data)
         validate_gepinde_vakken(instance, gepinde_vakken)
         instance.gepinde_vakken.set(gepinde_vakken)
-        
+
         return instance
 
     def update(self, instance, validated_data):
@@ -83,7 +90,8 @@ def validate_lesgever_change(instance):
             f"De student {instance} moet eerst verwijderd worden \
             als student in zijn huidige vakken"
         )
-    
+
+
 def validate_gepinde_vakken(instance, gepinde_vakken):
     """
     Valideert of de gepinde vakken geldig zijn voor de gebruiker.
@@ -96,10 +104,10 @@ def validate_gepinde_vakken(instance, gepinde_vakken):
         serializers.ValidationError: Als de gebruiker deel moet uitmaken van alle gepinde vakken.
     """
     if instance.is_lesgever:
-        vakken = Vak.objects.filter(lesgevers = instance.user.id)
+        vakken = Vak.objects.filter(lesgevers=instance.user.id)
     else:
-        vakken = Vak.objects.filter(studenten = instance.user.id)
-    
+        vakken = Vak.objects.filter(studenten=instance.user.id)
+
     if not all(item in vakken for item in gepinde_vakken):
         raise serializers.ValidationError(
             "De gebruiker moet deel uitmaken van een vak voordat hij/zij dat vak kan markeren als een gepind vak"
