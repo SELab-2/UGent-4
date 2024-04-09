@@ -22,8 +22,8 @@ interface SubmissionListItemStudentPageProps {
 export function SubmissionListItemStudentPage({id, timestamp, status}: SubmissionListItemStudentPageProps) {
     const navigate = useNavigate();
     const handleSubmissionClick = () => {
-        console.log("Project clicked");
-        navigate(`/${id}`)
+        console.log("Submission clicked");
+        navigate(`/${id}`) // naar submission page
     }
 
     return (
@@ -46,7 +46,7 @@ export function SubmissionListItemStudentPage({id, timestamp, status}: Submissio
                         color: 'primary.light',
                         },
                      }} primary={id}/>
-                    <ListItemText sx={{maxWidth: 110}} primary={timestamp ? timestamp.toLocaleDateString() : t("no_deadline")}/>
+                    <ListItemText sx={{maxWidth: 110}} primary={timestamp ? timestamp.toLocaleDateString() : t("time")}/>
                     <ListItemIcon sx={{minWidth: 35}}>
                         {status ?
                         (<CheckCircleOutlineIcon sx={{color: "success.main"}}/>) :

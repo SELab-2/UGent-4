@@ -9,23 +9,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 
-const submissions = [
-    {
-        indiening_id: '1',
-        tijdstip: new Date(2024, 11, 17),
-        status: 0
-    },
-    {
-        indiening_id: '3',
-        tijdstip: new Date(2024, 9, 30),
-        status: -1
-    },
-    {
-        indiening_id: '5',
-        tijdstip: new Date(2024, 7, 8),
-        status: -1
-    },
-];
 const students = [
     {
       id: '1',
@@ -48,11 +31,13 @@ const students = [
 ];
 
 export function AssignmentPage() {
-    let { assignmentId } = useParams();
+    let { courseId, assignmentId } = useParams();
     assignmentId = String(assignmentId);
+    courseId = String(courseId);
 
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
     const [assignment, setAssignment] = useState<any>();
+    const [submissions, setSubmissions] = useState<any[]>([]);
 
     useEffect(() => {
         async function fetchData() {
@@ -61,6 +46,15 @@ export function AssignmentPage() {
                 setUser(userResponse.data);
                 const assignmentResponse = await instance.get(`/projecten/${assignmentId}/`);
                 setAssignment(assignmentResponse.data);
+                if (userResponse.data){
+                    let submissionsResponse;
+                    if (user.is_lesgever){
+                        submissionsResponse = await instance.get(`/indieningen/?project=${assignmentId}`);
+                    } else {
+                        submissionsResponse = await instance.get(`/indieningen/?vak=${courseId}`);
+                    }
+                    setSubmissions(submissionsResponse.data);
+                }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
@@ -215,8 +209,8 @@ export function AssignmentPage() {
                                         <Divider color={"text.main"}></Divider>
                                         <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
                                             <SubmissionListItemStudentPage id={submission.indiening_id} 
-                                                                timestamp={submission.tijdstip}
-                                                                status={!!submission.status}
+                                                                timestamp={new Date(submission.tijdstip)}
+                                                                status={!!!submission.status}
                                             />
                                             </Box>
                                     </Box>
