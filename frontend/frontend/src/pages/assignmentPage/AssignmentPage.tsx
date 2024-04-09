@@ -9,27 +9,6 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 
 
-const students = [
-    {
-      id: '1',
-      name: 'Lucas',
-      submitted: new Date(2024, 11, 17),
-      score: 12,
-    },
-    {
-      id: '3',
-      name: 'Ethan',
-      submitted: new Date(2024, 11, 19),
-      score: 18,
-    },
-    {
-      id: '5',
-      name: 'Liam',
-      submitted: new Date(2024, 11, 19),
-      score: 17,
-    },
-];
-
 export function AssignmentPage() {
     let { courseId, assignmentId } = useParams();
     assignmentId = String(assignmentId);
@@ -38,6 +17,7 @@ export function AssignmentPage() {
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
     const [assignment, setAssignment] = useState<any>();
     const [submissions, setSubmissions] = useState<any[]>([]);
+    const [groups, setGroups] = useState<any[]>([]);
 
     useEffect(() => {
         async function fetchData() {
@@ -47,20 +27,20 @@ export function AssignmentPage() {
                 const assignmentResponse = await instance.get(`/projecten/${assignmentId}/`);
                 setAssignment(assignmentResponse.data);
                 if (userResponse.data){
-                    let submissionsResponse;
                     if (user.is_lesgever){
-                        submissionsResponse = await instance.get(`/indieningen/?project=${assignmentId}`);
+                        const groupsResponse = await instance.get(`/groepen/?project=${assignmentId}`);
+                        setGroups(groupsResponse.data);
                     } else {
-                        submissionsResponse = await instance.get(`/indieningen/?vak=${courseId}`);
+                        const submissionsResponse = await instance.get(`/indieningen/?vak=${courseId}`);
+                        setSubmissions(submissionsResponse.data);
                     }
-                    setSubmissions(submissionsResponse.data);
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
             }
         }
         fetchData();
-    }, [assignmentId]);
+    }, [assignmentId, user.is_lesgever]);
     
     return (
         <>
@@ -103,7 +83,7 @@ export function AssignmentPage() {
                         }}
                         >
                         <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                            <Typography sx={{ fontWeight: 'bold' }}>Student</Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}>{t("group")}</Typography>
                             <Typography sx={{ fontWeight: 'bold' }}>{t("time")}</Typography>
                             <Typography sx={{ fontWeight: 'bold' }}>Score</Typography>
                             <Typography sx={{ fontWeight: 'bold' }}>{t("download")}</Typography>
@@ -111,15 +91,12 @@ export function AssignmentPage() {
                         <Box style={{maxHeight: 300, overflow: 'auto'}}>
                             <Divider color={"text.main"}></Divider>
                             <List disablePadding={true} >
-                                {students.map((student) => (
-                                    <Box key={student.id}>
+                                {groups.map((group) => (
+                                    <Box key={group.groep_id}>
                                         <Divider color={"text.main"}></Divider>
                                         <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
                                         <SubmissionListItemTeacherPage
-                                                id={student.id} 
-                                                studentName={student.name}
-                                                submitted={student.submitted}
-                                                score={student.score}
+                                                group_id={group.groep_id}
                                         />
                                         </Box>
                                     </Box>
