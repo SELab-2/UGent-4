@@ -1,37 +1,53 @@
 import {ListItem, ListItemText, ListItemIcon, ListItemButton} from "@mui/material";
 import {useNavigate} from "react-router-dom";
 import DownloadIcon from '@mui/icons-material/Download';
-import {t} from "i18next";
+import { useEffect, useState } from "react";
+import instance from "../axiosConfig";
+
 interface SubmissionListItemTeacherPageProps {
-    id: string;
-    studentName: string;
-    submitted?: Date;
-    score: number;
+    group_id: string;
 }
 
 /*
 * This component is used to display a single submission in the list of submissions
-* @param id: string - the id of the student
-* @param studentName: string - the name of the student
-* @param submitted: Date - the due date of the submission. empty when the student hasn't submitted yet
-* @param score: number - assigned score on the project
+* @param group_id: string - the id of the group
 */
 
-export function SubmissionListItemTeacherPage({id, studentName, submitted, score}:SubmissionListItemTeacherPageProps) {
+export function SubmissionListItemTeacherPage({group_id}:SubmissionListItemTeacherPageProps) {
     const navigate = useNavigate();
 
     const handleStudentDownloadClick = () => {
         console.log("Submission download clicked");
-        navigate(`/${id}/download/`)
+        navigate(`/${group_id}/download/`);
     }
     const handleSubmissionClick = () => {
         console.log("Submission clicked");
-        navigate(`/${id}`) // naar submission page
+        navigate(`/${group_id}`); // naar submission page
     }
+
+    const [submitted, setSubmitted] = useState<any>();
+    const [score, setScore] = useState<any>();
+
+    useEffect(() => {
+        async function fetchData() {
+            try {           
+                const submissionsResponse = await instance.get(`/indieningen/?groep=${group_id}`);
+                const lastSubmission = submissionsResponse.data[submissionsResponse.data.length - 1];
+                setSubmitted(lastSubmission);
+                if (lastSubmission){
+                    const scoreResponse = await instance.get(`/scores/?indiening=${submitted.indiening_id}`);
+                    setScore(scoreResponse.data);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+            }
+        }
+        fetchData();
+    }, [group_id]);
 
     return (
         <>
-            <ListItem id={studentName}sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={group_id}sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: "100%",
@@ -53,10 +69,10 @@ export function SubmissionListItemTeacherPage({id, studentName, submitted, score
                                 color: "primary.light",
                             },
                         }}
-                        primary={studentName}
+                        primary={group_id}
                     />
-                    <ListItemText sx={{ maxWidth: 40 }} primary={submitted ? submitted.toLocaleDateString() : t("time")} />
-                    <ListItemText sx={{ maxWidth: 50 }} primary={submitted ? score + "/20" : "-"} />
+                    <ListItemText sx={{ maxWidth: 100 }} primary={submitted? new Date(submitted.tijdstip).toLocaleDateString() : "-"} />
+                    <ListItemText sx={{ maxWidth: 50 }} primary={score? Number(score.score) + "/20" : "-"} />
                     <ListItemIcon sx={{ minWidth: 35 }}>
                         {submitted ? (
                             <DownloadIcon
@@ -74,7 +90,6 @@ export function SubmissionListItemTeacherPage({id, studentName, submitted, score
                     </ListItemIcon>
                 </ListItemButton>
             </ListItem>
-            {/*<Divider color={"text.main"} />*/}
         </>
     );
 }
