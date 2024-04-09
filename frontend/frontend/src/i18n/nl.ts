@@ -74,6 +74,10 @@ const dutch = {
     cant_be_undone: "Dit kan niet ongedaan gemaakt worden.",
     archive: "Archiveer",
     no_score_yet: "Nog geen score",
+    edit_scores_warning: "Scores Aanpassen?",
+    everyone_can_see: "Deze aanpassingen zijn voor iedereen zichtbaar.",
+    undo_changes_warning: "Aanpassingen Verwijderen?",
+    confirm: "Bevestig",
 };
 
 export default dutch;

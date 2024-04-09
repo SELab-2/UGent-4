@@ -31,7 +31,7 @@ export function SubjectsPage() {
     const navigate = useNavigate();
 
     const [course, setCourse] = useState<any>(null);
-    const [assignments, setAssignments] = useState<any[]>([]);
+    const [assignments, setAssignments] = useState<Project[]>([]);
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
 
     useEffect(() => {
@@ -163,7 +163,12 @@ function archiveSingleAssignment(assignment: Project): FormData {
     const formData = new FormData();
     formData.append('titel', assignment.titel);
     formData.append('beschrijving', assignment.beschrijving);
-    formData.append('opgave_bestand', assignment.opgave_bestand);
+
+    //TODO upload correct file
+    const blob = new Blob(["fileContent"], { type: 'text/plain' });
+    const file = new File([blob], 'example.txt', { type: 'text/plain' });
+    formData.append('opgave_bestand', file);
+    
     formData.append('vak', assignment.vak.toString());
     formData.append('max_score', assignment.max_score.toString());
     formData.append('max_groep_grootte', assignment.max_groep_grootte.toString());

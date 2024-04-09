@@ -74,6 +74,10 @@ const english = {
     cant_be_undone: "This cannot be undone.",
     archive: "Archive",
     no_score_yet: "No score yet",
+    edit_scores_warning: "Edit Scores?",
+    everyone_can_see: "Everyone can see these changes.",
+    undo_changes_warning: "Undo Changes?",
+    confirm: "Confirm",
 };
 
 export default english;
