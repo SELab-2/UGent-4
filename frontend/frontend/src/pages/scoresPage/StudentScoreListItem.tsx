@@ -1,7 +1,8 @@
 import {Divider, IconButton, ListItem, ListItemText, TextField} from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { t } from "i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import instance from "../../axiosConfig";
 
 interface Bestand {
     indiening_bestand_id: number,
@@ -16,7 +17,20 @@ interface Bestand {
 * @param submissionFiles: string[] - a list of all files submitted by this student
 */
 
-export function StudentScoreListItem({key, groepName, lastSubmission, score, maxScore, changeScore}) {
+export function StudentScoreListItem({key, groupNumber, studenten, lastSubmission, score, maxScore, changeScore}) {
+    const [name, setName] = useState(t('group') + " " + groupNumber);
+
+    useEffect(() => {
+        async function fetchName() {
+            if(studenten.length == 1){
+                const studentId = studenten[0];
+                const studentResponse = await instance.get(`/gebruikers/${studentId}/`);
+                setName(studentResponse.data.first_name + " " + studentResponse.data.last_name);
+            }
+        }
+        fetchName();
+    }, [studenten]);
+    
     return (
         <>
             <ListItem key={key} sx={{margin: 0}} disablePadding={true}>
@@ -31,7 +45,7 @@ export function StudentScoreListItem({key, groepName, lastSubmission, score, max
                     borderRadius: 2,
                 }}>
                     <>
-                        <ListItemText sx={{maxWidth: 100}} primary={groepName}/>
+                        <ListItemText sx={{maxWidth: 200}} primary={name}/>
                         <ListItemText sx={{maxWidth: 300}}
                         //TODO time of last submission
                                       primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
