@@ -1,3 +1,4 @@
+from django.http import FileResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -95,4 +96,27 @@ def restrictie_detail(request, id, format=None):
         elif request.method == "DELETE":
             restrictie.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def restrictie_detail_download_script(request, id, format=None):
+    """
+    Een view om het script van een specifieke restrictie te downloaden.
+
+    Args:
+        id (int): De primaire sleutel van de restrictie.
+        format (str, optional): Het gewenste formaat voor de respons. Standaard is None.
+
+    Returns:
+        Response: Een bestandsrespons met het script van de restrictie als bijlage,
+        indien de gebruiker een lesgever is. Anders wordt een foutmelding geretourneerd.
+    """
+    try:
+        restrictie = Restrictie.objects.get(pk=id)
+    except Restrictie.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if is_lesgever(request.user):
+        return FileResponse(restrictie.script.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)
