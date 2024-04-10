@@ -41,7 +41,7 @@ class GebruikerSerializer(serializers.ModelSerializer):
             Gebruiker: De aangemaakte gebruiker.
         """
 
-        gepinde_vakken = validated_data.pop("gepinde_vakken")
+        gepinde_vakken = validated_data.pop("gepinde_vakken", [])
         instance = Gebruiker.objects.create(**validated_data)
         validate_gepinde_vakken(instance, gepinde_vakken)
         instance.gepinde_vakken.set(gepinde_vakken)
