@@ -19,7 +19,7 @@ import {
 } from "@mui/material";
 import Switch from '@mui/material/Switch';
 import {t} from "i18next";
-import {FormEvent, useEffect, useMemo, useState} from "react";
+import {FormEvent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import instance from "../../axiosConfig.ts";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -47,7 +47,7 @@ export function GroupsPage() {
     // Get the parameters from the URL
     const {courseId, assignmentId} = useParams() as { courseId: string, assignmentId: string };
 
-    const studentNames: Hashmap = useMemo(() => new Map(), []);
+    const [studentNames, setStudentNames] = useState<Hashmap>(new Map<number, string>());
     //state for new groups and new groupSize, don't change the old groups and groupSize until the user clicks save
     const [newGroups, setNewGroups] = useState<group[]>([]);
     const [newGroupSize, setNewGroupSize] = useState(1);
@@ -114,9 +114,13 @@ export function GroupsPage() {
     // Change max group size
     const handleGroupSizeChange = (newValue: number) => {
         setNewGroupSize(newValue);
+        setAvailableStudents(() => Array.from(studentNames.keys()))
+        setCurrentGroup('0');
         setNewGroups(() => {
             const newGroups = [];
+            console.log('new amount of groups' + Math.ceil(availableStudents.length / newValue));
             for (let i = 0; i < Math.ceil(availableStudents.length / newValue); i++) {
+                console.log('new group' + i);
                 newGroups.push({
                     studenten: [],
                     project: parseInt(assignmentId)
@@ -124,7 +128,7 @@ export function GroupsPage() {
             }
             return newGroups;
         })
-        setCurrentGroup('0');
+
         instance.get('/vakken/' + courseId).then((response) => {
             setAvailableStudents(response.data.studenten);
         });
@@ -133,8 +137,21 @@ export function GroupsPage() {
 
     //get the current groups and group size from the backend
     useEffect(() => {
-        instance.get('/vakken/' + courseId).then((response) => {
-            setNewGroupSize(response.data.groep_grootte);
+        instance.get('/vakken/' + courseId).then(async (response) => {
+            const newStudentNames = new Map<number, string>();
+
+            for (const student of response.data.studenten) {
+                await instance.get('/gebruikers/' + student).then((response) => {
+                    newStudentNames.set(student, response.data.first_name + " " + response.data.last_name);
+                    console.log("available names:" + Array.from(newStudentNames.entries()));
+                });
+            }
+
+            setStudentNames(() => newStudentNames);
+        });
+
+        instance.get('/projecten/' + assignmentId).then((response) => {
+            setNewGroupSize(response.data.max_groep_grootte);
         });
 
         instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
@@ -143,25 +160,15 @@ export function GroupsPage() {
 
     }, [assignmentId, courseId]);
 
-
-    // Get student names from backend and map their id to their name
     useEffect(() => {
-        instance.get('/vakken/' + courseId).then(async (response) => {
-            for (const student of response.data.studenten) {
-                await instance.get('/gebruikers/' + student).then((response) => {
-                    studentNames.set(student, response.data.first_name + " " + response.data.last_name);
-                    console.log("available names:" + Array.from(studentNames.entries()));
-                });
-            }
-            let newAvailableStudenten = response.data.studenten;
-            newAvailableStudenten = newAvailableStudenten.filter((student: number) => !newGroups.some((group) => group.studenten.includes(student)));
-            setAvailableStudents(newAvailableStudenten);
-        });
-    }, [courseId, newGroups]);
+        setAvailableStudents(() => Array.from(studentNames.keys()).filter((student) => !newGroups.some((group) => group.studenten.includes(student))));
+    }, [newGroups, studentNames]);
 
     // Create new groups when the group size changes
     useEffect(() => {
         if (newGroups.length === 0) {
+            setAvailableStudents(() => Array.from(studentNames.keys()));
+            setCurrentGroup('0');
             setNewGroups(() => {
                 const newGroups = [];
                 for (let i = 0; i < Math.ceil(availableStudents.length / newGroupSize); i++) {
@@ -172,10 +179,9 @@ export function GroupsPage() {
                 }
                 return newGroups;
             })
-            setCurrentGroup('0');
         }
 
-    }, [availableStudents.length, newGroupSize, newGroups.length]);
+    }, [assignmentId, availableStudents.length, newGroupSize, newGroups.length]);
 
 
     //Handle current group change
@@ -338,10 +344,12 @@ export function GroupsPage() {
                                     <TableBody>
                                         {availableStudents.map((student) => (
                                             <TableRow key={student}>
-                                                <TableCell>{studentNames.get(student)}
-                                                    <IconButton onClick={() => {
-                                                        assignStudent(student, parseInt(currentGroup));
-                                                    }}>
+                                                <TableCell>{studentNames.get(student) === '' ? student : studentNames.get(student)}
+                                                    <IconButton
+                                                        disabled={newGroups[parseInt(currentGroup)] ? newGroups[parseInt(currentGroup)].studenten.length >= newGroupSize : true}
+                                                        onClick={() => {
+                                                            assignStudent(student, parseInt(currentGroup));
+                                                        }}>
                                                         <Add/>
                                                     </IconButton>
                                                 </TableCell>
@@ -366,7 +374,7 @@ export function GroupsPage() {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {(newGroups.length > 0) && newGroups[parseInt(currentGroup)].studenten.map((student) => (
+                                        {newGroups[parseInt(currentGroup)] && newGroups[parseInt(currentGroup)].studenten.map((student) => (
                                             <TableRow key={student}>
                                                 <TableCell>{studentNames.get(student)}
                                                     <IconButton onClick={() => {
