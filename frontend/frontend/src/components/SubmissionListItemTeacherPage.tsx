@@ -73,7 +73,9 @@ export function SubmissionListItemTeacherPage({group_id, assignment_id, course_i
 
     const handleSubmissionClick = () => {
         console.log("Submission clicked");
-        navigate(`/course_student/${course_id}/assignment/${assignment_id}/submission/${submitted.indiening_id}`);
+        if (submitted){
+            navigate(`/course_student/${course_id}/assignment/${assignment_id}/submission/${submitted.indiening_id}`);
+        }
     }
 
     return (
