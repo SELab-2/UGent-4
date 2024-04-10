@@ -6,7 +6,7 @@ const dutch = {
     current_courses: "Huidige vakken",
     archived: "Gearchiveerd",
     no_deadline: "Geen deadline",
-    add_admin: "Voeg admin toe",
+    add_teacher: "Voeg lesgever toe",
     submission: "Indiening",
     submissions: "Indieningen",
     no_submission: "niet ingediend",
@@ -77,7 +77,18 @@ const dutch = {
     edit_scores_warning: "Scores Aanpassen?",
     everyone_can_see: "Deze aanpassingen zijn voor iedereen zichtbaar.",
     undo_changes_warning: "Aanpassingen Verwijderen?",
+    optional: "Optioneel",
+    deadlineCheck: "extra deadline moet na de eerste deadline liggen",
+    not_before_now: "Datum moet in de toekomst liggen",
+    noStudentsYet: "Nog geen studenten",
+    change_groups: "Groepen aanpassen?",
     confirm: "Bevestig",
+    save_project_warning: "Project Opslaan?",
+    visible_for_everyone: "Deze wijzigingen zijn zichtbaar voor iedereen.",
+    no_restrictions: "Geen restricties gevonden",
+    pending: "Nog niet voltooid",
+    failed: "Gefaald",
+    result: "Resultaat",
 };
 
 export default dutch;

@@ -4,17 +4,32 @@ import TabSwitcher from "../../components/TabSwitcher.tsx";
 import {ArchivedView} from "./ArchivedView.tsx";
 import {CoursesView} from "./CoursesView.tsx";
 import {DeadlineCalendar} from "../../components/DeadlineCalendar.tsx";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {t} from "i18next";
 import {useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
 import {AxiosError, AxiosResponse} from "axios";
+import {useNavigate} from "react-router-dom";
 
 export default interface course {
     vak_id: number;
     naam: string;
     studenten: number[];
     lesgevers: number[];
+}
+
+export interface project {
+    project_id: number;
+    titel: string;
+    beschrijving: string;
+    opgave_bestand: File | null;
+    vak_id: number;
+    deadline: string;
+    extra_deadline: string | null;
+    max_score: number;
+    max_groepsgrootte: number;
+    zichtbaar: boolean;
+    gearchiveerd: boolean;
 }
 
 /**
@@ -27,6 +42,7 @@ export function MainPage() {
     const [role, setRole] = useState<string>('');
     const [courses, setCourses] = useState<course[]>([]);
     const [deadlines, setDeadlines] = useState<Dayjs[]>([]);
+    const navigator = useNavigate();
 
     useEffect(() => {
         console.log("requesting api")
@@ -39,11 +55,23 @@ export function MainPage() {
 
         async function fetchData() {
             try {
-                const response = await instance.get("/vakken/");
+                const response = await instance.get<course[]>("/vakken/");
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
             }
+
+            instance.get("/projecten/").then((response: AxiosResponse) => {
+                const deadlines: Dayjs[] = [];
+                response.data.forEach((project: project) => {
+                        deadlines.push(dayjs(project.deadline, "YYYY-MM-DD-HH:mm:ss"));
+                    }
+                )
+                console.log(deadlines);
+                setDeadlines(deadlines);
+            }).catch((e: AxiosError) => {
+                console.error(e);
+            });
         }
 
         fetchData().catch((e) => {
@@ -53,7 +81,7 @@ export function MainPage() {
     }, []);
 
     useEffect(() => {
-        instance.get("/")
+
     }, [courses]);
 
 
@@ -87,7 +115,8 @@ export function MainPage() {
                         justifyContent: "end"
                     }}>
                         <Button variant={'contained'} color={"secondary"}
-                                aria-label={'admin-button'} sx={{margin: 5}}>{t('add_admin')}</Button>
+                                on-click={() => navigator("/addTeacher")}
+                                aria-label={'admin-button'} sx={{margin: 5}}>{t('add_teacher')}</Button>
                     </Box>}
             </Stack>
         </>
