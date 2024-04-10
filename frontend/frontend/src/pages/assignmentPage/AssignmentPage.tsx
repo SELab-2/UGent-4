@@ -1,4 +1,5 @@
 import {Header} from "../../components/Header.tsx";
+import FileUploadButton from "../../components/FileUploadButton.tsx";
 import {SubmissionListItemStudentPage} from "../../components/SubmissionListItemStudentPage.tsx";
 import {SubmissionListItemTeacherPage } from "../../components/SubmissionListItemTeacherPage.tsx";
 import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
@@ -60,8 +61,7 @@ export function AssignmentPage() {
         submissions.forEach((submission, index) => {
             downloadPromises.push(
                 new Promise((resolve, reject) => {
-                    instance.get(`/indieningen/${submission.indiening_id}/indiening_bestanden/`, { responseType: 'blob' })
-                        .then(res => {
+                    instance.get(`/indieningen/${submission.indiening_id}/indiening_bestanden/`, { responseType: 'blob' }).then(res => {
                             let filename = 'lege_indiening_zip.zip';
                             if (submission.indiening_bestanden.length > 0) {
                                 filename = submission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
@@ -70,19 +70,15 @@ export function AssignmentPage() {
                                 zip.file(filename, res.data);
                             }
                             resolve();
-                        })
-                        .catch(err => {
+                        }).catch(err => {
                             console.error(`Error downloading submission ${index + 1}:`, err);
                             reject(err);
                         });
                 })
             );
         });
-    
-        Promise.all(downloadPromises)
-            .then(() => {
-                zip.generateAsync({ type: "blob" })
-                    .then(blob => {
+        Promise.all(downloadPromises).then(() => {
+                zip.generateAsync({ type: "blob" }).then(blob => {
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.href = url;
@@ -90,15 +86,20 @@ export function AssignmentPage() {
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
-                    })
-                    .catch(err => {
+                    }).catch(err => {
                         console.error("Error generating zip file:", err);
                     });
-            })
-            .catch(err => {
-                console.error("Error downloading submissions:", err);
-            });
+        }).catch(err => {
+            console.error("Error downloading submissions:", err);
+        });
     };
+
+    /*const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            setAssignmentFile(event.target.files[0]);
+            console.log(assignmentFile?.name);
+        }
+    };*/
     
     return (
         <>
@@ -251,6 +252,8 @@ export function AssignmentPage() {
                                             <SubmissionListItemStudentPage id={submission.indiening_id} 
                                                                 timestamp={new Date(submission.tijdstip)}
                                                                 status={!!!submission.status}
+                                                                assignment_id={assignmentId}
+                                                                course_id={courseId}
                                             />
                                             </Box>
                                     </Box>
@@ -266,9 +269,11 @@ export function AssignmentPage() {
                         }}
                         >
                             <Stack direction={"row"}>
-                                <Button sx={{bgcolor: 'primary.main', textTransform: 'none'}}>
-                                    <Typography color="primary.contrastText">{t("upload")}</Typography>
-                                </Button>
+                            {/*<FileUploadButton name={t('upload_assignment')} path={assignmentFile}
+                                              onFileChange={handleFileChange}
+                                              fileTypes={['.pdf', '.zip']}
+                                              tooltip={t('uploadToolTip')}
+                    />*/}
                                 <div style={{flexGrow: 1}}/>
                             </Stack>
                         </Box>
