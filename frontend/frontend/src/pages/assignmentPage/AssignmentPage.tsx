@@ -7,6 +7,7 @@ import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import JSZip from 'jszip';
 
 
 export function AssignmentPage() {
@@ -52,6 +53,52 @@ export function AssignmentPage() {
         }
         fetchData();
     }, [assignmentId, user.is_lesgever]);
+
+    const downloadAllSubmissions = () => {
+        const zip = new JSZip();
+        const downloadPromises: Promise<void>[] = [];
+        submissions.forEach((submission, index) => {
+            downloadPromises.push(
+                new Promise((resolve, reject) => {
+                    instance.get(`/indieningen/${submission.indiening_id}/indiening_bestanden/`, { responseType: 'blob' })
+                        .then(res => {
+                            let filename = 'lege_indiening_zip.zip';
+                            if (submission.indiening_bestanden.length > 0) {
+                                filename = submission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+                            }
+                            if (filename !== 'lege_indiening_zip.zip') {
+                                zip.file(filename, res.data);
+                            }
+                            resolve();
+                        })
+                        .catch(err => {
+                            console.error(`Error downloading submission ${index + 1}:`, err);
+                            reject(err);
+                        });
+                })
+            );
+        });
+    
+        Promise.all(downloadPromises)
+            .then(() => {
+                zip.generateAsync({ type: "blob" })
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'all_submissions.zip';
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    })
+                    .catch(err => {
+                        console.error("Error generating zip file:", err);
+                    });
+            })
+            .catch(err => {
+                console.error("Error downloading submissions:", err);
+            });
+    };
     
     return (
         <>
@@ -125,16 +172,18 @@ export function AssignmentPage() {
                             <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
                         </Button> */}
 
-                        {/*Upload knop*/}
+                        {/*Export- en Aanpasknop*/}
                         <Box sx={{
                                 padding: '20px',
                                 backgroundColor: "background.default",
                             }}
                             >
                                 <Stack direction={"row"}>
-                                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
-                                        <Typography color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
-                                    </Button>
+                                    {submissions.length > 0 && (
+                                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={downloadAllSubmissions}>
+                                            <Typography color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
+                                        </Button>
+                                        )}
                                     <div style={{flexGrow: 1}}/>
                                     <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={adjustScores}>
                                         <Typography color="secondary.contrastText">{t("adjust_scores")}</Typography>
