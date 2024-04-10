@@ -6,7 +6,7 @@ import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material
 import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import JSZip from 'jszip';
 
@@ -31,6 +31,7 @@ export function AssignmentPage() {
     const [assignment, setAssignment] = useState<any>();
     const [submissions, setSubmissions] = useState<any[]>([]);
     const [groups, setGroups] = useState<any[]>([]);
+    const [submissionFile, setSubmissionFile] = useState<File>();
 
     useEffect(() => {
         async function fetchData() {
@@ -94,12 +95,27 @@ export function AssignmentPage() {
         });
     };
 
-    /*const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
-            setAssignmentFile(event.target.files[0]);
-            console.log(assignmentFile?.name);
+            setSubmissionFile(event.target.files[0]);
+            console.log(submissionFile?.name);
         }
-    };*/
+    };
+
+    // PUT werkt nog niet (JSON-object meegeven in de plaats)
+    const uploadIndiening = async () => {
+        if (submissionFile){
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            await instance.put('/api/indieningen/', submissionFile, config).catch((error) => {
+                console.error(error)
+            });
+            setSubmissionFile(undefined);
+        }
+    }
     
     return (
         <>
@@ -269,11 +285,14 @@ export function AssignmentPage() {
                         }}
                         >
                             <Stack direction={"row"}>
-                            {/*<FileUploadButton name={t('upload_assignment')} path={assignmentFile}
+                            {<FileUploadButton name={t('upload')} path={submissionFile}
                                               onFileChange={handleFileChange}
-                                              fileTypes={['.pdf', '.zip']}
+                                              fileTypes={['.zip']}
                                               tooltip={t('uploadToolTip')}
-                    />*/}
+                    />}
+                            <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={uploadIndiening}>
+                                <Typography color="secondary.contrastText">Confirm Upload</Typography>
+                            </Button>
                                 <div style={{flexGrow: 1}}/>
                             </Stack>
                         </Box>
