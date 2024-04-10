@@ -109,6 +109,8 @@ export function AssignmentPage() {
                                         <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
                                         <SubmissionListItemTeacherPage
                                                 group_id={group.groep_id}
+                                                assignment_id={assignmentId}
+                                                course_id={courseId}
                                         />
                                         </Box>
                                     </Box>
