@@ -1,4 +1,4 @@
-import {ListItem, ListItemIcon, ListItemText} from "@mui/material";
+import {ListItem, ListItemIcon, ListItemText, ListItemButton} from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {useNavigate} from "react-router-dom";
@@ -8,6 +8,8 @@ interface SubmissionListItemStudentPageProps {
     id: string;
     timestamp?: Date;
     status: boolean;
+    assignment_id: string;
+    course_id: string;
 }
 
 /*
@@ -19,27 +21,32 @@ interface SubmissionListItemStudentPageProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function SubmissionListItemStudentPage({id, timestamp, status}: SubmissionListItemStudentPageProps) {
+export function SubmissionListItemStudentPage({id, timestamp, status, assignment_id, course_id}: SubmissionListItemStudentPageProps) {
     const navigate = useNavigate();
     const handleSubmissionClick = () => {
         console.log("Submission clicked");
-        navigate(`/${id}`) // naar submission page
+        if (id){
+            navigate(`/course_student/${course_id}/assignment/${assignment_id}/submission/${id}`);
+        }
     }
 
     return (
         <>
             <ListItem key={id} sx={{margin: 0}} disablePadding={true}>
-                <ListItem  sx={{
-                    width: "100%",
-                    height: 30,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    paddingX: 1,
-                    paddingY: 3,
-                    borderRadius: 2,
-                }}>
-                    <ListItemText onClick={handleSubmissionClick} sx={{
+                <ListItemButton 
+                    sx={{
+                        width: "100%",
+                        height: 30,
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
+                        paddingX: 1,
+                        paddingY: 3,
+                        borderRadius: 2,
+                    }}
+                    onClick={handleSubmissionClick}
+                >
+                    <ListItemText sx={{
                         maxWidth: 110,
                         color: 'primary.main',
                          '&:hover': {
@@ -53,7 +60,7 @@ export function SubmissionListItemStudentPage({id, timestamp, status}: Submissio
                         (<HighlightOffIcon sx={{color: "error.main"}}/>)
                         }
                     </ListItemIcon>
-                </ListItem>
+                </ListItemButton>
             </ListItem>
         </>
     );
