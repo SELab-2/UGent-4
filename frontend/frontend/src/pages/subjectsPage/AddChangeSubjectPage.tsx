@@ -34,7 +34,6 @@ export function AddChangeSubjectPage() {
   const [title, setTitle] = useState("");
   const [num, setNum] = useState("");
   const [students, setStudents]  = useState([]);
-  //const [studentsIds, setStudentsIds]  = useState([]);
   const [teachers, setTeachers]  = useState([]);
   const [open, setOpen] = useState(false);
 
@@ -44,27 +43,13 @@ export function AddChangeSubjectPage() {
   };
 
   useEffect(() =>{
-    console.log("in effect")
     instance.get('vakken/1').then((res) => {
 
-      console.log(res.data);
-
       setTitle(res.data.naam);
-      console.log(res.data.studenten);
-      //setStudents(res.data.studenten);
-      setTeachers(res.data.lesgevers);
-      console.log("for loop");
-      //setStudents([])
       for (const id of res.data.studenten) {
-        console.log("in for");
-        console.log(id);
         instance.get('gebruikers/' + id).then((res) => {
-          console.log("in then");
-          //console.log(res.data);
-          console.log(res.data.first_name)
-          console.log(res.data.user);
           setStudents((oldstudents)=>{
-            //This is like this to prevent the the same user being in the list twice
+            //This is like this to prevent the same user being in the list twice
             var found=false;
             const id=res.data.user;
             for (const student of oldstudents){
@@ -76,6 +61,31 @@ export function AddChangeSubjectPage() {
               return oldstudents
             }else{
               return [...oldstudents, res.data]
+            }
+
+          });
+
+        }).catch((err) => {
+              setTitle("miserie");
+              console.log(err);
+            }
+        );
+      }
+      for (const id of res.data.lesgevers) {
+        instance.get('gebruikers/' + id).then((res) => {
+          setTeachers((oldteachers)=>{
+            //This is like this to prevent the same user being in the list twice
+            var found=false;
+            const id=res.data.user;
+            for (const teacher of oldteachers){
+              if (teacher.user==id){
+                found = true;
+              }
+            }
+            if (found) {
+              return oldteachers
+            }else{
+              return [...oldteachers, res.data]
             }
 
           });
@@ -210,7 +220,7 @@ export function AddChangeSubjectPage() {
             <Typography>{t("teachers")+":"}</Typography>
             <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
               <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
-                {teachers.map((id) => {
+                {teachers.map((teacher) => {
 
                   const handleClickOpen = () => {
                     setOpen(true);
@@ -227,8 +237,9 @@ export function AddChangeSubjectPage() {
                           paddingY: 3,
                           borderRadius:2,
                         }}>
-                          <ListItemText sx={{maxWidth:100}} primary={getteacher(id).name}/>
-                          <ListItemText sx={{maxWidth:100}} primary={id}/>
+                          <ListItemText sx={{maxWidth:100}} primary={teacher.first_name}/>
+                          <ListItemText sx={{maxWidth:100}} primary={teacher.last_name}/>
+                          <ListItemText sx={{maxWidth:100}} primary={teacher.user}/>
                           <IconButton aria-label={'delete_file'} size={'small'} onClick={handleClickOpen}
                                       sx={{marginBottom: 1}}>
                             <ClearIcon color={'error'}/>
