@@ -1,15 +1,8 @@
 import {Divider, IconButton, ListItem, ListItemText, TextField} from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
 import { t } from "i18next";
-import { useState } from "react";
-
-interface StudentScoreListItemProps {
-    key: number;
-    groepName: string;
-    submissionFiles: Bestand[];
-    startScore: number;
-    maxScore: number;
-}
+import { useEffect, useState } from "react";
+import instance from "../../axiosConfig";
 
 interface Bestand {
     indiening_bestand_id: number,
@@ -24,9 +17,20 @@ interface Bestand {
 * @param submissionFiles: string[] - a list of all files submitted by this student
 */
 
-export function StudentScoreListItem({key, groepName, submissionFiles, startScore, maxScore}: StudentScoreListItemProps) {
-    const [score, setScore] = useState(startScore.toString());
+export function StudentScoreListItem({key, groupNumber, studenten, lastSubmission, score, maxScore, changeScore}) {
+    const [name, setName] = useState(t('group') + " " + groupNumber);
 
+    useEffect(() => {
+        async function fetchName() {
+            if(studenten.length == 1){
+                const studentId = studenten[0];
+                const studentResponse = await instance.get(`/gebruikers/${studentId}/`);
+                setName(studentResponse.data.first_name + " " + studentResponse.data.last_name);
+            }
+        }
+        fetchName();
+    }, [studenten]);
+    
     return (
         <>
             <ListItem key={key} sx={{margin: 0}} disablePadding={true}>
@@ -41,11 +45,12 @@ export function StudentScoreListItem({key, groepName, submissionFiles, startScor
                     borderRadius: 2,
                 }}>
                     <>
-                        <ListItemText sx={{maxWidth: 100}} primary={groepName}/>
-                        <ListItemText sx={{maxWidth: 150}}
-                                      primary={submissionFiles.length ? submissionFiles.length + " " + t("submissions") : t("no_submissions")}/>
+                        <ListItemText sx={{maxWidth: 200}} primary={name}/>
+                        <ListItemText sx={{maxWidth: 300}}
+                        //TODO time of last submission
+                                      primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
-                            <TextField hiddenLabel defaultValue={score} onChange={(event) => setScore(event.target.value)}
+                            <TextField hiddenLabel defaultValue={score} onChange={(event) => changeScore(parseInt(event.target.value))}
                             variant="filled" size="small"/>
                             <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
                         </ListItem>
