@@ -40,11 +40,11 @@ import WarningPopup from "../../components/WarningPopup.tsx";
 
 const initialAllowedTypes: restrictionType[] = ['dockerTest', 'fileSize', 'fileType'];
 
-interface getAssignment {
+export interface getAssignment {
     project_id: number,
     titel: string,
     beschrijving: string,
-    opgave_bestand: File,
+    opgave_bestand: string,
     vak: number,
     max_score: number,
     max_groep_grootte: number,
@@ -52,6 +52,7 @@ interface getAssignment {
     extra_deadline: string | null,
     zichtbaar: boolean,
     gearchiveerd: boolean,
+    file?: File,
 }
 
 export interface restriction {
@@ -78,6 +79,7 @@ export function AddChangeAssignmentPage() {
     const [assignmentFile, setAssignmentFile] = useState<File>();
     const [maxScore, SetMaxScore] = useState<number>(20);
     const [cleared, setCleared] = useState<boolean>(false);
+    const [filename, setFilename] = useState<string>("indiening.zip");
 
     // State for the error checks of the assignment
     const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
@@ -142,9 +144,9 @@ export function AddChangeAssignmentPage() {
                     console.log("returned assignment " + assignment.titel + " " + assignment.beschrijving);
                     setTitle(assignment.titel);
                     setDescription(assignment.beschrijving);
-                    //TODO: file from api is not a file but string
-                    //setAssignmentFile(assignment.opgave_bestand);
+
                     console.log('bestand' + assignment.opgave_bestand);
+                    setFilename(() => assignment.opgave_bestand);
                     SetMaxScore(assignment.max_score);
                     console.log('max score' + assignment.max_score);
 
@@ -160,9 +162,20 @@ export function AddChangeAssignmentPage() {
                 }).catch((error) => {
                     console.error(error);
                 });
+
+
+                //get the assignment file
+                instance.get(`/projecten/${assignmentId}/opgave_bestand/`, {responseType: 'blob'}).then((response) => {
+                    const blob = new Blob([response.data], {type: response.headers['content-type']});
+                    const file: File = new File([blob], filename, {type: response.headers['content-type']});
+
+                    setAssignmentFile(file);
+                }).catch((error) => {
+                    console.error(error);
+                });
             }
         }
-        , [assignmentId]);
+        , [assignmentId, filename]);
 
     // make the datepickers clearable
     useEffect(() => {
@@ -208,7 +221,7 @@ export function AddChangeAssignmentPage() {
     const [deadlineCheckError, setDeadlineCheck] = useState<boolean>(false);
 
     useEffect(() => {
-        
+
         if (dueDate === null && extraDueDate === null) {
             setDeadlineCheck(false);
         } else if (dueDate !== null && extraDueDate !== null) {
@@ -231,8 +244,7 @@ export function AddChangeAssignmentPage() {
         setSaveConfirmation(true)
     }
 
-    // Upload the assignment to the API.
-    //TODO: put/post does not work yet
+    // Upload the assignment to the API. patch if it is an edit, post if it is a new assignment.
     const uploadAssignment = async () => {
         let optionalFile: File | null = null;
         if (assignmentFile !== undefined) {
@@ -265,13 +277,13 @@ export function AddChangeAssignmentPage() {
         };
         if (assignmentId !== undefined) {
             formData.append('project_id', assignmentId);
-            await instance.put('/projecten/' + parseInt(assignmentId) + "/", formData, config).catch((error) => {
+            await instance.patch('/projecten/' + parseInt(assignmentId) + "/", formData, config).catch((error) => {
                 console.error(error)
             });
 
         } else {
             //if there is no assignmentId, it is a new assignment
-            await instance.post('/projecten/', formData, config).catch((error) => {
+            await instance.patch('/projecten/', formData, config).catch((error) => {
                 console.error(error)
             });
 

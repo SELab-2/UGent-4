@@ -81,6 +81,10 @@ const dutch = {
     confirm: "Bevestig",
     save_project_warning: "Project Opslaan?",
     visible_for_everyone: "Deze wijzigingen zijn zichtbaar voor iedereen.",
+    no_restrictions: "Geen restricties gevonden",
+    pending: "Nog niet voltooid",
+    failed: "Gefaald",
+    result: "Resultaat",
 };
 
 export default dutch;
