@@ -8,6 +8,8 @@ import instance from "../axiosConfig";
 
 interface SubmissionListItemTeacherPageProps {
     group_id: string;
+    assignment_id: string;
+    course_id: string;
 }
 
 /*
@@ -15,18 +17,15 @@ interface SubmissionListItemTeacherPageProps {
 * @param group_id: string - the id of the group
 */
 
-export function SubmissionListItemTeacherPage({group_id}:SubmissionListItemTeacherPageProps) {
+export function SubmissionListItemTeacherPage({group_id, assignment_id, course_id}:SubmissionListItemTeacherPageProps) {
     const navigate = useNavigate();
 
-    const handleStudentDownloadClick = () => {
+    const handleStudentDownloadClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        event.stopPropagation();
         console.log("Submission download clicked");
-        navigate(`/${group_id}/download/`);
+        downloadSubmission();
     }
-    const handleSubmissionClick = () => {
-        console.log("Submission clicked");
-        navigate(`/${group_id}`); // naar submission page
-    }
-
+    
     const [submitted, setSubmitted] = useState<any>();
     const [score, setScore] = useState<any>();
 
@@ -47,6 +46,33 @@ export function SubmissionListItemTeacherPage({group_id}:SubmissionListItemTeach
         }
         fetchData();
     }, [group_id]);
+
+    const downloadSubmission = () => {
+        instance.get(`/indieningen/${submitted.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
+            res => {
+                let filename = 'lege_indiening.zip';
+                if (submitted.indiening_bestanden.length > 0) {
+                    filename = submitted.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+                }
+                const blob = new Blob([res.data], {type: res.headers['content-type']});
+                const file: File = new File([blob], filename, {type: res.headers['content-type']});
+                const url = window.URL.createObjectURL(file);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }
+        ).catch(err => {
+            console.error(err);
+        })
+    }
+
+    const handleSubmissionClick = () => {
+        console.log("Submission clicked");
+        navigate(`/course_student/${course_id}/assignment/${assignment_id}/submission/${submitted.indiening_id}`);
+    }
 
     return (
         <>
@@ -83,19 +109,15 @@ export function SubmissionListItemTeacherPage({group_id}:SubmissionListItemTeach
                         )}
                     </ListItemIcon>
                     <ListItemIcon sx={{ minWidth: 35 }}>
-                        {submitted ? (
+                        <div onClick={handleStudentDownloadClick}>
+                            {submitted ? (
                             <DownloadIcon
-                                onClick={handleStudentDownloadClick}
-                                sx={{
-                                    color: "primary.main",
-                                    "&:hover": {
-                                        color: "primary.light",
-                                    },
-                                }}
-                            />
-                        ) : (
+                                sx={{color: "primary.main", "&:hover": {color: "primary.light",},}}
+                        />
+                            ) : (
                             <DownloadIcon sx={{ color: "gray" }} />
-                        )}
+                            )}
+                        </div>
                     </ListItemIcon>
                 </ListItemButton>
             </ListItem>
