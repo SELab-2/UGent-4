@@ -48,25 +48,27 @@ export function SubmissionListItemTeacherPage({group_id, assignment_id, course_i
     }, [group_id]);
 
     const downloadSubmission = () => {
-        instance.get(`/indieningen/${submitted.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
-            res => {
-                let filename = 'lege_indiening.zip';
-                if (submitted.indiening_bestanden.length > 0) {
-                    filename = submitted.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+        if (submitted){
+            instance.get(`/indieningen/${submitted.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
+                res => {
+                    let filename = 'lege_indiening.zip';
+                    if (submitted.indiening_bestanden.length > 0) {
+                        filename = submitted.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+                    }
+                    const blob = new Blob([res.data], {type: res.headers['content-type']});
+                    const file: File = new File([blob], filename, {type: res.headers['content-type']});
+                    const url = window.URL.createObjectURL(file);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
                 }
-                const blob = new Blob([res.data], {type: res.headers['content-type']});
-                const file: File = new File([blob], filename, {type: res.headers['content-type']});
-                const url = window.URL.createObjectURL(file);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = filename;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
-            }
-        ).catch(err => {
-            console.error(err);
-        })
+            ).catch(err => {
+                console.error(err);
+            })
+        }
     }
 
     const handleSubmissionClick = () => {
