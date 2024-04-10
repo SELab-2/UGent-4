@@ -81,7 +81,7 @@ export function DeadlineCalendar({deadlines}: DeadlineCalendarProps) {
         // abort request on unmount
         return () => requestAbortController.current?.abort();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [deadlines]);
 
     const handleMonthChange = (date: Dayjs) => {
         if (requestAbortController.current) {
