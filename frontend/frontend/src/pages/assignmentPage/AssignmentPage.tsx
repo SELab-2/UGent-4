@@ -6,13 +6,24 @@ import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 
 export function AssignmentPage() {
+    const navigate = useNavigate();
     let { courseId, assignmentId } = useParams();
     assignmentId = String(assignmentId);
     courseId = String(courseId);
+
+    const adjustScores = () => {
+        console.log("adjust scores");
+        navigate(`/course_teacher/${courseId}/assignment/${assignmentId}/scoring`);
+    }
+
+    const goToGroups = () => {
+        console.log("go to scores");
+        navigate(`/course_teacher/${courseId}/assignment/${assignmentId}/groups`);
+    }
 
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
     const [assignment, setAssignment] = useState<any>();
@@ -123,7 +134,7 @@ export function AssignmentPage() {
                                         <Typography color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
                                     </Button>
                                     <div style={{flexGrow: 1}}/>
-                                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={adjustScores}>
                                         <Typography color="secondary.contrastText">{t("adjust_scores")}</Typography>
                                     </Button>
                                 </Stack>
@@ -145,7 +156,7 @@ export function AssignmentPage() {
                             <Stack direction={"row"}>
                                 <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}</Typography>
                                 <div style={{flexGrow: 1}}/>
-                                <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}>
+                                <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={goToGroups}>
                                     <Typography color="secondary.contrastText">{t("group")}</Typography>
                                 </Button>
                             </Stack>
@@ -208,9 +219,6 @@ export function AssignmentPage() {
                                     <Typography color="primary.contrastText">{t("upload")}</Typography>
                                 </Button>
                                 <div style={{flexGrow: 1}}/>
-                                <Button sx={{bgcolor: 'success.main', textTransform: 'none'}}>
-                                    <Typography color="primary.contrastText">{t("submission")+" "+t("passed") }</Typography>
-                                </Button>
                             </Stack>
                         </Box>
                     </Stack>
