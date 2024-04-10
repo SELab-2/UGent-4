@@ -67,11 +67,10 @@ export function SubjectsPage() {
         setOpenDeletePopup(true);
     }
     const doDelete = async () => {
-        //setAssignments(assignments.filter((_, i) => i !== deleteIndex));
+        setAssignments(assignments.filter((_, i) => i !== deleteIndex));
         try {
             const deletedAssignment = assignments[deleteIndex];
             await instance.delete(`/projecten/${deletedAssignment.project_id}/`);
-            await fetchData();
         } catch(error) {
             console.error("Error deleting data:", error);
         }
@@ -81,32 +80,21 @@ export function SubjectsPage() {
         setOpenArchivePopup(true);
     }
     const doArchive = async () => {
-        //const newAssignments = assignments.map((a, i) => i==archiveIndex? archiveSingleAssignment(a): a);
-        //setAssignments(newAssignments);
+        const newAssignments = assignments.map((a, i) => i==archiveIndex? archiveSingleAssignment(a): a);
+        setAssignments(newAssignments);
         try {
-            const config = {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            };
             const assignment = assignments[archiveIndex];
-            const archivedAssignment = archiveSingleAssignment(assignment);
-            await instance.put(`/projecten/${assignment.project_id}/`, archivedAssignment, config).catch((error) => {
-                console.error(error);
-                console.log(error.response.data);
-            });
-            await fetchData();
+            await instance.patch(`/projecten/${assignment.project_id}/`, {gearchiveerd: true});
         } catch(error) {
             console.error("Error updating data:", error);
         }
     }
     const changeVisibilityAssignment = async (index: number) => {
-        //const newAssignments = assignments.map((a, i) => i==index? changeVisibilitySingleAssignment(a): a);
-        //setAssignments(newAssignments);
+        const newAssignments = assignments.map((a, i) => i==index? changeVisibilitySingleAssignment(a): a);
+        setAssignments(newAssignments);
         try {
-            const changedVisibilityAssignment = changeVisibilitySingleAssignment(assignments[index]);
-            await instance.put(`/projecten/${changedVisibilityAssignment.project_id}/`, changedVisibilityAssignment);
-            await fetchData();
+            const assignment = assignments[index];
+            await instance.patch(`/projecten/${assignment.project_id}/`, {zichtbaar: !assignment.zichtbaar});
         } catch(error) {
             console.error("Error updating data:", error);
         }
@@ -159,24 +147,11 @@ export function SubjectsPage() {
     );
 }
 
-function archiveSingleAssignment(assignment: Project): FormData {
-    const formData = new FormData();
-    formData.append('titel', assignment.titel);
-    formData.append('beschrijving', assignment.beschrijving);
-
-    //TODO upload correct file
-    const blob = new Blob(["fileContent"], { type: 'text/plain' });
-    const file = new File([blob], 'example.txt', { type: 'text/plain' });
-    formData.append('opgave_bestand', file);
-    
-    formData.append('vak', assignment.vak.toString());
-    formData.append('max_score', assignment.max_score.toString());
-    formData.append('max_groep_grootte', assignment.max_groep_grootte.toString());
-    if(assignment.deadline != null) formData.append('deadline', assignment.deadline.toString());
-    if(assignment.extra_deadline != null) formData.append('extra_deadline', assignment.extra_deadline.toString());
-    formData.append('zichtbaar', assignment.zichtbaar.toString());
-    formData.append('gearchiveerd', "true");
-    return formData;
+function archiveSingleAssignment(assignment: Project): Project {
+    return {
+        ...assignment,
+        gearchiveerd: true,
+    }
 }
 
 function changeVisibilitySingleAssignment(assignment: Project): Project {
