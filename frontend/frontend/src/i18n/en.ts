@@ -81,6 +81,10 @@ const english = {
     confirm: "Confirm",
     save_project_warning: "Save Project?",
     visible_for_everyone: "These changes are visible for everyone.",
+    no_restrictions: "No restrictions found",
+    pending: "Not yet completed",
+    failed: "Failed",
+    result: "Result",
 };
 
 export default english;
