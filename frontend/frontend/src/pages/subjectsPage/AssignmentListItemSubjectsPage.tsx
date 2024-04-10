@@ -7,40 +7,6 @@ import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { useState } from "react";
 
-interface AssignmentListItemSubjectsPageProps {
-    projectName: string;
-    dueDate?: Date;
-    submission: Indiening;
-    score: Score;
-    maxScore: number;
-    isStudent: boolean;
-    archived: boolean;
-    visible: boolean;
-    deleteEvent: () => void;
-    archiveEvent: () => void;
-    visibilityEvent: () => void;
-}
-
-interface Indiening {
-    indiening_id: number,
-    groep: number,
-    tijdstip: Date,
-    status: boolean,
-    indiening_bestanden: Bestand[],
- }
-
- interface Bestand {
-    indiening_bestand_id: number,
-    indiening: number,
-    bestand: File | null,
- }
-
- interface Score {
-    score_id: number,
-    score: number,
-    indiening: number,
-}
-
 /*
 * This component is used to display a single assignment in the list of assignments
 * @param projectName: string - the name of the project
@@ -55,15 +21,15 @@ interface Indiening {
 * @param visibilityEvent: () => void - event to call to change visibility of assignment
 */
 
-export function AssignmentListItemSubjectsPage({projectName, dueDate, submission, score, maxScore, isStudent, archived, visible,
-    deleteEvent, archiveEvent, visibilityEvent}:AssignmentListItemSubjectsPageProps) {
+export function AssignmentListItemSubjectsPage({projectName, dueDate, submissions, score, maxScore, isStudent, archived, visible,
+    deleteEvent, archiveEvent, visibilityEvent, courseId, assignmentId}) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
         if(isStudent){
-            navigate("/assignment_student");
+            navigate(`/course_student/${courseId}/assignment/${assignmentId}`);
         } else {
-            navigate("/assignment_teacher");
+            navigate(`/course_teacher/${courseId}/assignment/${assignmentId}`);
         }
     }
 
@@ -84,8 +50,12 @@ export function AssignmentListItemSubjectsPage({projectName, dueDate, submission
                         <>
                             <ListItemText sx={{maxWidth:100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth:110}} primary={dueDate? dueDate.toLocaleDateString() : t("no_deadline")}/>
-                            <ListItemText sx={{maxWidth:150}} primary={t("last_submission") + " " + submission.tijdstip.toLocaleDateString()}/>
-                            <ListItemText sx={{maxWidth:100}} primary={score.score + "/" + maxScore + " " + (100 * score.score / maxScore) + "%"}/>
+                            <ListItemText sx={{maxWidth:150}} primary={submissions>0? (submissions>1? submissions + " " + t('submissions'): submissions + " " + t('submission')) : t('no_submissions')}/>
+                            {submissions>0?
+                                <ListItemText sx={{maxWidth:100}} primary={score?.score ? `${score.score}/${maxScore} (${(100 * score.score / maxScore)}%)` : t('no_score_yet')}/>
+                            :
+                                <ListItemText sx={{maxWidth:100}} primary={`0/${maxScore} (0%)`}/>
+                            }
                         </>
                         :
                         <>
