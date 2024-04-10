@@ -6,7 +6,7 @@ const english = {
     current_courses: "Current courses",
     archived: "Archived",
     no_deadline: "No deadline",
-    add_admin: "Add admin",
+    add_teacher: "Add teacher",
     submission: "Submission",
     submissions: "Submissions",
     no_submission: "no submission",
@@ -77,7 +77,18 @@ const english = {
     edit_scores_warning: "Edit Scores?",
     everyone_can_see: "Everyone can see these changes.",
     undo_changes_warning: "Undo Changes?",
+    optional: "Optional",
+    deadlineCheck: "extra deadline must be after the first deadline",
+    not_before_now: "Deadline must be in the future",
+    noStudentsYet: "No students yet",
+    change_groups: "Change groups?",
     confirm: "Confirm",
+    save_project_warning: "Save Project?",
+    visible_for_everyone: "These changes are visible for everyone.",
+    no_restrictions: "No restrictions found",
+    pending: "Not yet completed",
+    failed: "Failed",
+    result: "Result",
 };
 
 export default english;

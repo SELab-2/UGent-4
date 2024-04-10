@@ -92,15 +92,16 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
     return (
         <>
             <Box aria-label={"courseHeader"}
-                sx={{backgroundColor: "secondary.main",
-                    margin:0,
-                    height: 50,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    padding:3,
-                }}>
-                {!gebruiker.is_lesgever?
+                 sx={{
+                     backgroundColor: "secondary.main",
+                     margin: 0,
+                     height: 50,
+                     display: "flex",
+                     flexDirection: "row",
+                     justifyContent: "space-between",
+                     padding: 3,
+                 }}>
+                {!gebruiker.is_lesgever ?
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
@@ -116,16 +117,17 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                 }
             </Box>
             <Box aria-label={"assignmentList"}
-                sx={{backgroundColor: "background.default",
-                    height: 340,
-                    display: "flex",
-                    flexDirection: "column",
-                    padding:1,
-                    borderRadius:2,
-                    paddingBottom:0
-                }}>
+                 sx={{
+                     backgroundColor: "background.default",
+                     height: 340,
+                     display: "flex",
+                     flexDirection: "column",
+                     padding: 1,
+                     borderRadius: 2,
+                     paddingBottom: 0
+                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
+                    <Box sx={{width: "100%", height: 320, overflow: "auto"}}>
                         <List disablePadding={true}>
                             {projects
                             .map((project, index) => ({...project, index}))

@@ -6,6 +6,7 @@ import instance from "../axiosConfig.ts";
 import {AssignmentListItem} from "./AssignmentListItem.tsx";
 import List from "@mui/material/List";
 import ArchiveOutlinedIcon from "@mui/icons-material/ArchiveOutlined";
+import course, {project} from "../pages/mainPage/MainPage.tsx";
 /*
 * CourseCard component displays a card with course information and a list of assignments
 * @param courseId: string, the id of the course
@@ -22,20 +23,25 @@ interface CourseCardProps {
 }
 
 export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
-    const [course, setCourse] = useState(null);
-    const [assignments, setAssignments] = useState([]);
-    const [teachers, setTeachers] = useState<any[]>([]);
+    const [course, setCourse] = useState<course>({
+        vak_id: 0,
+        naam: "",
+        studenten: [],
+        lesgevers: [],
+    });
+    const [assignments, setAssignments] = useState<project[]>([]);
+    const [teachers, setTeachers] = useState<{ first_name: string, last_name: string }[]>([]);
     const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const courseResponse = await instance.get(`/vakken/${courseId}/`);
-                const assignmentsResponse = await instance.get(`/projecten/?vak=${courseId}`);
-    
+                const courseResponse = await instance.get<course>(`/vakken/${courseId}/`);
+                const assignmentsResponse = await instance.get<project[]>(`/projecten/?vak=${courseId}`);
+
                 setCourse(courseResponse.data);
                 setAssignments(assignmentsResponse.data);
-    
+
                 if (courseResponse.data && courseResponse.data.lesgevers) {
                     const lesgevers = [];
                     for (const teacherId of courseResponse.data.lesgevers) {
@@ -52,8 +58,9 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                 console.error("Error fetching data:", error);
             }
         }
-        fetchData();
-    }, []);
+
+        fetchData().catch((error) => console.error("Error fetching data:", error));
+    }, [courseId]);
 
     const handleCardClick = () => {
         console.log("Card clicked");
@@ -103,7 +110,8 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                      justifyContent={"center"}>
                                     <Typography variant={"h4"}>{course.naam}</Typography>
                                     {teachers.map((teacher) => (
-                                        <Typography variant={"subtitle1"}>{t("teachers") + ": "}{teacher.first_name + " " + teacher.last_name}</Typography>
+                                        <Typography
+                                            variant={"subtitle1"}>{t("teachers") + ": "}{teacher.first_name + " " + teacher.last_name}</Typography>
                                     ))}
                                 </Box>
                                 <Box>
@@ -152,10 +160,11 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                     <Box sx={{width: "100%", height: 130, overflow: "auto"}}>
                                         <List disablePadding={true}>
                                             {assignments.map((assignment) => (
-                                                <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
+                                                <AssignmentListItem key={assignment.project_id}
+                                                                    id={assignment.project_id.toString()}
                                                                     projectName={assignment.titel}
                                                                     dueDate={new Date(assignment.deadline) || null}
-                                                                    status={assignment.project_id === "assignment1"} // dit moet nog aangepast worden
+                                                                    status={assignment.project_id === 1} //TODO dit moet nog aangepast worden
                                                                     isStudent={isStudent}/>
                                             ))}
                                         </List>
@@ -164,10 +173,13 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                         <Box sx={{width: "90%", height: 130}}>
                                             <List disablePadding={true}>
                                                 {assignments.map((assignment) => (
-                                                    <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
+                                                    <AssignmentListItem key={assignment.project_id}
+                                                                        id={assignment.project_id.toString()}
                                                                         projectName={assignment.titel}
                                                                         dueDate={new Date(assignment.deadline) || null}
-                                                                        status={assignment.project_id === "assignment1"}
+                                                                        status={assignment.project_id === 1
+                                                                            //TODO: status has to check if there is already a submission
+                                                                        }
                                                                         isStudent={isStudent}/>
                                                 ))}
                                             </List>
@@ -175,10 +187,11 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                         <Box sx={{width: "100%", height: 130}}>
                                             <List disablePadding={true}>
                                                 {assignments.map((assignment) => (
-                                                    <AssignmentListItem key={assignment.project_id} id={assignment.project_id}
+                                                    <AssignmentListItem key={assignment.project_id}
+                                                                        id={assignment.project_id.toString()}
                                                                         projectName={assignment.titel}
                                                                         dueDate={new Date(assignment.deadline) || null}
-                                                                        status={assignment.project_id === "assignment1"}
+                                                                        status={assignment.project_id === 1}
                                                                         isStudent={isStudent}/>
                                                 ))}
                                             </List>

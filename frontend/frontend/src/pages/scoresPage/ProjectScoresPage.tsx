@@ -1,7 +1,7 @@
-import { Header } from "../../components/Header";
-import { Box, Button, Stack } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
-import { StudentsView } from "./StudentsView.tsx";
+import {Header} from "../../components/Header";
+import {Box, Button, Stack} from "@mui/material";
+import {useNavigate, useParams} from "react-router-dom";
+import {StudentsView} from "./StudentsView.tsx";
 import {t} from "i18next";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
