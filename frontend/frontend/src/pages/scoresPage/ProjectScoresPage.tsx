@@ -43,7 +43,7 @@ export function ProjectScoresPage() {
 
         for(const groep of groepen){
             const score = groep.score;
-            console.log(score.score);
+            console.log(score?.score);
             try {
                 await instance.put(`/scores/${score.score_id}/`, score);
             } catch (error) {
@@ -88,7 +88,7 @@ export function ProjectScoresPage() {
                         <Button onClick={() => setOpenDeleteScoresPopup(true)} variant="contained" color="secondary" startIcon={<CloseIcon />}/>
                     </Box>
                 </Box>
-                <WarningPopup title={t("edit_scores_warning")} content={t("everyone_can_see")}
+                <WarningPopup title={t("edit_scores_warning")} content={t("visible_for_everyone")}
                 buttonName={t("confirm")} open={openSaveScoresPopup} handleClose={() => setOpenSaveScoresPopup(false)} doAction={saveScores}/>
                 <WarningPopup title={t("undo_changes_warning")} content={t("cant_be_undone")}
                 buttonName={t("confirm")} open={openDeleteScoresPopup} handleClose={() => setOpenDeleteScoresPopup(false)} doAction={deleteScores}/>

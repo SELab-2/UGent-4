@@ -75,7 +75,6 @@ const dutch = {
     archive: "Archiveer",
     no_score_yet: "Nog geen score",
     edit_scores_warning: "Scores Aanpassen?",
-    everyone_can_see: "Deze aanpassingen zijn voor iedereen zichtbaar.",
     undo_changes_warning: "Aanpassingen Verwijderen?",
     optional: "Optioneel",
     deadlineCheck: "extra deadline moet na de eerste deadline liggen",

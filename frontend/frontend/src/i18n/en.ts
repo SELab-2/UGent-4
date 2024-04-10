@@ -75,7 +75,6 @@ const english = {
     archive: "Archive",
     no_score_yet: "No score yet",
     edit_scores_warning: "Edit Scores?",
-    everyone_can_see: "Everyone can see these changes.",
     undo_changes_warning: "Undo Changes?",
     optional: "Optional",
     deadlineCheck: "extra deadline must be after the first deadline",
