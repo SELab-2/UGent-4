@@ -5,7 +5,7 @@ import {StudentsView} from "./StudentsView.tsx";
 import {t} from "i18next";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
 
@@ -17,16 +17,16 @@ interface ScoreGroep {
 }
 
 export function ProjectScoresPage() {
-    let { courseId } = useParams();
+    const {courseId} = useParams();
     const vakId = Number(courseId);
-    let { assignmentId } = useParams();
+    const {assignmentId} = useParams();
     const projectId = Number(assignmentId);
 
     const [openSaveScoresPopup, setOpenSaveScoresPopup] = useState(false);
-    const [openDeleteScoresPopup, setOpenDeleteScoresPopup] = useState(false); 
+    const [openDeleteScoresPopup, setOpenDeleteScoresPopup] = useState(false);
 
     const [project, setProject] = useState<any>();
-    const [groepen, setGroepen] = useState<ScoreGroep[]>([]); 
+    const [groepen, setGroepen] = useState<ScoreGroep[]>([]);
 
     const navigate = useNavigate();
 
@@ -41,7 +41,7 @@ export function ProjectScoresPage() {
     const saveScores = async () => {
         console.log("save scores");
 
-        for(const groep of groepen){
+        for (const groep of groepen) {
             const score = groep.score;
             console.log(score?.score);
             try {
@@ -51,12 +51,12 @@ export function ProjectScoresPage() {
             }
         }
 
-        navigate(`/course_teacher/${vakId}/assignment/${projectId}`);
+        navigate(`/course/${vakId}/assignment/${projectId}`);
     }
 
     const deleteScores = () => {
         console.log("delete scores");
-        navigate(`/course_teacher/${vakId}/assignment/${projectId}`);
+        navigate(`/course/${vakId}/assignment/${projectId}`);
     }
 
     useEffect(() => {
@@ -68,30 +68,38 @@ export function ProjectScoresPage() {
                 console.log("Error fetching data:", error);
             }
         }
+
         fetchData();
     }, []);
 
     return (
         <>
-            <Stack direction={"column"} spacing={0} sx={{width:"100%" ,height:"100%", backgroundColor:"background.default"}}>
-                <Header variant={"default"} title={project?.titel + ": Scores"} />
-                <Box sx={{ width: '100%', height:"70%", marginTop:10, boxShadow: 3, borderRadius: 3 }}>
+            <Stack direction={"column"} spacing={0}
+                   sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
+                <Header variant={"default"} title={project?.titel + ": Scores"}/>
+                <Box sx={{width: '100%', height: "70%", marginTop: 10, boxShadow: 3, borderRadius: 3}}>
                     <StudentsView project={project} groepen={groepen} setGroepen={setGroepen}/>
                 </Box>
-                <Box display="flex" flexDirection="row" sx={{ width: '100%', height:"30%", marginTop:5 }}>
-                    <Box display="flex" flexDirection="row" sx={{ width: '50%', height:"auto" }}>
-                        <Button onClick={exportSubmissions} variant="contained" color="secondary">{t("export_submissions")}</Button>
-                        <Button onClick={uploadScores} variant="contained" color="secondary">{t("upload_scores")}</Button>
+                <Box display="flex" flexDirection="row" sx={{width: '100%', height: "30%", marginTop: 5}}>
+                    <Box display="flex" flexDirection="row" sx={{width: '50%', height: "auto"}}>
+                        <Button onClick={exportSubmissions} variant="contained"
+                                color="secondary">{t("export_submissions")}</Button>
+                        <Button onClick={uploadScores} variant="contained"
+                                color="secondary">{t("upload_scores")}</Button>
                     </Box>
-                    <Box display="flex" flexDirection="row-reverse" sx={{ width: '50%', height:"auto" }}>
-                        <Button onClick={() => setOpenSaveScoresPopup(true)} variant="contained" startIcon={<SaveIcon />}/>
-                        <Button onClick={() => setOpenDeleteScoresPopup(true)} variant="contained" color="secondary" startIcon={<CloseIcon />}/>
+                    <Box display="flex" flexDirection="row-reverse" sx={{width: '50%', height: "auto"}}>
+                        <Button onClick={() => setOpenSaveScoresPopup(true)} variant="contained"
+                                startIcon={<SaveIcon/>}/>
+                        <Button onClick={() => setOpenDeleteScoresPopup(true)} variant="contained" color="secondary"
+                                startIcon={<CloseIcon/>}/>
                     </Box>
                 </Box>
                 <WarningPopup title={t("edit_scores_warning")} content={t("visible_for_everyone")}
-                buttonName={t("confirm")} open={openSaveScoresPopup} handleClose={() => setOpenSaveScoresPopup(false)} doAction={saveScores}/>
+                              buttonName={t("confirm")} open={openSaveScoresPopup}
+                              handleClose={() => setOpenSaveScoresPopup(false)} doAction={saveScores}/>
                 <WarningPopup title={t("undo_changes_warning")} content={t("cant_be_undone")}
-                buttonName={t("confirm")} open={openDeleteScoresPopup} handleClose={() => setOpenDeleteScoresPopup(false)} doAction={deleteScores}/>
+                              buttonName={t("confirm")} open={openDeleteScoresPopup}
+                              handleClose={() => setOpenDeleteScoresPopup(false)} doAction={deleteScores}/>
             </Stack>
         </>
     );
