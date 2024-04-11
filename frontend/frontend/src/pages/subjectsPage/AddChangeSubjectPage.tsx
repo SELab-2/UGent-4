@@ -58,6 +58,10 @@ export function AddChangeSubjectPage() {
   };
 
   const handleUploadClickStudent = () => {
+    if(!/^\+?(0|[1-9]\d*)$/.test(numStudent)){
+      //Test if numStudent is an int
+      return
+    }
     instance.get('gebruikers/' + numStudent).then((res)=>{
       setStudents((oldstudents)=>{
         //This is like this to prevent the same user being in the list twice
@@ -96,6 +100,36 @@ export function AddChangeSubjectPage() {
       return oldteacher
     })
     setOpenTeacher(false);
+  };
+
+  const handleUploadClickTeacher = () => {
+    if(!/^\+?(0|[1-9]\d*)$/.test(numTeacher)){
+      //Test if numTeacher is an int
+      return
+    }
+    instance.get('gebruikers/' + numTeacher).then((res)=>{
+      setTeachers((oldteacher)=>{
+        //This is like this to prevent the same user being in the list twice
+        var found=false;
+        console.log("res.data");
+        console.log(res.data);
+        const id=res.data.user;
+        for (const teacher of oldteacher){
+          if (teacher.user==id){
+            found = true;
+          }
+        }
+        if (found) {
+          return oldteacher
+        }else{
+          return [...oldteacher, res.data]
+        }
+
+      });
+    }).catch((err) => {
+          console.log(err);
+        }
+    );
   };
 
   useEffect(() =>{
@@ -283,8 +317,8 @@ export function AddChangeSubjectPage() {
                 />
                 <Box display={"flex"} flexDirection={"row"}>
                   <TextField type="text" placeholder={t("teacher")}
-                             onChange={(event) => setNumStudent(event.target.value)}/>
-                  <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
+                             onChange={(event) => setNumTeacher(event.target.value)}/>
+                  <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleUploadClickTeacher}>
                     {t("add")}
                   </Button>
                 </Box>
