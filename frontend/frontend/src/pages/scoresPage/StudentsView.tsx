@@ -53,7 +53,12 @@ export function StudentsView({project, groepen, setGroepen}) {
                 };
             } catch (error) {
                 console.error("Error fetching data:", error);
-                return scoregroep;
+                return {
+                    ...scoregroep,
+                    score: {
+                        score: undefined,
+                    },
+                };
             }
         }
 
