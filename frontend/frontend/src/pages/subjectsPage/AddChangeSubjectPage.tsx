@@ -31,7 +31,8 @@ export function AddChangeSubjectPage() {
   const params = useParams()
   // State for the different fields of the subject
   const [title, setTitle] = useState("");
-  const [num, setNum] = useState("");
+  const [numStudent, setNumStudent] = useState("");
+  const [numTeacher, setNumTeacher] = useState("");
   const [students, setStudents]  = useState([]);
   const [teachers, setTeachers]  = useState([]);
   const [selectedStudent, setSelectedStudent] = useState(0);
@@ -54,6 +55,30 @@ export function AddChangeSubjectPage() {
       return oldstudents
     })
     setOpenStudent(false);
+  };
+
+  const handleUploadClickStudent = () => {
+    instance.get('gebruikers/' + numStudent).then((res)=>{
+      setStudents((oldstudents)=>{
+        //This is like this to prevent the same user being in the list twice
+        var found=false;
+        const id=res.data.user;
+        for (const student of oldstudents){
+          if (student.user==id){
+            found = true;
+          }
+        }
+        if (found) {
+          return oldstudents
+        }else{
+          return [...oldstudents, res.data]
+        }
+
+      });
+    }).catch((err) => {
+          console.log(err);
+        }
+    );
   };
 
   const handleCloseTeacher = (value: string) => {
@@ -97,7 +122,6 @@ export function AddChangeSubjectPage() {
           });
 
         }).catch((err) => {
-              setTitle("miserie");
               console.log(err);
             }
         );
@@ -122,7 +146,6 @@ export function AddChangeSubjectPage() {
           });
 
         }).catch((err) => {
-              setTitle("miserie");
               console.log(err);
             }
         );
@@ -194,8 +217,8 @@ export function AddChangeSubjectPage() {
                 />
                 <Box display={"flex"} flexDirection={"row"}>
                   <TextField type="text" placeholder={t("studentnumber")}
-                           onChange={(event) => setNum(event.target.value)}/>
-                  <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
+                           onChange={(event) => setNumStudent(event.target.value)}/>
+                  <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleUploadClickStudent}>
                   {t("add")}
                   </Button>
                 </Box>
@@ -260,7 +283,7 @@ export function AddChangeSubjectPage() {
                 />
                 <Box display={"flex"} flexDirection={"row"}>
                   <TextField type="text" placeholder={t("teacher")}
-                             onChange={(event) => setNum(event.target.value)}/>
+                             onChange={(event) => setNumStudent(event.target.value)}/>
                   <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
                     {t("add")}
                   </Button>
