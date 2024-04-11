@@ -130,9 +130,9 @@ export function AddChangeAssignmentPage() {
     //handle the cancelation of changes
     const handleCancel = () => {
         if (assignmentId !== undefined) {
-            navigate('/course_teacher/' + courseId + '/assignment/' + assignmentId);
+            navigate('/course/' + courseId + '/assignment/' + assignmentId);
         } else {
-            navigate('/course_teacher/' + courseId);
+            navigate('/course/' + courseId);
         }
     }
 
@@ -283,7 +283,7 @@ export function AddChangeAssignmentPage() {
 
         } else {
             //if there is no assignmentId, it is a new assignment
-            await instance.patch('/projecten/', formData, config).catch((error) => {
+            await instance.post('/projecten/', formData, config).catch((error) => {
                 console.error(error)
             });
 
@@ -292,9 +292,9 @@ export function AddChangeAssignmentPage() {
         console.info('Form submitted', title, description, dueDate, restrictions, visible, assignmentFile)
         setSaveConfirmation(false);
         if (assignmentId !== undefined) {
-            navigate('/course_teacher/' + courseId + '/assignment/' + assignmentId);
+            navigate('/course/' + courseId + '/assignment/' + assignmentId);
         } else {
-            navigate('/course_teacher/' + courseId);
+            navigate('/course/' + courseId);
         }
     }
 
