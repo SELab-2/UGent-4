@@ -5,7 +5,6 @@ import {ChangeEvent, useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import List from '@mui/material/List';
 import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
-//import {Dayjs} from "dayjs";
 import {t} from "i18next";
 import {DateTimePicker, LocalizationProvider, renderTimeViewClock} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs/AdapterDayjs";
@@ -35,11 +34,43 @@ export function AddChangeSubjectPage() {
   const [num, setNum] = useState("");
   const [students, setStudents]  = useState([]);
   const [teachers, setTeachers]  = useState([]);
-  const [open, setOpen] = useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(0);
+  const [openStudent, setOpenStudent] = useState(false);
+  const [selectedTeacher, setSelectedTeacher] = useState(0);
+  const [openTeacher, setOpenTeacher] = useState(false);
 
+  const handleCloseStudent = (value: string) => {
+    setOpenStudent(false);
+  };
 
-  const handleClose = (value: string) => {
-    setOpen(false);
+  const handleRemoveStudent = (value: string) => {
+    setStudents((oldstudents)=>{
+      for (let i = 0; i < oldstudents.length; i++) {
+        if(oldstudents[i].user==selectedStudent){
+          oldstudents.splice(i, 1);
+          return oldstudents
+        }
+      }
+      return oldstudents
+    })
+    setOpenStudent(false);
+  };
+
+  const handleCloseTeacher = (value: string) => {
+    setOpenTeacher(false);
+  };
+
+  const handleRemoveTeacher = (value: string) => {
+    setTeachers((oldteacher)=>{
+      for (let i = 0; i < oldteacher.length; i++) {
+        if(oldteacher[i].user==selectedTeacher){
+          oldteacher.splice(i, 1);
+          return oldteacher
+        }
+      }
+      return oldteacher
+    })
+    setOpenTeacher(false);
   };
 
   useEffect(() =>{
@@ -104,36 +135,6 @@ export function AddChangeSubjectPage() {
 
 
 
-  // const testpress = () => {
-  //   instance.get('vakken/1').then((res) => {
-  //
-  //     console.log(res.data);
-  //
-  //     setTitle(res.data.naam);
-  //     console.log(res.data.studenten);
-  //     setStudents(res.data.studenten);
-  //     setTeachers(res.data.lesgevers);
-  //     console.log("for loop");
-  //     for (const id in res.data.studenten) {
-  //       console.log("in for");
-  //       instance.get('gebruikers/'+id).then((res)=> {
-  //         console.log("in then");
-  //         console.log(id);
-  //         console.log(res.data);
-  //       }).catch((err) => {
-  //             console.log(err);
-  //           }
-  //       );
-  //     }
-  //
-  //   }).catch((err) => {
-  //         console.log(err);
-  //       }
-  //   );
-  // }
-
-
-
 
   return (<>
       <Stack direction={"column"} >
@@ -157,7 +158,8 @@ export function AddChangeSubjectPage() {
                 {students.map((student) => {
 
                   const handleClickOpen = () => {
-                    setOpen(true);
+                    setSelectedStudent(student.user);
+                    setOpenStudent(true);
                   };
 
 
@@ -201,15 +203,15 @@ export function AddChangeSubjectPage() {
             </Box>
           </Box>
 
-          <Dialog onClose={handleClose} open={open}>
+          <Dialog onClose={handleCloseStudent} open={openStudent}>
             <Box padding={2} alignItems={'center'} gap={1}>
               <Typography> {t("delete_student")+"?"} </Typography>
               <Typography> {t("this_can_not_be_undone")} </Typography>
               <Box display={'flex'} flexDirection={"row"}>
-                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleClose}>
+                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleCloseStudent}>
                   {t("cancel")}
                 </Button>
-                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
+                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleRemoveStudent}>
                   {t("delete")}
                 </Button>
               </Box>
@@ -223,7 +225,8 @@ export function AddChangeSubjectPage() {
                 {teachers.map((teacher) => {
 
                   const handleClickOpen = () => {
-                    setOpen(true);
+                    setSelectedTeacher(teacher.user);
+                    setOpenTeacher(true);
                   };
 
                   return (<>
@@ -266,20 +269,21 @@ export function AddChangeSubjectPage() {
             </Box>
           </Box>
 
-          <Dialog onClose={handleClose} open={open}>
+          <Dialog onClose={handleCloseStudent} open={openTeacher}>
             <Box padding={2} alignItems={'center'} gap={1}>
               <Typography> {t("delete_teacher")+"?"} </Typography>
               <Typography> {t("this_can_not_be_undone")} </Typography>
               <Box display={'flex'} flexDirection={"row"}>
-                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleClose}>
+                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleCloseTeacher}>
                   {t("cancel")}
                 </Button>
-                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
+                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleRemoveTeacher}>
                   {t("delete")}
                 </Button>
               </Box>
             </Box>
           </Dialog>
+
         </Stack>
       </Stack>
     </>);
