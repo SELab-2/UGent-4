@@ -102,7 +102,6 @@ export function AssignmentPage() {
         }
     };
 
-    // PUT werkt nog niet (JSON-object meegeven in de plaats)
     const uploadIndiening = async () => {
         if (submissionFile){
             const config = {
@@ -110,10 +109,29 @@ export function AssignmentPage() {
                     'Content-Type': 'application/json',
                 },
             };
-            await instance.put('/api/indieningen/', submissionFile, config).catch((error) => {
-                console.error(error)
-            });
-            setSubmissionFile(undefined);
+            const groupResponse = await instance.get(`/groepen/?project=${assignmentId}`)
+            if (groupResponse.data){
+                const data = {
+                    groep: groupResponse.data[0].groep_id,
+                    indiening_bestanden: [{}],
+                }
+                const indieningResponse = await instance.post('/indieningen/', data, config);
+                if (indieningResponse.data){
+                    const bestandData = {
+                        groep: groupResponse.data.groep_id,
+                        indiening_bestanden: [
+                            {
+                                indiening: indieningResponse.data.indiening_id,
+                                bestand: submissionFile,
+                            }
+                        ]
+                    }
+                    await instance.post('/indieningen/', bestandData, config).catch((error) => {
+                        console.error(error)
+                    });
+                    setSubmissionFile(undefined);
+                }
+            }
         }
     }
     
