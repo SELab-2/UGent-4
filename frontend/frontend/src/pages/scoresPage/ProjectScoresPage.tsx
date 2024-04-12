@@ -48,10 +48,10 @@ export function ProjectScoresPage() {
                 if(score.score_id !== undefined){
                     await instance.put(`/scores/${score.score_id}/`, score);
                 } else {
-                    const formData = new FormData();
-                    formData.append('score', score.score);
-                    formData.append('indiening', parseInt(groep.lastSubmission.indiening_id as string).toString());
-                    await instance.post(`/scores/`, formData);
+                    await instance.post(`/scores/`, {
+                        score: parseInt(groep.score.score),
+                        indiening: parseInt(groep.lastSubmission.indiening_id),
+                    });
                 }
             } catch (error) {
                 console.error("Error updating data:", error);
