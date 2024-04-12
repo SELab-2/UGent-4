@@ -64,7 +64,9 @@ export function MainPage() {
             instance.get("/projecten/").then((response: AxiosResponse) => {
                 const deadlines: Dayjs[] = [];
                 response.data.forEach((project: project) => {
-                        deadlines.push(dayjs(project.deadline, "YYYY-MM-DD-HH:mm:ss"));
+                        if (project.zichtbaar && !project.gearchiveerd) {
+                            deadlines.push(dayjs(project.deadline, "YYYY-MM-DD-HH:mm:ss"));
+                        }
                     }
                 )
                 console.log(deadlines);
