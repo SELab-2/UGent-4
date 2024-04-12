@@ -20,11 +20,11 @@ interface AssignmentListItemStudentPageProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItemStudentPage({id, studentName, dueDate, status}: AssignmentListItemStudentPageProps) {
+export function AssignmentListItemStudentPage({id, studentName, dueDate, status, assignmentUrl}: AssignmentListItemStudentPageProps) {
     const navigate = useNavigate();
     const handleProjectClick = () => {
         console.log("Project clicked");
-        navigate(`/${id}`)
+        navigate(`${assignmentUrl}${id}`)
     }
 
     return (
