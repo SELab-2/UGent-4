@@ -19,8 +19,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
     useEffect(() => {
         async function fetchGroup(assignment): Promise<ProjectStudent> {
             try {
-                //TODO vul bij student gebruiker.user in
-                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=6`);
+                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=${gebruiker.user}`);
                 if(groupResponse.data.length == 0){
                     return {
                         assignment: assignment,
