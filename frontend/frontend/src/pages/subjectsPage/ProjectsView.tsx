@@ -131,6 +131,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                             {projects
                             .map((project, index) => ({...project, index}))
                             .filter((project) => project.assignment.gearchiveerd == archived)
+                            .filter((project) => project.assignment.zichtbaar || gebruiker.is_lesgever)
                             .map((project) => 
                                 <AssignmentListItemSubjectsPage key={project.assignment.project_id} projectName={project.assignment.titel}
                                     dueDate={new Date(project.assignment.deadline)} submissions={project.submissions}
