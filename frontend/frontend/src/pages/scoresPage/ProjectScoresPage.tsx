@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useEffect, useState } from "react";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
+import JSZip from 'jszip';
 
 interface ScoreGroep {
     group: any,
@@ -32,6 +33,7 @@ export function ProjectScoresPage() {
 
     const exportSubmissions = () => {
         console.log("export submissions");
+        downloadAllSubmissions();
     }
 
     const uploadScores = () => {
@@ -77,6 +79,47 @@ export function ProjectScoresPage() {
         }
         fetchData();
     }, []);
+
+    const downloadAllSubmissions = () => {
+        const zip = new JSZip();
+        const downloadPromises: Promise<void>[] = [];
+        groepen.filter((groep) => groep.lastSubmission !== undefined)
+        .map((groep) => groep.lastSubmission)
+        .forEach((submission, index) => {
+            downloadPromises.push(
+                new Promise((resolve, reject) => {
+                    instance.get(`/indieningen/${submission.indiening_id}/indiening_bestanden/`, { responseType: 'blob' }).then(res => {
+                            let filename = 'lege_indiening_zip.zip';
+                            if (submission.indiening_bestanden.length > 0) {
+                                filename = submission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+                            }
+                            if (filename !== 'lege_indiening_zip.zip') {
+                                zip.file(filename, res.data);
+                            }
+                            resolve();
+                        }).catch(err => {
+                            console.error(`Error downloading submission ${index + 1}:`, err);
+                            reject(err);
+                        });
+                })
+            );
+        });
+        Promise.all(downloadPromises).then(() => {
+                zip.generateAsync({ type: "blob" }).then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'all_submissions.zip';
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    }).catch(err => {
+                        console.error("Error generating zip file:", err);
+                    });
+        }).catch(err => {
+            console.error("Error downloading submissions:", err);
+        });
+    };
 
     return (
         <>
