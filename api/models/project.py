@@ -54,7 +54,7 @@ class Project(models.Model):
     opgave_bestand = models.FileField(upload_to=upload_to)
     vak = models.ForeignKey(Vak, on_delete=models.CASCADE)
     deadline = models.DateTimeField(null=True, blank=True)
-    extra_deadline = models.DateTimeField(null=True, blank=True, default=None)
+    extra_deadline = models.DateTimeField(null=True, blank=True)
     max_score = models.IntegerField(default=20)
     max_groep_grootte = models.IntegerField(default=1)
     zichtbaar = models.BooleanField(default=True, blank=True)
