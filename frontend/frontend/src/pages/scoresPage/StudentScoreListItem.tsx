@@ -1,23 +1,10 @@
 import {Divider, IconButton, ListItem, ListItemText, TextField} from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { t } from "i18next";
-import { useEffect, useState } from "react";
+import {t} from "i18next";
+import {useEffect, useState} from "react";
 import instance from "../../axiosConfig";
+import {Indiening} from "./ProjectScoresPage.tsx";
 
-interface Indiening {
-    indiening_id: number,
-    groep: number,
-    tijdstip: Date,
-    status: number,
-    result: string,
-    indiening_bestanden: IndieningBestand[],
-}
-
-interface IndieningBestand {
-    indiening_bestand_id: number,
-    indiening: number,
-    bestand: File,
-}
 
 interface StudentScoreListItemProps {
     key: number,
@@ -29,18 +16,27 @@ interface StudentScoreListItemProps {
     changeScore: (score: number) => void,
 }
 
-export function StudentScoreListItem({key, groupNumber, studenten, lastSubmission, score, maxScore, changeScore}: StudentScoreListItemProps) {
+export function StudentScoreListItem({
+                                         key,
+                                         groupNumber,
+                                         studenten,
+                                         lastSubmission,
+                                         score,
+                                         maxScore,
+                                         changeScore
+                                     }: StudentScoreListItemProps) {
     const [name, setName] = useState(t('group') + " " + groupNumber);
 
     useEffect(() => {
         async function fetchName() {
-            if(studenten.length == 1){
+            if (studenten.length == 1) {
                 const studentId = studenten[0];
                 const studentResponse = await instance.get(`/gebruikers/${studentId}/`);
                 setName(studentResponse.data.first_name + " " + studentResponse.data.last_name);
             }
         }
-        fetchName();
+
+        fetchName().catch(e => console.error(e));
     }, [studenten]);
 
     const downloadSubmission = () => {
@@ -48,6 +44,7 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
             instance.get(`/indieningen/${lastSubmission?.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
                 res => {
                     let filename = 'lege_indiening.zip';
+                    if (lastSubmission === undefined) return;
                     if (lastSubmission.indiening_bestanden.length > 0) {
                         filename = lastSubmission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
                     }
@@ -61,11 +58,11 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
                     a.click();
                     a.remove();
                 });
-        } catch(error) {
+        } catch (error) {
             console.error(error);
         }
     }
-    
+
     return (
         <>
             <ListItem key={key} sx={{margin: 0}} disablePadding={true}>
@@ -82,20 +79,22 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
                     <>
                         <ListItemText sx={{maxWidth: 200}} primary={name}/>
                         <ListItemText sx={{maxWidth: 300}}
-                                      primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
+                                      primary={lastSubmission ? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
-                            {lastSubmission?
+                            {lastSubmission ?
                                 <>
-                                    <TextField hiddenLabel defaultValue={score} onChange={(event) => changeScore(parseInt(event.target.value))}
-                                    variant="filled" size="small"/>
+                                    <TextField hiddenLabel defaultValue={score}
+                                               onChange={(event) => changeScore(parseInt(event.target.value))}
+                                               variant="filled" size="small"/>
                                     <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
                                 </>
-                            :
+                                :
                                 <ListItemText sx={{maxWidth: 100}} primary={"0/" + maxScore}/>
                             }
                         </ListItem>
                         <ListItem sx={{maxWidth: 100}}>
-                            <IconButton onClick={downloadSubmission} edge="end" aria-label="download" disabled={lastSubmission == undefined}>
+                            <IconButton onClick={downloadSubmission} edge="end" aria-label="download"
+                                        disabled={lastSubmission == undefined}>
                                 <DownloadIcon/>
                             </IconButton>
                         </ListItem>

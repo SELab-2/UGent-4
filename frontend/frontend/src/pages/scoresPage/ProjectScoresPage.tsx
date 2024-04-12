@@ -5,7 +5,7 @@ import {StudentsView} from "./StudentsView.tsx";
 import {t} from "i18next";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-import {useEffect, useState} from "react";
+import {ChangeEvent, useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
 import JSZip from 'jszip';
@@ -22,7 +22,7 @@ const VisuallyHiddenInput = styled('input')({
     width: 1,
 });
 
-interface Project {
+export interface Project {
     project_id: number,
     titel: string,
     beschrijving: string,
@@ -42,7 +42,7 @@ interface Groep {
     project: number,
 }
 
-interface Indiening {
+export interface Indiening {
     indiening_id: number,
     groep: number,
     tijdstip: Date,
@@ -54,7 +54,7 @@ interface Indiening {
 interface IndieningBestand {
     indiening_bestand_id: number,
     indiening: number,
-    bestand: File,
+    bestand: string,
 }
 
 interface Score {
@@ -63,7 +63,7 @@ interface Score {
     indiening?: number,
 }
 
-interface ScoreGroep {
+export interface ScoreGroep {
     group: Groep,
     group_number: number,
     lastSubmission?: Indiening,
@@ -71,10 +71,7 @@ interface ScoreGroep {
 }
 
 export function ProjectScoresPage() {
-    const {courseId} = useParams();
-    const vakId = Number(courseId);
-    const {assignmentId} = useParams();
-    const projectId = Number(assignmentId);
+    const {courseId, assignmentId} = useParams() as { courseId: string, assignmentId: string };
 
     const [openSaveScoresPopup, setOpenSaveScoresPopup] = useState(false);
     const [openDeleteScoresPopup, setOpenDeleteScoresPopup] = useState(false);
@@ -89,7 +86,7 @@ export function ProjectScoresPage() {
         downloadAllSubmissions();
     }
 
-    const uploadScores = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const uploadScores = (e: ChangeEvent<HTMLInputElement>) => {
         console.log("upload scores");
         handleParse(e);
     }
@@ -99,9 +96,9 @@ export function ProjectScoresPage() {
 
         for (const groep of groepen) {
             const score = groep.score;
-            if(score !== undefined && groep.lastSubmission !== undefined){
+            if (score !== undefined && groep.lastSubmission !== undefined) {
                 try {
-                    if(score.score_id !== undefined){
+                    if (score.score_id !== undefined) {
                         await instance.put(`/scores/${score.score_id}/`, score);
                     } else {
                         await instance.post(`/scores/`, {
@@ -115,37 +112,38 @@ export function ProjectScoresPage() {
             }
         }
 
-        navigate(`/course/${vakId}/assignment/${projectId}`);
+        navigate(`/course/${courseId}/assignment/${assignmentId}`);
     }
 
     const deleteScores = () => {
         console.log("delete scores");
-        navigate(`/course/${vakId}/assignment/${projectId}`);
+        navigate(`/course/${courseId}/assignment/${assignmentId}`);
     }
 
     useEffect(() => {
         async function fetchData() {
             try {
-                const assignmentResponse = await instance.get(`/projecten/${projectId}/`);
+                const assignmentResponse = await instance.get(`/projecten/${assignmentId}/`);
                 setProject(assignmentResponse.data);
             } catch (error) {
                 console.log("Error fetching data:", error);
             }
         }
 
-        fetchData();
-    }, []);
+        fetchData().catch(e => console.error(e));
+    }, [assignmentId]);
 
     const downloadAllSubmissions = () => {
         const zip = new JSZip();
         const downloadPromises: Promise<void>[] = [];
         groepen.filter((groep) => groep.lastSubmission !== undefined)
-        .map((groep) => groep.lastSubmission)
-        .forEach((submission, index) => {
-            downloadPromises.push(
-                new Promise((resolve, reject) => {
-                    instance.get(`/indieningen/${submission?.indiening_id}/indiening_bestanden/`, { responseType: 'blob' }).then(res => {
+            .map((groep) => groep.lastSubmission)
+            .forEach((submission, index) => {
+                downloadPromises.push(
+                    new Promise((resolve, reject) => {
+                        instance.get(`/indieningen/${submission?.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(res => {
                             let filename = 'lege_indiening_zip.zip';
+                            if (submission === undefined) return;
                             if (submission.indiening_bestanden.length > 0) {
                                 filename = submission?.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
                             }
@@ -157,60 +155,67 @@ export function ProjectScoresPage() {
                             console.error(`Error downloading submission ${index + 1}:`, err);
                             reject(err);
                         });
-                })
-            );
-        });
+                    })
+                );
+            });
         Promise.all(downloadPromises).then(() => {
-                zip.generateAsync({ type: "blob" }).then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'all_submissions.zip';
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    }).catch(err => {
-                        console.error("Error generating zip file:", err);
-                    });
+            zip.generateAsync({type: "blob"}).then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'all_submissions.zip';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }).catch(err => {
+                console.error("Error generating zip file:", err);
+            });
         }).catch(err => {
             console.error("Error downloading submissions:", err);
         });
     };
 
-    const handleParse = (e: React.ChangeEvent<HTMLInputElement>) => {
+    interface ScoreEntry {
+        groep: string;
+        score: string;
+    }
+
+
+    const handleParse = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files !== null && e.target.files.length) {
             const inputFile = e.target.files[0];
 
-            const reader = new FileReader();
-    
-            reader.onload = async ({ target }) => {
-                const csv = Papa.parse(target.result, {
-                    header: true,
-                });
-                const parsedData = csv?.data;
-                setScores(parsedData);
-            };
-            reader.readAsText(inputFile);
-        }else{
-            return alert("Enter a valid file");
+            Papa.parse<ScoreEntry>(inputFile, {
+                header: true,
+                complete: (results) => {
+                    const parsedData = results.data;
+                    setScores(parsedData);
+                },
+                error: (error) => {
+                    console.error("Error parsing CSV file:", error);
+                }
+            });
+        } else {
+            alert("Enter a valid file");
         }
     };
 
-    const setScores = (data: { [x: string]: { [x: string]: string; }; }) => {
-        for(const i in data){
-            const groupNumber = parseInt(data[i]["groep"]);
-            const score = parseInt(data[i]["score"]);
+    const setScores = (data: ScoreEntry[]) => {
+        for (const entry of data) {
+            const groupNumber = parseInt(entry.groep);
+            const score = parseInt(entry.score);
 
             const index = groepen.findIndex((groep) => groep.group_number === groupNumber);
             if (index !== -1) {
                 changeScore(index, score);
             }
         }
-        saveScores();
+        saveScores().catch(e => console.error(e));
     }
 
+
     const changeScore = (index: number, score: number) => {
-        let newGroepen = groepen;
+        const newGroepen = groepen;
         newGroepen[index] = {
             ...newGroepen[index],
             score: {
@@ -223,22 +228,25 @@ export function ProjectScoresPage() {
 
     return (
         <>
-            <Stack direction={"column"} spacing={0} sx={{width:"100%" ,height:"100%", backgroundColor:"background.default"}}>
-                <Header variant={"default"} title={project?.titel + ": Scores"} />
-                <Box sx={{ width: '100%', height:"70%", marginTop:10, boxShadow: 3, borderRadius: 3 }}>
-                    {project !== undefined && 
-                        <StudentsView project={project} groepen={groepen} setGroepen={setGroepen} changeScore={changeScore}/>
+            <Stack direction={"column"} spacing={0}
+                   sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
+                <Header variant={"default"} title={project?.titel + ": Scores"}/>
+                <Box sx={{width: '100%', height: "70%", marginTop: 10, boxShadow: 3, borderRadius: 3}}>
+                    {project !== undefined &&
+                        <StudentsView project={project} groepen={groepen} setGroepen={setGroepen}
+                                      changeScore={changeScore}/>
                     }
                 </Box>
-                <Box display="flex" flexDirection="row" sx={{ width: '100%', height:"30%", marginTop:5 }}>
-                    <Box display="flex" flexDirection="row" sx={{ width: '50%', height:"auto" }}>
-                        <Button onClick={exportSubmissions} variant="contained" color="secondary">{t("export_submissions")}</Button>
+                <Box display="flex" flexDirection="row" sx={{width: '100%', height: "30%", marginTop: 5}}>
+                    <Box display="flex" flexDirection="row" sx={{width: '50%', height: "auto"}}>
+                        <Button onClick={exportSubmissions} variant="contained"
+                                color="secondary">{t("export_submissions")}</Button>
                         <Button variant={"contained"} color={"secondary"} component="label">
                             {t("upload_scores")}
                             <VisuallyHiddenInput type="file" value={undefined}
-                                                accept={[".csv"].join(',')}
-                                                multiple={false}
-                                                onChange={uploadScores}
+                                                 accept={[".csv"].join(',')}
+                                                 multiple={false}
+                                                 onChange={uploadScores}
                             />
                         </Button>
                     </Box>
