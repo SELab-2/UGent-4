@@ -91,7 +91,7 @@ export function MainPage() {
         <>
             <Stack direction={"column"} spacing={5}
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default", paddingTop: 5}}>
-                <Header variant={"default"} title={"Naam Platform"}/>
+                <Header variant={"default"} title={"Pigeonhole"}/>
                 <Box sx={{
                     width: '100%',
                     height: "80%",
