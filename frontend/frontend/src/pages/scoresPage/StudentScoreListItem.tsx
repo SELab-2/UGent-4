@@ -72,9 +72,15 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
                         <ListItemText sx={{maxWidth: 300}}
                                       primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
-                            <TextField hiddenLabel defaultValue={score} onChange={(event) => changeScore(parseInt(event.target.value))}
-                            variant="filled" size="small"/>
-                            <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
+                            {lastSubmission?
+                                <>
+                                    <TextField hiddenLabel defaultValue={score} onChange={(event) => changeScore(parseInt(event.target.value))}
+                                    variant="filled" size="small"/>
+                                    <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
+                                </>
+                            :
+                                <ListItemText sx={{maxWidth: 100}} primary={"0/" + maxScore}/>
+                            }
                         </ListItem>
                         <ListItem sx={{maxWidth: 100}}>
                             <IconButton onClick={downloadSubmission} edge="end" aria-label="download" disabled={lastSubmission == undefined}>
