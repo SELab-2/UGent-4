@@ -112,8 +112,6 @@ export function AddChangeSubjectPage() {
       setTeachers((oldteacher)=>{
         //This is like this to prevent the same user being in the list twice
         var found=false;
-        console.log("res.data");
-        console.log(res.data);
         const id=res.data.user;
         for (const teacher of oldteacher){
           if (teacher.user==id){
@@ -140,10 +138,7 @@ export function AddChangeSubjectPage() {
     const teacherIDs=teachers.map(teacher=>teacher.user)
     console.log(teacherIDs)
     instance.put('vakken/'+vakID+'/',{naam:title,studenten:studentIDs,lesgevers:teacherIDs}).then((res) =>{
-      console.log("res");
-      console.log(res);
     }).catch((err) => {
-        console.log("err");
         console.log(err);
       }
     );
@@ -383,71 +378,3 @@ function getteacher(id: number): Teacher {
       name: "teacher"
   }
 }
-
-// <Box display={"flex"} flexDirection={"column"} padding={2}>
-//   <Typography>{t("teachers")+":"}</Typography>
-//   <Box padding={2} display={"flex"} flexDirection={"row"} alignItems={'center'} gap={1}>
-//     <List disablePadding={true} sx={{'& > :not(style)': {marginBottom: '8px', width: "75vw"}}}>
-//       {teachers.map((id) => {
-//         const [open, setOpen] = useState(false);
-//
-//         const handleClickOpen = () => {
-//           console.log("test")
-//         };
-//         const handleClose = (value: string) => {
-//           setOpen(false);
-//           setSelectedValue(value);
-//         };
-//
-//         return (<>
-//               <ListItemButton sx={{
-//                 width: "100%",
-//                 height: 30,
-//                 display: "flex",
-//                 flexDirection: "row",
-//                 justifyContent: "space-between",
-//                 paddingX: 1,
-//                 paddingY: 3,
-//                 borderRadius:2,
-//               }}>
-//                 <ListItemText sx={{maxWidth:100}} primary={getteacher(id).name}/>
-//                 <ListItemText sx={{maxWidth:100}} primary={id}/>
-//                 <IconButton aria-label={'delete_file'} size={'small'} onClick={handleClickOpen}
-//                             sx={{marginBottom: 1}}>
-//                   <ClearIcon color={'error'}/>
-//                 </IconButton>
-//                 <Dialog onClose={handleClose} open={false}>
-//                   <Box padding={2} alignItems={'center'} gap={1}>
-//                     <Typography> {t("delete_teacher")+"?"} </Typography>
-//                     <Typography> {t("this_can_not_be_undone")} </Typography>
-//                     <Box display={'flex'} flexDirection={"row"}>
-//                       <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleClose}>
-//                         {t("cancel")}
-//                       </Button>
-//                       <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
-//                         {t("delete")}
-//                       </Button>
-//                     </Box>
-//                   </Box>
-//                 </Dialog>
-//
-//               </ListItemButton>
-//               <Divider color={"text.main"}></Divider>
-//             </>
-//         )})}
-//     </List>
-//     <Box display={"flex"} flexDirection={"column"}>
-//       <FileUploadButton name={t("upload_teachers")}
-//                         fileTypes={['.pdf', '.zip']}
-//                         tooltip={t('uploadToolTip')}
-//       />
-//       <Box display={"flex"} flexDirection={"row"}>
-//         <TextField type="text" placeholder={t("teacher")}
-//                    onChange={(event) => setNum(event.target.value)}/>
-//         <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation>
-//           {"add"}
-//         </Button>
-//       </Box>
-//     </Box>
-//   </Box>
-// </Box>
