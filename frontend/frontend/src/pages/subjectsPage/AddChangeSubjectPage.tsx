@@ -39,6 +39,7 @@ export function AddChangeSubjectPage() {
   const [openStudent, setOpenStudent] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(0);
   const [openTeacher, setOpenTeacher] = useState(false);
+  const vakID=1;
 
   const handleCloseStudent = (value: string) => {
     setOpenStudent(false);
@@ -132,6 +133,22 @@ export function AddChangeSubjectPage() {
     );
   };
 
+  const handleSave = () =>{
+    console.log("test")
+    const studentIDs=students.map(student=>student.user)
+    console.log(studentIDs)
+    const teacherIDs=teachers.map(teacher=>teacher.user)
+    console.log(teacherIDs)
+    instance.put('vakken/'+vakID+'/',{naam:title,studenten:studentIDs,lesgevers:teacherIDs}).then((res) =>{
+      console.log("res");
+      console.log(res);
+    }).catch((err) => {
+        console.log("err");
+        console.log(err);
+      }
+    );
+  }
+
   useEffect(() =>{
     instance.get('vakken/1').then((res) => {
 
@@ -197,6 +214,12 @@ export function AddChangeSubjectPage() {
       <Stack direction={"column"} >
         <Header variant={"default"} title={title}/>
         <Stack direction={"column"} spacing={1} marginTop={11} sx={{width: "100%", height: "70 %", backgroundColor: "background.default"}}>
+
+
+
+          <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleSave}>
+            {t("save")}
+          </Button>
 
 
 
