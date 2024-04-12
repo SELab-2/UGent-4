@@ -112,7 +112,8 @@ export function AssignmentStudentPage() {
                                 <Box key={assignment.id}>
                                     <Divider color={"text.main"}></Divider>
                                     <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                        <AssignmentListItemStudentPage id={assignment.id} 
+                                        <AssignmentListItemStudentPage assignmentUrl="/course/1/assignment/1/submission/"
+                                                            id={assignment.id} 
                                                             studentName={assignment.name}
                                                             dueDate={assignment.deadline}
                                                             status={true}
