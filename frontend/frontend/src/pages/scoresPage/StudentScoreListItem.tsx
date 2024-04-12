@@ -30,6 +30,29 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
         }
         fetchName();
     }, [studenten]);
+
+    const downloadSubmission = () => {
+        try {
+            instance.get(`/indieningen/${lastSubmission.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
+                res => {
+                    let filename = 'lege_indiening.zip';
+                    if (lastSubmission.indiening_bestanden.length > 0) {
+                        filename = lastSubmission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+                    }
+                    const blob = new Blob([res.data], {type: res.headers['content-type']});
+                    const file: File = new File([blob], filename, {type: res.headers['content-type']});
+                    const url = window.URL.createObjectURL(file);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+        } catch(error) {
+            console.error(error);
+        }
+    }
     
     return (
         <>
@@ -47,7 +70,6 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
                     <>
                         <ListItemText sx={{maxWidth: 200}} primary={name}/>
                         <ListItemText sx={{maxWidth: 300}}
-                        //TODO time of last submission
                                       primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
                             <TextField hiddenLabel defaultValue={score} onChange={(event) => changeScore(parseInt(event.target.value))}
@@ -55,7 +77,7 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
                             <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
                         </ListItem>
                         <ListItem sx={{maxWidth: 100}}>
-                            <IconButton edge="end" aria-label="download">
+                            <IconButton onClick={downloadSubmission} edge="end" aria-label="download" disabled={lastSubmission == undefined}>
                                 <DownloadIcon/>
                             </IconButton>
                         </ListItem>
