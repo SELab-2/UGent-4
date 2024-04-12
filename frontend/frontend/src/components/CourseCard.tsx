@@ -64,7 +64,7 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
 
     const handleCardClick = () => {
         console.log("Card clicked");
-        navigate(`/subjects_student/${courseId}`);
+        navigate(`/course/${courseId}`);
     }
 
     const archive = () => {
