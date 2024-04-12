@@ -5,7 +5,7 @@ import {StudentsView} from "./StudentsView.tsx";
 import {t} from "i18next";
 import SaveIcon from '@mui/icons-material/Save';
 import CloseIcon from '@mui/icons-material/Close';
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
 import JSZip from 'jszip';
@@ -71,16 +71,16 @@ interface ScoreGroep {
 }
 
 export function ProjectScoresPage() {
-    let { courseId } = useParams();
+    const {courseId} = useParams();
     const vakId = Number(courseId);
-    let { assignmentId } = useParams();
+    const {assignmentId} = useParams();
     const projectId = Number(assignmentId);
 
     const [openSaveScoresPopup, setOpenSaveScoresPopup] = useState(false);
-    const [openDeleteScoresPopup, setOpenDeleteScoresPopup] = useState(false); 
+    const [openDeleteScoresPopup, setOpenDeleteScoresPopup] = useState(false);
 
     const [project, setProject] = useState<Project>();
-    const [groepen, setGroepen] = useState<ScoreGroep[]>([]); 
+    const [groepen, setGroepen] = useState<ScoreGroep[]>([]);
 
     const navigate = useNavigate();
 
@@ -97,7 +97,7 @@ export function ProjectScoresPage() {
     const saveScores = async () => {
         console.log("save scores");
 
-        for(const groep of groepen){
+        for (const groep of groepen) {
             const score = groep.score;
             if(score !== undefined && groep.lastSubmission !== undefined){
                 try {
@@ -115,12 +115,12 @@ export function ProjectScoresPage() {
             }
         }
 
-        navigate(`/course_teacher/${vakId}/assignment/${projectId}`);
+        navigate(`/course/${vakId}/assignment/${projectId}`);
     }
 
     const deleteScores = () => {
         console.log("delete scores");
-        navigate(`/course_teacher/${vakId}/assignment/${projectId}`);
+        navigate(`/course/${vakId}/assignment/${projectId}`);
     }
 
     useEffect(() => {
@@ -132,6 +132,7 @@ export function ProjectScoresPage() {
                 console.log("Error fetching data:", error);
             }
         }
+
         fetchData();
     }, []);
 
@@ -241,15 +242,19 @@ export function ProjectScoresPage() {
                             />
                         </Button>
                     </Box>
-                    <Box display="flex" flexDirection="row-reverse" sx={{ width: '50%', height:"auto" }}>
-                        <Button onClick={() => setOpenSaveScoresPopup(true)} variant="contained" startIcon={<SaveIcon />}/>
-                        <Button onClick={() => setOpenDeleteScoresPopup(true)} variant="contained" color="secondary" startIcon={<CloseIcon />}/>
+                    <Box display="flex" flexDirection="row-reverse" sx={{width: '50%', height: "auto"}}>
+                        <Button onClick={() => setOpenSaveScoresPopup(true)} variant="contained"
+                                startIcon={<SaveIcon/>}/>
+                        <Button onClick={() => setOpenDeleteScoresPopup(true)} variant="contained" color="secondary"
+                                startIcon={<CloseIcon/>}/>
                     </Box>
                 </Box>
                 <WarningPopup title={t("edit_scores_warning")} content={t("visible_for_everyone")}
-                buttonName={t("confirm")} open={openSaveScoresPopup} handleClose={() => setOpenSaveScoresPopup(false)} doAction={saveScores}/>
+                              buttonName={t("confirm")} open={openSaveScoresPopup}
+                              handleClose={() => setOpenSaveScoresPopup(false)} doAction={saveScores}/>
                 <WarningPopup title={t("undo_changes_warning")} content={t("cant_be_undone")}
-                buttonName={t("confirm")} open={openDeleteScoresPopup} handleClose={() => setOpenDeleteScoresPopup(false)} doAction={deleteScores}/>
+                              buttonName={t("confirm")} open={openDeleteScoresPopup}
+                              handleClose={() => setOpenDeleteScoresPopup(false)} doAction={deleteScores}/>
             </Stack>
         </>
     );
