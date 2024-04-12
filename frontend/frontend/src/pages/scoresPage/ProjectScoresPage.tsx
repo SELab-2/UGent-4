@@ -1,5 +1,5 @@
 import {Header} from "../../components/Header";
-import {Box, Button, Stack} from "@mui/material";
+import {Box, Button, Stack, styled} from "@mui/material";
 import {useNavigate, useParams} from "react-router-dom";
 import {StudentsView} from "./StudentsView.tsx";
 import {t} from "i18next";
@@ -9,6 +9,18 @@ import { useEffect, useState } from "react";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
 import JSZip from 'jszip';
+import Papa from "papaparse";
+
+const VisuallyHiddenInput = styled('input')({
+    clipPath: 'inset(50%)',
+    height: 1,
+    overflow: 'hidden',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    whiteSpace: 'nowrap',
+    width: 1,
+});
 
 interface ScoreGroep {
     group: any,
@@ -36,8 +48,9 @@ export function ProjectScoresPage() {
         downloadAllSubmissions();
     }
 
-    const uploadScores = () => {
+    const uploadScores = (e) => {
         console.log("upload scores");
+        handleParse(e);
     }
 
     const saveScores = async () => {
@@ -121,17 +134,68 @@ export function ProjectScoresPage() {
         });
     };
 
+    const handleParse = (e) => {
+        if (e.target.files.length) {
+            const inputFile = e.target.files[0];
+
+            const reader = new FileReader();
+    
+            reader.onload = async ({ target }) => {
+                const csv = Papa.parse(target.result, {
+                    header: true,
+                });
+                const parsedData = csv?.data;
+                setScores(parsedData);
+            };
+            reader.readAsText(inputFile);
+        }else{
+            return alert("Enter a valid file");
+        }
+    };
+
+    const setScores = (data) => {
+        for(const i in data){
+            const groupNumber = parseInt(data[i]["groep"]);
+            const score = parseInt(data[i]["score"]);
+
+            const index = groepen.findIndex((groep) => groep.group_number === groupNumber);
+            if (index !== -1) {
+                changeScore(index, score);
+            }
+        }
+        saveScores();
+    }
+
+    const changeScore = (index: number, score: number) => {
+        let newGroepen = groepen;
+        newGroepen[index] = {
+            ...newGroepen[index],
+            score: {
+                ...newGroepen[index].score,
+                score: score,
+            },
+        }
+        setGroepen(newGroepen);
+    }
+
     return (
         <>
             <Stack direction={"column"} spacing={0} sx={{width:"100%" ,height:"100%", backgroundColor:"background.default"}}>
                 <Header variant={"default"} title={project?.titel + ": Scores"} />
                 <Box sx={{ width: '100%', height:"70%", marginTop:10, boxShadow: 3, borderRadius: 3 }}>
-                    <StudentsView project={project} groepen={groepen} setGroepen={setGroepen}/>
+                    <StudentsView project={project} groepen={groepen} setGroepen={setGroepen} changeScore={changeScore}/>
                 </Box>
                 <Box display="flex" flexDirection="row" sx={{ width: '100%', height:"30%", marginTop:5 }}>
                     <Box display="flex" flexDirection="row" sx={{ width: '50%', height:"auto" }}>
                         <Button onClick={exportSubmissions} variant="contained" color="secondary">{t("export_submissions")}</Button>
-                        <Button onClick={uploadScores} variant="contained" color="secondary">{t("upload_scores")}</Button>
+                        <Button variant={"contained"} color={"secondary"} component="label">
+                            {t("upload_scores")}
+                            <VisuallyHiddenInput type="file" value={undefined}
+                                                accept={[".csv"].join(',')}
+                                                multiple={false}
+                                                onChange={uploadScores}
+                            />
+                        </Button>
                     </Box>
                     <Box display="flex" flexDirection="row-reverse" sx={{ width: '50%', height:"auto" }}>
                         <Button onClick={() => setOpenSaveScoresPopup(true)} variant="contained" startIcon={<SaveIcon />}/>

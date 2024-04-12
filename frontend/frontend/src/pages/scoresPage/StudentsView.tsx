@@ -13,7 +13,7 @@ interface ScoreGroep {
     score?: any,
 }
 
-export function StudentsView({project, groepen, setGroepen}) {
+export function StudentsView({project, groepen, setGroepen, changeScore}) {
 
     useEffect(() => {
         async function fetchGroups(assignment): Promise<ScoreGroep[]> {
@@ -79,18 +79,6 @@ export function StudentsView({project, groepen, setGroepen}) {
         }
         fetchData();
     }, [project]);
-
-    const changeScore = (index: number, score: number) => {
-        let newGroepen = groepen;
-        newGroepen[index] = {
-            ...newGroepen[index],
-            score: {
-                ...newGroepen[index].score,
-                score: score,
-            },
-        }
-        setGroepen(newGroepen);
-    }
 
     return (
         <>
