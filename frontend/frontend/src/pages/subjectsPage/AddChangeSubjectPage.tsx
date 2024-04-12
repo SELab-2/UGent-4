@@ -39,7 +39,7 @@ export function AddChangeSubjectPage() {
   const [openStudent, setOpenStudent] = useState(false);
   const [selectedTeacher, setSelectedTeacher] = useState(0);
   const [openTeacher, setOpenTeacher] = useState(false);
-  const vakID=1;
+  const vakID=params.courseId;
 
   const handleCloseStudent = (value: string) => {
     setOpenStudent(false);
@@ -150,7 +150,7 @@ export function AddChangeSubjectPage() {
   }
 
   useEffect(() =>{
-    instance.get('vakken/1').then((res) => {
+    instance.get('vakken/'+vakID).then((res) => {
 
       setTitle(res.data.naam);
       for (const id of res.data.studenten) {
