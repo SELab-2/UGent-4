@@ -10,17 +10,16 @@ URL = "https://graph.microsoft.com/v1.0/me"
 
 class AuthenticationUserMiddleware:
     """
-    Middleware die anonieme gebruikers omleidt naar de inlogpagina.
-    Deze middleware controleert of de gebruiker anoniem is en of het huidige pad niet de inlogpagina is.
-    Als dit het geval is, wordt de gebruiker omgeleid naar de inlogpagina die is geconfigureerd in de instellingen.
+    Middleware voor authenticatie van gebruikers en het aanmaken van gebruikersindeling.
 
     Args:
-        get_response (function): De functie die wordt aangeroepen om het verzoek te verwerken.
+        get_response (callable): De volgende middleware in de keten.
 
     Returns:
-        HttpResponse: Een HTTP-omleiding naar de inlogpagina als de gebruiker anoniem is
-        en het huidige pad niet de inlogpagina is.
-                      Anders wordt het verzoek verder verwerkt door de volgende middleware of de weergavefunctie.
+        HttpResponse: Een HTTP-response-object.
+
+    Raises:
+        Redirect: Redirect naar de inlog-URL als er geen autorisatiegegevens zijn.
     """
 
     def __init__(self, get_response):
