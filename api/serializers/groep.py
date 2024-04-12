@@ -32,7 +32,9 @@ class GroepSerializer(serializers.ModelSerializer):
             Groep: De aangemaakte groep.
         """
         students_data = validated_data.pop("studenten")
-        validate_students(students_data, validated_data["project"])
+        project = validated_data["project"]
+        validate_students(students_data, project)
+        validate_groep_grootte(students_data, project)
         instance = Groep.objects.create(**validated_data)
         instance.studenten.set(students_data)
 
@@ -48,11 +50,10 @@ class GroepSerializer(serializers.ModelSerializer):
             Groep: De bijgewerkte groep.
         """
         students_data = validated_data.pop("studenten", instance.studenten)
-        validate_students(
-            students_data, validated_data["project"], current_group=instance
-        )
         new_project = validated_data.get("project", instance.project)
+        validate_students(students_data, new_project, current_group=instance)
         validate_project(instance, new_project)
+        validate_groep_grootte(students_data, new_project)
 
         super().update(instance=instance, validated_data=validated_data)
         instance.studenten.set(students_data)
@@ -119,3 +120,10 @@ def validate_students(students_data, project, current_group=None):
                 raise serializers.ValidationError(
                     f"Student {student} zit al in een andere groep voor dit project!"
                 )
+
+
+def validate_groep_grootte(studenten, project):
+    if len(studenten) > project.max_groep_grootte:
+        raise serializers.ValidationError(
+            f"Dit project heeft een maximum groep groote van {project.max_groep_grootte} studenten"
+        )

@@ -28,12 +28,12 @@ class ScoreSerializer(serializers.ModelSerializer):
         Returns:
             Score: De aangemaakte score.
         """
-
-        if Score.objects.filter(indiening=validated_data.get("indiening")).exists():
+        indiening = validated_data.get("indiening")
+        if Score.objects.filter(indiening=indiening).exists():
             raise serializers.ValidationError(
                 "Deze indiening heeft al een bestaande score"
             )
-        validate_score(validated_data)
+        validate_score(indiening, validated_data.get("score"))
         return Score.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
