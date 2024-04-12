@@ -4,20 +4,32 @@ import { t } from "i18next";
 import { useEffect, useState } from "react";
 import instance from "../../axiosConfig";
 
-interface Bestand {
+interface Indiening {
+    indiening_id: number,
+    groep: number,
+    tijdstip: Date,
+    status: number,
+    result: string,
+    indiening_bestanden: IndieningBestand[],
+}
+
+interface IndieningBestand {
     indiening_bestand_id: number,
     indiening: number,
-    bestand: File | null,
- }
+    bestand: File,
+}
 
-/*
-* This component is used to display a single assignment in the list of assignments
-* @param key: string - the key of the studentOnProject
-* @param studentName: string - the name of the student
-* @param submissionFiles: string[] - a list of all files submitted by this student
-*/
+interface StudentScoreListItemProps {
+    key: number,
+    groupNumber: number,
+    studenten: number[],
+    lastSubmission: Indiening | undefined,
+    score: number | undefined,
+    maxScore: number,
+    changeScore: (score: number) => void,
+}
 
-export function StudentScoreListItem({key, groupNumber, studenten, lastSubmission, score, maxScore, changeScore}) {
+export function StudentScoreListItem({key, groupNumber, studenten, lastSubmission, score, maxScore, changeScore}: StudentScoreListItemProps) {
     const [name, setName] = useState(t('group') + " " + groupNumber);
 
     useEffect(() => {
@@ -33,7 +45,7 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
 
     const downloadSubmission = () => {
         try {
-            instance.get(`/indieningen/${lastSubmission.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
+            instance.get(`/indieningen/${lastSubmission?.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
                 res => {
                     let filename = 'lege_indiening.zip';
                     if (lastSubmission.indiening_bestanden.length > 0) {

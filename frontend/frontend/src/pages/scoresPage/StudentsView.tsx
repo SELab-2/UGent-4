@@ -2,24 +2,71 @@ import {Box, Typography, Divider} from "@mui/material";
 import List from '@mui/material/List';
 import { StudentScoreListItem } from "./StudentScoreListItem.tsx";
 import {t} from "i18next";
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import instance from "../../axiosConfig.ts";
 
-interface ScoreGroep {
-    group: any,
-    group_number: number,
-    lastSubmission?: any,
-    score?: any,
+interface Project {
+    project_id: number,
+    titel: string,
+    beschrijving: string,
+    opgave_bestand: File,
+    vak: number,
+    max_score: number,
+    max_groep_grootte: number,
+    deadline: Date | null,
+    extra_deadline: Date | null,
+    zichtbaar: boolean,
+    gearchiveerd: boolean,
 }
 
-export function StudentsView({project, groepen, setGroepen, changeScore}) {
+interface Groep {
+    groep_id: number,
+    studenten: number[],
+    project: number,
+}
+
+interface Indiening {
+    indiening_id: number,
+    groep: number,
+    tijdstip: Date,
+    status: number,
+    result: string,
+    indiening_bestanden: IndieningBestand[],
+}
+
+interface IndieningBestand {
+    indiening_bestand_id: number,
+    indiening: number,
+    bestand: File,
+}
+
+interface Score {
+    score_id?: number,
+    score?: number,
+    indiening?: number,
+}
+
+interface ScoreGroep {
+    group: Groep,
+    group_number: number,
+    lastSubmission?: Indiening,
+    score?: Score,
+}
+
+interface StudentsViewProps {
+    project: Project,
+    groepen: ScoreGroep[],
+    setGroepen: (groepen: ScoreGroep[]) => void,
+    changeScore: (index: number, score: number) => void,
+}
+
+export function StudentsView({project, groepen, setGroepen, changeScore}: StudentsViewProps) {
 
     useEffect(() => {
-        async function fetchGroups(assignment): Promise<ScoreGroep[]> {
+        async function fetchGroups(assignment: Project): Promise<ScoreGroep[]> {
             try {
                 const groupsResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}`);
-                return groupsResponse.data.map((group, index) => ({
+                return groupsResponse.data.map((group: ScoreGroep, index: number) => ({
                     group: group,
                     group_number: index+1,
                 }));
