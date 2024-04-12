@@ -1,4 +1,4 @@
-import {ListItem, ListItemButton, ListItemIcon, ListItemText} from "@mui/material";
+import {ListItem, ListItemIcon, ListItemText} from "@mui/material";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import {useNavigate} from "react-router-dom";
@@ -30,7 +30,7 @@ export function AssignmentListItemStudentPage({id, studentName, dueDate, status,
     return (
         <>
             <ListItem key={studentName} sx={{margin: 0}} disablePadding={true}>
-                <ListItem  sx={{
+                <ListItem sx={{
                     width: "100%",
                     height: 30,
                     display: "flex",
@@ -43,15 +43,16 @@ export function AssignmentListItemStudentPage({id, studentName, dueDate, status,
                     <ListItemText onClick={handleProjectClick} sx={{
                         maxWidth: 110,
                         color: 'primary.main',
-                         '&:hover': {
-                        color: 'primary.light',
+                        '&:hover': {
+                            color: 'primary.light',
                         },
-                     }} primary={studentName}/>
-                    <ListItemText sx={{maxWidth: 110}} primary={dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
+                    }} primary={studentName}/>
+                    <ListItemText sx={{maxWidth: 110}}
+                                  primary={dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
                     <ListItemIcon sx={{minWidth: 35}}>
                         {status ?
-                        (<CheckCircleOutlineIcon sx={{color: "success.main"}}/>) :
-                        (<HighlightOffIcon sx={{color: "error.main"}}/>)
+                            (<CheckCircleOutlineIcon sx={{color: "success.main"}}/>) :
+                            (<HighlightOffIcon sx={{color: "error.main"}}/>)
                         }
                     </ListItemIcon>
                 </ListItem>
