@@ -74,8 +74,8 @@ export function AssignmentListItemSubjectsPage({
                             }
                         </>
                         :
-                        {/* In case of the user being the teacher: */}
                         <>
+                            {/* In case of the user being the teacher: */}
                             <ListItemText sx={{maxWidth: 100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth: 110}}
                                           primary={dueDate ? dueDate.toLocaleDateString() : t("no_deadline")}/>
