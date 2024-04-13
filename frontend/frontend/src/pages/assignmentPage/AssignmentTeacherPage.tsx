@@ -2,7 +2,6 @@ import {Header} from "../../components/Header.tsx";
 import UploadIcon from '@mui/icons-material/Upload';
 import SaveIcon from '@mui/icons-material/Save';
 import AddIcon from '@mui/icons-material/Add';
-import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {LocalizationProvider} from '@mui/x-date-pickers';
 import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs'
 import {DatePicker} from '@mui/x-date-pickers/DatePicker';
