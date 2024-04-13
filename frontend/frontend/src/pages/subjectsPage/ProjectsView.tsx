@@ -108,16 +108,16 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                      padding: 3,
                  }}>
                 {!gebruiker.is_lesgever ?
-                {/* Show the UI from the perspective of a student. */}
                     <>
+                    {/* Show the UI from the perspective of a student. */}
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
                         <Typography variant={"h4"}>{t("submissions")}</Typography>
                         <Typography variant={"h4"}>Score</Typography>
                     </>
                     :
-                    {/* Show the UI from the perspective of a teacher. */}
                     <>
+                    {/* Show the UI from the perspective of a teacher. */}
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
                         <Typography variant={"h4"}>{t("edit")}</Typography>
