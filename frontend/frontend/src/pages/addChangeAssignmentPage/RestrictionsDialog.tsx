@@ -10,6 +10,7 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { ButtonGroup, TextField } from '@mui/material';
 import {t} from "i18next";
+import instance from "../../axiosConfig.ts";
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & {
@@ -23,6 +24,34 @@ const Transition = React.forwardRef(function Transition(
 export default function RestrictionsDialog({ closeParentDialog }: { closeParentDialog: () => void }) {
   const [open, setOpen] = React.useState(false);
     const fileInput = React.useRef<HTMLInputElement>(null);
+
+    const handleUploadedFiles = (e) => {
+      files = e.target.files;
+      if (files.length > 0) {
+        console.log(files);
+        Array.from(files).forEach(async (file) => {
+          console.log("there's at least one file");
+          const formData = new FormData();
+          const json = {
+            project: 1,
+            script: file,
+            moet_slagen: true,
+          };
+          formData.append('data', JSON.stringify(json));
+          try {
+            await instance.post('/api/restricties/', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data'
+              }
+            });
+            console.log("done");
+          } catch (error) {
+            console.error('Error uploading file:', error);
+          }
+        });
+      }
+
+    }
 
 
     const handleClickOpen = () => {
@@ -59,9 +88,11 @@ export default function RestrictionsDialog({ closeParentDialog }: { closeParentD
   return (
     <React.Fragment>
         <input 
-            ref={fileInput} 
+            ref={fileInput}
             type="file" 
             style={{ display: 'none' }} 
+            onChange={(e) => { handleUploadedFiles(e);}} 
+            multiple
         />
         <ButtonGroup orientation="vertical" aria-label="Vertical button group">
             {buttons}
