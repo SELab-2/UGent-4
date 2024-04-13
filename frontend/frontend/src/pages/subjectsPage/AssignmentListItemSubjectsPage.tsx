@@ -7,8 +7,8 @@ import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import {useState} from "react";
 
-/*
-* This component is used to display a single assignment in the list of assignments
+/**
+* This component is used to display a single assignment in the list of assignments.
 * @param projectName: string - the name of the project
 * @param dueDate: Date - the due date of the project
 * @param submissions: number - number of submissions for the project
@@ -74,6 +74,7 @@ export function AssignmentListItemSubjectsPage({
                             }
                         </>
                         :
+                        {/* In case of the user being the teacher: */}
                         <>
                             <ListItemText sx={{maxWidth: 100}} primary={projectName}/>
                             <ListItemText sx={{maxWidth: 110}}

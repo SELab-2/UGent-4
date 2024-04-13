@@ -24,6 +24,12 @@ interface Project {
     gearchiveerd: boolean,
 }
 
+/**
+ * This page is the main page of a course.
+ * It mainly lists the projects with some brief info.
+ * Besides it allows the user to select current or archived projects.
+ * Any other UI on the course's page is also handled in this view
+ */
 export function SubjectsPage() {
     let {courseId} = useParams();
     courseId = String(courseId);
@@ -38,6 +44,7 @@ export function SubjectsPage() {
         fetchData();
     }, []);
 
+    // Get the data for this course.
     async function fetchData() {
         try {
             const courseResponse = await instance.get(`/vakken/${courseId}/`);
@@ -107,10 +114,12 @@ export function SubjectsPage() {
     return (
         <>
             {user.is_lesgever ?
+                {/* The code below shows the page from the perspecitve of the teacher. */}
                 <Stack direction={"column"} spacing={0}
                        sx={{width: "99%", height: "100%", backgroundColor: "background.default"}}>
                     <Header variant={"editable"} title={course.naam}/>
                     <Box sx={{width: '100%', height: "70%", marginTop: 10}}>
+                        {/* Give the student the option to select current or archived projects. */}
                         <TabSwitcher titles={["current_projects", "archived"]}
                                      nodes={[<ProjectsView gebruiker={user} archived={false} assignments={assignments}
                                                            deleteAssignment={deleteAssignment}
@@ -136,6 +145,8 @@ export function SubjectsPage() {
                                   handleClose={() => setOpenArchivePopup(false)} doAction={doArchive}/>
                 </Stack>
                 :
+                {/* The colon is the "else" of the ternary operator.
+                This means that all the code below is applicable to the student's view. */}
                 <Stack direction={"column"} spacing={10}
                        sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
                     <Header variant={"default"} title={course.naam}/>
