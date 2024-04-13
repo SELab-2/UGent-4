@@ -4,6 +4,8 @@ from rest_framework import status
 
 from api.models.indiening import Indiening, IndieningBestand
 from api.models.groep import Groep
+from api.models.vak import Vak
+from api.models.project import Project
 from api.serializers.indiening import IndieningSerializer
 from api.utils import is_lesgever, contains
 
@@ -39,6 +41,23 @@ def indiening_list(request, format=None):
                 groep = eval(request.GET.get("groep"))
                 indieningen = indieningen.filter(groep=groep)
             except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if "project" in request.GET:
+            try:
+                project = Project.objects.get(pk=eval(request.GET.get("project")))
+                groepen = Groep.objects.filter(project=project)
+                indieningen = indieningen.filter(groep__in=groepen)
+            except (NameError, Project.DoesNotExist):
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if "vak" in request.GET:
+            try:
+                vak = Vak.objects.get(pk=eval(request.GET.get("vak")))
+                projecten = Project.objects.filter(vak=vak)
+                groepen = Groep.objects.filter(project__in=projecten)
+                indieningen = indieningen.filter(groep__in=groepen)
+            except (NameError, Vak.DoesNotExist):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
         serializer = IndieningSerializer(indieningen, many=True)
