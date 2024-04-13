@@ -55,6 +55,9 @@ export function AddChangeSubjectPage() {
         //This is like this to prevent the same user being in the list twice
         let found=false;
         const id=res.data.user;
+        if(res.data.is_lesgever){
+          return oldstudents
+        }
         for (const student of oldstudents){
           if (student.user==id){
             found = true;
@@ -100,6 +103,9 @@ export function AddChangeSubjectPage() {
         //This is like this to prevent the same user being in the list twice
         let found=false;
         const id=res.data.user;
+        if(!res.data.is_lesgever){
+          return oldteacher
+        }
         for (const teacher of oldteacher){
           if (teacher.user==id){
             found = true;
@@ -119,11 +125,8 @@ export function AddChangeSubjectPage() {
   };
 
   const handleSave = () =>{
-    console.log("test")
     const studentIDs=students.map(student=>student.user)
-    console.log(studentIDs)
     const teacherIDs=teachers.map(teacher=>teacher.user)
-    console.log(teacherIDs)
     instance.put('vakken/'+vakID+'/',{naam:title,studenten:studentIDs,lesgevers:teacherIDs}).catch((err) => {
         console.log(err);
       }
@@ -267,7 +270,6 @@ export function AddChangeSubjectPage() {
           <Dialog onClose={handleCloseStudent} open={openStudent}>
             <Box padding={2} alignItems={'center'} gap={1}>
               <Typography> {t("delete_student")+"?"} </Typography>
-              <Typography> {t("this_can_not_be_undone")} </Typography>
               <Box display={'flex'} flexDirection={"row"}>
                 <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleCloseStudent}>
                   {t("cancel")}
@@ -333,7 +335,6 @@ export function AddChangeSubjectPage() {
           <Dialog onClose={handleCloseStudent} open={openTeacher}>
             <Box padding={2} alignItems={'center'} gap={1}>
               <Typography> {t("delete_teacher")+"?"} </Typography>
-              <Typography> {t("this_can_not_be_undone")} </Typography>
               <Box display={'flex'} flexDirection={"row"}>
                 <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation onClick={handleCloseTeacher}>
                   {t("cancel")}
