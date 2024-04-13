@@ -17,6 +17,9 @@ interface GroupListItemProps {
 export function GroupListItem({id, studentName, groupMemberNames}: GroupListItemProps) {
     const navigate = useNavigate();
 
+    
+    
+
     return (
         <>
             <Card elevation={1} sx={{

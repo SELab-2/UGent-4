@@ -26,7 +26,7 @@ export default function RestrictionsDialog({ closeParentDialog }: { closeParentD
     const fileInput = React.useRef<HTMLInputElement>(null);
 
     const handleUploadedFiles = (e) => {
-      files = e.target.files;
+      const files = e.target.files;
       if (files.length > 0) {
         console.log(files);
         Array.from(files).forEach(async (file) => {
