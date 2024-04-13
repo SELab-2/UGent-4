@@ -129,7 +129,7 @@ export function AssignmentPage() {
         <>
             {user.is_lesgever ? (
                 <>
-                    <Header variant={"editable"} title={assignment ? assignment.titel : ""}></Header>
+                    <Header variant={"editable"} title={assignment ? assignment.titel : ""}/>
                     <Stack marginTop={15} direction={"column"} spacing={4}
                            sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
 
