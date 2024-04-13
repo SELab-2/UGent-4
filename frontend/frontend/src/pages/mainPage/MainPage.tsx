@@ -45,6 +45,7 @@ export function MainPage() {
     const navigator = useNavigate();
 
     useEffect(() => {
+        // Get the role of the person that has logged in
         console.log("requesting api")
         instance.get("/gebruikers/me/").then((response: AxiosResponse) => {
             console.log(response.data);
@@ -53,6 +54,7 @@ export function MainPage() {
             console.error(e);
         });
 
+        // Get the courses, their projects, and their respective deadlines
         async function fetchData() {
             try {
                 const response = await instance.get<course[]>("/vakken/");
@@ -100,6 +102,7 @@ export function MainPage() {
                     flexDirection: {"md": "row", "xs": "column-reverse"},
                     gap: 5,
                 }}>
+                    {/* Two tabs to select either the current or archived courses  */}
                     <TabSwitcher titles={["current_courses", "archived"]}
                                  nodes={[<CoursesView isStudent={role == 'student'} activecourses={courses}/>,
                                      <ArchivedView isStudent={role == 'student'} archivedCourses={courses}/>]}/>
