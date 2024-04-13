@@ -464,6 +464,7 @@ export function AddChangeAssignmentPage() {
                                                 disabled={allowedTypes.length === 0}
                                 onClick={handleAddRestriction}><AddIcon/></IconButton>*/}
                                 <AddRestrictionButton></AddRestrictionButton>
+                                {/*<Button>Show restrictions</Button>*/}
 
                                 </Tooltip>
                             </Box>
