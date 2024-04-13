@@ -262,11 +262,12 @@ export function AddChangeSubjectPage() {
                             })}
                         </List>
                         <Box display={"flex"} flexDirection={"column"}>
+                            {/* TODO: de csv files moeten afgehandeld worden
                             <FileUploadButton name={t("upload_students")}
                                               fileTypes={['.pdf', '.zip']}
                                               tooltip={t('uploadToolTip')}
                                               
-                            />
+                        />*/}
                             <Box display={"flex"} flexDirection={"row"}>
                                 <TextField type="text" placeholder={t("studentnumber")}
                                            onChange={(event) => setNumStudent(event.target.value)}/>
@@ -333,10 +334,11 @@ export function AddChangeSubjectPage() {
                             })}
                         </List>
                         <Box display={"flex"} flexDirection={"column"}>
+                            {/* TODO: fix dit voor de csv files
                             <FileUploadButton name={t("upload_teachers")}
                                               fileTypes={['.pdf', '.zip']}
                                               tooltip={t('uploadToolTip')}
-                            />
+                        />*/}
                             <Box display={"flex"} flexDirection={"row"}>
                                 <TextField type="text" placeholder={t("teacher")}
                                            onChange={(event) => setNumTeacher(event.target.value)}/>
