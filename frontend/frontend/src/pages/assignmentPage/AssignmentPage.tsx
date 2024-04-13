@@ -3,7 +3,6 @@ import FileUploadButton from "../../components/FileUploadButton.tsx";
 import {SubmissionListItemStudentPage} from "../../components/SubmissionListItemStudentPage.tsx";
 import {SubmissionListItemTeacherPage} from "../../components/SubmissionListItemTeacherPage.tsx";
 import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
-import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
 import {ChangeEvent, useEffect, useState} from "react";
@@ -197,7 +196,7 @@ export function AssignmentPage() {
                             </Box>
                         </Card>
 
-                        <AddRestrictionButton></AddRestrictionButton>
+                        {/*<AddRestrictionButton></AddRestrictionButton>*/}
 
                         {/* <Button sx={{bgcolor: 'secondary.main'}}>
                             <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>

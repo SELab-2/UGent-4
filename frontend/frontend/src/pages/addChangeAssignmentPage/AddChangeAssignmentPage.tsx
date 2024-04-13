@@ -18,6 +18,7 @@ import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
+import AddRestrictionButton from "./AddRestrictionButton.tsx";
 
 //TODO: add restriction functionality
 /**
@@ -459,9 +460,12 @@ export function AddChangeAssignmentPage() {
                             </Box>
                             <Box width={'100%'} display={'flex'} justifyContent={'flex-end'}>
                                 <Tooltip title={t('add_restriction')}>
-                                    <IconButton color={"primary"}
+                                    {/*<IconButton color={"primary"}
                                                 disabled={allowedTypes.length === 0}
-                                                onClick={handleAddRestriction}><AddIcon/></IconButton>
+                                onClick={handleAddRestriction}><AddIcon/></IconButton>*/}
+                                <AddRestrictionButton></AddRestrictionButton>
+                                {/*<Button>Show restrictions</Button>*/}
+
                                 </Tooltip>
                             </Box>
                         </Card>
