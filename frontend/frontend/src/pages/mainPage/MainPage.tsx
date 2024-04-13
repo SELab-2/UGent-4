@@ -4,18 +4,32 @@ import TabSwitcher from "../../components/TabSwitcher.tsx";
 import {ArchivedView} from "./ArchivedView.tsx";
 import {CoursesView} from "./CoursesView.tsx";
 import {DeadlineCalendar} from "../../components/DeadlineCalendar.tsx";
-import dayjs from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {t} from "i18next";
 import {useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
-import axios from "../../axiosConfig.ts";
 import {AxiosError, AxiosResponse} from "axios";
+import {useNavigate} from "react-router-dom";
 
 export default interface course {
     vak_id: number;
     naam: string;
     studenten: number[];
     lesgevers: number[];
+}
+
+export interface project {
+    project_id: number;
+    titel: string;
+    beschrijving: string;
+    opgave_bestand: File | null;
+    vak_id: number;
+    deadline: string;
+    extra_deadline: string | null;
+    max_score: number;
+    max_groepsgrootte: number;
+    zichtbaar: boolean;
+    gearchiveerd: boolean;
 }
 
 /**
@@ -25,44 +39,61 @@ export default interface course {
  */
 export function MainPage() {
     // State for role
-    const [role, setRole] = useState(getRole("1"));
+    const [role, setRole] = useState<string>('');
     const [courses, setCourses] = useState<course[]>([]);
+    const [deadlines, setDeadlines] = useState<Dayjs[]>([]);
+    const navigator = useNavigate();
 
     useEffect(() => {
-        instance.get().then((response: AxiosResponse) => {
+        // Get the role of the person that has logged in
+        console.log("requesting api")
+        instance.get("/gebruikers/me/").then((response: AxiosResponse) => {
             console.log(response.data);
+            setRole(response.data.is_lesgever ? "teacher" : "student");
         }).catch((e: AxiosError) => {
             console.error(e);
         });
 
+        // Get the courses, their projects, and their respective deadlines
         async function fetchData() {
             try {
-                const response = await axios.get("/vakken/");
+                const response = await instance.get<course[]>("/vakken/");
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
             }
+
+            instance.get("/projecten/").then((response: AxiosResponse) => {
+                const deadlines: Dayjs[] = [];
+                response.data.forEach((project: project) => {
+                        if (project.zichtbaar && !project.gearchiveerd) {
+                            deadlines.push(dayjs(project.deadline, "YYYY-MM-DD-HH:mm:ss"));
+                        }
+                    }
+                )
+                console.log(deadlines);
+                setDeadlines(deadlines);
+            }).catch((e: AxiosError) => {
+                console.error(e);
+            });
         }
 
         fetchData().catch((e) => {
             console.error(e)
         });
+
     }, []);
 
-    /**
-     * useEffect hook to set the role of the user and log it
-     */
     useEffect(() => {
 
-        setRole(getRole("2"));
-        console.log("current user is: " + role);
-    }, []);
+    }, [courses]);
+
 
     return (
         <>
             <Stack direction={"column"} spacing={5}
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default", paddingTop: 5}}>
-                <Header variant={"default"} title={"Naam Platform"}/>
+                <Header variant={"default"} title={"Pigeonhole"}/>
                 <Box sx={{
                     width: '100%',
                     height: "80%",
@@ -71,12 +102,16 @@ export function MainPage() {
                     flexDirection: {"md": "row", "xs": "column-reverse"},
                     gap: 5,
                 }}>
+                    {/* Two tabs to select either the current or archived courses,
+                    CoursesView is a scroll-box with the current courses, 
+                    ArchivedView is the same but for the archived courses.  */}
                     <TabSwitcher titles={["current_courses", "archived"]}
                                  nodes={[<CoursesView isStudent={role == 'student'} activecourses={courses}/>,
-                                     <ArchivedView isStudent={role == 'student'}/>]}/>
+                                     <ArchivedView isStudent={role == 'student'} archivedCourses={courses}/>]}/>
+                    {/* Add a calendar to the right of the mainpage. */}
                     <Box aria-label={"calendarView"} display={"flex"} flexDirection={"row"} alignContent={"center"}
                          height={"50%"}>
-                        <DeadlineCalendar deadlines={[dayjs()]}/>
+                        <DeadlineCalendar deadlines={deadlines}/>
                     </Box>
                 </Box>
                 {role === "admin" &&
@@ -88,25 +123,10 @@ export function MainPage() {
                         justifyContent: "end"
                     }}>
                         <Button variant={'contained'} color={"secondary"}
-                                aria-label={'admin-button'} sx={{margin: 5}}>{t('add_admin')}</Button>
+                                on-click={() => navigator("/addTeacher")}
+                                aria-label={'admin-button'} sx={{margin: 5}}>{t('add_teacher')}</Button>
                     </Box>}
             </Stack>
         </>
     );
-}
-
-//TODO: implement api integration
-/**
- * Function to get the role of the user
- * @param {string} id - The id of the user
- * @returns {string} - The role of the user
- */
-function getRole(id: string): string {
-    instance.get('/gebruikers/' + id).then((response: AxiosResponse) => {
-        return response.data.is_lesgever ? "teacher" : "student";
-    }).catch((e: AxiosError) => {
-        console.error(e);
-
-    })
-    return "student";
 }
