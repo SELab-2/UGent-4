@@ -1,13 +1,12 @@
 import {createBrowserRouter} from "react-router-dom";
-import {SubjectsStudentPage} from "./pages/subjectsPage/SubjectsStudentPage.tsx";
-import { AssignmentPage } from "./pages/assignmentPage/AssignmentPage.tsx";
+import {SubjectsPage} from "./pages/subjectsPage/SubjectsPage.tsx";
 import {SubmissionPage} from "./pages/submissionPage/SubmissionPage.tsx";
 import {ProjectScoresPage} from "./pages/scoresPage/ProjectScoresPage.tsx";
-import {SubjectsTeacherPage} from "./pages/subjectsPage/SubjectsTeacherPage.tsx";
 import {AddChangeAssignmentPage} from "./pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
 import ErrorPage from "./pages/ErrorPage.tsx";
 import {MainPage} from "./pages/mainPage/MainPage.tsx";
-import { GroupsPage } from "./pages/groupsPage/GroupsPage.tsx";
+import {GroupsPage} from "./pages/groupsPage/GroupsPage.tsx";
+import {AssignmentPage} from "./pages/assignmentPage/AssignmentPage.tsx";
 
 
 //TODO: add change/add course page when implemented
@@ -18,13 +17,13 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage/>,
     },
     {
-        path: '/course_student/:courseId',
-        element: <SubjectsStudentPage/>,
+        path: '/course/:courseId',
+        element: <SubjectsPage/>,
         errorElement: <ErrorPage/>,
     },
     {
-        path: '/course_teacher/:courseId',
-        element: <SubjectsTeacherPage/>,
+        path: '/course/:courseId/assignment/:assignmentId/groups',
+        element: <GroupsPage/>,
         errorElement: <ErrorPage/>,
     },
     {
@@ -33,28 +32,23 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage/>,
     },
     {
-        path: '/course_student/:courseId/assignment/:assignmentId/submission/:submissionId',
+        path: '/course/:courseId/assignment/:assignmentId/submission/:submissionId',
         element: <SubmissionPage/>,
         errorElement: <ErrorPage/>,
     },
     {
-        path: '/course_teacher/:courseId/assignment/:assignmentId/scoring',
+        path: '/course/:courseId/assignment/:assignmentId/scoring',
         element: <ProjectScoresPage/>,
         errorElement: <ErrorPage/>,
     },
     {
-        path: '/course_teacher/:courseId/assignment/edit/:assignmentId?',
+        path: '/course/:courseId/assignment/:assignmentId?/edit',
         element: <AddChangeAssignmentPage/>,
         errorElement: <ErrorPage/>,
     },
     {
         path: '*',
         element: <ErrorPage/>,
-    },
-    {
-        path: '/course_teacher/:courseId/assignment/:assignmentId/groups',
-        element: <GroupsPage/>,
-        errorElement: <ErrorPage/>,
     },
 ]);
 
