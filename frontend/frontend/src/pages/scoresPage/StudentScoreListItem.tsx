@@ -1,36 +1,68 @@
 import {Divider, IconButton, ListItem, ListItemText, TextField} from "@mui/material";
 import DownloadIcon from '@mui/icons-material/Download';
-import { t } from "i18next";
-import { useEffect, useState } from "react";
+import {t} from "i18next";
+import {useEffect, useState} from "react";
 import instance from "../../axiosConfig";
+import {Indiening} from "./ProjectScoresPage.tsx";
 
-interface Bestand {
-    indiening_bestand_id: number,
-    indiening: number,
-    bestand: File | null,
- }
 
-/*
-* This component is used to display a single assignment in the list of assignments
-* @param key: string - the key of the studentOnProject
-* @param studentName: string - the name of the student
-* @param submissionFiles: string[] - a list of all files submitted by this student
-*/
+interface StudentScoreListItemProps {
+    key: number,
+    groupNumber: number,
+    studenten: number[],
+    lastSubmission: Indiening | undefined,
+    score: number | undefined,
+    maxScore: number,
+    changeScore: (score: number) => void,
+}
 
-export function StudentScoreListItem({key, groupNumber, studenten, lastSubmission, score, maxScore, changeScore}) {
+export function StudentScoreListItem({
+                                         key,
+                                         groupNumber,
+                                         studenten,
+                                         lastSubmission,
+                                         score,
+                                         maxScore,
+                                         changeScore
+                                     }: StudentScoreListItemProps) {
     const [name, setName] = useState(t('group') + " " + groupNumber);
 
     useEffect(() => {
         async function fetchName() {
-            if(studenten.length == 1){
+            if (studenten.length == 1) {
                 const studentId = studenten[0];
                 const studentResponse = await instance.get(`/gebruikers/${studentId}/`);
                 setName(studentResponse.data.first_name + " " + studentResponse.data.last_name);
             }
         }
-        fetchName();
+
+        fetchName().catch(e => console.error(e));
     }, [studenten]);
-    
+
+    const downloadSubmission = () => {
+        try {
+            instance.get(`/indieningen/${lastSubmission?.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(
+                res => {
+                    let filename = 'lege_indiening.zip';
+                    if (lastSubmission === undefined) return;
+                    if (lastSubmission.indiening_bestanden.length > 0) {
+                        filename = lastSubmission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+                    }
+                    const blob = new Blob([res.data], {type: res.headers['content-type']});
+                    const file: File = new File([blob], filename, {type: res.headers['content-type']});
+                    const url = window.URL.createObjectURL(file);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <>
             <ListItem key={key} sx={{margin: 0}} disablePadding={true}>
@@ -47,15 +79,22 @@ export function StudentScoreListItem({key, groupNumber, studenten, lastSubmissio
                     <>
                         <ListItemText sx={{maxWidth: 200}} primary={name}/>
                         <ListItemText sx={{maxWidth: 300}}
-                        //TODO time of last submission
-                                      primary={lastSubmission? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
+                                      primary={lastSubmission ? t("last_submission") + " " + new Date(lastSubmission.tijdstip).toLocaleString() : t("no_submissions")}/>
                         <ListItem sx={{maxWidth: 100}}>
-                            <TextField hiddenLabel defaultValue={score} onChange={(event) => changeScore(parseInt(event.target.value))}
-                            variant="filled" size="small"/>
-                            <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
+                            {lastSubmission ?
+                                <>
+                                    <TextField hiddenLabel defaultValue={score}
+                                               onChange={(event) => changeScore(parseInt(event.target.value))}
+                                               variant="filled" size="small"/>
+                                    <ListItemText sx={{maxWidth: 100}} primary={"/" + maxScore}/>
+                                </>
+                                :
+                                <ListItemText sx={{maxWidth: 100}} primary={"0/" + maxScore}/>
+                            }
                         </ListItem>
                         <ListItem sx={{maxWidth: 100}}>
-                            <IconButton edge="end" aria-label="download">
+                            <IconButton onClick={downloadSubmission} edge="end" aria-label="download"
+                                        disabled={lastSubmission == undefined}>
                                 <DownloadIcon/>
                             </IconButton>
                         </ListItem>
