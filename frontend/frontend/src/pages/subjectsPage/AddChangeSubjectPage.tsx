@@ -1,13 +1,11 @@
-import {Box, Card, Stack, TextField, Typography, IconButton,Grid} from "@mui/material";
+import {Box, Stack, TextField, Typography, IconButton} from "@mui/material";
 import Button from '@mui/material/Button';
 import {Header} from "../../components/Header.tsx";
-import {ChangeEvent, useState, useEffect} from "react";
+import {useState, useEffect} from "react";
 import { useParams } from "react-router-dom";
 import List from '@mui/material/List';
-import {ListItem, ListItemButton, ListItemText, Divider} from "@mui/material";
+import {ListItemButton, ListItemText, Divider} from "@mui/material";
 import {t} from "i18next";
-import {DateTimePicker, LocalizationProvider, renderTimeViewClock} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs/AdapterDayjs";
 import 'dayjs/locale/nl';
 import FileUploadButton from "../../components/FileUploadButton";
 import ClearIcon from '@mui/icons-material/Clear';
@@ -15,17 +13,6 @@ import ClearIcon from '@mui/icons-material/Clear';
 import Dialog from '@mui/material/Dialog';
 
 import instance from '../../axiosConfig.ts';
-
-interface Student {
-  id: number;
-  studentnumber: number;
-  name:string;
-}
-
-interface Teacher {
-  id: number;
-  name:string;
-}
 
 export function AddChangeSubjectPage() {
   const params = useParams()
@@ -41,11 +28,11 @@ export function AddChangeSubjectPage() {
   const [openTeacher, setOpenTeacher] = useState(false);
   const vakID=params.courseId;
 
-  const handleCloseStudent = (value: string) => {
+  const handleCloseStudent = () => {
     setOpenStudent(false);
   };
 
-  const handleRemoveStudent = (value: string) => {
+  const handleRemoveStudent = () => {
     setStudents((oldstudents)=>{
       for (let i = 0; i < oldstudents.length; i++) {
         if(oldstudents[i].user==selectedStudent){
@@ -66,7 +53,7 @@ export function AddChangeSubjectPage() {
     instance.get('gebruikers/' + numStudent).then((res)=>{
       setStudents((oldstudents)=>{
         //This is like this to prevent the same user being in the list twice
-        var found=false;
+        let found=false;
         const id=res.data.user;
         for (const student of oldstudents){
           if (student.user==id){
@@ -86,11 +73,11 @@ export function AddChangeSubjectPage() {
     );
   };
 
-  const handleCloseTeacher = (value: string) => {
+  const handleCloseTeacher = () => {
     setOpenTeacher(false);
   };
 
-  const handleRemoveTeacher = (value: string) => {
+  const handleRemoveTeacher = () => {
     setTeachers((oldteacher)=>{
       for (let i = 0; i < oldteacher.length; i++) {
         if(oldteacher[i].user==selectedTeacher){
@@ -111,7 +98,7 @@ export function AddChangeSubjectPage() {
     instance.get('gebruikers/' + numTeacher).then((res)=>{
       setTeachers((oldteacher)=>{
         //This is like this to prevent the same user being in the list twice
-        var found=false;
+        let found=false;
         const id=res.data.user;
         for (const teacher of oldteacher){
           if (teacher.user==id){
@@ -137,8 +124,7 @@ export function AddChangeSubjectPage() {
     console.log(studentIDs)
     const teacherIDs=teachers.map(teacher=>teacher.user)
     console.log(teacherIDs)
-    instance.put('vakken/'+vakID+'/',{naam:title,studenten:studentIDs,lesgevers:teacherIDs}).then((res) =>{
-    }).catch((err) => {
+    instance.put('vakken/'+vakID+'/',{naam:title,studenten:studentIDs,lesgevers:teacherIDs}).catch((err) => {
         console.log(err);
       }
     );
@@ -152,7 +138,7 @@ export function AddChangeSubjectPage() {
         instance.get('gebruikers/' + id).then((res) => {
           setStudents((oldstudents)=>{
             //This is like this to prevent the same user being in the list twice
-            var found=false;
+            let found=false;
             const id=res.data.user;
             for (const student of oldstudents){
               if (student.user==id){
@@ -176,7 +162,7 @@ export function AddChangeSubjectPage() {
         instance.get('gebruikers/' + id).then((res) => {
           setTeachers((oldteachers)=>{
             //This is like this to prevent the same user being in the list twice
-            var found=false;
+            let found=false;
             const id=res.data.user;
             for (const teacher of oldteachers){
               if (teacher.user==id){
@@ -200,7 +186,7 @@ export function AddChangeSubjectPage() {
           console.log(err);
         }
     );
-  },[])
+  },[vakID])
 
 
 
@@ -362,19 +348,4 @@ export function AddChangeSubjectPage() {
         </Stack>
       </Stack>
     </>);
-}
-
-function getstudent(id: number): Student {
-  return {
-      id: id,
-      studentnumber: 123456,
-      name: "naam"
-  }
-}
-
-function getteacher(id: number): Teacher {
-  return {
-      id: id,
-      name: "teacher"
-  }
 }
