@@ -2,81 +2,114 @@ import {Box, Typography} from "@mui/material";
 import List from '@mui/material/List';
 import {t} from "i18next";
 import { AssignmentListItemSubjectsPage } from "../subjectsPage/AssignmentListItemSubjectsPage";
+import instance from "../../axiosConfig";
+import { useState, useEffect } from "react";
 
-interface ProjectsViewProps {
-    gebruiker: Gebruiker;
-    archived: boolean;
-    assignments: Project[];
-    deleteAssignment: (index: number) => void;
-    archiveAssignment: (index: number) => void;
-    changeVisibilityAssignment: (index: number) => void;
+interface ProjectStudent {
+    assignment: any,
+    group?: any,
+    lastSubmission?: any,
+    submissions?: any,
+    score?: any,
 }
 
-interface Project {
-    project_id: number,
-    titel: string,
-    beschrijving: string,
-    opgave_bestand: File | null,
-    vak: number,
-    max_score: number,
-    deadline: Date,
-    extra_deadline: Date,
-    zichtbaar: boolean,
-    gearchiveerd: boolean,
-}
+/**
+ * This View is used as a part of the SubjectsPage.
+ * It displays a box that lists The projects with some brief info.
+ * @param gebruiker: the user that wants to view the page.
+ * @param archived: boolean that tells whether to show the current or the archived projects.
+ * @param courseId: the id for the course that is to be displayed.
+ */
+export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment, courseId}) {
+    const [projects, setProjects] = useState<ProjectStudent[]>([]);
 
-interface Groep {
-    groep_id: number,
-    studenten: number[],
-    project: number,
-}
+    useEffect(() => {
+        async function fetchGroup(assignment): Promise<ProjectStudent> {
+            try {
+                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=${gebruiker.user}`);
+                if(groupResponse.data.length == 0){
+                    return {
+                        assignment: assignment,
+                    };
+                }
+                return {
+                    assignment: assignment,
+                    group: groupResponse.data[0],
+                };
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                return {
+                    assignment: assignment,
+                };
+            }
+        }
+        async function fetchSubmission(projectstudent: ProjectStudent): Promise<ProjectStudent> {
+            if(!projectstudent.group){
+                return projectstudent;
+            }
+            try {
+                const submissionsResponse = await instance.get(`/indieningen/?groep=${projectstudent.group.groep_id.toString()}&project=${projectstudent.assignment.project_id.toString()}`);
+                const lastSubmission = submissionsResponse.data[submissionsResponse.data.length - 1];
+                return {
+                    ...projectstudent,
+                    lastSubmission: lastSubmission,
+                    submissions: submissionsResponse.data.length,
+                };
+            } catch (e) {
+                console.error("Error fetching data:", e);
+                return projectstudent;
+            }
+        }
+        async function fetchScore(projectstudent: ProjectStudent): Promise<ProjectStudent> {
+            if(!projectstudent.group || !projectstudent.lastSubmission){
+                return projectstudent;
+            }
+            try {
+                const scoreResponse = await instance.get(`/scores/?indiening=${projectstudent.lastSubmission.indiening_id.toString()}`);
+                return {
+                    ...projectstudent,
+                    score: scoreResponse.data[0],
+                };
+            } catch (e) {
+                console.error("Error fetching data:", e);
+                return projectstudent;
+            }
+        }
 
-interface Score {
-    score_id: number,
-    score: number,
-    indiening: number,
-}
+        async function fetchData() {
+            try {
+                const groupPromises = assignments.map((assignment) => fetchGroup(assignment));
+                const groupArray = await Promise.all(groupPromises);
 
-interface Gebruiker {
-    user: number,
-    is_lesgever: boolean,
-    first_name: string,
-    last_name: string,
-    email: string,
-}
+                const submissionPromises = groupArray.map((projectstudent) => fetchSubmission(projectstudent));
+                const submissionArray = await Promise.all(submissionPromises);
 
-interface Indiening {
-    indiening_id: number,
-    groep: number,
-    tijdstip: Date,
-    status: boolean,
-    indiening_bestanden: Bestand[],
- }
+                const scorePromises = submissionArray.map((projectstudent) => fetchScore(projectstudent));
+                const scoreArray = await Promise.all(scorePromises);
 
- interface Bestand {
-    indiening_bestand_id: number,
-    indiening: number,
-    bestand: File | null,
- }
-
-export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment}: ProjectsViewProps) {
-    const groups = assignments.map((assignment) => getGroepVanStudentVoorProject(gebruiker.user, assignment.project_id));
-    const submissions = groups.map((group) => getLaatseIndieningVanGroep(group.groep_id));
-    const scores = submissions.map((submission) => getScoreVoorIndiening(submission.indiening_id));
+                setProjects(scoreArray);
+            } catch (e) {
+                console.error("Error fetching all data:", e);
+            }
+        }
+        fetchData();
+    }, [assignments]);
     
     return (
         <>
             <Box aria-label={"courseHeader"}
-                sx={{backgroundColor: "secondary.main",
-                    margin:0,
-                    height: 50,
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    padding:3,
-                }}>
-                {!gebruiker.is_lesgever?
+                 sx={{
+                     backgroundColor: "secondary.main",
+                     margin: 0,
+                     height: 50,
+                     display: "flex",
+                     flexDirection: "row",
+                     justifyContent: "space-between",
+                     padding: 3,
+                 }}>
+                {!gebruiker.is_lesgever ?
                     <>
+                    {/* Show the UI from the perspective of a student. */}
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
                         <Typography variant={"h4"}>{t("submissions")}</Typography>
@@ -84,6 +117,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                     </>
                     :
                     <>
+                    {/* Show the UI from the perspective of a teacher. */}
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
                         <Typography variant={"h4"}>{t("edit")}</Typography>
@@ -91,70 +125,37 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                 }
             </Box>
             <Box aria-label={"assignmentList"}
-                sx={{backgroundColor: "background.default",
-                    height: 340,
-                    display: "flex",
-                    flexDirection: "column",
-                    padding:1,
-                    borderRadius:2,
-                    paddingBottom:0
-                }}>
+                 sx={{
+                     backgroundColor: "background.default",
+                     height: 340,
+                     display: "flex",
+                     flexDirection: "column",
+                     padding: 1,
+                     borderRadius: 2,
+                     paddingBottom: 0
+                 }}>
                 <Box display={"flex"} flexDirection={"row"}>
-                    <Box sx={{width:"100%", height: 320, overflow:"auto"}}>
+                    <Box sx={{width: "100%", height: 320, overflow: "auto"}}>
+                        {/* The list below will display the projects with their information */}
                         <List disablePadding={true}>
-                            {assignments
-                            .map((assignment, index) => ({...assignment, index}))
-                            .filter((assignment) => assignment.gearchiveerd == archived)
-                            .map((assignment) => (
-                                <AssignmentListItemSubjectsPage key={assignment.project_id} projectName={assignment.titel}
-                                        dueDate={assignment.deadline} submission={submissions[assignment.index]}
-                                        score={scores[assignment.index]} maxScore={assignment.max_score}
-                                        isStudent={!gebruiker.is_lesgever} archived={archived} visible={assignment.zichtbaar}
-                                        deleteEvent={() => deleteAssignment(assignment.index)}
-                                        archiveEvent={() => archiveAssignment(assignment.index)}
-                                        visibilityEvent={() => changeVisibilityAssignment(assignment.index)}/>
-                            ))}
+                            {projects
+                            .map((project, index) => ({...project, index}))
+                            .filter((project) => project.assignment.gearchiveerd == archived)
+                            .filter((project) => project.assignment.zichtbaar || gebruiker.is_lesgever)
+                            .map((project) => 
+                                <AssignmentListItemSubjectsPage key={project.assignment.project_id} projectName={project.assignment.titel}
+                                    dueDate={new Date(project.assignment.deadline)} submissions={project.submissions}
+                                    score={project.score} maxScore={Number(project.assignment.max_score)}
+                                    isStudent={!gebruiker.is_lesgever} archived={archived} visible={project.assignment.zichtbaar}
+                                    deleteEvent={() => deleteAssignment(project.index)}
+                                    archiveEvent={() => archiveAssignment(project.index)}
+                                    visibilityEvent={() => changeVisibilityAssignment(project.index)}
+                                    courseId={courseId} assignmentId={project.assignment.project_id}/>
+                            )}
                         </List>
                     </Box>
                 </Box>
             </Box>
         </>
     );
-}
-
-function getGroepVanStudentVoorProject(gebruikerId: number, projectId: number): Groep {
-    return {
-        groep_id: 0,
-        studenten: [gebruikerId, 1, 2, 3],
-        project: projectId,
-    }
-}
-
-function getLaatseIndieningVanGroep(groepId: number): Indiening {
-    return {
-        indiening_id: 0,
-        groep: groepId,
-        tijdstip: new Date(2022, 11, 17),
-        status: true,
-        indiening_bestanden: [
-            {
-                indiening_bestand_id: 0,
-                indiening: 0,
-                bestand: null,
-            },
-            {
-                indiening_bestand_id: 1,
-                indiening: 0,
-                bestand: null,
-            }
-        ],
-     }
-}
-
-function getScoreVoorIndiening(indieningId: number): Score {
-    return {
-        score_id: 0,
-        score: 10,
-        indiening: indieningId,
-    }
 }

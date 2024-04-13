@@ -20,6 +20,8 @@ export function CoursesView({isStudent, activecourses}: CourseCardProps) {
                                overflowY: {md: "auto"},
                                maxHeight: "72svh",
                            }}>
+                        {/* Map the list of the cirrent courses to CourseCards.
+                        A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
                         {activecourses.map((course: course) => (
                             <CourseCard key={course.naam} courseId={course.vak_id.toString()} archived={false}
                                         isStudent={isStudent}/>
@@ -27,6 +29,7 @@ export function CoursesView({isStudent, activecourses}: CourseCardProps) {
                     </Stack>
                     {!isStudent &&
                         <Stack flexDirection={"row"} justifyContent={"end"} width={"100%"} padding={0}>
+                            {/* Teachers get an extra button to add courses. */}
                             <IconButton color={"primary"} aria-label={'add-button'}>
                                 <AddIcon fontSize={"large"}/>
                             </IconButton>
