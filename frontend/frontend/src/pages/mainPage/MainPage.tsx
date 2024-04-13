@@ -102,10 +102,13 @@ export function MainPage() {
                     flexDirection: {"md": "row", "xs": "column-reverse"},
                     gap: 5,
                 }}>
-                    {/* Two tabs to select either the current or archived courses  */}
+                    {/* Two tabs to select either the current or archived courses,
+                    CoursesView is a scroll-box with the current courses, 
+                    ArchivedView is the same but for the archived courses.  */}
                     <TabSwitcher titles={["current_courses", "archived"]}
                                  nodes={[<CoursesView isStudent={role == 'student'} activecourses={courses}/>,
                                      <ArchivedView isStudent={role == 'student'} archivedCourses={courses}/>]}/>
+                    {/* Add a calendar to the right of the mainpage. */}
                     <Box aria-label={"calendarView"} display={"flex"} flexDirection={"row"} alignContent={"center"}
                          height={"50%"}>
                         <DeadlineCalendar deadlines={deadlines}/>

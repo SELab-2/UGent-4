@@ -19,6 +19,7 @@ export function ArchivedView({isStudent, archivedCourses}: CourseCardProps) {
                                overflowY: {sm: "auto"},
                                maxHeight: "78svh",
                            }}>
+                            {/* Map the list of the cirrent courses to CourseCards. */}
                         {archivedCourses.map((course) => {
                             return <CourseCard courseId={course.vak_id.toString()} archived={true}
                                                isStudent={isStudent}/>
