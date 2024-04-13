@@ -8,7 +8,6 @@ interface CourseCardProps {
 }
 
 export function ArchivedView({isStudent, archivedCourses}: CourseCardProps) {
-    //TODO: get courses from state
     return (
         <>
             <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
