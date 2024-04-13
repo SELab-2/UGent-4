@@ -230,6 +230,7 @@ export function ProjectScoresPage() {
         <>
             <Stack direction={"column"} spacing={0}
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
+
                 <Header variant={"default"} title={project?.titel + ": Scores"}/>
                 <Box sx={{width: '100%', height: "70%", marginTop: 10, boxShadow: 3, borderRadius: 3}}>
                     {project !== undefined &&
@@ -241,6 +242,7 @@ export function ProjectScoresPage() {
                     <Box display="flex" flexDirection="row" sx={{width: '50%', height: "auto"}}>
                         <Button onClick={exportSubmissions} variant="contained"
                                 color="secondary">{t("export_submissions")}</Button>
+
                         <Button variant={"contained"} color={"secondary"} component="label">
                             {t("upload_scores")}
                             <VisuallyHiddenInput type="file" value={undefined}

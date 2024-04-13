@@ -74,6 +74,7 @@ const english = {
     archive_project_warning: "Archive Project?",
     cant_be_undone: "This cannot be undone.",
     archive: "Archive",
+    save: "Save",
     no_score_yet: "No score yet",
     edit_scores_warning: "Edit Scores?",
     undo_changes_warning: "Undo Changes?",
