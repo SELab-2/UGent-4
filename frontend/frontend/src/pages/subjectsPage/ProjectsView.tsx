@@ -19,8 +19,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
     useEffect(() => {
         async function fetchGroup(assignment): Promise<ProjectStudent> {
             try {
-                //TODO vul bij student gebruiker.user in
-                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=6`);
+                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=${gebruiker.user}`);
                 if(groupResponse.data.length == 0){
                     return {
                         assignment: assignment,
@@ -132,6 +131,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                             {projects
                             .map((project, index) => ({...project, index}))
                             .filter((project) => project.assignment.gearchiveerd == archived)
+                            .filter((project) => project.assignment.zichtbaar || gebruiker.is_lesgever)
                             .map((project) => 
                                 <AssignmentListItemSubjectsPage key={project.assignment.project_id} projectName={project.assignment.titel}
                                     dueDate={new Date(project.assignment.deadline)} submissions={project.submissions}

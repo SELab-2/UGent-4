@@ -51,6 +51,7 @@ const dutch = {
     allowed_file_types: "Toegestane bestandstypes",
     dockerfile_error: "Gelieve een Docker bestand te uploaden.",
     filetype_error: "Gelieve minstens één bestandstype te selecteren.",
+    new_script: "Nieuw script",
     upload_students: "Upload studenten",
     upload_teachers: "Upload leerkrachten",
     subject_name: "Naam vak",
