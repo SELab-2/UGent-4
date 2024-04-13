@@ -13,6 +13,13 @@ interface ProjectStudent {
     score?: any,
 }
 
+/**
+ * This View is used as a part of the SubjectsPage.
+ * It displays a box that lists The projects with some brief info.
+ * @param gebruiker: the user that wants to view the page.
+ * @param archived: boolean that tells whether to show the current or the archived projects.
+ * @param courseId: the id for the course that is to be displayed.
+ */
 export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment, courseId}) {
     const [projects, setProjects] = useState<ProjectStudent[]>([]);
 
@@ -101,6 +108,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                      padding: 3,
                  }}>
                 {!gebruiker.is_lesgever ?
+                {/* Show the UI from the perspective of a student. */}
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
@@ -108,6 +116,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                         <Typography variant={"h4"}>Score</Typography>
                     </>
                     :
+                    {/* Show the UI from the perspective of a teacher. */}
                     <>
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
@@ -127,6 +136,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                  }}>
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width: "100%", height: 320, overflow: "auto"}}>
+                        {/* The list below will display the projects with their information */}
                         <List disablePadding={true}>
                             {projects
                             .map((project, index) => ({...project, index}))
