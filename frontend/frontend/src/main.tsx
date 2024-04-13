@@ -69,9 +69,8 @@ instance.interceptors.request.use(async (config) => {
     try {
         const token = await acquireAccessToken();
         if (token) {
-            console.log("Token acquired: ", token);
             config.headers.Authorization = `Bearer ${token}`;
-            console.log('auth header added' + config.headers.Authorization);
+            console.log('auth token set')
         }
         return config;
     } catch (error) {

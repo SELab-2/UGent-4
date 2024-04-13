@@ -1,4 +1,10 @@
 import {Header} from "../../components/Header.tsx";
+import UploadIcon from '@mui/icons-material/Upload';
+import SaveIcon from '@mui/icons-material/Save';
+import AddIcon from '@mui/icons-material/Add';
+import {LocalizationProvider} from '@mui/x-date-pickers';
+import {AdapterDayjs} from '@mui/x-date-pickers/AdapterDayjs'
+import {DatePicker} from '@mui/x-date-pickers/DatePicker';
 import { AssignmentListItemTeacherPage } from "../../components/AssignmentListItemTeacherPage.tsx";
 import { Box, Button, Card, Divider, Grid, List, ListItem, ListItemText, ListSubheader, Stack, TextField, Typography} from "@mui/material";
 import {t} from "i18next";
@@ -136,6 +142,11 @@ export function AssignmentTeacherPage() {
                 </Card>
 
 
+                    <AddRestrictionButton></AddRestrictionButton>
+
+                    {/* <Button sx={{bgcolor: 'secondary.main'}}>
+                        <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
+                    </Button> */}
              {/*Upload knop*/}
              <Box sx={{
                     padding: '20px',
