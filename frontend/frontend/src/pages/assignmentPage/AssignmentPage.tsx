@@ -1,19 +1,19 @@
 import {Header} from "../../components/Header.tsx";
 import FileUploadButton from "../../components/FileUploadButton.tsx";
 import {SubmissionListItemStudentPage} from "../../components/SubmissionListItemStudentPage.tsx";
-import {SubmissionListItemTeacherPage } from "../../components/SubmissionListItemTeacherPage.tsx";
+import {SubmissionListItemTeacherPage} from "../../components/SubmissionListItemTeacherPage.tsx";
 import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
 import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
-import { useEffect, useState, ChangeEvent } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import {ChangeEvent, useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import JSZip from 'jszip';
 
 
 export function AssignmentPage() {
     const navigate = useNavigate();
-    let { courseId, assignmentId } = useParams();
+    let {courseId, assignmentId} = useParams();
     assignmentId = String(assignmentId);
     courseId = String(courseId);
 
@@ -35,13 +35,13 @@ export function AssignmentPage() {
 
     useEffect(() => {
         async function fetchData() {
-            try {           
+            try {
                 const userResponse = await instance.get("/gebruikers/me/");
                 setUser(userResponse.data);
                 const assignmentResponse = await instance.get(`/projecten/${assignmentId}/`);
                 setAssignment(assignmentResponse.data);
-                if (userResponse.data){
-                    if (user.is_lesgever){
+                if (userResponse.data) {
+                    if (user.is_lesgever) {
                         const groupsResponse = await instance.get(`/groepen/?project=${assignmentId}`);
                         setGroups(groupsResponse.data);
                     } else {
@@ -53,6 +53,7 @@ export function AssignmentPage() {
                 console.error("Error fetching data:", error);
             }
         }
+
         fetchData();
     }, [assignmentId, user.is_lesgever]);
 
@@ -62,34 +63,34 @@ export function AssignmentPage() {
         submissions.forEach((submission, index) => {
             downloadPromises.push(
                 new Promise((resolve, reject) => {
-                    instance.get(`/indieningen/${submission.indiening_id}/indiening_bestanden/`, { responseType: 'blob' }).then(res => {
-                            let filename = 'lege_indiening_zip.zip';
-                            if (submission.indiening_bestanden.length > 0) {
-                                filename = submission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
-                            }
-                            if (filename !== 'lege_indiening_zip.zip') {
-                                zip.file(filename, res.data);
-                            }
-                            resolve();
-                        }).catch(err => {
-                            console.error(`Error downloading submission ${index + 1}:`, err);
-                            reject(err);
-                        });
+                    instance.get(`/indieningen/${submission.indiening_id}/indiening_bestanden/`, {responseType: 'blob'}).then(res => {
+                        let filename = 'lege_indiening_zip.zip';
+                        if (submission.indiening_bestanden.length > 0) {
+                            filename = submission.indiening_bestanden[0].bestand.replace(/^.*[\\/]/, '');
+                        }
+                        if (filename !== 'lege_indiening_zip.zip') {
+                            zip.file(filename, res.data);
+                        }
+                        resolve();
+                    }).catch(err => {
+                        console.error(`Error downloading submission ${index + 1}:`, err);
+                        reject(err);
+                    });
                 })
             );
         });
         Promise.all(downloadPromises).then(() => {
-                zip.generateAsync({ type: "blob" }).then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = 'all_submissions.zip';
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                    }).catch(err => {
-                        console.error("Error generating zip file:", err);
-                    });
+            zip.generateAsync({type: "blob"}).then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'all_submissions.zip';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            }).catch(err => {
+                console.error("Error generating zip file:", err);
+            });
         }).catch(err => {
             console.error("Error downloading submissions:", err);
         });
@@ -103,14 +104,14 @@ export function AssignmentPage() {
     };
 
     const uploadIndiening = async () => {
-        if (submissionFile){
+        if (submissionFile) {
             const config = {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
             };
             const groupResponse = await instance.get(`/groepen/?project=${assignmentId}`)
-            if (groupResponse.data){
+            if (groupResponse.data) {
                 const group = groupResponse.data[0];
                 const formData = new FormData();
                 formData.append('groep', group.groep_id);
@@ -123,14 +124,14 @@ export function AssignmentPage() {
             }
         }
     }
-    
+
     return (
         <>
             {user.is_lesgever ? (
                 <>
-                    <Header variant={"not_main"} title={assignment ? assignment.titel : ""}></Header>
+                    <Header variant={"editable"} title={assignment ? assignment.titel : ""}></Header>
                     <Stack marginTop={15} direction={"column"} spacing={4}
-                        sx={{ width: "100%", height: "100%", backgroundColor: "background.default" }}>
+                           sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
 
                         {/*deadline and groep button */}
                         <Box sx={{
@@ -138,19 +139,24 @@ export function AssignmentPage() {
                             backgroundColor: "background.default",
                         }}
                         >
-                        <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}</Typography>
+                            <Typography variant="h6"
+                                        color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}
+                            </Typography>
                         </Box>
 
                         {/*Opgave*/}
                         <Card elevation={1} sx={{
-                                color: "text.primary",
-                                padding: '20px',
-                                backgroundColor: "background.default",
-                                borderRadius: 5,
+                            color: "text.primary",
+                            padding: '20px',
+                            backgroundColor: "background.default",
+                            borderRadius: 5,
                         }}
                         >
                             <Stack direction={"column"}>
-                                <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>{t("assignment")}</Typography>
+                                <Typography sx={{
+                                    textDecoration: 'underline',
+                                    fontWeight: 'bold'
+                                }}>{t("assignment")}</Typography>
                                 <Typography>{assignment ? assignment.beschrijving : ""}</Typography>
                             </Stack>
                         </Card>
@@ -161,33 +167,34 @@ export function AssignmentPage() {
                             backgroundColor: "background.default",
                             borderRadius: 5,
                             padding: '20px'
-                                
+
                         }}
                         >
-                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                            <Typography sx={{ fontWeight: 'bold' }}>{t("group")}</Typography>
-                            <Typography sx={{ fontWeight: 'bold' }}>{t("time")}</Typography>
-                            <Typography sx={{ fontWeight: 'bold' }}>Score</Typography>
-                            <Typography sx={{ fontWeight: 'bold' }}>Status</Typography>
-                            <Typography sx={{ fontWeight: 'bold' }}>{t("download")}</Typography>
-                        </Box>
-                        <Box style={{maxHeight: 300, overflow: 'auto'}}>
-                            <Divider color={"text.main"}></Divider>
-                            <List disablePadding={true} >
-                                {groups.map((group) => (
-                                    <Box key={group.groep_id}>
-                                        <Divider color={"text.main"}></Divider>
-                                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                        <SubmissionListItemTeacherPage
-                                                group_id={group.groep_id}
-                                                assignment_id={assignmentId}
-                                                course_id={courseId}
-                                        />
+                            <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
+                                <Typography sx={{fontWeight: 'bold'}}>{t("group")}</Typography>
+                                <Typography sx={{fontWeight: 'bold'}}>{t("time")}</Typography>
+                                <Typography sx={{fontWeight: 'bold'}}>Score</Typography>
+                                <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
+                                <Typography sx={{fontWeight: 'bold'}}>{t("download")}</Typography>
+                            </Box>
+                            <Box style={{maxHeight: 300, overflow: 'auto'}}>
+                                <Divider color={"text.main"}></Divider>
+                                <List disablePadding={true}>
+                                    {groups.map((group) => (
+                                        <Box key={group.groep_id}>
+                                            <Divider color={"text.main"}></Divider>
+                                            <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}
+                                                 pl={3} pr={3}>
+                                                <SubmissionListItemTeacherPage
+                                                    group_id={group.groep_id}
+                                                    assignment_id={assignmentId}
+                                                    course_id={courseId}
+                                                />
+                                            </Box>
                                         </Box>
-                                    </Box>
-                                ))}
-                            </List>
-                        </Box>
+                                    ))}
+                                </List>
+                            </Box>
                         </Card>
 
                         <AddRestrictionButton></AddRestrictionButton>
@@ -198,21 +205,23 @@ export function AssignmentPage() {
 
                         {/*Export- en Aanpasknop*/}
                         <Box sx={{
-                                padding: '20px',
-                                backgroundColor: "background.default",
-                            }}
-                            >
-                                <Stack direction={"row"}>
-                                    {submissions.length > 0 && (
-                                        <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={downloadAllSubmissions}>
-                                            <Typography color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
-                                        </Button>
-                                        )}
-                                    <div style={{flexGrow: 1}}/>
-                                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={adjustScores}>
-                                        <Typography color="secondary.contrastText">{t("adjust_scores")}</Typography>
+                            padding: '20px',
+                            backgroundColor: "background.default",
+                        }}
+                        >
+                            <Stack direction={"row"}>
+                                {submissions.length > 0 && (
+                                    <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}
+                                            onClick={downloadAllSubmissions}>
+                                        <Typography
+                                            color="secondary.contrastText">{t("export")} {t("submissions")}</Typography>
                                     </Button>
-                                </Stack>
+                                )}
+                                <div style={{flexGrow: 1}}/>
+                                <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={adjustScores}>
+                                    <Typography color="secondary.contrastText">{t("adjust_scores")}</Typography>
+                                </Button>
+                            </Stack>
                         </Box>
                     </Stack>
                 </>
@@ -220,7 +229,7 @@ export function AssignmentPage() {
                 <>
                     <Header variant={"not_main"} title={assignment ? assignment.titel : ""}></Header>
                     <Stack marginTop={15} direction={"column"} spacing={4}
-                        sx={{ width: "100%", height: "100%", backgroundColor: "background.default" }}>
+                           sx={{width: "100%", height: "100%", backgroundColor: "background.default"}}>
 
                         {/*deadline and groep button */}
                         <Box sx={{
@@ -229,7 +238,9 @@ export function AssignmentPage() {
                         }}
                         >
                             <Stack direction={"row"}>
-                                <Typography variant="h6" color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}</Typography>
+                                <Typography variant="h6"
+                                            color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}
+                                </Typography>
                                 <div style={{flexGrow: 1}}/>
                                 <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={goToGroups}>
                                     <Typography color="secondary.contrastText">{t("group")}</Typography>
@@ -246,7 +257,10 @@ export function AssignmentPage() {
                         }}
                         >
                             <Stack direction={"column"}>
-                                <Typography sx={{textDecoration: 'underline', fontWeight: 'bold'}}>{t("assignment")}</Typography>
+                                <Typography sx={{
+                                    textDecoration: 'underline',
+                                    fontWeight: 'bold'
+                                }}>{t("assignment")}</Typography>
                                 <Typography>{assignment ? assignment.beschrijving : ""}</Typography>
                             </Stack>
                         </Card>
@@ -257,32 +271,33 @@ export function AssignmentPage() {
                             backgroundColor: "background.default",
                             borderRadius: 5,
                             padding: '20px'
-                            
+
                         }}
                         >
-                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                            <Typography sx={{fontWeight: 'bold'}}>{t("submission")}</Typography>
-                            <Typography sx={{fontWeight: 'bold'}}>{t("time")}</Typography>
-                            <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
-                        </Box>
-                        <Box style={{maxHeight: 300, overflow: 'auto'}}>
-                            <Divider color={"text.main"}></Divider>
-                            <List disablePadding={true} >
-                                {submissions.map((submission) => (
-                                    <Box key={submission.indiening_id}>
-                                        <Divider color={"text.main"}></Divider>
-                                        <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
-                                            <SubmissionListItemStudentPage id={submission.indiening_id} 
-                                                                timestamp={new Date(submission.tijdstip)}
-                                                                status={!!!submission.status}
-                                                                assignment_id={assignmentId}
-                                                                course_id={courseId}
-                                            />
+                            <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"} pl={3} pr={3}>
+                                <Typography sx={{fontWeight: 'bold'}}>{t("submission")}</Typography>
+                                <Typography sx={{fontWeight: 'bold'}}>{t("time")}</Typography>
+                                <Typography sx={{fontWeight: 'bold'}}>Status</Typography>
+                            </Box>
+                            <Box style={{maxHeight: 300, overflow: 'auto'}}>
+                                <Divider color={"text.main"}></Divider>
+                                <List disablePadding={true}>
+                                    {submissions.map((submission) => (
+                                        <Box key={submission.indiening_id}>
+                                            <Divider color={"text.main"}></Divider>
+                                            <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}
+                                                 pl={3} pr={3}>
+                                                <SubmissionListItemStudentPage id={submission.indiening_id}
+                                                                               timestamp={new Date(submission.tijdstip)}
+                                                                               status={!submission.status}
+                                                                               assignment_id={assignmentId}
+                                                                               course_id={courseId}
+                                                />
                                             </Box>
-                                    </Box>
-                                ))}
-                            </List>
-                        </Box>
+                                        </Box>
+                                    ))}
+                                </List>
+                            </Box>
                         </Card>
 
                         {/*Upload knop*/}
@@ -292,14 +307,15 @@ export function AssignmentPage() {
                         }}
                         >
                             <Stack direction={"row"}>
-                            {<FileUploadButton name={t('upload')} path={submissionFile}
-                                              onFileChange={handleFileChange}
-                                              fileTypes={['.zip']}
-                                              tooltip={t('uploadToolTip')}
-                    />}
-                            <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={uploadIndiening}>
-                                <Typography color="secondary.contrastText">Confirm Upload</Typography>
-                            </Button>
+                                {<FileUploadButton name={t('upload')} path={submissionFile}
+                                                   onFileChange={handleFileChange}
+                                                   fileTypes={['.zip']}
+                                                   tooltip={t('uploadToolTip')}
+                                />}
+                                <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}}
+                                        onClick={uploadIndiening}>
+                                    <Typography color="secondary.contrastText">Confirm Upload</Typography>
+                                </Button>
                                 <div style={{flexGrow: 1}}/>
                             </Stack>
                         </Box>
