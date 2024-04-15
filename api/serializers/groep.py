@@ -125,5 +125,5 @@ def validate_students(students_data, project, current_group=None):
 def validate_groep_grootte(studenten, project):
     if len(studenten) > project.max_groep_grootte:
         raise serializers.ValidationError(
-            f"Dit project heeft een maximum groep groote van {project.max_groep_grootte} studenten"
+            f"Dit project heeft een maximum groep grootte van {project.max_groep_grootte} studenten"
         )

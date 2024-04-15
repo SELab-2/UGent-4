@@ -22,9 +22,17 @@ class GebruikerFactory(DjangoModelFactory):
     user = SubFactory(UserFactory)
     is_lesgever = Faker("boolean")
 
-    @PostGeneration  # Use the PostGeneration decorator
+    @PostGeneration 
     def make_superuser(self, create, extracted, **kwargs):
         if not create:
             return
         self.user.is_superuser = self.is_lesgever
         self.user.save()
+    
+    @PostGeneration
+    def gepinde_vakken(self, create, extracted, **kwargs):
+        if not create:
+            return
+        if extracted:
+            for vak in extracted:
+                self.gepinde_vakken.add(vak)
