@@ -123,6 +123,14 @@ class RestrictieDetailViewTest(APITestCase):
         response = self.client.put(self.url, new_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_restrictie_patch(self):
+        new_data = {
+            "moet_slagen": not self.restrictie.moet_slagen,
+        }
+        response = self.client.patch(self.url, new_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["moet_slagen"], not self.restrictie.moet_slagen)
+
     def test_restrictie_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -132,3 +140,30 @@ class RestrictieDetailViewTest(APITestCase):
         self.client.force_login(student.user)
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class RestrictieDetailDownloadScriptTest(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.restrictie = RestrictieFactory.create()
+        self.url = reverse(
+            "restrictie_detail_download_script",
+            kwargs={"id": self.restrictie.restrictie_id},
+        )
+        self.teacher = GebruikerFactory.create(is_lesgever=True)
+        self.client.force_login(self.teacher.user)
+
+    def test_project_detail_download_opgave_get_as_teacher(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_project_detail_download_opgave_get_unauthorized(self):
+        student = GebruikerFactory.create(is_lesgever=False)
+        self.client.force_login(student.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_project_detail_download_opgave_get_invalid(self):
+        self.url = reverse("restrictie_detail_download_script", kwargs={"id": 69})
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

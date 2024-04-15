@@ -26,7 +26,8 @@ class GroepSerializerTest(APITestCase):
 
     def test_create(self):
         studenten = [
-            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(self.groep.project.max_groep_grootte)
+            GebruikerFactory.create(is_lesgever=False).user.id
+            for _ in range(self.groep.project.max_groep_grootte)
         ]
         for student in studenten:
             self.groep.project.vak.studenten.add(student)
@@ -80,16 +81,18 @@ class GroepSerializerTest(APITestCase):
         data = {
             "project": self.groep.project.project_id,
             "studenten": [
-                GebruikerFactory.create(is_lesgever=True).user.id for _ in range(self.groep.project.max_groep_grootte)
+                GebruikerFactory.create(is_lesgever=True).user.id
+                for _ in range(self.groep.project.max_groep_grootte)
             ],
         }
         serializer = GroepSerializer(data=data)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-    
+
     def test_create_invalid_group_size(self):
         studenten = [
-            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(self.groep.project.max_groep_grootte + 1)
+            GebruikerFactory.create(is_lesgever=False).user.id
+            for _ in range(self.groep.project.max_groep_grootte + 1)
         ]
         for student in studenten:
             self.groep.project.vak.studenten.add(student)
@@ -157,7 +160,7 @@ class GroepSerializerTest(APITestCase):
         serializer = GroepSerializer(instance=groep, data=new_data, partial=True)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-    
+
     def test_update_invalid_group_size(self):
         data = self.serializer.data
         for _ in range(self.groep.project.max_groep_grootte):

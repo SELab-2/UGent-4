@@ -110,7 +110,7 @@ class ProjectSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         project = serializer.save()
         self.assertEqual(project.deadline, parse(data["deadline"]))
-    
+
     def test_create_no_deadline(self):
         vak = VakFactory.create().vak_id
         data = {

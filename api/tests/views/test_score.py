@@ -120,6 +120,13 @@ class ScoreDetailViewTest(TestCase):
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_score_detail_patch(self):
+        new_data = {"score": 10}
+        response = self.client.patch(self.url, new_data, format="json")
+        self.assertEqual(response.status_code, 200)
+        self.score.refresh_from_db()
+        self.assertEqual(self.score.score, new_data["score"])
+
     def test_score_detail_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

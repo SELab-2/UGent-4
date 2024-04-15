@@ -179,6 +179,15 @@ class ProjectDetailViewTest(APITestCase):
         response = self.client.put(self.url, new_data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
+    def test_project_detail_patch(self):
+        new_data = {
+            "beschrijving": "Aangepaste beschrijving",
+        }
+        response = self.client.patch(self.url, new_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.beschrijving, new_data["beschrijving"])
+
     def test_project_detail_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -188,3 +197,36 @@ class ProjectDetailViewTest(APITestCase):
         self.client.force_login(student.user)
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class ProjectDetailDownloadOpgaveTest(APITestCase):
+    def setUp(self):
+        self.project = ProjectFactory.create()
+        self.teacher = GebruikerFactory.create(is_lesgever=True)
+        self.student = GebruikerFactory.create(is_lesgever=False)
+        self.project.vak.studenten.add(self.student)
+        self.url = reverse(
+            "project_detail_download_opgave", kwargs={"id": self.project.project_id}
+        )
+        self.client = APIClient()
+        self.client.force_login(self.teacher.user)
+
+    def test_project_detail_download_opgave_get_as_teacher(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_project_detail_download_opgave_get_as_student(self):
+        self.client.force_login(self.student.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_project_detail_download_opgave_get_unauthorized(self):
+        student = GebruikerFactory.create(is_lesgever=False)
+        self.client.force_login(student.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_project_detail_download_opgave_get_invalid(self):
+        self.url = reverse("project_detail_download_opgave", kwargs={"id": 69})
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

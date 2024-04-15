@@ -14,7 +14,15 @@ class GebruikerSerializerTest(APITestCase):
     def test_contains_expected_fields(self):
         data = self.serializer.data
         self.assertCountEqual(
-            data.keys(), ["user", "is_lesgever", "first_name", "last_name", "email", "gepinde_vakken"]
+            data.keys(),
+            [
+                "user",
+                "is_lesgever",
+                "first_name",
+                "last_name",
+                "email",
+                "gepinde_vakken",
+            ],
         )
 
     def test_user_field_content(self):
@@ -79,7 +87,7 @@ class GebruikerSerializerTest(APITestCase):
         )
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-    
+
     def test_update_invalid_gepinde_vak(self):
         data = self.serializer.data
         data["gepinde_vakken"].append(VakFactory.create().vak_id)

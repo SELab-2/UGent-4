@@ -48,7 +48,7 @@ class GebruikerDetailViewTest(APITestCase):
         new_data = {
             "user": self.gebruiker.user.id,
             "is_lesgever": not self.gebruiker.is_lesgever,
-            "gepinde_vakken": self.gebruiker.gepinde_vakken.all()
+            "gepinde_vakken": self.gebruiker.gepinde_vakken.all(),
         }
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -82,6 +82,15 @@ class GebruikerDetailViewTest(APITestCase):
         }
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_gebruiker_detail_patch(self):
+        new_data = {
+            "is_lesgever": not self.gebruiker.is_lesgever,
+        }
+        response = self.client.patch(self.url, new_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.gebruiker.refresh_from_db()
+        self.assertEqual(self.gebruiker.is_lesgever, new_data["is_lesgever"])
 
 
 class GebruikerDetailMeViewTest(APITestCase):
