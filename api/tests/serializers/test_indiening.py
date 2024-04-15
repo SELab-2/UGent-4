@@ -16,7 +16,16 @@ class IndieningSerializerTest(TestCase):
         data = self.serializer.data
         self.assertEqual(
             set(data.keys()),
-            set(["indiening_id", "groep", "tijdstip", "status", "result", "indiening_bestanden"]),
+            set(
+                [
+                    "indiening_id",
+                    "groep",
+                    "tijdstip",
+                    "status",
+                    "result",
+                    "indiening_bestanden",
+                ]
+            ),
         )
 
     def test_indiening_serializer_create(self):
