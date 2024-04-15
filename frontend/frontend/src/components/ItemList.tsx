@@ -1,5 +1,6 @@
 import {Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@mui/material';
 import theme from '../Theme';
+import {FC} from "react";
 
 interface Item {
     opdracht: string;
@@ -12,7 +13,7 @@ interface ItemListProps {
     itemList: Item[];
 }
 
-export const ItemList: React.FC<ItemListProps> = ({itemList}) => {
+export const ItemList: FC<ItemListProps> = ({itemList}) => {
     return (
         <TableContainer component={Paper} variant="outlined">
             <Table>

@@ -13,14 +13,20 @@ interface ProjectStudent {
     score?: any,
 }
 
+/**
+ * This View is used as a part of the SubjectsPage.
+ * It displays a box that lists The projects with some brief info.
+ * @param gebruiker: the user that wants to view the page.
+ * @param archived: boolean that tells whether to show the current or the archived projects.
+ * @param courseId: the id for the course that is to be displayed.
+ */
 export function ProjectsView({gebruiker, archived, assignments, deleteAssignment, archiveAssignment, changeVisibilityAssignment, courseId}) {
     const [projects, setProjects] = useState<ProjectStudent[]>([]);
 
     useEffect(() => {
         async function fetchGroup(assignment): Promise<ProjectStudent> {
             try {
-                //TODO vul bij student gebruiker.user in
-                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=6`);
+                const groupResponse = await instance.get(`/groepen/?project=${assignment.project_id.toString()}&student=${gebruiker.user}`);
                 if(groupResponse.data.length == 0){
                     return {
                         assignment: assignment,
@@ -103,6 +109,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                  }}>
                 {!gebruiker.is_lesgever ?
                     <>
+                    {/* Show the UI from the perspective of a student. */}
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
                         <Typography variant={"h4"}>{t("submissions")}</Typography>
@@ -110,6 +117,7 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                     </>
                     :
                     <>
+                    {/* Show the UI from the perspective of a teacher. */}
                         <Typography variant={"h4"}>Project</Typography>
                         <Typography variant={"h4"}>Deadline</Typography>
                         <Typography variant={"h4"}>{t("edit")}</Typography>
@@ -128,10 +136,12 @@ export function ProjectsView({gebruiker, archived, assignments, deleteAssignment
                  }}>
                 <Box display={"flex"} flexDirection={"row"}>
                     <Box sx={{width: "100%", height: 320, overflow: "auto"}}>
+                        {/* The list below will display the projects with their information */}
                         <List disablePadding={true}>
                             {projects
                             .map((project, index) => ({...project, index}))
                             .filter((project) => project.assignment.gearchiveerd == archived)
+                            .filter((project) => project.assignment.zichtbaar || gebruiker.is_lesgever)
                             .map((project) => 
                                 <AssignmentListItemSubjectsPage key={project.assignment.project_id} projectName={project.assignment.titel}
                                     dueDate={new Date(project.assignment.deadline)} submissions={project.submissions}

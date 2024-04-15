@@ -159,9 +159,10 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                 {isStudent ?
                                     <Box sx={{width: "100%", height: 130, overflow: "auto"}}>
                                         <List disablePadding={true}>
-                                            {assignments.map((assignment) => (
+                                            {assignments.filter((assignment) => assignment.zichtbaar).map((assignment) => (
                                                 <AssignmentListItem key={assignment.project_id}
                                                                     id={assignment.project_id.toString()}
+                                                                    courseId={courseId}
                                                                     projectName={assignment.titel}
                                                                     dueDate={new Date(assignment.deadline) || null}
                                                                     status={assignment.project_id === 1} //TODO dit moet nog aangepast worden
@@ -172,9 +173,10 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                     <>{!archived ?
                                         <Box sx={{width: "90%", height: 130}}>
                                             <List disablePadding={true}>
-                                                {assignments.map((assignment) => (
+                                                {assignments.filter((assignment) => assignment.zichtbaar).map((assignment) => (
                                                     <AssignmentListItem key={assignment.project_id}
                                                                         id={assignment.project_id.toString()}
+                                                                        courseId={courseId}
                                                                         projectName={assignment.titel}
                                                                         dueDate={new Date(assignment.deadline) || null}
                                                                         status={assignment.project_id === 1
@@ -186,9 +188,10 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                         </Box> :
                                         <Box sx={{width: "100%", height: 130}}>
                                             <List disablePadding={true}>
-                                                {assignments.map((assignment) => (
+                                                {assignments.filter((assignment) => assignment.zichtbaar).map((assignment) => (
                                                     <AssignmentListItem key={assignment.project_id}
                                                                         id={assignment.project_id.toString()}
+                                                                        courseId={courseId}
                                                                         projectName={assignment.titel}
                                                                         dueDate={new Date(assignment.deadline) || null}
                                                                         status={assignment.project_id === 1}

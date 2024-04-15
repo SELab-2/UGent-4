@@ -6,6 +6,7 @@ import {t} from "i18next";
 
 interface AssignmentListItemProps {
     id: string;
+    courseId: string;
     projectName: string;
     dueDate?: Date;
     status: boolean;
@@ -21,12 +22,12 @@ interface AssignmentListItemProps {
 * @param isStudent: boolean - if the user is a student or a teacher
 */
 
-export function AssignmentListItem({id, projectName, dueDate, status, isStudent}: AssignmentListItemProps) {
+export function AssignmentListItem({id, courseId, projectName, dueDate, status, isStudent}: AssignmentListItemProps) {
     const navigate = useNavigate();
 
     const handleProjectClick = () => {
         console.log("Project clicked");
-        navigate(`/${id}`)
+        navigate(`/course/${courseId}/assignment/${id}`)
     }
 
     return (
