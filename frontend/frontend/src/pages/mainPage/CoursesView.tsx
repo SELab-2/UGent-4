@@ -2,6 +2,7 @@ import {IconButton, Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import course from "./MainPage.tsx";
+import { useNavigate } from "react-router-dom";
 
 interface CourseCardProps {
     isStudent: boolean;
