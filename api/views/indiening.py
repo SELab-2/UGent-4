@@ -4,8 +4,15 @@ from rest_framework import status
 
 from api.models.indiening import Indiening, IndieningBestand
 from api.models.groep import Groep
+from api.models.vak import Vak
+from api.models.project import Project
 from api.serializers.indiening import IndieningSerializer
 from api.utils import is_lesgever, contains
+
+import os
+import tempfile
+import zipfile
+from django.http import HttpResponse
 
 
 @api_view(["GET", "POST"])
@@ -39,6 +46,23 @@ def indiening_list(request, format=None):
                 groep = eval(request.GET.get("groep"))
                 indieningen = indieningen.filter(groep=groep)
             except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if "project" in request.GET:
+            try:
+                project = Project.objects.get(pk=eval(request.GET.get("project")))
+                groepen = Groep.objects.filter(project=project)
+                indieningen = indieningen.filter(groep__in=groepen)
+            except (NameError, Project.DoesNotExist):
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if "vak" in request.GET:
+            try:
+                vak = Vak.objects.get(pk=eval(request.GET.get("vak")))
+                projecten = Project.objects.filter(vak=vak)
+                groepen = Groep.objects.filter(project__in=projecten)
+                indieningen = indieningen.filter(groep__in=groepen)
+            except (NameError, Vak.DoesNotExist):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
         serializer = IndieningSerializer(indieningen, many=True)
@@ -89,9 +113,46 @@ def indiening_detail(request, id, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     elif request.method == "DELETE":
-        if is_lesgever(request.user) or contains(
-            indiening.groep.studenten, request.user
-        ):
+        if is_lesgever(request.user):
             indiening.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def indiening_detail_download_bestanden(request, id, format=None):
+    """
+    Een view om de bestanden van een specifieke indiening te downloaden als een zip-archief.
+
+    Args:
+        id (int): De primaire sleutel van de indiening.
+        format (str, optional): Het gewenste formaat voor de respons. Standaard is None.
+
+    Returns:
+        HttpResponse: Een zip-bestandsrespons met de bestanden van de indiening als bijlage,
+        indien de gebruiker een lesgever is of betrokken is bij de groep van de indiening.
+        Anders wordt een foutmelding geretourneerd.
+    """
+    try:
+        indiening = Indiening.objects.get(pk=id)
+    except Indiening.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if is_lesgever(request.user) or contains(indiening.groep.studenten, request.user):
+        indiening_bestanden = IndieningBestand.objects.filter(indiening=indiening)
+
+        temp_dir = tempfile.mkdtemp()
+
+        zip_file_name = f"groep_{indiening.groep.groep_id}_indiening_{indiening.indiening_id}_bestanden.zip"
+        zip_file_path = os.path.join(temp_dir, zip_file_name)
+        with zipfile.ZipFile(zip_file_path, "w") as zip_file:
+            for indiening_bestand in indiening_bestanden:
+                path = indiening_bestand.bestand.path
+                zip_file.write(path, os.path.basename(path))
+
+        with open(zip_file_path, "rb") as zip_file:
+            response = HttpResponse(zip_file.read(), content_type="application/zip")
+            response["Content-Disposition"] = f"attachment; filename={zip_file_name}"
+            return response
+
+    return Response(status=status.HTTP_403_FORBIDDEN)

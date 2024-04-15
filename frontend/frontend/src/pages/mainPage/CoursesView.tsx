@@ -9,10 +9,11 @@ interface CourseCardProps {
 }
 
 export function CoursesView({isStudent, activecourses}: CourseCardProps) {
+    const navigate = useNavigate();
 
     return (
         <>
-            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={"500px"}>
+            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
                 <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
                     <Stack flexDirection={"row"} flexWrap={"wrap"} width={'90%'}
                            sx={{
@@ -20,19 +21,18 @@ export function CoursesView({isStudent, activecourses}: CourseCardProps) {
                                overflowY: {md: "auto"},
                                maxHeight: "72svh",
                            }}>
-                        <CourseCard courseId={"course1"} archived={false} isStudent={isStudent}/>
-                        <CourseCard courseId={"course2"} archived={false} isStudent={false}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={isStudent}/>
-                        <CourseCard courseId={"course3"} archived={true} isStudent={false}/>
+                        {/* Map the list of the cirrent courses to CourseCards.
+                        A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
                         {activecourses.map((course: course) => (
-                            <CourseCard key={course.vak_id} courseId={course.naam} archived={false}
+                            <CourseCard key={course.naam} courseId={course.vak_id.toString()} archived={false}
                                         isStudent={isStudent}/>
-                            // eerste dummy's tijdelijk houden (courses fetchen werkt nog niet)
                         ))}
                     </Stack>
                     {!isStudent &&
                         <Stack flexDirection={"row"} justifyContent={"end"} width={"100%"} padding={0}>
-                            <IconButton color={"primary"} aria-label={'add-button'}>
+                            {/* Teachers get an extra button to add courses. */}
+                            <IconButton color={"primary"} aria-label={'add-button'}
+                                        onClick={() => navigate('/course/edit')}>
                                 <AddIcon fontSize={"large"}/>
                             </IconButton>
                         </Stack>}

@@ -96,11 +96,17 @@ def run_tests_async(instance):
     project_id = instance.groep.project.project_id
     result = run_tests_on(indiening_id, project_id)
     matches = re.findall(r"Testing \./.*", result[1])
-    first_match_index = result[1].find(matches[0])
+    try:
+        first_match_index = result[1].find(matches[0])
+        result = result[1][first_match_index:]
+        status = -1 if result[0] else 1
+    except Exception:
+        result = result[1]
+        status = -1
 
     with transaction.atomic():
-        instance.status = -1 if result[0] else 1
-        instance.result = result[1][first_match_index:]
+        instance.status = status
+        instance.result = result
         instance.save()
 
 

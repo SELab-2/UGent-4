@@ -1,3 +1,4 @@
+from django.http import FileResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -54,7 +55,7 @@ def restrictie_list(request, format=None):
     return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
 def restrictie_detail(request, id, format=None):
     """
     Een view om de details van een restrictie op te halen, bij te werken of te verwijderen.
@@ -62,7 +63,7 @@ def restrictie_detail(request, id, format=None):
     GET:
     Haalt de details van een restrictie op als de gebruiker een lesgever is.
 
-    PUT:
+    PUT, PATCH:
     Werkt de details van een restrictie bij als de gebruiker een lesgever is.
 
     DELETE:
@@ -85,8 +86,13 @@ def restrictie_detail(request, id, format=None):
             serializer = RestrictieSerializer(restrictie)
             return Response(serializer.data)
 
-        if request.method == "PUT":
-            serializer = RestrictieSerializer(restrictie, data=request.data)
+        if request.method in ["PUT", "PATCH"]:
+            if request.method == "PUT":
+                serializer = RestrictieSerializer(restrictie, data=request.data)
+            else:
+                serializer = RestrictieSerializer(
+                    restrictie, data=request.data, partial=True
+                )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -95,4 +101,27 @@ def restrictie_detail(request, id, format=None):
         elif request.method == "DELETE":
             restrictie.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def restrictie_detail_download_script(request, id, format=None):
+    """
+    Een view om het script van een specifieke restrictie te downloaden.
+
+    Args:
+        id (int): De primaire sleutel van de restrictie.
+        format (str, optional): Het gewenste formaat voor de respons. Standaard is None.
+
+    Returns:
+        Response: Een bestandsrespons met het script van de restrictie als bijlage,
+        indien de gebruiker een lesgever is. Anders wordt een foutmelding geretourneerd.
+    """
+    try:
+        restrictie = Restrictie.objects.get(pk=id)
+    except Restrictie.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if is_lesgever(request.user):
+        return FileResponse(restrictie.script.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)
