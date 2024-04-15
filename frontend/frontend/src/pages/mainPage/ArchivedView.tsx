@@ -8,7 +8,6 @@ interface CourseCardProps {
 }
 
 export function ArchivedView({isStudent, archivedCourses}: CourseCardProps) {
-    //TODO: get courses from state
     return (
         <>
             <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
@@ -19,6 +18,7 @@ export function ArchivedView({isStudent, archivedCourses}: CourseCardProps) {
                                overflowY: {sm: "auto"},
                                maxHeight: "78svh",
                            }}>
+                            {/* Map the list of the cirrent courses to CourseCards. */}
                         {archivedCourses.map((course) => {
                             return <CourseCard courseId={course.vak_id.toString()} archived={true}
                                                isStudent={isStudent}/>

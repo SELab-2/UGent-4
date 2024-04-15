@@ -45,6 +45,7 @@ export function MainPage() {
     const navigator = useNavigate();
 
     useEffect(() => {
+        // Get the role of the person that has logged in
         console.log("requesting api")
         instance.get("/gebruikers/me/").then((response: AxiosResponse) => {
             console.log(response.data);
@@ -53,6 +54,7 @@ export function MainPage() {
             console.error(e);
         });
 
+        // Get the courses, their projects, and their respective deadlines
         async function fetchData() {
             try {
                 const response = await instance.get<course[]>("/vakken/");
@@ -64,7 +66,9 @@ export function MainPage() {
             instance.get("/projecten/").then((response: AxiosResponse) => {
                 const deadlines: Dayjs[] = [];
                 response.data.forEach((project: project) => {
-                        deadlines.push(dayjs(project.deadline, "YYYY-MM-DD-HH:mm:ss"));
+                        if (project.zichtbaar && !project.gearchiveerd) {
+                            deadlines.push(dayjs(project.deadline, "YYYY-MM-DD-HH:mm:ss"));
+                        }
                     }
                 )
                 console.log(deadlines);
@@ -89,7 +93,7 @@ export function MainPage() {
         <>
             <Stack direction={"column"} spacing={5}
                    sx={{width: "100%", height: "100%", backgroundColor: "background.default", paddingTop: 5}}>
-                <Header variant={"default"} title={"Naam Platform"}/>
+                <Header variant={"default"} title={"Pigeonhole"}/>
                 <Box sx={{
                     width: '100%',
                     height: "80%",
@@ -98,9 +102,13 @@ export function MainPage() {
                     flexDirection: {"md": "row", "xs": "column-reverse"},
                     gap: 5,
                 }}>
+                    {/* Two tabs to select either the current or archived courses,
+                    CoursesView is a scroll-box with the current courses, 
+                    ArchivedView is the same but for the archived courses.  */}
                     <TabSwitcher titles={["current_courses", "archived"]}
                                  nodes={[<CoursesView isStudent={role == 'student'} activecourses={courses}/>,
                                      <ArchivedView isStudent={role == 'student'} archivedCourses={courses}/>]}/>
+                    {/* Add a calendar to the right of the mainpage. */}
                     <Box aria-label={"calendarView"} display={"flex"} flexDirection={"row"} alignContent={"center"}
                          height={"50%"}>
                         <DeadlineCalendar deadlines={deadlines}/>
