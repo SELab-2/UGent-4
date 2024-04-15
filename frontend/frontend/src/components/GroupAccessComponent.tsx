@@ -1,4 +1,4 @@
-import {Button, Typography} from "@mui/material";
+import {Box, Button, Typography} from "@mui/material";
 import {t} from "i18next";
 import Switch from "@mui/material/Switch";
 import {useEffect, useState} from "react";
@@ -15,7 +15,7 @@ export function GroupAccessComponent({assignmentid, courseid}: GroupAccessCompon
     const [allowGroups, setAllowGroups] = useState(false);
 
     const handleClick = () => {
-        navigate(`/courses/${courseid}/assignments/${assignmentid}/groups`);
+        navigate(`/course/${courseid}/assignment/${assignmentid}/groups`);
     };
 
     useEffect(() => {
@@ -23,12 +23,24 @@ export function GroupAccessComponent({assignmentid, courseid}: GroupAccessCompon
     }, [allowGroups]);
 
     return (
-        <>{allowGroups ?
-            <Button variant={"contained"} disableElevation
-                    onClick={handleClick}
-                    color={"secondary"}>{t('groups')}</Button> :
-            <Typography color={'text.primary'} variant={"body1"}>{t('groups')}</Typography>}
-            <Switch checked={allowGroups} onChange={() => setAllowGroups(!allowGroups)}
-                    color={'primary'}/></>
+        <>
+            <Box
+                display={"flex"}
+                flexDirection={"row"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                width={"20vw"}
+                marginBottom={2}
+            >
+                {allowGroups ?
+
+                    <Button variant={"contained"} disableElevation
+                            onClick={handleClick}
+                            color={"secondary"}>{t('groups')}</Button> :
+                    <Typography color={'text.primary'} variant={"body1"}>{t('groups')}</Typography>}
+                <Switch checked={allowGroups} onChange={() => setAllowGroups(!allowGroups)}
+                        color={'primary'}/>
+            </Box>
+        </>
     );
 }
