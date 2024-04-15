@@ -79,12 +79,11 @@ def gebruiker_detail_me(request):
     Een view om de gegevens van de huidige gebruiker op te halen (GET).
 
     Returns:
-        Response: Gegevens van de gebruiker of een foutmelding als de gebruiker niet bestaat.
+        Response: Gegevens van de gebruiker.
     """
-    try:
-        gebruiker = Gebruiker.objects.get(pk=request.user.id)
-    except Gebruiker.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    gebruiker = Gebruiker.objects.get(pk=request.user.id)
+
 
     serializer = GebruikerSerializer(gebruiker)
     return Response(serializer.data)

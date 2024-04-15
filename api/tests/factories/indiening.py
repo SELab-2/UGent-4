@@ -22,6 +22,7 @@ class IndieningFactory(DjangoModelFactory):
         )
     )
     status = factory.Faker("boolean")
+    result = factory.Faker("paragraph")
 
     indiening_bestanden = factory.RelatedFactory(
         "api.tests.factories.indiening.IndieningBestandFactory", "indiening"
