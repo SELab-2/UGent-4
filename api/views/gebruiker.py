@@ -81,9 +81,8 @@ def gebruiker_detail_me(request):
     Returns:
         Response: Gegevens van de gebruiker.
     """
-    
-    gebruiker = Gebruiker.objects.get(pk=request.user.id)
 
+    gebruiker = Gebruiker.objects.get(pk=request.user.id)
 
     serializer = GebruikerSerializer(gebruiker)
     return Response(serializer.data)
