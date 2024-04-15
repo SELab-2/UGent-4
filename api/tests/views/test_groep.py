@@ -132,6 +132,13 @@ class GroepDetailViewTest(APITestCase):
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_groep_detail_patch(self):
+        new_data = {"studenten": []}
+        response = self.client.patch(self.url, new_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.groep.refresh_from_db()
+        self.assertEqual(set(self.groep.studenten.all()), set(new_data["studenten"]))
+
     def test_groep_detail_delete(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)

@@ -68,6 +68,8 @@ def gebruiker_detail(request, id):
             if request.method == "PUT":
                 serializer = GebruikerSerializer(gebruiker, data=request.data)
             else:
+                if not request.data.get("gepinde_vakken"):
+                    request.data["gepinde_vakken"] = gebruiker.gepinde_vakken.all()
                 serializer = GebruikerSerializer(
                     gebruiker, data=request.data, partial=True
                 )

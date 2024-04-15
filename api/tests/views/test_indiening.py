@@ -53,6 +53,32 @@ class IndieningListViewTest(TestCase):
         response = self.client.get(self.url, {"groep": "groep"}, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_indiening_list_get_project(self):
+        response = self.client.get(
+            self.url,
+            {"project": self.indiening1.groep.project.project_id},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["groep"], self.indiening1.groep.groep_id)
+
+    def test_indiening_list_get_project_invalid(self):
+        response = self.client.get(self.url, {"project": "project"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_indiening_list_get_vak(self):
+        response = self.client.get(
+            self.url, {"vak": self.indiening1.groep.project.vak.vak_id}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]["groep"], self.indiening1.groep.groep_id)
+
+    def test_indiening_list_get_project_vak(self):
+        response = self.client.get(self.url, {"vak": "vak"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_indiening_list_post_no_files(self):
         data = {
             "groep": self.indiening2.groep_id,
@@ -104,3 +130,37 @@ class IndieningDetailViewTest(TestCase):
         self.client.force_login(gebruiker.user)
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class IndieningDetailDownloadBestandenTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.teacher = GebruikerFactory.create(is_lesgever=True)
+        self.student = GebruikerFactory.create(is_lesgever=False)
+        self.client.force_login(self.teacher.user)
+        self.indiening = IndieningFactory.create()
+        self.indiening.groep.studenten.add(self.student)
+        self.url = reverse(
+            "indiening_detail_download_bestanden",
+            kwargs={"id": self.indiening.indiening_id},
+        )
+
+    def test_indiening_detail_download_bestanden_get_as_teacher(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_indiening_detail_download_bestanden_get_as_student(self):
+        self.client.force_login(self.student.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_indiening_detail_download_bestanden_get_unauthorized(self):
+        student = GebruikerFactory.create(is_lesgever=False)
+        self.client.force_login(student.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_indiening_detail_download_bestanden_get_invalid(self):
+        self.url = reverse("indiening_detail_download_bestanden", kwargs={"id": 69})
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

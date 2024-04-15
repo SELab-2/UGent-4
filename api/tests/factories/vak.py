@@ -20,7 +20,7 @@ class VakFactory(DjangoModelFactory):
             for gebruiker in extracted:
                 self.studenten.add(gebruiker)
         else:
-            self.studenten.add(GebruikerFactory())
+            self.studenten.add(GebruikerFactory(is_lesgever=False))
 
     @factory.post_generation
     def lesgevers(self, create, extracted, **kwargs):
