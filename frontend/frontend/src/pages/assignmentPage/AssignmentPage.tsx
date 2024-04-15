@@ -18,12 +18,12 @@ export function AssignmentPage() {
 
     const adjustScores = () => {
         console.log("adjust scores");
-        navigate(`/course_teacher/${courseId}/assignment/${assignmentId}/scoring`);
+        navigate(`/course/${courseId}/assignment/${assignmentId}/scoring`);
     }
 
     const goToGroups = () => {
         console.log("go to scores");
-        navigate(`/course_teacher/${courseId}/assignment/${assignmentId}/groups`);
+        navigate(`/course/${courseId}/assignment/${assignmentId}/groups`);
     }
 
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
