@@ -13,6 +13,10 @@ class GebruikerModelTest(TestCase):
         self.assertEqual(self.gebruiker1.is_lesgever, False)
         self.assertEqual(self.gebruiker2.is_lesgever, True)
 
+    def test_gepinde_vakken(self):
+        self.assertEqual(self.gebruiker1.gepinde_vakken.count(), 0)
+        self.assertEqual(self.gebruiker2.gepinde_vakken.count(), 0)
+
     def test_str_method(self):
         expected_object_name = (
             self.gebruiker1.user.first_name + " " + self.gebruiker1.user.last_name

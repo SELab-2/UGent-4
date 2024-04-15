@@ -48,6 +48,7 @@ class GebruikerDetailViewTest(APITestCase):
         new_data = {
             "user": self.gebruiker.user.id,
             "is_lesgever": not self.gebruiker.is_lesgever,
+            "gepinde_vakken": self.gebruiker.gepinde_vakken.all()
         }
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
