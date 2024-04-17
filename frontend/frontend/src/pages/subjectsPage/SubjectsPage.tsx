@@ -36,7 +36,7 @@ export function SubjectsPage() {
 
     const navigate = useNavigate()
 
-    const [course, setCourse] = useState<any>(null)
+    const [course, setCourse] = useState<unknown>(null)
     const [assignments, setAssignments] = useState<Project[]>([])
     const [user, setUser] = useState({
         user: 0,
@@ -48,26 +48,27 @@ export function SubjectsPage() {
     const [fetchError, setFetchError] = useState(false)
 
     useEffect(() => {
-        fetchData()
-    }, [])
+        // Get the data for this course.
+        async function fetchData() {
+            try {
+                const courseResponse = await instance.get(
+                    `/vakken/${courseId}/`
+                )
+                const assignmentsResponse = await instance.get(
+                    `/projecten/?vak=${courseId}`
+                )
+                setCourse(courseResponse.data)
+                setAssignments(assignmentsResponse.data)
 
-    // Get the data for this course.
-    async function fetchData() {
-        try {
-            const courseResponse = await instance.get(`/vakken/${courseId}/`)
-            const assignmentsResponse = await instance.get(
-                `/projecten/?vak=${courseId}`
-            )
-            setCourse(courseResponse.data)
-            setAssignments(assignmentsResponse.data)
-
-            const userResponse = await instance.get('/gebruikers/me/')
-            setUser(userResponse.data)
-        } catch (error) {
-            console.error('Error fetching data:', error)
-            setFetchError(true)
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                setFetchError(true)
+            }
         }
-    }
+        fetchData()
+    }, [courseId])
 
     const addProject = () => {
         console.log('add project')
