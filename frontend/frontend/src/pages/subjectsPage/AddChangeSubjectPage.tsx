@@ -13,6 +13,8 @@ import Dialog from '@mui/material/Dialog';
 
 import instance from '../../axiosConfig.ts';
 
+import Papa from "papaparse";
+
 interface User {
     user: number,
     is_lesgever: boolean,
@@ -34,6 +36,7 @@ export function AddChangeSubjectPage() {
     const [openStudent, setOpenStudent] = useState(false);
     const [selectedTeacher, setSelectedTeacher] = useState(0);
     const [openTeacher, setOpenTeacher] = useState(false);
+    const [studentFile,setStudentFile] = useState<File>();
     const vakID = params.courseId;
 
     const handleCloseStudent = () => {
@@ -53,17 +56,52 @@ export function AddChangeSubjectPage() {
         setOpenStudent(false);
     };
 
-    const handleUploadClickStudent = () => {
-        if (!/^\+?(0|[1-9]\d*)$/.test(numStudent)) {
-            //Test if numStudent is an int
-            return
-        }
-        instance.get('gebruikers/' + numStudent).then((res) => {
+    const handleAddStudent = () => {
+        // if (!/^\+?(0|[1-9]\d*)$/.test(numStudent)) {
+        //     //Test if numStudent is an int
+        //     return
+        // }
+        // instance.get('gebruikers/' + numStudent).then((res) => {
+        //     setStudents((oldstudents) => {
+        //         //This is like this to prevent the same user being in the list twice
+        //         let found = false;
+        //         const id = res.data.user;
+        //         if (res.data.is_lesgever) {
+        //             return oldstudents
+        //         }
+        //         for (const student of oldstudents) {
+        //             if (student.user == id) {
+        //                 found = true;
+        //             }
+        //         }
+        //         if (found) {
+        //             return oldstudents
+        //         } else {
+        //             return [...oldstudents, res.data]
+        //         }
+        //
+        //     });
+        // }).catch((err) => {
+        //         console.log(err);
+        //     }
+        // );
+        instance.get('gebruikers/?email=' + numStudent).then((res) => {
             setStudents((oldstudents) => {
+                console.log("res");
+                console.log(res);
+
+                if (res.data.length==0){
+                    return oldstudents
+                }
+
                 //This is like this to prevent the same user being in the list twice
                 let found = false;
-                const id = res.data.user;
-                if (res.data.is_lesgever) {
+
+                const data=res.data[0]
+
+                const id = data.user;
+                console.log(data);
+                if (data.is_lesgever) {
                     return oldstudents
                 }
                 for (const student of oldstudents) {
@@ -74,7 +112,7 @@ export function AddChangeSubjectPage() {
                 if (found) {
                     return oldstudents
                 } else {
-                    return [...oldstudents, res.data]
+                    return [...oldstudents, data]
                 }
 
             });
@@ -83,6 +121,102 @@ export function AddChangeSubjectPage() {
             }
         );
     };
+
+    const handleStudentFileChange = (e) =>{
+        console.log("test")
+        console.log(e)
+        console.log("studentFile")
+        console.log(studentFile)
+        if (e.target.files.length){
+            const inputFile = e.target.files[0];
+            setStudentFile(inputFile);
+        }
+        else{
+            setStudentFile(undefined);
+        }
+    }
+
+    const handleUploadStudent = () =>{
+        console.log("studentFile")
+        console.log(studentFile)
+        //console.log(Papa.parse(studentFile))
+
+        const reader = new FileReader();
+
+        reader.onload = async ({ target }) => {
+            const csv = Papa.parse(target.result, {
+                header: true,
+            });
+
+            for (let i = 0; i < csv.data.length; i++) {
+                console.log(csv.data[i].email)
+
+                if(csv.data[i].email!=""){
+                    // instance.get('gebruikers/' + csv.data[i].ID).then((res) => {
+                    //     setStudents((oldstudents) => {
+                    //         //This is like this to prevent the same user being in the list twice
+                    //         let found = false;
+                    //         const id = res.data.user;
+                    //         if (res.data.is_lesgever) {
+                    //             return oldstudents
+                    //         }
+                    //         for (const student of oldstudents) {
+                    //             if (student.user == id) {
+                    //                 found = true;
+                    //             }
+                    //         }
+                    //         if (found) {
+                    //             return oldstudents
+                    //         } else {
+                    //             return [...oldstudents, res.data]
+                    //         }
+                    //
+                    //     });
+                    // }).catch((err) => {
+                    //         console.log(err);
+                    //     }
+                    // );
+                    instance.get('gebruikers/?email=' + csv.data[i].email).then((res) => {
+                        setStudents((oldstudents) => {
+                            console.log("res");
+                            console.log(res);
+
+                            if (res.data.length==0){
+                                return oldstudents
+                            }
+
+                            //This is like this to prevent the same user being in the list twice
+                            let found = false;
+
+                            const data=res.data[0]
+
+                            const id = data.user;
+                            console.log(data);
+                            if (data.is_lesgever) {
+                                return oldstudents
+                            }
+                            for (const student of oldstudents) {
+                                if (student.user == id) {
+                                    found = true;
+                                }
+                            }
+                            if (found) {
+                                return oldstudents
+                            } else {
+                                return [...oldstudents, data]
+                            }
+
+                        });
+                    }).catch((err) => {
+                            console.log(err);
+                        }
+                    );
+                }
+            }
+        };
+
+        reader.readAsText(studentFile);
+    }
 
     const handleCloseTeacher = () => {
         setOpenTeacher(false);
@@ -101,7 +235,7 @@ export function AddChangeSubjectPage() {
         setOpenTeacher(false);
     };
 
-    const handleUploadClickTeacher = () => {
+    const handleAddTeacher = () => {
         if (!/^\+?(0|[1-9]\d*)$/.test(numTeacher)) {
             //Test if numTeacher is an int
             return
@@ -248,7 +382,7 @@ export function AddChangeSubjectPage() {
                                         }}>
                                             <ListItemText sx={{maxWidth: 100}} primary={student.first_name}/>
                                             <ListItemText sx={{maxWidth: 100}} primary={student.last_name}/>
-                                            <ListItemText sx={{maxWidth: 100}} primary={student.user}/>
+                                            <ListItemText sx={{maxWidth: 100}} primary={student.email}/>
                                             <IconButton aria-label={'delete_file'} size={'small'}
                                                         onClick={handleClickOpen}
                                                         sx={{marginBottom: 1}}>
@@ -263,16 +397,22 @@ export function AddChangeSubjectPage() {
                         </List>
                         <Box display={"flex"} flexDirection={"column"}>
                             <FileUploadButton name={t("upload_students")}
-                                              fileTypes={['.pdf', '.zip']}
+                                              fileTypes={['.csv']}
                                               tooltip={t('uploadToolTip')}
-                                              
+                                              onFileChange={handleStudentFileChange}
+                                              path={studentFile}
+
                             />
                             <Box display={"flex"} flexDirection={"row"}>
                                 <TextField type="text" placeholder={t("studentnumber")}
                                            onChange={(event) => setNumStudent(event.target.value)}/>
                                 <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation
-                                        onClick={handleUploadClickStudent}>
+                                        onClick={handleAddStudent}>
                                     {t("add")}
+                                </Button>
+                                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation
+                                        onClick={handleUploadStudent}>
+                                    {t("upload")}
                                 </Button>
                             </Box>
                         </Box>
@@ -319,7 +459,7 @@ export function AddChangeSubjectPage() {
                                         }}>
                                             <ListItemText sx={{maxWidth: 100}} primary={teacher.first_name}/>
                                             <ListItemText sx={{maxWidth: 100}} primary={teacher.last_name}/>
-                                            <ListItemText sx={{maxWidth: 100}} primary={teacher.user}/>
+                                            <ListItemText sx={{maxWidth: 100}} primary={teacher.email}/>
                                             <IconButton aria-label={'delete_file'} size={'small'}
                                                         onClick={handleClickOpen}
                                                         sx={{marginBottom: 1}}>
@@ -334,14 +474,14 @@ export function AddChangeSubjectPage() {
                         </List>
                         <Box display={"flex"} flexDirection={"column"}>
                             <FileUploadButton name={t("upload_teachers")}
-                                              fileTypes={['.pdf', '.zip']}
+                                              fileTypes={['.csv']}
                                               tooltip={t('uploadToolTip')}
                             />
                             <Box display={"flex"} flexDirection={"row"}>
                                 <TextField type="text" placeholder={t("teacher")}
                                            onChange={(event) => setNumTeacher(event.target.value)}/>
                                 <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation
-                                        onClick={handleUploadClickTeacher}>
+                                        onClick={handleAddTeacher}>
                                     {t("add")}
                                 </Button>
                             </Box>
