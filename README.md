@@ -6,7 +6,13 @@
 
 # Frontend
 
-- WIP
+### Linting:
+De volgende commando's run je van de ***frontend/frontend*** directory:
+`npm run lint`: geeft een lijst van alle linting errors weer.
+`npm run lint -- --fix`: fixt een aantal linting errors automatisch indien mogelijk.
+`npm run format`: format alle files in het project volgens de instellingen in ***.prettierrc***.
+
+Er kan niet gepushed worden als er nog linting errors aanwezig zijn.
 
 # Backend
 
