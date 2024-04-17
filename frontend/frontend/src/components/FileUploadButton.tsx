@@ -54,7 +54,10 @@ export default function InputFileUpload({name, fileTypes, path, onFileChange, to
                             tabIndex={-1}
                             sx={{
                                 padding: 1,
-                                "& .MuiButton-startIcon": {margin: 0},
+                                "& .MuiButton-startIcon": {
+                                    margin: 0,
+                                    marginRight: 1,
+                                },
                             }}
                     >
                         <Typography marginTop={0.5} textAlign={'center'}>{name}</Typography>
