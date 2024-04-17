@@ -1,6 +1,6 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
-echo "check frontend/frontend/.husky/pre-push to activate linting"
+echo "checking for linting errors before pushing..."
 
-#uncomment to activate linting
-#cd ./frontend/frontend && npm run lint
+uncomment to activate linting
+cd ./frontend/frontend && npm run lint
