@@ -24,7 +24,6 @@ import 'dayjs/locale/nl'
 import FileUploadButton from '../../components/FileUploadButton'
 import List from '@mui/material/List'
 import ClearIcon from '@mui/icons-material/Clear'
-import AddIcon from '@mui/icons-material/Add'
 import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
@@ -253,7 +252,8 @@ export function AddChangeAssignmentPage() {
 
     // Limit the types of restrictions that can be added by one for each type and set the type to the first allowed type,
     // then open the restriction popup.
-    const handleAddRestriction = () => {
+    // CURRENTLY NOT IN USE
+    /* const handleAddRestriction = () => {
         //found at https://upmostly.com/typescript/typescripts-array-filter-method-explained
         const currentRestrictionTypes = restrictions.map(
             (restriction) => restriction.type as restrictionType
@@ -267,7 +267,7 @@ export function AddChangeAssignmentPage() {
             setType(allowedTypes[0])
             setOpen(true)
         }
-    }
+    }*/
 
     // Remove the restriction at the given index, tied to the remove button in the restriction list.
     const removeRestriction = (index: number) => {

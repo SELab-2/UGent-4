@@ -15,7 +15,6 @@ import { useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
 import 'dayjs/locale/nl'
-import FileUploadButton from '../../components/FileUploadButton'
 import ClearIcon from '@mui/icons-material/Clear'
 
 import Dialog from '@mui/material/Dialog'
