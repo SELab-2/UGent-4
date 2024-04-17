@@ -18,6 +18,7 @@ import RestrictionPopup, {restrictionType} from "./RestrictionPopup.tsx";
 import {useNavigate, useParams} from "react-router-dom";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
+import ErrorPage from "../ErrorPage.tsx";
 import AddRestrictionButton from "./AddRestrictionButton.tsx";
 
 //TODO: add restriction functionality
@@ -97,6 +98,7 @@ export function AddChangeAssignmentPage() {
     const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([]);
     const [maxSize, setMaxSize] = useState<number>();
     const [allowedTypes, setAllowedTypes] = useState<restrictionType[]>(initialAllowedTypes);
+    const [fetchError, setFetchError] = useState(false);
 
     //confirmation dialogs
     const [deleteConfirmation, setDeleteConfirmation] = useState(false);
@@ -162,6 +164,7 @@ export function AddChangeAssignmentPage() {
                     }
                 }).catch((error) => {
                     console.error(error);
+                    setFetchError(true);
                 });
 
 
@@ -324,6 +327,10 @@ export function AddChangeAssignmentPage() {
         }
 
     }, [restrictions]);
+
+    if(fetchError){
+        return <ErrorPage/>
+    }
 
     return (
         <>

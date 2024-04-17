@@ -8,6 +8,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import {ChangeEvent, useEffect, useState} from "react";
 import instance from "../../axiosConfig.ts";
 import WarningPopup from "../../components/WarningPopup.tsx";
+import ErrorPage from "../ErrorPage.tsx";
 import JSZip from 'jszip';
 import Papa from "papaparse";
 
@@ -78,6 +79,7 @@ export function ProjectScoresPage() {
 
     const [project, setProject] = useState<Project>();
     const [groepen, setGroepen] = useState<ScoreGroep[]>([]);
+    const [fetchError, setFetchError] = useState(false);
 
     const navigate = useNavigate();
 
@@ -127,6 +129,7 @@ export function ProjectScoresPage() {
                 setProject(assignmentResponse.data);
             } catch (error) {
                 console.log("Error fetching data:", error);
+                setFetchError(true);
             }
         }
 
@@ -224,6 +227,10 @@ export function ProjectScoresPage() {
             },
         }
         setGroepen(newGroepen);
+    }
+
+    if(fetchError){
+        return <ErrorPage/>;
     }
 
     return (
