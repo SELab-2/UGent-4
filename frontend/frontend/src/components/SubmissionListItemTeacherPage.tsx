@@ -37,8 +37,8 @@ export function SubmissionListItemTeacherPage({
         downloadSubmission()
     }
 
-    const [submitted, setSubmitted] = useState<any>()
-    const [score, setScore] = useState<any>()
+    const [submitted, setSubmitted] = useState<unknown>()
+    const [score, setScore] = useState<unknown>()
 
     useEffect(() => {
         async function fetchData() {
@@ -63,7 +63,7 @@ export function SubmissionListItemTeacherPage({
             }
         }
         fetchData()
-    }, [group_id])
+    }, [group_id, score.score])
 
     const downloadSubmission = () => {
         if (submitted) {

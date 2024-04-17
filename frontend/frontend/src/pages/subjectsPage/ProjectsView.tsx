@@ -6,11 +6,11 @@ import instance from '../../axiosConfig'
 import { useState, useEffect } from 'react'
 
 interface ProjectStudent {
-    assignment: any
-    group?: any
-    lastSubmission?: any
-    submissions?: any
-    score?: any
+    assignment: unknown
+    group?: unknown
+    lastSubmission?: unknown
+    submissions?: unknown
+    score?: un
 }
 
 /**
@@ -120,7 +120,7 @@ export function ProjectsView({
             }
         }
         fetchData()
-    }, [assignments])
+    }, [assignments, gebruiker.user])
 
     return (
         <>
