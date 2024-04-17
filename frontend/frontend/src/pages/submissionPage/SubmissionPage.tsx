@@ -9,6 +9,7 @@ import List from "@mui/material/List";
 import Grid2 from "@mui/material/Unstable_Grid2";
 import instance from "../../axiosConfig.ts";
 import {getAssignment} from "../addChangeAssignmentPage/AddChangeAssignmentPage.tsx";
+import ErrorPage from "../ErrorPage.tsx";
 
 /**
  * Page for viewing a specific submission
@@ -49,6 +50,7 @@ export function SubmissionPage() {
     const [submission, setSubmission] = useState<Submission>()
     const [project, setProject] = useState<getAssignment>()
     const [restrictions, setRestrictions] = useState<Restriction[]>([])
+    const [fetchError, setFetchError] = useState(false);
 
     const downloadArtifact = (artifact: number) => {
         //TODO: artifacts are not yet implemented in the backend
@@ -83,6 +85,7 @@ export function SubmissionPage() {
             }
         ).catch(err => {
             console.error(err);
+            setFetchError(true);
         })
     }
 
@@ -94,6 +97,7 @@ export function SubmissionPage() {
             }
         ).catch(err => {
             console.error(err);
+            setFetchError(true);
         })
 
 
@@ -105,6 +109,7 @@ export function SubmissionPage() {
             }
         ).catch(err => {
             console.error(err);
+            setFetchError(true);
         })
 
 
@@ -131,6 +136,9 @@ export function SubmissionPage() {
         return () => clearInterval(intervalId);
     }, [submissionId]);
 
+    if (fetchError) {
+        return <ErrorPage/>;
+    }
 
     return (
         <>

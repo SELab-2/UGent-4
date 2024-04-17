@@ -8,7 +8,7 @@ import WarningPopup from "../../components/WarningPopup.tsx";
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
 import {useEffect, useState} from "react";
-
+import ErrorPage from "../ErrorPage.tsx";
 
 interface Project {
     project_id: number,
@@ -39,6 +39,7 @@ export function SubjectsPage() {
     const [course, setCourse] = useState<any>(null);
     const [assignments, setAssignments] = useState<Project[]>([]);
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
+    const [fetchError, setFetchError] = useState(false);
 
     useEffect(() => {
         fetchData();
@@ -56,6 +57,7 @@ export function SubjectsPage() {
             setUser(userResponse.data);
         } catch (error) {
             console.error("Error fetching data:", error);
+            setFetchError(true);
         }
     }
 
@@ -105,6 +107,10 @@ export function SubjectsPage() {
         } catch (error) {
             console.error("Error updating data:", error);
         }
+    }
+
+    if (fetchError) {
+        return <ErrorPage/>;
     }
 
     if (!course) {
