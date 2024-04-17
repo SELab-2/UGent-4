@@ -60,7 +60,7 @@ export default function InputFileUpload({name, fileTypes, path, onFileChange, to
                                 },
                             }}
                     >
-                        <Typography marginTop={0.5} textAlign={'center'}>{name}</Typography>
+                        <Typography variant={'body2'} marginTop={0.5} textAlign={'center'}>{name}</Typography>
                         <VisuallyHiddenInput type="file" value={path === undefined ? "" : path.webkitRelativePath}
                                              accept={fileTypes.join(',')}
                                              multiple={false}
