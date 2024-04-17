@@ -2,5 +2,4 @@
 . "$(dirname "$0")/_/husky.sh"
 echo "checking for linting errors before pushing..."
 
-uncomment to activate linting
 cd ./frontend/frontend && npm run lint
