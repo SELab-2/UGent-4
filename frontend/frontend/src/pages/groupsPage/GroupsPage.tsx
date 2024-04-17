@@ -31,7 +31,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import WarningPopup from "../../components/WarningPopup.tsx";
 
 // goup interface
-export interface group {
+export interface Group {
     groep_id?: number,
     studenten: number[],
     project: number,
@@ -49,7 +49,7 @@ export function GroupsPage() {
 
     const [studentNames, setStudentNames] = useState<Hashmap>(new Map<number, string>());
     //state for new groups and new groupSize, don't change the old groups and groupSize until the user clicks save
-    const [newGroups, setNewGroups] = useState<group[]>([]);
+    const [newGroups, setNewGroups] = useState<Group[]>([]);
     const [newGroupSize, setNewGroupSize] = useState(1);
     const [currentGroup, setCurrentGroup] = useState('');
     const [availableStudents, setAvailableStudents] = useState<number[]>([]);
@@ -154,7 +154,7 @@ export function GroupsPage() {
             setNewGroupSize(response.data.max_groep_grootte);
         });
 
-        instance.get<group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
+        instance.get<Group[]>(`/groepen/?project=${assignmentId}`).then((response) => {
             setNewGroups(response.data);
         });
 
@@ -181,7 +181,7 @@ export function GroupsPage() {
             })
         }
 
-    }, [assignmentId, availableStudents.length, newGroupSize, newGroups.length]);
+    }, [assignmentId, availableStudents.length, newGroupSize, newGroups.length, studentNames]);
 
 
     //Handle current group change
@@ -192,7 +192,7 @@ export function GroupsPage() {
     // Randomise groups
     const randomGroups = () => {
         const students = Array.from(studentNames.keys());
-        const newGroups: group[] = [];
+        const newGroups: Group[] = [];
         for (let i = 0; i < Math.ceil(students.length / newGroupSize); i++) {
             newGroups.push({
                 studenten: [],
