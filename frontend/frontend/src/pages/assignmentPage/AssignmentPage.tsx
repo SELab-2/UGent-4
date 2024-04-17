@@ -297,7 +297,7 @@ export function AssignmentPage() {
                                             <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}
                                                  pl={3} pr={3}>
                                                 <SubmissionListItemStudentPage id={submission.indiening_id.toString()}
-                                                                               timestamp={submission.tijdstip.toDate()}
+                                                                               timestamp={dayjs(submission.tijdstip).toDate()}
                                                                                status={!submission.status}
                                                                                assignment_id={assignmentId}
                                                                                course_id={courseId}
