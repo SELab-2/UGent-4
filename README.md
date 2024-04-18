@@ -6,6 +6,23 @@
 
 # Frontend
 
+## Hoe runnen?
+
+### Benodigdheden:
+- Je zal bepaalde node modules moeten installeren. Dit kan je gemakkelijk doen in één keer. Ga naar de UGent-4/frontend/frontend folder. Run dan het commando `npm i`.
+
+### De frontend lokaal runnen:
+Ga naar de UGent-4/frontend/frontend folder. Run het commando: ```npm run dev```. Normaal kan je nu naar de url `http://localhost:5173/` surfen in je browser en de frontend zien. Als je een wit scherm ziet dan kan je proberen om de frontend te stoppen, `npm audit fix` te runnen in dezelfde folder, en de frontend opnieuw te runnen.
+
+
+### Linting:
+in de ***frontend/frontend*** directory.
+```sh
+npm run lint
+``` 
+
+### Testen:
+
 - WIP
 
 # Backend
