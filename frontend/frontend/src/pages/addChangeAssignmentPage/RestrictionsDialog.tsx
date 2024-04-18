@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {ChangeEvent, useState} from 'react';
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import AppBar from '@mui/material/AppBar';
@@ -6,51 +7,70 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import CloseIcon from '@mui/icons-material/Close';
-import Slide from '@mui/material/Slide';
-import { TransitionProps } from '@mui/material/transitions';
-import { ButtonGroup, TextField } from '@mui/material';
+import {Box, ButtonGroup, FormControl, MenuItem, Select, TextField} from '@mui/material';
 import {t} from "i18next";
-import instance from "../../axiosConfig.ts";
+import {restriction} from "./AddChangeAssignmentPage.tsx";
+import Switch from "@mui/material/Switch";
+import WarningPopup from "../../components/WarningPopup.tsx";
 
-const Transition = React.forwardRef(function Transition(
-  props: TransitionProps & {
-    children: React.ReactElement;
-  },
-  ref: React.Ref<unknown>,
-) {
-  return <Slide direction="up" ref={ref} {...props} />;
-});
+interface RestrictionsDialogProps {
+    restrictions: restriction[],
+    setRestrictions: (restriction: restriction[]) => void,
+    closeParentDialog: () => void
+}
 
-export default function RestrictionsDialog({ closeParentDialog }: { closeParentDialog: () => void }) {
-  const [open, setOpen] = React.useState(false);
-    const fileInput = React.useRef<HTMLInputElement>(null);
+enum restrictionExtension {
+    Shell = ".sh",
+    Python = ".py",
+}
 
-    const handleUploadedFiles = (e) => {
-      const files = e.target.files;
-      if (files.length > 0) {
-        console.log(files);
-        Array.from(files).forEach(async (file) => {
-          console.log("there's at least one file");
-          const formData = new FormData();
-          const json = {
-            project: 1,
-            script: file,
-            moet_slagen: true,
-          };
-          formData.append('data', JSON.stringify(json));
-          try {
-            await instance.post('/api/restricties/', formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data'
-              }
-            });
-            console.log("done");
-          } catch (error) {
-            console.error('Error uploading file:', error);
-          }
-        });
-      }
 
+export default function RestrictionsDialog({
+                                               restrictions,
+                                               setRestrictions,
+                                               closeParentDialog
+                                           }: RestrictionsDialogProps) {
+    const [open, setOpen] = useState(false);
+    const [mustPass, setMustPass] = useState(false);
+    const [textFieldContent, setTextFieldContent] = useState('')
+    const [restrictionName, setRestrictionName] = useState('')
+    const [restrictionType, setRestrictionType] = useState<restrictionExtension>(restrictionExtension.Shell)
+    const [nameError, setNameError] = useState(false)
+    const [popupOpen, setPopupOpen] = useState(false)
+
+    // function to handle the uploaded files and send them to the parent component
+    const handleUploadedFiles = (e: ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (!files) return;
+        const newRestrictions: restriction[] = [];
+
+        if (files.length > 0) {
+            console.log(files);
+            for (const file of files) {
+                const newRestriction: restriction = {
+                    script: file,
+                    moet_slagen: mustPass
+                };
+                newRestrictions.push(newRestriction);
+            }
+        }
+        setRestrictions([...restrictions, ...newRestrictions]);
+        handleClose()
+    }
+
+    //handle the submission of the form
+    const handleSubmit = () => {
+        if (restrictionName === '') {
+            setNameError(true)
+            return;
+        }
+
+        const newRestriction: restriction = {
+            script: new File([textFieldContent], restrictionName + restrictionType, {type: "text/plain"}),
+            moet_slagen: mustPass
+        };
+        setRestrictions([...restrictions, newRestriction]);
+        handleClose();
     }
 
 
@@ -59,75 +79,138 @@ export default function RestrictionsDialog({ closeParentDialog }: { closeParentD
     };
 
     const buttons = [
-        <Button 
-                key="Upload"
-                onClick={()=> {
-                    fileInput.current?.click();
-                    closeParentDialog();
-                }}
-        >Upload</Button>,
+        <Button
+            key="Upload"
+            component={"label"}
+        >Upload
+            <input hidden type="file" multiple onChange={handleUploadedFiles}/>
+        </Button>,
         <Button key="New_Script"
-        onClick={() => {
-            handleClickOpen();}}>{t('new_script')}</Button>,
+                onClick={() => {
+                    handleClickOpen();
+                }}>{t('new_script')}</Button>,
         <Button key="FileExtensionCheck"
-        onClick={() => {
-            handleClickOpen();
-            }}>File Extension Check</Button>,
+                onClick={() => {
+                    handleClickOpen();
+                }}>File Extension Check</Button>,
         <Button key="FilesPresentCheck" onClick={() => {
             handleClickOpen();
-            }}>Files Present Check</Button>,
+        }}>Files Present Check</Button>,
     ];
 
-    
 
-  const handleClose = () => {
-    setOpen(false);
-    closeParentDialog();
-  };
+    const handleClose = () => {
+        setOpen(false);
+        closeParentDialog();
+    };
 
-  return (
-    <React.Fragment>
-        <input 
-            ref={fileInput}
-            type="file" 
-            style={{ display: 'none' }} 
-            onChange={(e) => { handleUploadedFiles(e);}} 
-            multiple
-        />
-        <ButtonGroup orientation="vertical" aria-label="Vertical button group">
-            {buttons}
-        </ButtonGroup>
-      <Dialog
-        fullScreen
-        open={open}
-        onClose={handleClose}
-        TransitionComponent={Transition}
-      >
-        <AppBar sx={{ position: 'relative' }}>
-          <Toolbar>
-            <IconButton
-              edge="start"
-              color="inherit"
-              onClick={handleClose}
-              aria-label="close"
+    return (
+        <React.Fragment>
+            <ButtonGroup orientation="vertical" aria-label="Vertical button group" variant={'outlined'}
+                         color={"primary"}>
+                {buttons}
+            </ButtonGroup>
+            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                <Typography variant={'body2'}>{t('must_pass') + ":"}</Typography>
+                <Switch value={mustPass} onChange={() => setMustPass(!mustPass)}/>
+            </Box>
+            <Dialog
+                fullScreen
+                open={open}
+                onClose={handleClose}
             >
-              <CloseIcon />
-            </IconButton>
-            <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
-              Test code
-            </Typography>
-            <Button autoFocus color="inherit" onClick={handleClose}>
-              save
-            </Button>
-          </Toolbar>
-        </AppBar>
-        
-        <TextField
-          id="filled-textarea"
-          multiline
-          variant="filled"
-        />
-      </Dialog>
-    </React.Fragment>
-  );
+                <Box>
+                    <AppBar sx={{position: 'relative'}}>
+                        <Toolbar>
+                            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}
+                                 width={'100%'}
+                                 justifyContent={'space-between'}>
+                                <Box display={'flex'} flexDirection={'row'} alignItems={'center'}
+                                     justifyContent={'flex-start'}>
+                                    <IconButton
+                                        edge="start"
+                                        color="inherit"
+                                        onClick={handleClose}
+                                        aria-label="close"
+                                    >
+                                        <CloseIcon/>
+                                    </IconButton>
+                                    <Box display={'flex'} flexDirection={'row'} alignItems={"center"} padding={1}
+                                         justifyContent={'center'}
+                                         gap={1}
+                                    >
+                                        <TextField label={t('name')} value={restrictionName}
+                                                   required
+                                                   error={nameError}
+                                                   helperText={nameError ? t('is_required') : ''}
+                                                   variant={"standard"}
+                                                   sx={{
+                                                       "& .MuiInputBase-root": {
+                                                           color: 'secondary.main'
+                                                       },
+                                                       marginTop: -1.2,
+                                                       borderRadius: 1
+                                                   }}
+                                                   onChange={(e) => {
+                                                       setNameError(false)
+                                                       setRestrictionName(e.target.value)
+                                                   }}/>
+                                        <FormControl
+                                            sx={{minWidth: 80}} size="small">
+                                            <Select label={t('restrictionType')}
+                                                    labelId={t('restrictionType')}
+                                                    value={restrictionType}
+                                                    variant={"standard"}
+                                                    required
+                                                    autoWidth
+                                                    sx={{
+                                                        "& .MuiSelect-select": {
+                                                            color: 'secondary.main'
+                                                        },
+                                                        borderRadius: 1,
+                                                        padding: 0.5,
+                                                    }}
+                                                    onChange={(e) => setRestrictionType(e.target.value as restrictionExtension)}>
+                                                <MenuItem
+                                                    value={restrictionExtension.Shell}
+                                                    color={'text.secondary'}>{restrictionExtension.Shell}</MenuItem>
+                                                <MenuItem
+                                                    value={restrictionExtension.Python}>{restrictionExtension.Python}</MenuItem>
+                                            </Select>
+                                        </FormControl>
+                                    </Box>
+                                </Box>
+                                <Button autoFocus color="inherit" onClick={() => setPopupOpen(true)}>
+                                    save
+                                </Button>
+                            </Box>
+                        </Toolbar>
+                    </AppBar>
+                    <Box aria-label={'Content'} padding={1}>
+                        <TextField
+                            fullWidth
+                            value={textFieldContent}
+                            onChange={(e) => setTextFieldContent(e.target.value)}
+                            id="filled-textarea"
+                            multiline
+                            label={'Test-Content'}
+                            variant="standard"
+                            sx={{
+                                overflowY: 'auto',
+                                maxHeight: '100%'
+                            }
+                            }
+                        />
+                    </Box>
+                </Box>
+            </Dialog>
+            <WarningPopup
+                title={t('add_restriction') + '?'}
+                content={t('this_can_not_be_undone')}
+                buttonName={t('add')}
+                open={popupOpen}
+                handleClose={() => setPopupOpen(false)}
+                doAction={handleSubmit}/>
+        </React.Fragment>
+    );
 }

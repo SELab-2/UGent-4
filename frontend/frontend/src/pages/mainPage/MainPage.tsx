@@ -100,7 +100,7 @@ export function MainPage() {
                     marginTop: 10,
                     display: "flex",
                     flexDirection: {"md": "row", "xs": "column-reverse"},
-                    gap: 5,
+                    gap: 3,
                 }}>
                     {/* Two tabs to select either the current or archived courses,
                     CoursesView is a scroll-box with the current courses, 

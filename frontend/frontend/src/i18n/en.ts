@@ -40,10 +40,9 @@ const english = {
     is_required: "is required",
     name: "Name",
     descriptionName: "Description",
-    restrictionType: "Restriction type",
+    restrictionType: "Filetype",
     upload_container: "Upload a .tar file",
     dockerfile: "Dockerfile",
-    restrictiontype: "Restriction type",
     dockerTest: "Docker test",
     maxSize: "Max file size",
     fileType: "Allowed file types",
@@ -90,6 +89,7 @@ const english = {
     pending: "Not yet completed",
     failed: "Failed",
     result: "Result",
+    must_pass: "Must pass",
 };
 
 export default english;

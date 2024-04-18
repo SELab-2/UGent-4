@@ -40,10 +40,9 @@ const dutch = {
     is_required: "is verplicht",
     name: "Naam",
     descriptionName: "Beschrijving",
-    restrictionType: "Restrictietype",
+    restrictionType: "Bestandstype",
     upload_container: "Upload een .tar bestand",
     dockerfile: "Docker bestand (Dockerfile)",
-    restrictiontype: "Restrictietype",
     dockerTest: "Docker test",
     maxSize: "Maximale bestandsgrootte",
     fileType: "Toegestane bestandstypes",
@@ -90,6 +89,7 @@ const dutch = {
     pending: "Nog niet voltooid",
     failed: "Gefaald",
     result: "Resultaat",
+    must_pass: "Moet slagen",
 };
 
 export default dutch;

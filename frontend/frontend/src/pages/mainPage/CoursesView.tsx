@@ -2,7 +2,7 @@ import {IconButton, Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import course from "./MainPage.tsx";
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 
 interface CourseCardProps {
     isStudent: boolean;
@@ -14,7 +14,7 @@ export function CoursesView({isStudent, activecourses}: CourseCardProps) {
 
     return (
         <>
-            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
+            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '69svw'}}>
                 <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
                     <Stack flexDirection={"row"} flexWrap={"wrap"} width={'90%'}
                            sx={{

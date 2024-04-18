@@ -100,19 +100,25 @@ export function CourseCard({courseId, archived, isStudent}: CourseCardProps) {
                                  sx={{
                                      backgroundColor: "secondary.main",
                                      margin: 0,
-                                     height: 50,
+                                     height: 70,
                                      display: "flex",
                                      flexDirection: "row",
                                      justifyContent: "space-between",
-                                     padding: 3,
+                                     padding: 2,
                                  }}>
-                                <Box width={"50%"} height={"100%"} display={"flex"} flexDirection={"column"}
-                                     justifyContent={"center"}>
-                                    <Typography variant={"h4"}>{course.naam}</Typography>
-                                    {teachers.map((teacher) => (
-                                        <Typography
-                                            variant={"subtitle1"}>{t("teachers") + ": "}{teacher.first_name + " " + teacher.last_name}</Typography>
-                                    ))}
+                                <Box width={"70%"} height={"100%"} display={"flex"} flexDirection={"column"}
+                                     justifyContent={"center"} gap={1}>
+                                    <Typography width={'100%'} height={'50%'} noWrap
+                                                variant={"h5"}>{course.naam}</Typography>
+                                    <Box display={"flex"} flexDirection={"row"} gap={1} height={"40%"}>
+                                        <Typography variant={"subtitle1"}>{t("teachers") + ": "}</Typography>
+                                        <Box display={"flex"} flexDirection={"column"} gap={0.5} overflow={'auto'}>
+                                            {teachers.map((teacher) => (
+                                                <Typography padding={0} margin={0}
+                                                            variant={"subtitle1"}>{teacher.first_name + " " + teacher.last_name}</Typography>
+                                            ))}
+                                        </Box>
+                                    </Box>
                                 </Box>
                                 <Box>
                                     <Typography

@@ -10,7 +10,7 @@ interface CourseCardProps {
 export function ArchivedView({isStudent, archivedCourses}: CourseCardProps) {
     return (
         <>
-            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '75svw'}}>
+            <Stack flexDirection={{xs: "column-reverse", md: "row"}} minWidth={{md: "60svw", lg: '69svw'}}>
                 <Stack direction={"column"} spacing={1} width={"100%"} alignItems={'center'}>
                     <Stack flexDirection={"row"} flexWrap={"wrap"} width={{xs: '100%', md: "90%"}}
                            sx={{
@@ -18,7 +18,7 @@ export function ArchivedView({isStudent, archivedCourses}: CourseCardProps) {
                                overflowY: {sm: "auto"},
                                maxHeight: "78svh",
                            }}>
-                            {/* Map the list of the cirrent courses to CourseCards. */}
+                        {/* Map the list of the cirrent courses to CourseCards. */}
                         {archivedCourses.map((course) => {
                             return <CourseCard courseId={course.vak_id.toString()} archived={true}
                                                isStudent={isStudent}/>
