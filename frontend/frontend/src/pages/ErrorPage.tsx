@@ -1,23 +1,22 @@
-import {isRouteErrorResponse, useRouteError} from "react-router-dom";
-import {Box, Typography} from "@mui/material";
-import {t} from "i18next";
+import { isRouteErrorResponse, useRouteError } from 'react-router-dom'
+import { Box, Typography } from '@mui/material'
+import { t } from 'i18next'
 
 export default function ErrorPage() {
-
-    const error = useRouteError();
-    console.error(error);
-    let errorMessage: string;
+    const error = useRouteError()
+    console.error(error)
+    let errorMessage: string
 
     if (isRouteErrorResponse(error)) {
         // error is type `ErrorResponse`
-        errorMessage = error.data.message || error.statusText;
+        errorMessage = error.data.message || error.statusText
     } else if (error instanceof Error) {
-        errorMessage = error.message;
+        errorMessage = error.message
     } else if (typeof error === 'string') {
-        errorMessage = error;
+        errorMessage = error
     } else {
-        console.error(error);
-        errorMessage = 'Unknown error';
+        console.error(error)
+        errorMessage = 'Unknown error'
     }
 
     return (
@@ -30,11 +29,11 @@ export default function ErrorPage() {
                 width="100%"
                 component="div"
                 sx={{
-                    backgroundColor: "secondary.main",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    display: "flex",
-                    backgroundSize: "cover",
+                    backgroundColor: 'secondary.main',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    display: 'flex',
+                    backgroundSize: 'cover',
                 }}
             >
                 <Box
@@ -47,12 +46,12 @@ export default function ErrorPage() {
                     sx={{
                         backgroundImage: `url(/assets/ufo-logo-3375276369.png)`,
                         opacity: 0.2,
-                        position: "fixed",
-                        backgroundSize: "cover",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
+                        position: 'fixed',
+                        backgroundSize: 'cover',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
                         padding: 0,
                         margin: 0,
                         zIndex: -1,
@@ -62,11 +61,11 @@ export default function ErrorPage() {
                     component="div"
                     className="contentContainer"
                     display="flex"
-                    position={"relative"}
+                    position={'relative'}
                     flexDirection="column"
                     alignItems="center"
-                    justifyContent={"center"}
-                    alignSelf={"center"}
+                    justifyContent={'center'}
+                    alignSelf={'center'}
                     maxWidth="60%"
                     maxHeight="60%"
                 >
@@ -76,41 +75,43 @@ export default function ErrorPage() {
                         display="flex"
                         flexDirection="row"
                         alignItems="center"
-                        justifyContent={"center"}
-                        alignSelf={"center"}
+                        justifyContent={'center'}
+                        alignSelf={'center'}
                     >
                         <Box
                             component="img"
-                            src={t("logo_blue")}
+                            src={t('logo_blue')}
                             alt="logo"
                             sx={{
-                                maxHeight: "20%",
-                                maxWidth: "30%",
+                                maxHeight: '20%',
+                                maxWidth: '30%',
                             }}
                         />
                         <Box
                             component="div"
                             display="flex"
                             flexDirection="column"
-                            maxWidth={"40%"}
-                            maxHeight={"30%"}
-
+                            maxWidth={'40%'}
+                            maxHeight={'30%'}
                         >
                             <Typography
                                 variant="h4"
                                 sx={{
-                                    color: "error.main",
-                                    maxWidth: "100%",
-                                    maxHeight: "50%",
+                                    color: 'error.main',
+                                    maxWidth: '100%',
+                                    maxHeight: '50%',
                                 }}
                             >
-                                {t("error")}
+                                {t('error')}
                             </Typography>
-                            <Typography variant={"h5"} sx={{
-                                color: "error.main",
-                                maxWidth: "100%",
-                                maxHeight: "50%",
-                            }}>
+                            <Typography
+                                variant={'h5'}
+                                sx={{
+                                    color: 'error.main',
+                                    maxWidth: '100%',
+                                    maxHeight: '50%',
+                                }}
+                            >
                                 {errorMessage}
                             </Typography>
                         </Box>
@@ -118,5 +119,5 @@ export default function ErrorPage() {
                 </Box>
             </Box>
         </>
-    );
+    )
 }

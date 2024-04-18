@@ -35,6 +35,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             "extra_deadline",
             "max_score",
             "max_groep_grootte",
+            "student_groep",
             "zichtbaar",
             "gearchiveerd",
             "restricties",

@@ -10,8 +10,8 @@
  * Licensed under the MIT License.
  */
 
-import {LogLevel} from "@azure/msal-browser";
-import authSecrets from "./authSecrets.ts";
+import { LogLevel } from '@azure/msal-browser'
+import authSecrets from './authSecrets.ts'
 
 /**
  * Configuration object to be passed to MSAL instance on creation.
@@ -22,39 +22,43 @@ import authSecrets from "./authSecrets.ts";
 export const msalConfig = {
     auth: {
         clientId: authSecrets.clientId,
-        authority: "https://login.microsoftonline.com/" + authSecrets.authority,
-        redirectUri: window.location.origin + "/", // This redirectUri is the default for single-page applications
+        authority: 'https://login.microsoftonline.com/' + authSecrets.authority,
+        redirectUri: window.location.origin + '/', // This redirectUri is the default for single-page applications
     },
     cache: {
-        cacheLocation: "sessionStorage", // This configures where your cache will be stored
+        cacheLocation: 'sessionStorage', // This configures where your cache will be stored
         storeAuthStateInCookie: false, // Set this to "true" if you are having issues on IE11 or Edge
     },
     system: {
         loggerOptions: {
-            loggerCallback: (level: LogLevel, message: string, containsPii: boolean) => {
+            loggerCallback: (
+                level: LogLevel,
+                message: string,
+                containsPii: boolean
+            ) => {
                 if (containsPii) {
-                    return;
+                    return
                 }
                 switch (level) {
                     case LogLevel.Error:
-                        console.error(message);
-                        return;
+                        console.error(message)
+                        return
                     case LogLevel.Info:
-                        console.info(message);
-                        return;
+                        console.info(message)
+                        return
                     case LogLevel.Verbose:
-                        console.debug(message);
-                        return;
+                        console.debug(message)
+                        return
                     case LogLevel.Warning:
-                        console.warn(message);
-                        return;
+                        console.warn(message)
+                        return
                     default:
-                        return;
+                        return
                 }
-            }
-        }
-    }
-};
+            },
+        },
+    },
+}
 
 /**
  * Scopes you add here will be prompted for user consent during sign-in.
@@ -63,13 +67,13 @@ export const msalConfig = {
  * https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-permissions-and-consent#openid-connect-scopes
  */
 export const loginRequest = {
-    scopes: ["User.Read"]
-};
+    scopes: ['User.Read'],
+}
 
 /**
  * Add here the scopes to request when obtaining an access token for MS Graph API. For more information, see:
  * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md
  */
 export const graphConfig = {
-    graphMeEndpoint: "https://graph.microsoft.com/v1.0/me",
-};
+    graphMeEndpoint: 'https://graph.microsoft.com/v1.0/me',
+}

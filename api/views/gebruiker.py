@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.contrib.auth.models import User
 from api.models.gebruiker import Gebruiker
 from api.serializers.gebruiker import GebruikerSerializer
 
@@ -36,6 +37,10 @@ def gebruiker_list(request):
         gebruikers = gebruikers.filter(
             is_lesgever=(request.GET.get("is_lesgever").lower() == "true")
         )
+
+    if "email" in request.GET:
+        users = User.objects.filter(email__iexact=request.GET.get('email'))
+        gebruikers = gebruikers.filter(user__in=users)
 
     serializer = GebruikerSerializer(gebruikers, many=True)
     return Response(serializer.data)
