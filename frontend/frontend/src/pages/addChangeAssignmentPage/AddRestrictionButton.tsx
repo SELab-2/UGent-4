@@ -1,41 +1,44 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Dialog, {DialogProps} from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogTitle from '@mui/material/DialogTitle';
-import AddIcon from '@mui/icons-material/Add';
-import RestrictionsDialog from './RestrictionsDialog';
-import {t} from "i18next";
-import {IconButton} from "@mui/material";
-import {restriction} from "./AddChangeAssignmentPage.tsx";
+import * as React from 'react'
+import Button from '@mui/material/Button'
+import Dialog, { DialogProps } from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContent from '@mui/material/DialogContent'
+import DialogTitle from '@mui/material/DialogTitle'
+import AddIcon from '@mui/icons-material/Add'
+import RestrictionsDialog from './RestrictionsDialog'
+import { t } from 'i18next'
+import { IconButton } from '@mui/material'
+import { restriction } from './AddChangeAssignmentPage.tsx'
 
 interface AddRestrictionButtonProps {
-    restrictions: restriction[],
+    restrictions: restriction[]
     setRestrictions: (restriction: restriction[]) => void
 }
 
-
-export default function AddRestrictionButton({restrictions, setRestrictions}: AddRestrictionButtonProps) {
-    const [open, setOpen] = React.useState(false);
-    const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper');
+export default function AddRestrictionButton({
+    restrictions,
+    setRestrictions,
+}: AddRestrictionButtonProps) {
+    const [open, setOpen] = React.useState(false)
+    const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper')
 
     const handleClose = () => {
-        setOpen(false);
-    };
+        setOpen(false)
+    }
 
     return (
         <>
             <IconButton
                 sx={{
                     bgcolor: 'secondary.main',
-                    marginRight: 1
+                    marginRight: 1,
                 }}
                 onClick={() => {
-                    setOpen(true);
-                    setScroll('paper');
-                }}>
-                <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
+                    setOpen(true)
+                    setScroll('paper')
+                }}
+            >
+                <AddIcon sx={{ color: 'secondary.contrastText' }}></AddIcon>
             </IconButton>
             <Dialog
                 open={open}
@@ -44,15 +47,20 @@ export default function AddRestrictionButton({restrictions, setRestrictions}: Ad
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >
-                <DialogTitle id="scroll-dialog-title">{t('add_restriction')}</DialogTitle>
+                <DialogTitle id="scroll-dialog-title">
+                    {t('add_restriction')}
+                </DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
-                    <RestrictionsDialog closeParentDialog={handleClose} restrictions={restrictions}
-                                        setRestrictions={setRestrictions}></RestrictionsDialog>
+                    <RestrictionsDialog
+                        closeParentDialog={handleClose}
+                        restrictions={restrictions}
+                        setRestrictions={setRestrictions}
+                    ></RestrictionsDialog>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose}>{t('cancel')}</Button>
                 </DialogActions>
             </Dialog>
         </>
-    );
+    )
 }
