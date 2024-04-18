@@ -8,6 +8,10 @@ import AddIcon from '@mui/icons-material/Add'
 import RestrictionsDialog from './RestrictionsDialog'
 import { t } from 'i18next'
 
+/**
+ * Component for an "Add Restriction" button that opens a dialog for adding restrictions.
+ * @returns {React.ReactElement} - The rendered component.
+ */
 export default function AddRestrictionButton() {
     const [open, setOpen] = React.useState(false)
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper')
@@ -16,6 +20,7 @@ export default function AddRestrictionButton() {
         setOpen(false)
     }
 
+    // Focuses on the dialog description element when the dialog opens
     const descriptionElementRef = React.useRef<HTMLElement>(null)
     React.useEffect(() => {
         if (open) {
@@ -28,6 +33,7 @@ export default function AddRestrictionButton() {
 
     return (
         <React.Fragment>
+            {/* Add Restriction Button */}
             <Button
                 sx={{ bgcolor: 'secondary.main' }}
                 onClick={() => {
@@ -37,6 +43,7 @@ export default function AddRestrictionButton() {
             >
                 <AddIcon sx={{ color: 'secondary.contrastText' }}></AddIcon>
             </Button>
+            {/* Add Restriction Dialog */}
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -53,6 +60,7 @@ export default function AddRestrictionButton() {
                     ></RestrictionsDialog>
                 </DialogContent>
                 <DialogActions>
+                    {/* Cancel Button */}
                     <Button onClick={handleClose}>{t('cancel')}</Button>
                 </DialogActions>
             </Dialog>

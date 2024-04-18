@@ -405,8 +405,11 @@ export function AddChangeAssignmentPage() {
 
     return (
         <>
+            {/* Stack container for layout */}
             <Stack direction={'column'} paddingX={2}>
                 <Header variant={'default'} title={title} />
+
+                {/* Form for submitting assignment */}
                 <Stack
                     direction={'column'}
                     marginTop={11}
@@ -452,6 +455,7 @@ export function AddChangeAssignmentPage() {
                                 }
                             />
                         </Box>
+                        {/* File Upload button */}
                         <Box
                             padding={0}
                             marginRight={3}
@@ -468,6 +472,7 @@ export function AddChangeAssignmentPage() {
                             />
                         </Box>
                     </Box>
+                    {/* Deadline section */}
                     <Box
                         aria-label={'deadline'}
                         padding={2}
@@ -572,6 +577,7 @@ export function AddChangeAssignmentPage() {
                             </LocalizationProvider>
                         </Box>
                     </Box>
+                    {/* Description section */}
                     <Card
                         aria-label={'description'}
                         elevation={1}
@@ -611,6 +617,7 @@ export function AddChangeAssignmentPage() {
                             />
                         </Box>
                     </Card>
+                    {/* Restrictions section */}
                     <Box
                         aria-label={'restrictions'}
                         marginTop={3}
@@ -714,6 +721,7 @@ export function AddChangeAssignmentPage() {
                             </Box>
                         </Card>
                     </Box>
+                    {/* Main actions section */}
                     <Box
                         aria-label={'main actions'}
                         marginTop={3}
@@ -805,6 +813,7 @@ export function AddChangeAssignmentPage() {
                                 />
                             </Box>
                         </Box>
+                        {/* Submit and Cancel buttons */}
                         <Box
                             aria-label={'submit_and_cancel'}
                             display={'flex'}
@@ -843,6 +852,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                 </Stack>
+                {/* Popup for adding restrictions */}
                 <RestrictionPopup
                     open={open}
                     setOpen={setOpen}
@@ -858,6 +868,7 @@ export function AddChangeAssignmentPage() {
                     setMaxSize={setMaxSize}
                     allowedTypes={allowedTypes}
                 />
+                {/* Confirmation popup for deleting project */}
                 <WarningPopup
                     title={t('remove') + ' Project?'}
                     content={t('cant_be_undone')}
@@ -866,6 +877,7 @@ export function AddChangeAssignmentPage() {
                     handleClose={closeDeletion}
                     doAction={handleRemove}
                 />
+                {/* Confirmation popup for saving project */}
                 <WarningPopup
                     title={t('save_project_warning')}
                     content={t('visible_for_everyone')}

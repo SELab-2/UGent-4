@@ -12,6 +12,11 @@ import { ButtonGroup, TextField } from '@mui/material'
 import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
 
+/**
+ * Transition component for the dialog animation.
+ * @param {TransitionProps} props - Props for the transition component.
+ * @returns {React.ReactElement} - Slide transition component.
+ */
 const Transition = React.forwardRef(function Transition(
     props: TransitionProps & {
         children: React.ReactElement
@@ -21,6 +26,12 @@ const Transition = React.forwardRef(function Transition(
     return <Slide direction="up" ref={ref} {...props} />
 })
 
+/**
+ * Dialog component for managing restrictions related to file uploads.
+ * @param {Object} props - Props object.
+ * @param {Function} props.closeParentDialog - Function to close the parent dialog.
+ * @returns {React.ReactElement} - Dialog component.
+ */
 export default function RestrictionsDialog({
     closeParentDialog,
 }: {
@@ -60,6 +71,7 @@ export default function RestrictionsDialog({
         setOpen(true)
     }
 
+    // Buttons array for the vertical button group
     const buttons = [
         <Button
             key="Upload"
@@ -103,6 +115,7 @@ export default function RestrictionsDialog({
 
     return (
         <React.Fragment>
+            {/* File input for uploading files */}
             <input
                 ref={fileInput}
                 type="file"
@@ -112,12 +125,14 @@ export default function RestrictionsDialog({
                 }}
                 multiple
             />
+            {/* Vertical button group */}
             <ButtonGroup
                 orientation="vertical"
                 aria-label="Vertical button group"
             >
                 {buttons}
             </ButtonGroup>
+            {/* Dialog component */}
             <Dialog
                 fullScreen
                 open={open}
@@ -146,7 +161,7 @@ export default function RestrictionsDialog({
                         </Button>
                     </Toolbar>
                 </AppBar>
-
+                {/* TextField for entering test code */}
                 <TextField id="filled-textarea" multiline variant="filled" />
             </Dialog>
         </React.Fragment>

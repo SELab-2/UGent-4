@@ -10,7 +10,7 @@ interface ProjectStudent {
     group?: unknown
     lastSubmission?: unknown
     submissions?: unknown
-    score?: un
+    score?: unknown
 }
 
 /**
@@ -31,6 +31,8 @@ export function ProjectsView({
 }) {
     const [projects, setProjects] = useState<ProjectStudent[]>([])
 
+    
+    // useEffect hook to periodically fetch all data
     useEffect(() => {
         async function fetchGroup(assignment): Promise<ProjectStudent> {
             try {
