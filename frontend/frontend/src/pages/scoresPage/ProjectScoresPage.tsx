@@ -72,11 +72,13 @@ export interface ScoreGroep {
 }
 
 export function ProjectScoresPage() {
+    // Extract assignmentId and submissionId from URL parameters
     const { courseId, assignmentId } = useParams() as {
         courseId: string
         assignmentId: string
     }
 
+    // State variables
     const [openSaveScoresPopup, setOpenSaveScoresPopup] = useState(false)
     const [openDeleteScoresPopup, setOpenDeleteScoresPopup] = useState(false)
 
@@ -86,6 +88,7 @@ export function ProjectScoresPage() {
 
     const navigate = useNavigate()
 
+    // Function to handle the 'Export Submissions' button
     const exportSubmissions = () => {
         console.log('export submissions')
         downloadAllSubmissions()
@@ -206,6 +209,7 @@ export function ProjectScoresPage() {
         score: string
     }
 
+    // Way to handle csv-file
     const handleParse = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files !== null && e.target.files.length) {
             const inputFile = e.target.files[0]
@@ -271,6 +275,7 @@ export function ProjectScoresPage() {
                     variant={'default'}
                     title={project?.titel + ': Scores'}
                 />
+                {/* Main content box */}
                 <Box
                     sx={{
                         width: '100%',
@@ -280,6 +285,7 @@ export function ProjectScoresPage() {
                         borderRadius: 3,
                     }}
                 >
+                    {/* Render StudentsView component if project is defined */}
                     {project !== undefined && (
                         <StudentsView
                             project={project}
@@ -289,6 +295,7 @@ export function ProjectScoresPage() {
                         />
                     )}
                 </Box>
+                {/* Footer section with action buttons */}
                 <Box
                     display="flex"
                     flexDirection="row"
@@ -340,6 +347,7 @@ export function ProjectScoresPage() {
                         />
                     </Box>
                 </Box>
+                {/* Popup for confirming saving scores */}
                 <WarningPopup
                     title={t('edit_scores_warning')}
                     content={t('visible_for_everyone')}
@@ -348,6 +356,7 @@ export function ProjectScoresPage() {
                     handleClose={() => setOpenSaveScoresPopup(false)}
                     doAction={saveScores}
                 />
+                {/* Popup for confirming deletion of scores */}
                 <WarningPopup
                     title={t('undo_changes_warning')}
                     content={t('cant_be_undone')}

@@ -38,6 +38,7 @@ export function AssignmentPage() {
         navigate(`/course/${courseId}/assignment/${assignmentId}/groups`)
     }
 
+    // State variables
     const [user, setUser] = useState({
         user: 0,
         is_lesgever: false,
@@ -80,10 +81,12 @@ export function AssignmentPage() {
         fetchData().catch((err) => console.error(err))
     }, [assignmentId, courseId, user.is_lesgever])
 
+    // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
         const zip = new JSZip()
         const downloadPromises: Promise<void>[] = []
         submissions.forEach((submission, index) => {
+            // Iterating over submissions and creating promises for each download
             downloadPromises.push(
                 new Promise((resolve, reject) => {
                     instance
@@ -136,6 +139,7 @@ export function AssignmentPage() {
             })
     }
 
+    // Function to handle file change event
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         if (event.target.files) {
             setSubmissionFile(event.target.files[0])
@@ -143,6 +147,7 @@ export function AssignmentPage() {
         }
     }
 
+    // Function to upload submission file
     const uploadIndiening = async () => {
         if (submissionFile) {
             const config = {
@@ -171,7 +176,9 @@ export function AssignmentPage() {
 
     return (
         <>
+            {/* Rendering different UI based on user role */}
             {user.is_lesgever ? (
+                // Rendering UI for teacher
                 <>
                     <Header
                         variant={'editable'}

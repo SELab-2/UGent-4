@@ -101,13 +101,14 @@ export const Header = ({ variant, title }: Props) => {
             <AppBar
                 position="absolute"
                 sx={{
-                    margin: 'auto',
+                    margin: 'auto',put 
                     flexGrow: 1,
                     alignItems: 'space-between',
                     width: '100%',
                 }}
             >
                 <Toolbar>
+                    {/* Logo and Home Button */}
                     <Box>
                         <Tooltip title={t('home')}>
                             <IconButton
@@ -128,6 +129,7 @@ export const Header = ({ variant, title }: Props) => {
                                 />
                             </IconButton>
                         </Tooltip>
+                        {/* Back Button (if variant is not default) */}
                         {variant !== 'default' && (
                             <Tooltip title={t('back')}>
                                 <IconButton
@@ -143,6 +145,7 @@ export const Header = ({ variant, title }: Props) => {
                             </Tooltip>
                         )}
                     </Box>
+                    {/* Title */}
                     <Typography
                         maxWidth={'88%'}
                         variant="h5"
@@ -164,6 +167,7 @@ export const Header = ({ variant, title }: Props) => {
                             </IconButton>
                         )}
                     </Typography>
+                    {/* User Menu */}
                     <div>
                         <IconButton
                             size="medium"

@@ -37,6 +37,7 @@ export function AssignmentListItem({
 }: AssignmentListItemProps) {
     const navigate = useNavigate()
 
+    // Function to handle click event on the project.
     const handleProjectClick = () => {
         console.log('Project clicked')
         navigate(`/course/${courseId}/assignment/${id}`)
@@ -62,10 +63,12 @@ export function AssignmentListItem({
                         borderRadius: 2,
                     }}
                 >
+                    {/* Project Name */}
                     <ListItemText
                         sx={{ maxWidth: 100 }}
                         primary={projectName}
                     />
+                    {/* Due Date */}
                     <ListItemText
                         sx={{ maxWidth: 110 }}
                         primary={
@@ -74,6 +77,7 @@ export function AssignmentListItem({
                                 : t('no_deadline')
                         }
                     />
+                    {/* Status Icon (for students only) */}
                     {isStudent && (
                         <ListItemIcon sx={{ minWidth: 35 }}>
                             {status ? (

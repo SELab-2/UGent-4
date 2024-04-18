@@ -18,7 +18,7 @@ interface SubmissionListItemStudentPageProps {
 }
 
 /*
- * This component is used to display a single submission in the list of submissions
+ * This component is used to display a single submission in the list of submissions (for a student)
  * @param key: string - the key of the submission
  * @param projectName: string - the name of the project
  * @param timestamp: Date - the due date of the project
@@ -34,6 +34,8 @@ export function SubmissionListItemStudentPage({
     course_id,
 }: SubmissionListItemStudentPageProps) {
     const navigate = useNavigate()
+
+    // Function to handle submission click event
     const handleSubmissionClick = () => {
         console.log('Submission clicked')
         if (id) {
@@ -59,6 +61,7 @@ export function SubmissionListItemStudentPage({
                     }}
                     onClick={handleSubmissionClick}
                 >
+                    {/* Display submission id */}
                     <ListItemText
                         sx={{
                             maxWidth: 110,
@@ -69,6 +72,7 @@ export function SubmissionListItemStudentPage({
                         }}
                         primary={id}
                     />
+                    {/* Display submission timestamp */}
                     <ListItemText
                         sx={{ maxWidth: 110 }}
                         primary={
@@ -77,6 +81,7 @@ export function SubmissionListItemStudentPage({
                                 : t('time')
                         }
                     />
+                    {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
                         {status ? (
                             <CheckCircleOutlineIcon

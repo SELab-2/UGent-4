@@ -32,6 +32,7 @@ interface CourseCardProps {
 }
 
 export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
+    // State variables
     const [course, setCourse] = useState<course>({
         vak_id: 0,
         naam: '',
@@ -44,6 +45,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
     >([])
     const navigate = useNavigate()
 
+    // Get all necessary data from backend
     useEffect(() => {
         async function fetchData() {
             try {
@@ -81,6 +83,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
         )
     }, [courseId])
 
+    // Function to handle card click event.
     const handleCardClick = () => {
         console.log('Card clicked')
         navigate(`/course/${courseId}`)
@@ -94,6 +97,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
     return (
         <>
             {!course ? (
+                // If course is not available, show a skeleton loading component
                 <Skeleton
                     variant={'rectangular'}
                     sx={{
@@ -107,6 +111,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                     }}
                 />
             ) : (
+                // If course is available, show course details inside a card component
                 <Card
                     elevation={1}
                     sx={{
@@ -120,6 +125,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                     }}
                 >
                     <CardContent sx={{ margin: 0, padding: 0 }}>
+                        {/* Clickable area for the card */}
                         <CardActionArea onClick={handleCardClick}>
                             <Box
                                 aria-label={'courseHeader'}
@@ -133,6 +139,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                     padding: 2,
                                 }}
                             >
+                                {/* Course name and teachers */}
                                 <Box
                                     width={'70%'}
                                     height={'100%'}
@@ -178,6 +185,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                         </Box>
                                     </Box>
                                 </Box>
+                                {/* Number of students enrolled */}
                                 <Box>
                                     <Typography variant={'subtitle1'}>
                                         {t('students') + ': '}
@@ -186,6 +194,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                 </Box>
                             </Box>
                         </CardActionArea>
+                        {/* List of assignments */}
                         <Box
                             aria-label={'assignmentList'}
                             sx={{
@@ -199,6 +208,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                             }}
                         >
                             {isStudent ? (
+                                // Display assignments for students
                                 <Box
                                     display={'flex'}
                                     flexDirection={'row'}
@@ -211,6 +221,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                     <Typography width={30}>Status</Typography>
                                 </Box>
                             ) : (
+                                // Display assignments for teachers
                                 <>
                                     {archived ? (
                                         <Box
@@ -250,6 +261,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                             <Divider color={'text.main'}></Divider>
                             <Box display={'flex'} flexDirection={'row'}>
                                 {isStudent ? (
+                                    // Render assignment list for students
                                     <Box
                                         sx={{
                                             width: '100%',
@@ -288,6 +300,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                         </List>
                                     </Box>
                                 ) : (
+                                    // Render assignment list for teachers
                                     <>
                                         {!archived ? (
                                             <Box

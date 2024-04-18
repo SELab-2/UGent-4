@@ -19,7 +19,7 @@ import { t } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
-
+  
 interface RestrictionsDialogProps {
     restrictions: restriction[]
     setRestrictions: (restriction: restriction[]) => void
@@ -31,6 +31,12 @@ enum restrictionExtension {
     Python = '.py',
 }
 
+/**
+ * Dialog component for managing restrictions related to file uploads.
+ * @param {Object} props - Props object.
+ * @param {Function} props.closeParentDialog - Function to close the parent dialog.
+ * @returns {React.ReactElement} - Dialog component.
+ */
 export default function RestrictionsDialog({
     restrictions,
     setRestrictions,
@@ -90,6 +96,7 @@ export default function RestrictionsDialog({
         setOpen(true)
     }
 
+    // Buttons array for the vertical button group
     const buttons = [
         <Button key="Upload" component={'label'}>
             Upload
@@ -128,6 +135,17 @@ export default function RestrictionsDialog({
 
     return (
         <React.Fragment>
+            {/* File input for uploading files */}
+            <input
+                ref={fileInput}
+                type="file"
+                style={{ display: 'none' }}
+                onChange={(e) => {
+                    handleUploadedFiles(e)
+                }}
+                multiple
+            />
+            {/* Vertical button group */}
             <ButtonGroup
                 orientation="vertical"
                 aria-label="Vertical button group"
@@ -145,6 +163,7 @@ export default function RestrictionsDialog({
                     onChange={() => setMustPass(!mustPass)}
                 />
             </Box>
+          {/* Dialog component */}
             <Dialog fullScreen open={open} onClose={handleClose}>
                 <Box>
                     <AppBar sx={{ position: 'relative' }}>
@@ -259,6 +278,7 @@ export default function RestrictionsDialog({
                             </Box>
                         </Toolbar>
                     </AppBar>
+                  {/* TextField for entering test code */}
                     <Box aria-label={'Content'} padding={1}>
                         <TextField
                             fullWidth

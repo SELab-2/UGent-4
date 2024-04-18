@@ -42,6 +42,7 @@ export default function InputFileUpload({
     onFileChange,
     tooltip,
 }: InputFileUploadProps) {
+    // Function to clear the selected file
     const clearFile = () => {
         const dt = new DataTransfer()
         onFileChange({
@@ -59,6 +60,7 @@ export default function InputFileUpload({
                 alignItems={'flex-start'}
                 gap={1}
             >
+                {/* Tooltip for the upload button */}
                 <Tooltip title={tooltip}>
                     <Button
                         variant={'contained'}
@@ -77,6 +79,7 @@ export default function InputFileUpload({
                             },
                         }}
                     >
+                        {/* Hidden input for file selection */}
                         <Typography
                             variant={'body2'}
                             marginTop={0.5}
@@ -84,6 +87,7 @@ export default function InputFileUpload({
                         >
                             {name}
                         </Typography>
+
                         <VisuallyHiddenInput
                             type="file"
                             value={
@@ -97,6 +101,7 @@ export default function InputFileUpload({
                         />
                     </Button>
                 </Tooltip>
+                {/* Display selected file name */}
                 <Box
                     aria-label={'filename'}
                     padding={0}
@@ -114,6 +119,7 @@ export default function InputFileUpload({
                     >
                         {path ? path.name : t('noFile')}
                     </Typography>
+                    {/* Button to clear selected file */}
                     {path && (
                         <IconButton
                             aria-label={'delete_file'}
