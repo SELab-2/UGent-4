@@ -158,6 +158,8 @@ export function AddChangeSubjectPage() {
                 }
             }
         };
+
+        reader.readAsText(studentFile);
     }
 
     const handleCloseTeacher = () => {
@@ -277,6 +279,8 @@ export function AddChangeSubjectPage() {
                 }
             }
         };
+
+        reader.readAsText(teacherFile);
     }
 
     const handleSave = () => {
@@ -423,10 +427,6 @@ export function AddChangeSubjectPage() {
                                         onClick={handleAddStudent}>
                                     {t("add")}
                                 </Button>
-                                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation
-                                        onClick={handleUploadStudent}>
-                                    {t("upl")}
-                                </Button>
                             </Box>
                         </Box>
                     </Box>
@@ -498,10 +498,6 @@ export function AddChangeSubjectPage() {
                                 <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation
                                         onClick={handleAddTeacher}>
                                     {t("add")}
-                                </Button>
-                                <Button variant={"contained"} color={"secondary"} size={'small'} disableElevation
-                                        onClick={handleUploadTeacher}>
-                                    {t("upl")}
                                 </Button>
                             </Box>
                         </Box>
