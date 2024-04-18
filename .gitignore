@@ -14,3 +14,4 @@ htmlcov
 data
 uploads
 /data/
+/package-lock.json
