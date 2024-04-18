@@ -71,7 +71,6 @@ export function AddChangeSubjectPage() {
                 const data=res.data[0]
 
                 const id = data.user;
-                console.log(data);
                 if (data.is_lesgever) {
                     return oldstudents
                 }
@@ -117,14 +116,10 @@ export function AddChangeSubjectPage() {
             });
 
             for (let i = 0; i < csv.data.length; i++) {
-                console.log(csv.data[i].email)
 
                 if(csv.data[i].email!=""){
                     instance.get('gebruikers/?email=' + csv.data[i].email).then((res) => {
                         setStudents((oldstudents) => {
-                            console.log("res");
-                            console.log(res);
-
                             if (res.data.length==0){
                                 return oldstudents
                             }
@@ -135,7 +130,6 @@ export function AddChangeSubjectPage() {
                             const data=res.data[0]
 
                             const id = data.user;
-                            console.log(data);
                             if (data.is_lesgever) {
                                 return oldstudents
                             }
@@ -211,7 +205,6 @@ export function AddChangeSubjectPage() {
                 console.log(err);
             }
         );
-        console.log("handleUploadTeacher")
         handleUploadTeacher();
     };
 
@@ -226,21 +219,13 @@ export function AddChangeSubjectPage() {
     }
 
     const handleUploadTeacher = () =>{
-        console.log("in handleUploadTeacher")
         const reader = new FileReader();
 
         reader.onload = async ({ target }) => {
-            console.log("test")
             const csv = Papa.parse(target.result, {
                 header: true,
             });
-
-            console.log("data")
-
-            console.log(csv.data)
-
             for (let i = 0; i < csv.data.length; i++) {
-                console.log(csv.data[i].email)
 
                 if(csv.data[i].email!=""){
                     instance.get('gebruikers/?email=' + csv.data[i].email).then((res) => {
@@ -256,7 +241,6 @@ export function AddChangeSubjectPage() {
                             const data=res.data[0]
 
                             const id = data.user;
-                            console.log(data);
                             if (!data.is_lesgever) {
                                 return oldteachers
                             }
