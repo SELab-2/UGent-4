@@ -54,9 +54,13 @@ export default function InputFileUpload({name, fileTypes, path, onFileChange, to
                             tabIndex={-1}
                             sx={{
                                 padding: 1,
+                                "& .MuiButton-startIcon": {
+                                    margin: 0,
+                                    marginRight: 1,
+                                },
                             }}
                     >
-                        {name}
+                        <Typography variant={'body2'} marginTop={0.5} textAlign={'center'}>{name}</Typography>
                         <VisuallyHiddenInput type="file" value={path === undefined ? "" : path.webkitRelativePath}
                                              accept={fileTypes.join(',')}
                                              multiple={false}

@@ -2,6 +2,7 @@ import {IconButton, Stack} from "@mui/material";
 import {CourseCard} from "../../components/CourseCard.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import course from "./MainPage.tsx";
+import { useNavigate } from "react-router-dom";
 
 interface CourseCardProps {
     isStudent: boolean;
@@ -9,6 +10,7 @@ interface CourseCardProps {
 }
 
 export function CoursesView({isStudent, activecourses}: CourseCardProps) {
+    const navigate = useNavigate();
 
     return (
         <>
@@ -30,7 +32,8 @@ export function CoursesView({isStudent, activecourses}: CourseCardProps) {
                     {!isStudent &&
                         <Stack flexDirection={"row"} justifyContent={"end"} width={"100%"} padding={0}>
                             {/* Teachers get an extra button to add courses. */}
-                            <IconButton color={"primary"} aria-label={'add-button'}>
+                            <IconButton color={"primary"} aria-label={'add-button'}
+                                        onClick={() => navigate('/course/edit')}>
                                 <AddIcon fontSize={"large"}/>
                             </IconButton>
                         </Stack>}

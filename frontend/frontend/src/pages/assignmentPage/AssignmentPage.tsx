@@ -3,12 +3,16 @@ import FileUploadButton from "../../components/FileUploadButton.tsx";
 import {SubmissionListItemStudentPage} from "../../components/SubmissionListItemStudentPage.tsx";
 import {SubmissionListItemTeacherPage} from "../../components/SubmissionListItemTeacherPage.tsx";
 import {Box, Button, Card, Divider, List, Stack, Typography} from "@mui/material";
-import AddRestrictionButton from "./AddRestrictionButton.tsx";
 import {t} from "i18next";
 import instance from "../../axiosConfig.ts";
 import {ChangeEvent, useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import JSZip from 'jszip';
+import {Group} from "../groupsPage/GroupsPage.tsx";
+import {Submission} from "../submissionPage/SubmissionPage.tsx";
+import {Project} from "../scoresPage/ProjectScoresPage.tsx";
+import {GroupAccessComponent} from "../../components/GroupAccessComponent.tsx";
+import dayjs from "dayjs";
 
 
 export function AssignmentPage() {
@@ -19,18 +23,18 @@ export function AssignmentPage() {
 
     const adjustScores = () => {
         console.log("adjust scores");
-        navigate(`/course_teacher/${courseId}/assignment/${assignmentId}/scoring`);
+        navigate(`/course/${courseId}/assignment/${assignmentId}/scoring`);
     }
 
     const goToGroups = () => {
         console.log("go to scores");
-        navigate(`/course_teacher/${courseId}/assignment/${assignmentId}/groups`);
+        navigate(`/course/${courseId}/assignment/${assignmentId}/groups`);
     }
 
     const [user, setUser] = useState({user: 0, is_lesgever: false, first_name: "", last_name: "", email: ""});
-    const [assignment, setAssignment] = useState<any>();
-    const [submissions, setSubmissions] = useState<any[]>([]);
-    const [groups, setGroups] = useState<any[]>([]);
+    const [assignment, setAssignment] = useState<Project>();
+    const [submissions, setSubmissions] = useState<Submission[]>([]);
+    const [groups, setGroups] = useState<Group[]>([]);
     const [submissionFile, setSubmissionFile] = useState<File>();
 
     useEffect(() => {
@@ -54,8 +58,8 @@ export function AssignmentPage() {
             }
         }
 
-        fetchData();
-    }, [assignmentId, user.is_lesgever]);
+        fetchData().catch(err => console.error(err));
+    }, [assignmentId, courseId, user.is_lesgever]);
 
     const downloadAllSubmissions = () => {
         const zip = new JSZip();
@@ -137,11 +141,16 @@ export function AssignmentPage() {
                         <Box sx={{
                             padding: '20px',
                             backgroundColor: "background.default",
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            width: '100%'
                         }}
                         >
                             <Typography variant="h6"
-                                        color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}
+                                        color="text.primary"><strong>Deadline </strong>{assignment ? dayjs(assignment.deadline).format('DD/MM/YYYY-HH:MM') : "no deadline"}
                             </Typography>
+                            <GroupAccessComponent assignmentid={parseInt(assignmentId)} courseid={parseInt(courseId)}/>
                         </Box>
 
                         {/*Opgave*/}
@@ -186,7 +195,7 @@ export function AssignmentPage() {
                                             <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}
                                                  pl={3} pr={3}>
                                                 <SubmissionListItemTeacherPage
-                                                    group_id={group.groep_id}
+                                                    group_id={group.groep_id ? group.groep_id.toString() : ''}
                                                     assignment_id={assignmentId}
                                                     course_id={courseId}
                                                 />
@@ -197,7 +206,7 @@ export function AssignmentPage() {
                             </Box>
                         </Card>
 
-                        <AddRestrictionButton></AddRestrictionButton>
+                        {/*<AddRestrictionButton></AddRestrictionButton>*/}
 
                         {/* <Button sx={{bgcolor: 'secondary.main'}}>
                             <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
@@ -239,7 +248,7 @@ export function AssignmentPage() {
                         >
                             <Stack direction={"row"}>
                                 <Typography variant="h6"
-                                            color="text.primary"><strong>Deadline </strong>{assignment ? new Date(assignment.deadline) && new Date(assignment.deadline).toLocaleDateString() : "no deadline"}
+                                            color="text.primary"><strong>Deadline </strong>{assignment ? assignment.deadline?.toString() : "no deadline"}
                                 </Typography>
                                 <div style={{flexGrow: 1}}/>
                                 <Button sx={{bgcolor: 'secondary.main', textTransform: 'none'}} onClick={goToGroups}>
@@ -287,8 +296,8 @@ export function AssignmentPage() {
                                             <Divider color={"text.main"}></Divider>
                                             <Box display={"flex"} flexDirection={"row"} justifyContent={"space-between"}
                                                  pl={3} pr={3}>
-                                                <SubmissionListItemStudentPage id={submission.indiening_id}
-                                                                               timestamp={new Date(submission.tijdstip)}
+                                                <SubmissionListItemStudentPage id={submission.indiening_id.toString()}
+                                                                               timestamp={submission.tijdstip.toDate()}
                                                                                status={!submission.status}
                                                                                assignment_id={assignmentId}
                                                                                course_id={courseId}
