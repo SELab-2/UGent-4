@@ -1,7 +1,7 @@
-import {Box, Button, Typography} from "@mui/material";
-import {t} from "i18next";
-import {useMsal} from "@azure/msal-react";
-import {loginRequest} from "../../authConfig/authConfig.ts";
+import { Box, Button, Typography } from '@mui/material'
+import { t } from 'i18next'
+import { useMsal } from '@azure/msal-react'
+import { loginRequest } from '../../authConfig/authConfig.ts'
 
 /*
 LoginPage component is a simple page with a logo and a login button.
@@ -10,13 +10,13 @@ The page is styled with mui components
  */
 
 export function LoginPage() {
-    const {instance} = useMsal();
+    const { instance } = useMsal()
 
     const handleLogin = () => {
         //TODO: implement authentication trough backend
         instance.loginRedirect(loginRequest).catch((e) => {
-            console.log(e);
-        });
+            console.log(e)
+        })
     }
 
     return (
@@ -29,11 +29,11 @@ export function LoginPage() {
                 width="100%"
                 component="div"
                 sx={{
-                    backgroundColor: "secondary.main",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    display: "flex",
-                    backgroundSize: "cover",
+                    backgroundColor: 'secondary.main',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    display: 'flex',
+                    backgroundSize: 'cover',
                 }}
             >
                 <Box
@@ -46,12 +46,12 @@ export function LoginPage() {
                     sx={{
                         backgroundImage: `url(/assets/ufo-logo-3375276369.png)`,
                         opacity: 0.25,
-                        position: "fixed",
-                        backgroundSize: "cover",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        flexDirection: "column",
+                        position: 'fixed',
+                        backgroundSize: 'cover',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        flexDirection: 'column',
                         padding: 0,
                         margin: 0,
                         zIndex: -1,
@@ -61,11 +61,11 @@ export function LoginPage() {
                     component="div"
                     className="contentContainer"
                     display="flex"
-                    position={"relative"}
+                    position={'relative'}
                     flexDirection="column"
                     alignItems="center"
-                    justifyContent={"center"}
-                    alignSelf={"center"}
+                    justifyContent={'center'}
+                    alignSelf={'center'}
                 >
                     <Box
                         component="div"
@@ -73,37 +73,37 @@ export function LoginPage() {
                         display="flex"
                         flexDirection="row"
                         alignItems="center"
-                        justifyContent={"center"}
-                        alignSelf={"center"}
+                        justifyContent={'center'}
+                        alignSelf={'center'}
                     >
                         <Box
                             component="img"
-                            src={t("logo_blue")}
+                            src={t('logo_blue')}
                             alt="logo"
                             sx={{
-                                maxHeight: "20%",
-                                maxWidth: "20%",
+                                maxHeight: '20%',
+                                maxWidth: '20%',
                             }}
                         />
                         <Typography
                             variant="h3"
                             sx={{
-                                color: "text.primary",
-                                maxWidth: "20%",
-                                maxHeight: "20%",
+                                color: 'text.primary',
+                                maxWidth: '20%',
+                                maxHeight: '20%',
                             }}
                         >
                             Pigeonhole
                         </Typography>
                     </Box>
                     <Box
-                        component={"div"}
+                        component={'div'}
                         className="lowerContainer"
                         display="flex"
                         flexDirection="row"
                         alignItems="center"
-                        justifyContent={"center"}
-                        alignSelf={"stretch"}
+                        justifyContent={'center'}
+                        alignSelf={'stretch'}
                     >
                         <Button
                             onClick={handleLogin}
@@ -114,11 +114,11 @@ export function LoginPage() {
                                 fontWeight: 600,
                             }}
                         >
-                            {t("login")}
+                            {t('login')}
                         </Button>
                     </Box>
                 </Box>
             </Box>
         </>
-    );
+    )
 }
