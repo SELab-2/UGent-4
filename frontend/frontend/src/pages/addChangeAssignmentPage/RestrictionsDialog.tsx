@@ -19,7 +19,7 @@ import { t } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
-  
+
 interface RestrictionsDialogProps {
     restrictions: restriction[]
     setRestrictions: (restriction: restriction[]) => void
@@ -137,7 +137,6 @@ export default function RestrictionsDialog({
         <React.Fragment>
             {/* File input for uploading files */}
             <input
-                ref={fileInput}
                 type="file"
                 style={{ display: 'none' }}
                 onChange={(e) => {
@@ -163,7 +162,7 @@ export default function RestrictionsDialog({
                     onChange={() => setMustPass(!mustPass)}
                 />
             </Box>
-          {/* Dialog component */}
+            {/* Dialog component */}
             <Dialog fullScreen open={open} onClose={handleClose}>
                 <Box>
                     <AppBar sx={{ position: 'relative' }}>
@@ -278,7 +277,7 @@ export default function RestrictionsDialog({
                             </Box>
                         </Toolbar>
                     </AppBar>
-                  {/* TextField for entering test code */}
+                    {/* TextField for entering test code */}
                     <Box aria-label={'Content'} padding={1}>
                         <TextField
                             fullWidth
