@@ -44,6 +44,8 @@ export default function TabSwitcher({ titles, nodes }: TabSwitcherProps) {
     )
 }
 
+// Styled components for customizing the appearance of tabs and panels
+
 const Tab = styled(BaseTab)`
     font-family: 'IBM Plex Sans', sans-serif;
     color: ${theme.palette.text.primary};
