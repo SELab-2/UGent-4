@@ -829,21 +829,7 @@ export function AddChangeAssignmentPage() {
                 </Stack>
 
                 {/* Popup for adding restrictions */}
-                <RestrictionPopup
-                    open={open}
-                    setOpen={setOpen}
-                    type={type}
-                    setType={setType}
-                    restrictions={restrictions}
-                    setRestrictions={setRestrictions}
-                    allowedFileTypes={allowedFileTypes}
-                    setAllowedFileTypes={setAllowedFileTypes}
-                    dockerfile={dockerfile}
-                    setDockerFile={setDockerFile}
-                    maxSize={maxSize}
-                    setMaxSize={setMaxSize}
-                    allowedTypes={allowedTypes}
-                />
+
                 {/* Confirmation popup for deleting project */}
 
                 <WarningPopup

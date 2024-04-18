@@ -1,12 +1,12 @@
 import { IconButton, Stack } from '@mui/material'
 import { CourseCard } from '../../components/CourseCard.tsx'
 import AddIcon from '@mui/icons-material/Add'
-import course from './MainPage.tsx'
 import { useNavigate } from 'react-router-dom'
+import { Course } from './MainPage.tsx'
 
 interface CourseCardProps {
     isStudent: boolean
-    activecourses: course[]
+    activecourses: Course[]
 }
 
 export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
@@ -36,7 +36,7 @@ export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
                     >
                         {/* Map the list of the cirrent courses to CourseCards.
                         A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
-                        {activecourses.map((course: course) => (
+                        {activecourses.map((course: Course) => (
                             <CourseCard
                                 key={course.naam}
                                 courseId={course.vak_id.toString()}
