@@ -1,4 +1,17 @@
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from api.docker.python_entrypoint import run_tests_on
+from threading import Thread
+from django.db import transaction
+import re
+
+
+STATUS_CHOICES = (
+    (-1, "FAIL"),
+    (0, "PENDING"),
+    (1, "OK"),
+)
 
 
 def upload_to(instance, filename):
@@ -28,6 +41,8 @@ class Indiening(models.Model):
         indieningen verwijderd.
         tijdstip (DateTimeField): Een veld dat automatisch het tijdstip
         registreert waarop de indiening is aangemaakt.
+        status (IntegerField): Een veld dat de status van de testen zal bijhouden.
+        result (TextField): Een veld dat het resultaat van de uitgevoerde testen zal bijhouden.
 
     Methods:
         __str__(): Geeft een representatie van het model als een string terug, die de ID van de indiening bevat.
@@ -36,6 +51,8 @@ class Indiening(models.Model):
     indiening_id = models.AutoField(primary_key=True)
     groep = models.ForeignKey("Groep", on_delete=models.CASCADE)
     tijdstip = models.DateTimeField(auto_now_add=True)
+    status = models.IntegerField(default=0, choices=STATUS_CHOICES)
+    result = models.TextField(default="", blank=True)
 
     def __str__(self):
         return str(self.indiening_id)
@@ -59,8 +76,52 @@ class IndieningBestand(models.Model):
     """
 
     indiening_bestand_id = models.AutoField(primary_key=True)
-    indiening = models.ForeignKey("Indiening", on_delete=models.CASCADE)
+    indiening = models.ForeignKey(
+        Indiening, related_name="indiening_bestanden", on_delete=models.CASCADE
+    )
     bestand = models.FileField(upload_to=upload_to)
 
     def __str__(self):
         return str(self.bestand.name)
+
+
+def run_tests_async(instance):
+    """
+    Voert tests uit op een asynchrone manier en werkt de status en resultaat van de indiening bij.
+
+    Args:
+        instance: Het instantie-object van de indiening.
+    """
+    indiening_id = instance.indiening_id
+    project_id = instance.groep.project.project_id
+    result = run_tests_on(indiening_id, project_id)
+    matches = re.findall(r"Testing \./.*", result[1])
+    try:
+        first_match_index = result[1].find(matches[0])
+        result = result[1][first_match_index:]
+        status = -1 if result[0] else 1
+    except Exception:
+        result = result[1]
+        status = -1
+
+    with transaction.atomic():
+        instance.status = status
+        instance.result = result
+        instance.save()
+
+
+@receiver(post_save, sender=Indiening)
+def indiening_post_init(sender, instance, created, **kwargs):
+    """
+    Een signaalhandler die wordt geactiveerd na het maken van een nieuwe indiening.
+    Start een asynchrone thread om de tests uit te voeren.
+
+    Args:
+        sender: De verzender van het signaal.
+        instance: Het instantie-object van de indiening.
+        created: Geeft aan of de indiening is aangemaakt of bijgewerkt.
+        kwargs: Extra argumenten.
+    """
+    if created:
+        thread = Thread(target=run_tests_async, args=(instance,))
+        thread.start()

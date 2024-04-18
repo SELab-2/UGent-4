@@ -28,11 +28,12 @@ class ScoreSerializer(serializers.ModelSerializer):
         Returns:
             Score: De aangemaakte score.
         """
-        if Score.objects.filter(indiening=validated_data.get("indiening")).exists():
+        indiening = validated_data.get("indiening")
+        if Score.objects.filter(indiening=indiening).exists():
             raise serializers.ValidationError(
                 "Deze indiening heeft al een bestaande score"
             )
-        validate_score(validated_data)
+        validate_score(indiening, validated_data.get("score"))
         return Score.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
@@ -44,14 +45,19 @@ class ScoreSerializer(serializers.ModelSerializer):
         Returns:
             Score: De bijgewerkte score.
         """
-        validate_score(validated_data)
-        validate_indiening(instance, validated_data)
+        validate_score(
+            validated_data.get("indiening", instance.indiening),
+            validated_data.get("score", instance.score),
+        )
+        validate_indiening(
+            instance, validated_data.get("indiening", instance.indiening)
+        )
         super().update(instance=instance, validated_data=validated_data)
         instance.save()
         return instance
 
 
-def validate_score(data):
+def validate_score(indiening, score):
     """
     Controleert of de opgegeven score niet hoger is dan de maximale score van het bijbehorende project.
 
@@ -61,23 +67,25 @@ def validate_score(data):
     Raises:
         serializers.ValidationError: Als de score hoger is dan de maximale score van het bijbehorende project.
     """
-    max_score = data.get("indiening").groep.project.max_score
-    if data["score"] > max_score:
+    max_score = indiening.groep.project.max_score
+    if score > max_score:
         raise serializers.ValidationError(
             f"Score kan niet hoger zijn dan de maximale score van {max_score}"
         )
 
 
-def validate_indiening(instance, data):
+def validate_indiening(instance, new_indiening):
     """
-    Controleert of de indiening_id niet wordt aangepast.
+    Valideert of de indiening van een score niet kan worden aangepast.
 
     Args:
-        instance (Score): De score die moet worden bijgewerkt.
-        data (dict): Gevalideerde gegevens over de score.
+        instance: De huidige instantie van de score.
+        new_indiening: De nieuwe indiening waaraan de score moet worden gekoppeld.
 
     Raises:
-        serializers.ValidationError: Als de indiening_id wordt aangepast.
+        serializers.ValidationError: Wordt opgegooid als de indiening van een score wordt aangepast.
     """
-    if instance.indiening != data.get("indiening"):
-        raise serializers.ValidationError("indiening_id kan niet aangepast worden")
+    if instance.indiening != new_indiening:
+        raise serializers.ValidationError(
+            "De indiening van een score kan niet aangepast worden"
+        )

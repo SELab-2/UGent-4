@@ -8,3 +8,5 @@ coverage
 flake8
 black
 factory_boy
+pexpect
+django-cors-headers

@@ -1,3 +1,4 @@
+from django.http import FileResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
@@ -32,7 +33,7 @@ def project_list(request, format=None):
             projects = Project.objects.all()
         else:
             vakken = Vak.objects.filter(studenten=request.user.id)
-            projects = Project.objects.filter(vak__in=vakken)
+            projects = Project.objects.filter(vak__in=vakken).filter(zichtbaar=True)
 
         if "vak" in request.GET:
             try:
@@ -54,11 +55,11 @@ def project_list(request, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
 def project_detail(request, id, format=None):
     """
     Een view om de gegevens van een specifiek project op te halen (GET),
-    bij te werken (PUT) of te verwijderen (DELETE).
+    bij te werken (PUT, PATCH) of te verwijderen (DELETE).
 
     Args:
         id (int): De primaire sleutel van het project.
@@ -79,8 +80,11 @@ def project_detail(request, id, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     if is_lesgever(request.user):
-        if request.method == "PUT":
-            serializer = ProjectSerializer(project, data=request.data)
+        if request.method in ["PUT", "PATCH"]:
+            if request.method == "PUT":
+                serializer = ProjectSerializer(project, data=request.data)
+            else:
+                serializer = ProjectSerializer(project, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -89,4 +93,28 @@ def project_detail(request, id, format=None):
         elif request.method == "DELETE":
             project.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def project_detail_download_opgave(request, id, format=None):
+    """
+    Een view om de opdracht van een specifiek project te downloaden.
+
+    Args:
+        id (int): De primaire sleutel van het project.
+        format (str, optional): Het gewenste formaat voor de respons. Standaard is None.
+
+    Returns:
+        Response: Een bestandsrespons met de opdracht van het project als bijlage,
+        indien de gebruiker een lesgever is of betrokken is bij het vak van het project.
+        Anders wordt een foutmelding geretourneerd.
+    """
+    try:
+        project = Project.objects.get(pk=id)
+    except Project.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if is_lesgever(request.user) or contains(project.vak.studenten, request.user):
+        return FileResponse(project.opgave_bestand.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)

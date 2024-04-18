@@ -2,6 +2,7 @@ from rest_framework.test import APITestCase
 from rest_framework.exceptions import ValidationError
 from api.serializers.gebruiker import GebruikerSerializer
 from api.tests.factories.gebruiker import UserFactory, GebruikerFactory
+from api.tests.factories.vak import VakFactory
 
 
 class GebruikerSerializerTest(APITestCase):
@@ -12,7 +13,17 @@ class GebruikerSerializerTest(APITestCase):
 
     def test_contains_expected_fields(self):
         data = self.serializer.data
-        self.assertCountEqual(data.keys(), ["user", "is_lesgever"])
+        self.assertCountEqual(
+            data.keys(),
+            [
+                "user",
+                "is_lesgever",
+                "first_name",
+                "last_name",
+                "email",
+                "gepinde_vakken",
+            ],
+        )
 
     def test_user_field_content(self):
         data = self.serializer.data
@@ -21,6 +32,18 @@ class GebruikerSerializerTest(APITestCase):
     def test_is_lesgever_field_content(self):
         data = self.serializer.data
         self.assertEqual(data["is_lesgever"], self.gebruiker.is_lesgever)
+
+    def test_first_name_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data["first_name"], self.user.first_name)
+
+    def test_last_name_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data["last_name"], self.user.last_name)
+
+    def test_email_field_content(self):
+        data = self.serializer.data
+        self.assertEqual(data["email"], self.user.email)
 
     def test_create(self):
         data = {"user": UserFactory.create().id, "is_lesgever": False}
@@ -40,6 +63,39 @@ class GebruikerSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         self.gebruiker = serializer.save()
         self.assertTrue(self.gebruiker.is_lesgever)
+
+    def test_update_invalid_teacher(self):
+        vak = VakFactory.create()
+        vak.studenten.add(self.gebruiker)
+        data = self.serializer.data
+        self.assertFalse(data["is_lesgever"])
+        data["is_lesgever"] = True
+        serializer = GebruikerSerializer(
+            instance=self.gebruiker, data=data, partial=True
+        )
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+
+    def test_update_invalid_student(self):
+        self.gebruiker.is_lesgever = True
+        vak = VakFactory.create()
+        vak.lesgevers.add(self.gebruiker)
+        data = self.serializer.data
+        data["is_lesgever"] = False
+        serializer = GebruikerSerializer(
+            instance=self.gebruiker, data=data, partial=True
+        )
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+
+    def test_update_invalid_gepinde_vak(self):
+        data = self.serializer.data
+        data["gepinde_vakken"].append(VakFactory.create().vak_id)
+        serializer = GebruikerSerializer(
+            instance=self.gebruiker, data=data, partial=True
+        )
+        self.assertTrue(serializer.is_valid())
+        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
     def test_validation_for_blank_items(self):
         serializer = GebruikerSerializer(data={"user": "", "is_lesgever": []})

@@ -32,7 +32,9 @@ class GroepSerializer(serializers.ModelSerializer):
             Groep: De aangemaakte groep.
         """
         students_data = validated_data.pop("studenten")
-        validate_students(students_data, validated_data["project"])
+        project = validated_data["project"]
+        validate_students(students_data, project)
+        validate_groep_grootte(students_data, project)
         instance = Groep.objects.create(**validated_data)
         instance.studenten.set(students_data)
 
@@ -47,15 +49,35 @@ class GroepSerializer(serializers.ModelSerializer):
         Returns:
             Groep: De bijgewerkte groep.
         """
-        students_data = validated_data.pop("studenten")
-        validate_students(
-            students_data, validated_data["project"], current_group=instance
-        )
+        students_data = validated_data.pop("studenten", instance.studenten)
+        new_project = validated_data.get("project", instance.project)
+        validate_students(students_data, new_project, current_group=instance)
+        validate_project(instance, new_project)
+        validate_groep_grootte(students_data, new_project)
+
         super().update(instance=instance, validated_data=validated_data)
         instance.studenten.set(students_data)
         instance.save()
 
         return instance
+
+
+def validate_project(instance, new_project):
+    """
+    Valideert of het project van een groep niet kan worden aangepast.
+
+    Args:
+        instance: De huidige instantie van het project.
+        new_project: Het nieuwe project waaraan de groep wil worden gekoppeld.
+
+    Raises:
+        serializers.ValidationError: Wordt opgegooid als het project van een groep wordt aangepast.
+    """
+
+    if instance.project != new_project:
+        raise serializers.ValidationError(
+            "Het project van een groep kan niet aangepast worden"
+        )
 
 
 def validate_students(students_data, project, current_group=None):
@@ -72,12 +94,14 @@ def validate_students(students_data, project, current_group=None):
         serializers.ValidationError: Als een gebruiker geen student is of al in een andere groep voor dit project zit.
     """
     groepen = Groep.objects.filter(project=project)
+    if current_group is not None:
+        groepen = groepen.exclude(groep_id=current_group.groep_id)
 
     student_counts = Counter(students_data)
     for student, count in student_counts.items():
         if count > 1:
             raise serializers.ValidationError(
-                f"Student {student} zit al in deze groep!"
+                f"Student {student} komt meerdere keren voor in de groep!"
             )
 
     for student in students_data:
@@ -86,12 +110,20 @@ def validate_students(students_data, project, current_group=None):
                 "Alle gebruikers in 'studenten' moeten studenten zijn!"
             )
 
+        if not project.vak.studenten.all().contains(student):
+            raise serializers.ValidationError(
+                f"Student {student} is geen student van het vak {project.vak}"
+            )
+
         for groep in groepen:
-            if (
-                current_group
-                and groep.groep_id != current_group.groep_id
-                and student in groep.studenten.all()
-            ):
+            if student in groep.studenten.all():
                 raise serializers.ValidationError(
-                    f"Gebruiker {student} zit al in een andere groep voor dit project!"
+                    f"Student {student} zit al in een andere groep voor dit project!"
                 )
+
+
+def validate_groep_grootte(studenten, project):
+    if len(studenten) > project.max_groep_grootte:
+        raise serializers.ValidationError(
+            f"Dit project heeft een maximum groep grootte van {project.max_groep_grootte} studenten"
+        )

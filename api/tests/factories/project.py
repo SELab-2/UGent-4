@@ -13,7 +13,6 @@ class ProjectFactory(DjangoModelFactory):
     class Meta:
         model = Project
 
-    project_id = factory.Sequence(lambda n: n)
     titel = factory.Faker("word")
     beschrijving = factory.Faker("paragraph")
     opgave_bestand = factory.django.FileField(data=b"file content")
@@ -23,4 +22,12 @@ class ProjectFactory(DjangoModelFactory):
             fake.date_time_between(start_date="+1d", end_date="+30d")
         )
     )
+    extra_deadline = factory.LazyFunction(
+        lambda: timezone.make_aware(
+            fake.date_time_between(start_date="+30d", end_date="+40d")
+        )
+    )
     max_score = factory.Faker("random_int", min=10, max=100)
+    max_groep_grootte = factory.Faker("random_int", min=1, max=5)
+    zichtbaar = factory.Faker("boolean")
+    gearchiveerd = factory.Faker("boolean")

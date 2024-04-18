@@ -21,4 +21,6 @@ class GroepFactory(DjangoModelFactory):
             for student in extracted:
                 self.studenten.add(student)
         else:
-            self.studenten.add(GebruikerFactory(is_lesgever=False))
+            student = GebruikerFactory(is_lesgever=False)
+            self.project.vak.studenten.add(student)
+            self.studenten.add(student)
