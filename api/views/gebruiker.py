@@ -39,7 +39,7 @@ def gebruiker_list(request):
         )
 
     if "email" in request.GET:
-        users = User.objects.filter(email__iexact=request.GET.get('email'))
+        users = User.objects.filter(email__iexact=request.GET.get("email"))
         gebruikers = gebruikers.filter(user__in=users)
 
     serializer = GebruikerSerializer(gebruikers, many=True)

@@ -29,13 +29,15 @@ class GebruikerListViewTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
-    
+
     def test_gebruiker_list_get_email(self):
         self.client.force_login(self.teacher.user)
-        response = self.client.get(self.url, {"email": self.student.user.email}, format="json")
+        response = self.client.get(
+            self.url, {"email": self.student.user.email}, format="json"
+        )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
-    
+
     def test_gebruiker_list_get_email_non_existing(self):
         self.client.force_login(self.teacher.user)
         response = self.client.get(self.url, {"email": "fake@email.com"}, format="json")
