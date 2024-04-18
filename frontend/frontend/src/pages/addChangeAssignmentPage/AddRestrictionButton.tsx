@@ -7,12 +7,24 @@ import DialogTitle from '@mui/material/DialogTitle'
 import AddIcon from '@mui/icons-material/Add'
 import RestrictionsDialog from './RestrictionsDialog'
 import { t } from 'i18next'
+import { IconButton } from '@mui/material'
+import { restriction } from './AddChangeAssignmentPage.tsx'
+
 
 /**
  * Component for an "Add Restriction" button that opens a dialog for adding restrictions.
  * @returns {React.ReactElement} - The rendered component.
  */
-export default function AddRestrictionButton() {
+
+interface AddRestrictionButtonProps {
+    restrictions: restriction[]
+    setRestrictions: (restriction: restriction[]) => void
+}
+
+export default function AddRestrictionButton({
+    restrictions,
+    setRestrictions,
+}: AddRestrictionButtonProps) {
     const [open, setOpen] = React.useState(false)
     const [scroll, setScroll] = React.useState<DialogProps['scroll']>('paper')
 
@@ -20,29 +32,22 @@ export default function AddRestrictionButton() {
         setOpen(false)
     }
 
-    // Focuses on the dialog description element when the dialog opens
-    const descriptionElementRef = React.useRef<HTMLElement>(null)
-    React.useEffect(() => {
-        if (open) {
-            const { current: descriptionElement } = descriptionElementRef
-            if (descriptionElement !== null) {
-                descriptionElement.focus()
-            }
-        }
-    }, [open])
-
     return (
-        <React.Fragment>
+        <>
             {/* Add Restriction Button */}
-            <Button
-                sx={{ bgcolor: 'secondary.main' }}
+            <IconButton
+                sx={{
+                    bgcolor: 'secondary.main',
+                    marginRight: 1,
+                }}
+
                 onClick={() => {
                     setOpen(true)
                     setScroll('paper')
                 }}
             >
                 <AddIcon sx={{ color: 'secondary.contrastText' }}></AddIcon>
-            </Button>
+            </IconButton>
             {/* Add Restriction Dialog */}
             <Dialog
                 open={open}
@@ -57,6 +62,8 @@ export default function AddRestrictionButton() {
                 <DialogContent dividers={scroll === 'paper'}>
                     <RestrictionsDialog
                         closeParentDialog={handleClose}
+                        restrictions={restrictions}
+                        setRestrictions={setRestrictions}
                     ></RestrictionsDialog>
                 </DialogContent>
                 <DialogActions>
@@ -64,6 +71,6 @@ export default function AddRestrictionButton() {
                     <Button onClick={handleClose}>{t('cancel')}</Button>
                 </DialogActions>
             </Dialog>
-        </React.Fragment>
+        </>
     )
 }

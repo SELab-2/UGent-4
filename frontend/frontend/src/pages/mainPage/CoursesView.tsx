@@ -16,7 +16,7 @@ export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '60svw', lg: '75svw' }}
+                minWidth={{ md: '60svw', lg: '69svw' }}
             >
                 <Stack
                     direction={'column'}

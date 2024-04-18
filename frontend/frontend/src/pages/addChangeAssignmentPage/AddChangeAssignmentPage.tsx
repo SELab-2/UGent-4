@@ -1,7 +1,6 @@
 import {
     Box,
     Card,
-    Divider,
     IconButton,
     ListItem,
     Stack,
@@ -28,12 +27,11 @@ import VisibilityIcon from '@mui/icons-material/Visibility'
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever'
 import SaveIcon from '@mui/icons-material/Save'
-import RestrictionPopup, { restrictionType } from './RestrictionPopup.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
 import instance from '../../axiosConfig.ts'
 import WarningPopup from '../../components/WarningPopup.tsx'
-import ErrorPage from '../ErrorPage.tsx'
 import AddRestrictionButton from './AddRestrictionButton.tsx'
+import { RestrictionCard } from '../../components/RestrictionCard.tsx'
 
 //TODO: add restriction functionality
 /**
@@ -54,12 +52,6 @@ import AddRestrictionButton from './AddRestrictionButton.tsx'
  * restrictions use a different api call as well.
  */
 
-const initialAllowedTypes: restrictionType[] = [
-    'dockerTest',
-    'fileSize',
-    'fileType',
-]
-
 export interface getAssignment {
     project_id: number
     titel: string
@@ -76,8 +68,11 @@ export interface getAssignment {
 }
 
 export interface restriction {
-    type: string
-    value: string[] | number | File | undefined
+    restrictie_id?: number
+    project?: number
+    script: string
+    file?: File
+    moet_slagen: boolean
 }
 
 interface errorChecks {
@@ -109,16 +104,6 @@ export function AddChangeAssignmentPage() {
     })
     const [deadlineError, SetDeadlineError] =
         useState<DateTimeValidationError | null>(null)
-
-    // State for the restriction popup
-    const [open, setOpen] = useState(false)
-    const [type, setType] = useState<restrictionType>('dockerTest')
-    const [dockerfile, setDockerFile] = useState<File>()
-    const [allowedFileTypes, setAllowedFileTypes] = useState<string[]>([])
-    const [maxSize, setMaxSize] = useState<number>()
-    const [allowedTypes, setAllowedTypes] =
-        useState<restrictionType[]>(initialAllowedTypes)
-    const [fetchError, setFetchError] = useState(false)
 
     //confirmation dialogs
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
@@ -203,7 +188,36 @@ export function AddChangeAssignmentPage() {
                 })
                 .catch((error) => {
                     console.error(error)
-                    setFetchError(true)
+                })
+
+            //get the restrictions
+            instance
+                .get(`/restricties/?project=${assignmentId}`)
+                .then(async (response) => {
+                    const restrictions = response.data
+                    console.log('returned restrictions ' + restrictions)
+                    for (const restr of restrictions) {
+                        await instance
+                            .get(
+                                `/restricties/${restr.restrictie_id}/script/`,
+                                { responseType: 'blob' }
+                            )
+                            .then((response) => {
+                                const blob = new Blob([response.data], {
+                                    type: response.headers['content-type'],
+                                })
+                                restr.file = new File([blob], filename, {
+                                    type: response.headers['content-type'],
+                                })
+                            })
+                            .catch((error) => {
+                                console.error(error)
+                            })
+                    }
+                    setRestrictions(restrictions)
+                })
+                .catch((error) => {
+                    console.error(error)
                 })
 
             //get the assignment file
@@ -250,30 +264,6 @@ export function AddChangeAssignmentPage() {
         }
     }
 
-    // Limit the types of restrictions that can be added by one for each type and set the type to the first allowed type,
-    // then open the restriction popup.
-    // CURRENTLY NOT IN USE
-    /* const handleAddRestriction = () => {
-        //found at https://upmostly.com/typescript/typescripts-array-filter-method-explained
-        const currentRestrictionTypes = restrictions.map(
-            (restriction) => restriction.type as restrictionType
-        )
-        setAllowedTypes(
-            initialAllowedTypes.filter(
-                (type) => !currentRestrictionTypes.includes(type)
-            )
-        )
-        if (allowedTypes.length !== 0) {
-            setType(allowedTypes[0])
-            setOpen(true)
-        }
-    }*/
-
-    // Remove the restriction at the given index, tied to the remove button in the restriction list.
-    const removeRestriction = (index: number) => {
-        setRestrictions(restrictions.filter((_, i) => i !== index))
-    }
-
     const [deadlineCheckError, setDeadlineCheck] = useState<boolean>(false)
 
     useEffect(() => {
@@ -301,6 +291,45 @@ export function AddChangeAssignmentPage() {
             return
         }
         setSaveConfirmation(true)
+    }
+
+    //handle restrictionupload
+    const handleRestrictionUpload = (projectId: string) => {
+        const config = {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }
+
+        restrictions.forEach((restriction) => {
+            const formData = new FormData()
+            formData.append('project', projectId)
+            if (restriction.file !== undefined) {
+                formData.append('script', restriction.file)
+            }
+            formData.append('moet_slagen', restriction.moet_slagen.toString())
+            if (restriction.restrictie_id !== undefined) {
+                formData.append(
+                    'restrictie_id',
+                    restriction.restrictie_id.toString()
+                )
+                instance
+                    .patch(
+                        '/restricties/' + restriction.restrictie_id + '/',
+                        formData,
+                        config
+                    )
+                    .catch((error) => {
+                        console.error(error)
+                    })
+            } else {
+                instance
+                    .post('/restricties/', formData, config)
+                    .catch((error) => {
+                        console.error(error)
+                    })
+            }
+        })
     }
 
     // Upload the assignment to the API. patch if it is an edit, post if it is a new assignment.
@@ -345,13 +374,22 @@ export function AddChangeAssignmentPage() {
                 .catch((error) => {
                     console.error(error)
                 })
+
+            //upload the restrictions
+            handleRestrictionUpload(assignmentId.toString())
         } else {
             //if there is no assignmentId, it is a new assignment
+            let project_id: number = 0
+
             await instance
                 .post('/projecten/', formData, config)
+                .then((response) => (project_id = response.data.project_id))
                 .catch((error) => {
                     console.error(error)
                 })
+
+            //upload the restrictions
+            handleRestrictionUpload(project_id.toString())
         }
 
         console.info(
@@ -383,25 +421,6 @@ export function AddChangeAssignmentPage() {
             }
         }
     }, [deadlineError])
-
-    // Remove the types of restrictions that are already added to the assignment from the allowed types.
-    useEffect(() => {
-        const currentRestrictionTypes = restrictions.map(
-            (restriction) => restriction.type as restrictionType
-        )
-        const newAllowedRestrictions = initialAllowedTypes.filter(
-            (type) => !currentRestrictionTypes.includes(type)
-        )
-        setAllowedTypes(newAllowedRestrictions)
-
-        if (newAllowedRestrictions.length !== 0) {
-            setType(newAllowedRestrictions[0])
-        }
-    }, [restrictions])
-
-    if (fetchError) {
-        return <ErrorPage />
-    }
 
     return (
         <>
@@ -644,64 +663,15 @@ export function AddChangeAssignmentPage() {
                                 >
                                     {restrictions.map((restriction, index) => {
                                         return (
-                                            <Box key={index}>
-                                                <ListItem
-                                                    sx={{
-                                                        gap: 4,
-                                                        justifyContent:
-                                                            'space-between',
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant={'body1'}
-                                                        fontWeight={'bold'}
-                                                    >
-                                                        {restriction.type}
-                                                    </Typography>
-                                                    <Box
-                                                        display={'flex'}
-                                                        flexDirection={'row'}
-                                                        alignItems={'center'}
-                                                        gap={1}
-                                                    >
-                                                        <Typography
-                                                            variant={'body1'}
-                                                        >
-                                                            {restriction.value instanceof
-                                                            File
-                                                                ? restriction
-                                                                      .value
-                                                                      .name
-                                                                : restriction.value instanceof
-                                                                    Array
-                                                                  ? restriction.value.join(
-                                                                        ', '
-                                                                    )
-                                                                  : typeof restriction.value ===
-                                                                      'number'
-                                                                    ? restriction.value.toString() +
-                                                                      'mb'
-                                                                    : ''}
-                                                        </Typography>
-                                                        <IconButton
-                                                            size={'small'}
-                                                            onClick={() =>
-                                                                removeRestriction(
-                                                                    index
-                                                                )
-                                                            }
-                                                        >
-                                                            <ClearIcon
-                                                                fontSize={
-                                                                    'small'
-                                                                }
-                                                                color={'error'}
-                                                            ></ClearIcon>
-                                                        </IconButton>
-                                                    </Box>
-                                                </ListItem>
-                                                <Divider />
-                                            </Box>
+                                            <ListItem key={index}>
+                                                <RestrictionCard
+                                                    restriction={restriction}
+                                                    restrictions={restrictions}
+                                                    setRestrictions={
+                                                        setRestrictions
+                                                    }
+                                                />
+                                            </ListItem>
                                         )
                                     })}
                                 </List>
@@ -715,7 +685,12 @@ export function AddChangeAssignmentPage() {
                                     {/*<IconButton color={"primary"}
                                                 disabled={allowedTypes.length === 0}
                                 onClick={handleAddRestriction}><AddIcon/></IconButton>*/}
-                                    <AddRestrictionButton></AddRestrictionButton>
+                                    <AddRestrictionButton
+                                        restrictions={restrictions}
+                                        setRestrictions={(newRestrictions) =>
+                                            setRestrictions(newRestrictions)
+                                        }
+                                    ></AddRestrictionButton>
                                     {/*<Button>Show restrictions</Button>*/}
                                 </Tooltip>
                             </Box>
@@ -763,7 +738,7 @@ export function AddChangeAssignmentPage() {
                                 )}
                                 <Tooltip title={t('remove')}>
                                     <IconButton
-                                        color={'info'}
+                                        color={'warning'}
                                         onClick={openDeleteConfirmation}
                                     >
                                         <DeleteForeverIcon
@@ -852,6 +827,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                 </Stack>
+
                 {/* Popup for adding restrictions */}
                 <RestrictionPopup
                     open={open}
@@ -869,6 +845,7 @@ export function AddChangeAssignmentPage() {
                     allowedTypes={allowedTypes}
                 />
                 {/* Confirmation popup for deleting project */}
+
                 <WarningPopup
                     title={t('remove') + ' Project?'}
                     content={t('cant_be_undone')}
