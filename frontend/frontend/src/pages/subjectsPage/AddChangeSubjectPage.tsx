@@ -36,8 +36,8 @@ export function AddChangeSubjectPage() {
     const [openStudent, setOpenStudent] = useState(false);
     const [selectedTeacher, setSelectedTeacher] = useState(0);
     const [openTeacher, setOpenTeacher] = useState(false);
-    const [studentFile,setStudentFile] = useState<File>();
-    const [teacherFile, setTeacherFile] = useState<File>();
+    const [studentFile,setStudentFile] = useState<File | undefined>();
+    const [teacherFile, setTeacherFile] = useState<File | undefined>();
     const vakID = params.courseId;
 
     const handleCloseStudent = () => {
@@ -102,6 +102,7 @@ export function AddChangeSubjectPage() {
             setStudentFile(inputFile);
         }
         else{
+            //this clears selected file
             setStudentFile(undefined);
         }
     }
@@ -214,6 +215,7 @@ export function AddChangeSubjectPage() {
             setTeacherFile(inputFile);
         }
         else{
+            //this clears selected file
             setTeacherFile(undefined);
         }
     }
