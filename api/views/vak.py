@@ -70,7 +70,12 @@ def vak_detail(request, id, format=None):
             if request.method == "PUT":
                 serializer = VakSerializer(vak, data=request.data)
             else:
-                serializer = VakSerializer(vak, data=request.data, partial=True)
+                data = request.data.copy()
+                if not data.get("studenten"):
+                    data.setlist("studenten", vak.studenten.all())
+                if not data.get("lesgevers"):
+                    data.setlist("lesgevers", vak.lesgevers.all())
+                serializer = VakSerializer(vak, data=data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)

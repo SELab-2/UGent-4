@@ -30,6 +30,20 @@ class GebruikerListViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
 
+    def test_gebruiker_list_get_email(self):
+        self.client.force_login(self.teacher.user)
+        response = self.client.get(
+            self.url, {"email": self.student.user.email}, format="json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+    def test_gebruiker_list_get_email_non_existing(self):
+        self.client.force_login(self.teacher.user)
+        response = self.client.get(self.url, {"email": "fake@email.com"}, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 0)
+
 
 class GebruikerDetailViewTest(APITestCase):
     def setUp(self):
@@ -48,6 +62,7 @@ class GebruikerDetailViewTest(APITestCase):
         new_data = {
             "user": self.gebruiker.user.id,
             "is_lesgever": not self.gebruiker.is_lesgever,
+            "gepinde_vakken": self.gebruiker.gepinde_vakken.all(),
         }
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -81,3 +96,26 @@ class GebruikerDetailViewTest(APITestCase):
         }
         response = self.client.put(self.url, new_data, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_gebruiker_detail_patch(self):
+        new_data = {
+            "is_lesgever": not self.gebruiker.is_lesgever,
+        }
+        response = self.client.patch(self.url, new_data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.gebruiker.refresh_from_db()
+        self.assertEqual(self.gebruiker.is_lesgever, new_data["is_lesgever"])
+
+
+class GebruikerDetailMeViewTest(APITestCase):
+    def setUp(self):
+        self.student = GebruikerFactory.create(is_lesgever=False)
+        self.student.user.is_superuser = False
+        self.url = reverse("gebruiker_detail_me")
+        self.client = APIClient()
+        self.client.force_login(self.student.user)
+
+    def test_gebruiker_detail_me_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["user"], self.student.user.id)

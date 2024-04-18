@@ -3,26 +3,35 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from api.serializers.indiening import IndieningSerializer, IndieningBestandSerializer
 from api.tests.factories.indiening import IndieningFactory, IndieningBestandFactory
 from api.tests.factories.groep import GroepFactory
+from api.tests.factories.restrictie import RestrictieFactory
 
 
 class IndieningSerializerTest(TestCase):
     def setUp(self):
         self.indiening = IndieningFactory.create()
         self.serializer = IndieningSerializer(instance=self.indiening)
+        self.restrictie = RestrictieFactory(project=self.indiening.groep.project)
 
     def test_indiening_serializer_fields(self):
         data = self.serializer.data
         self.assertEqual(
             set(data.keys()),
-            set(["indiening_id", "groep", "tijdstip", "status", "indiening_bestanden"]),
+            set(
+                [
+                    "indiening_id",
+                    "groep",
+                    "tijdstip",
+                    "status",
+                    "result",
+                    "indiening_bestanden",
+                ]
+            ),
         )
 
     def test_indiening_serializer_create(self):
         groep = GroepFactory.create()
         data = {"groep": groep.groep_id}
         serializer = IndieningSerializer(data=data)
-        if not serializer.is_valid():
-            print(serializer.errors)
         self.assertTrue(serializer.is_valid())
         indiening = serializer.save()
         self.assertEqual(indiening.groep, groep)
