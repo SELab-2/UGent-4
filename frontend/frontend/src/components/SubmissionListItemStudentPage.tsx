@@ -26,7 +26,7 @@ export function SubmissionListItemStudentPage({id, timestamp, status, assignment
     const handleSubmissionClick = () => {
         console.log("Submission clicked");
         if (id){
-            navigate(`/course_student/${course_id}/assignment/${assignment_id}/submission/${id}`);
+            navigate(`/course/${course_id}/assignment/${assignment_id}/submission/${id}`);
         }
     }
 

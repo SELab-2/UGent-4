@@ -23,7 +23,7 @@ enum SubmissionStatus {
     PASSED = 1
 }
 
-interface Submission {
+export interface Submission {
     indiening_id: number,
     groep: number,
     tijdstip: Dayjs,

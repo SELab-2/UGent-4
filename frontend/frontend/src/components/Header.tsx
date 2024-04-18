@@ -4,7 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import EditIcon from "@mui/icons-material/Edit";
 import React from "react";
 import {AccountCircle} from "@mui/icons-material";
-import {useNavigate} from "react-router-dom";
+import {useLocation, useNavigate} from "react-router-dom";
 import {LanguageSwitcher} from "./LanguageSwitcher.tsx";
 import {useMsal} from "@azure/msal-react";
 import axios from "axios";
@@ -50,6 +50,15 @@ export const Header = ({variant, title}: Props) => {
         navigate("edit")
     }
 
+    const handleBack = () => {
+        //cut of last part of the path
+        let path = location.pathname.slice(0, location.pathname.lastIndexOf("/"));
+        //cut of the last part of the path again if the last part was a number
+        path = path.slice(0, path.lastIndexOf("/"));
+        //navigate to the new path or main page if there is no path
+        navigate(path || "/");
+    }
+
     /**
      * Function to handle menu closing
      */
@@ -58,6 +67,7 @@ export const Header = ({variant, title}: Props) => {
     };
 
     const navigate = useNavigate();
+    const location = useLocation();
 
     /**
      * Function to handle logout action
@@ -102,7 +112,7 @@ export const Header = ({variant, title}: Props) => {
                         {variant !== "default" && (
                             <Tooltip title={t("back")}>
                                 <IconButton
-                                    onClick={() => navigate(-1)}
+                                    onClick={handleBack}
                                     size="large"
                                     edge="start"
                                     color="inherit"
