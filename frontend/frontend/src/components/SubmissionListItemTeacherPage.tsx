@@ -10,11 +10,19 @@ import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import { useEffect, useState } from 'react'
 import instance from '../axiosConfig'
+import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
+import dayjs from 'dayjs'
 
 interface SubmissionListItemTeacherPageProps {
     group_id: string
     assignment_id: string
     course_id: string
+}
+
+export interface Score {
+    score_id: number
+    score: number
+    indiening: number
 }
 
 /*
@@ -37,8 +45,8 @@ export function SubmissionListItemTeacherPage({
         downloadSubmission()
     }
 
-    const [submitted, setSubmitted] = useState<unknown>()
-    const [score, setScore] = useState<unknown>()
+    const [submitted, setSubmitted] = useState<Submission>()
+    const [score, setScore] = useState<Score>()
 
     useEffect(() => {
         async function fetchData() {
@@ -56,14 +64,14 @@ export function SubmissionListItemTeacherPage({
                         `/scores/?indiening=${lastSubmission.indiening_id}`
                     )
                     setScore(scoreResponse.data[scoreResponse.data.length - 1])
-                    console.log(score.score)
+                    console.log(score?.score)
                 }
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
         }
-        fetchData()
-    }, [group_id, score.score])
+        fetchData().catch((err) => console.error(err))
+    }, [group_id, score?.score])
 
     const downloadSubmission = () => {
         if (submitted) {
@@ -140,9 +148,7 @@ export function SubmissionListItemTeacherPage({
                         sx={{ maxWidth: 100 }}
                         primary={
                             submitted
-                                ? new Date(
-                                      submitted.tijdstip
-                                  ).toLocaleDateString()
+                                ? dayjs(submitted.tijdstip).format('DD-MM-YYYY')
                                 : '-'
                         }
                     />

@@ -1,24 +1,38 @@
 import { Box, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { t } from 'i18next'
-import { AssignmentListItemSubjectsPage } from '../subjectsPage/AssignmentListItemSubjectsPage'
+import { AssignmentListItemSubjectsPage } from './AssignmentListItemSubjectsPage.tsx'
 import instance from '../../axiosConfig'
 import { useState, useEffect } from 'react'
+import { Project } from '../scoresPage/ProjectScoresPage.tsx'
+import { Group } from '../groupsPage/GroupsPage.tsx'
+import { Submission } from '../submissionPage/SubmissionPage.tsx'
+import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
+import { User } from './AddChangeSubjectPage.tsx'
+import dayjs from 'dayjs'
 
 interface ProjectStudent {
-    assignment: unknown
-    group?: unknown
-    lastSubmission?: unknown
-    submissions?: unknown
-    score?: un
+    assignment: Project
+    group?: Group
+    lastSubmission?: Submission
+    submissions?: Submission[]
+    score?: Score
+}
+
+interface ProjectsViewProps {
+    gebruiker: User
+    archived: boolean
+    assignments: Project[]
+    deleteAssignment: (index: number) => void
+    archiveAssignment: (index: number) => void
+    changeVisibilityAssignment: (index: number) => void
+    courseId: string
 }
 
 /**
  * This View is used as a part of the SubjectsPage.
  * It displays a box that lists The projects with some brief info.
  * @param gebruiker: the user that wants to view the page.
- * @param archived: boolean that tells whether to show the current or the archived projects.
- * @param courseId: the id for the course that is to be displayed.
  */
 export function ProjectsView({
     gebruiker,
@@ -28,11 +42,13 @@ export function ProjectsView({
     archiveAssignment,
     changeVisibilityAssignment,
     courseId,
-}) {
+}: ProjectsViewProps) {
     const [projects, setProjects] = useState<ProjectStudent[]>([])
 
     useEffect(() => {
-        async function fetchGroup(assignment): Promise<ProjectStudent> {
+        async function fetchGroup(
+            assignment: Project
+        ): Promise<ProjectStudent> {
             try {
                 const groupResponse = await instance.get(
                     `/groepen/?project=${assignment.project_id.toString()}&student=${gebruiker.user}`
@@ -61,7 +77,7 @@ export function ProjectsView({
             }
             try {
                 const submissionsResponse = await instance.get(
-                    `/indieningen/?groep=${projectstudent.group.groep_id.toString()}&project=${projectstudent.assignment.project_id.toString()}`
+                    `/indieningen/?groep=${projectstudent.group.groep_id?.toString()}&project=${projectstudent.assignment.project_id.toString()}`
                 )
                 const lastSubmission =
                     submissionsResponse.data[
@@ -119,7 +135,7 @@ export function ProjectsView({
                 console.error('Error fetching all data:', e)
             }
         }
-        fetchData()
+        fetchData().catch((err) => console.error(err))
     }, [assignments, gebruiker.user])
 
     return (
@@ -190,11 +206,9 @@ export function ProjectsView({
                                     <AssignmentListItemSubjectsPage
                                         key={project.assignment.project_id}
                                         projectName={project.assignment.titel}
-                                        dueDate={
-                                            new Date(
-                                                project.assignment.deadline
-                                            )
-                                        }
+                                        dueDate={dayjs(
+                                            project.assignment.deadline
+                                        ).format('DD-MM-YYYY HH:mm')}
                                         submissions={project.submissions}
                                         score={project.score}
                                         maxScore={Number(

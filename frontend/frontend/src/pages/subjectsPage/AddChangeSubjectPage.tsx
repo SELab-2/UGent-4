@@ -24,7 +24,7 @@ import instance from '../../axiosConfig.ts'
 
 import Papa from 'papaparse'
 
-interface User {
+export interface User {
     user: number
     is_lesgever: boolean
     first_name: string
