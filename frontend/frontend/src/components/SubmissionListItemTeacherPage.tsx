@@ -46,8 +46,8 @@ export function SubmissionListItemTeacherPage({
     }
 
     // State for submitted data and score
-    const [submitted, setSubmitted] = useState<unknown>()
-    const [score, setScore] = useState<unknown>()
+    const [submitted, setSubmitted] = useState<Submission>()
+    const [score, setScore] = useState<Score>()
     useEffect(() => {
         async function fetchData() {
             try {
