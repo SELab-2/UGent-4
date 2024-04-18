@@ -11,7 +11,7 @@ import instance from '../../axiosConfig.ts'
 import { AxiosError, AxiosResponse } from 'axios'
 import { useNavigate } from 'react-router-dom'
 
-export default interface course {
+export interface Course {
     vak_id: number
     naam: string
     studenten: number[]
@@ -40,7 +40,7 @@ export interface project {
 export function MainPage() {
     // State for role
     const [role, setRole] = useState<string>('')
-    const [courses, setCourses] = useState<course[]>([])
+    const [courses, setCourses] = useState<Course[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
     const navigator = useNavigate()
 
@@ -60,7 +60,7 @@ export function MainPage() {
         // Get the courses, their projects, and their respective deadlines
         async function fetchData() {
             try {
-                const response = await instance.get<course[]>('/vakken/')
+                const response = await instance.get<Course[]>('/vakken/')
                 setCourses(response.data)
             } catch (error) {
                 console.error('Error fetching courses:', error)

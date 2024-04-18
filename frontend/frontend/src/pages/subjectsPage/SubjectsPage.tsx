@@ -9,6 +9,7 @@ import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
 import { useEffect, useState } from 'react'
 import ErrorPage from '../ErrorPage.tsx'
+import { Course } from '../mainPage/MainPage.tsx'
 
 interface Project {
     project_id: number
@@ -36,7 +37,7 @@ export function SubjectsPage() {
 
     const navigate = useNavigate()
 
-    const [course, setCourse] = useState<unknown>(null)
+    const [course, setCourse] = useState<Course>()
     const [assignments, setAssignments] = useState<Project[]>([])
     const [user, setUser] = useState({
         user: 0,
@@ -67,7 +68,9 @@ export function SubjectsPage() {
                 setFetchError(true)
             }
         }
-        fetchData()
+        fetchData().catch((error) =>
+            console.error('Error fetching data:', error)
+        )
     }, [courseId])
 
     const addProject = () => {
