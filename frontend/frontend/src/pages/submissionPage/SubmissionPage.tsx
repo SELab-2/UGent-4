@@ -27,12 +27,14 @@ import ErrorPage from '../ErrorPage.tsx'
  * The page should also allow the user to download the submission and any restriction artifacts that are present
  */
 
+// Define an enum for submission status
 enum SubmissionStatus {
     FAIL = -1,
     PENDING = 0,
     PASSED = 1,
 }
 
+// Define the structure of a submission
 export interface Submission {
     indiening_id: number
     groep: number
@@ -46,6 +48,7 @@ export interface Submission {
     }[]
 }
 
+// Define the structure of a restriction
 interface Restriction {
     restrictie_id: number
     project: number
@@ -55,15 +58,18 @@ interface Restriction {
 }
 
 export function SubmissionPage() {
+    // Extract assignmentId and submissionId from URL parameters
     const { assignmentId, submissionId } = useParams() as {
         assignmentId: string
         submissionId: string
     }
+    // state variables
     const [submission, setSubmission] = useState<Submission>()
     const [project, setProject] = useState<getAssignment>()
     const [restrictions, setRestrictions] = useState<Restriction[]>([])
     const [fetchError, setFetchError] = useState(false)
 
+    // Function to download an artifact
     const downloadArtifact = (artifact: number) => {
         //TODO: artifacts are not yet implemented in the backend
         instance
@@ -81,6 +87,7 @@ export function SubmissionPage() {
             })
     }
 
+    // Function to download the submission
     const downloadSubmission = () => {
         instance
             .get(`/indieningen/${submissionId}/indiening_bestanden/`, {
@@ -167,6 +174,7 @@ export function SubmissionPage() {
         return <ErrorPage />
     }
 
+    // Render the submission page
     return (
         <>
             <Grid2 container spacing={2}>

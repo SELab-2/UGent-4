@@ -25,11 +25,10 @@ export interface Score {
     indiening: number
 }
 
-/*
- * This component is used to display a single submission in the list of submissions
- * @param group_id: string - the id of the group
+/**
+ * Component to display a single submission in the list of submissions for a teacher.
+ * @param {SubmissionListItemTeacherPageProps} props - Props for SubmissionListItemTeacherPage component
  */
-
 export function SubmissionListItemTeacherPage({
     group_id,
     assignment_id,
@@ -37,7 +36,8 @@ export function SubmissionListItemTeacherPage({
 }: SubmissionListItemTeacherPageProps) {
     const navigate = useNavigate()
 
-    const handleStudentDownloadClick = (
+    // Function to handle a download click event
+    const handleDownloadClick = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>
     ) => {
         event.stopPropagation()
@@ -45,9 +45,9 @@ export function SubmissionListItemTeacherPage({
         downloadSubmission()
     }
 
-    const [submitted, setSubmitted] = useState<Submission>()
-    const [score, setScore] = useState<Score>()
-
+    // State for submitted data and score
+    const [submitted, setSubmitted] = useState<unknown>()
+    const [score, setScore] = useState<unknown>()
     useEffect(() => {
         async function fetchData() {
             try {
@@ -73,6 +73,7 @@ export function SubmissionListItemTeacherPage({
         fetchData().catch((err) => console.error(err))
     }, [group_id, score?.score])
 
+    // Function to download the submission
     const downloadSubmission = () => {
         if (submitted) {
             instance
@@ -109,6 +110,7 @@ export function SubmissionListItemTeacherPage({
         }
     }
 
+    // Function to handle submission click event
     const handleSubmissionClick = () => {
         console.log('Submission clicked')
         if (submitted) {
@@ -134,6 +136,7 @@ export function SubmissionListItemTeacherPage({
                     }}
                     onClick={handleSubmissionClick}
                 >
+                    {/* Display group id */}
                     <ListItemText
                         sx={{
                             maxWidth: 10,
@@ -144,6 +147,7 @@ export function SubmissionListItemTeacherPage({
                         }}
                         primary={group_id}
                     />
+                    {/* Display submission timestamp */}
                     <ListItemText
                         sx={{ maxWidth: 100 }}
                         primary={
@@ -152,10 +156,12 @@ export function SubmissionListItemTeacherPage({
                                 : '-'
                         }
                     />
+                    {/* Display score */}
                     <ListItemText
                         sx={{ maxWidth: 50 }}
                         primary={score ? `${Number(score.score)}` + '/20' : '-'}
                     />
+                    {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
                         {submitted?.status ? (
                             <HighlightOffIcon sx={{ color: 'error.main' }} />
@@ -167,8 +173,9 @@ export function SubmissionListItemTeacherPage({
                             )
                         )}
                     </ListItemIcon>
+                    {/* Display download icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
-                        <div onClick={handleStudentDownloadClick}>
+                        <div onClick={handleDownloadClick}>
                             {submitted ? (
                                 <DownloadIcon
                                     sx={{

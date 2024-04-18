@@ -39,7 +39,7 @@ def gebruiker_list(request):
         )
 
     if "email" in request.GET:
-        users = User.objects.filter(email__iexact=request.GET.get('email'))
+        users = User.objects.filter(email__iexact=request.GET.get("email"))
         gebruikers = gebruikers.filter(user__in=users)
 
     serializer = GebruikerSerializer(gebruikers, many=True)
@@ -73,6 +73,8 @@ def gebruiker_detail(request, id):
             if request.method == "PUT":
                 serializer = GebruikerSerializer(gebruiker, data=request.data)
             else:
+                if not request.data.get("gepinde_vakken"):
+                    request.data["gepinde_vakken"] = gebruiker.gepinde_vakken.all()
                 serializer = GebruikerSerializer(
                     gebruiker, data=request.data, partial=True
                 )
@@ -89,12 +91,10 @@ def gebruiker_detail_me(request):
     Een view om de gegevens van de huidige gebruiker op te halen (GET).
 
     Returns:
-        Response: Gegevens van de gebruiker of een foutmelding als de gebruiker niet bestaat.
+        Response: Gegevens van de gebruiker.
     """
-    try:
-        gebruiker = Gebruiker.objects.get(pk=request.user.id)
-    except Gebruiker.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    gebruiker = Gebruiker.objects.get(pk=request.user.id)
 
     serializer = GebruikerSerializer(gebruiker)
     return Response(serializer.data)

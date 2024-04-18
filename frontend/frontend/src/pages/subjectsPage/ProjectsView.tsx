@@ -45,6 +45,8 @@ export function ProjectsView({
 }: ProjectsViewProps) {
     const [projects, setProjects] = useState<ProjectStudent[]>([])
 
+    
+    // useEffect hook to periodically fetch all data
     useEffect(() => {
         async function fetchGroup(
             assignment: Project

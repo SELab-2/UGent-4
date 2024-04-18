@@ -19,6 +19,7 @@ export function StudentsView({
     setGroepen,
     changeScore,
 }: StudentsViewProps) {
+    // useEffect hook to periodically fetch all data
     useEffect(() => {
         async function fetchGroups(assignment: Project): Promise<ScoreGroep[]> {
             try {
@@ -104,6 +105,7 @@ export function StudentsView({
 
     return (
         <>
+            {/* Header section */}
             <Box
                 aria-label={'scoresHeader'}
                 sx={{
@@ -136,9 +138,11 @@ export function StudentsView({
                     paddingBottom: 0,
                 }}
             >
+                {/* Scrollable list of students */}
                 <Box display={'flex'} flexDirection={'row'}>
                     <Box sx={{ width: '100%', height: 430, overflow: 'auto' }}>
                         <List disablePadding={true}>
+                            {/* Mapping through groups to render StudentScoreListItem */}
                             {groepen.map((groep, index) => (
                                 <StudentScoreListItem
                                     key={groep.group.groep_id}

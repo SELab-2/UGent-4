@@ -27,6 +27,7 @@ class ProjectSerializerTest(APITestCase):
                 "extra_deadline",
                 "max_score",
                 "max_groep_grootte",
+                "student_groep",
                 "zichtbaar",
                 "gearchiveerd",
             ],
@@ -110,6 +111,25 @@ class ProjectSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         project = serializer.save()
         self.assertEqual(project.deadline, parse(data["deadline"]))
+
+    def test_create_no_deadline(self):
+        vak = VakFactory.create().vak_id
+        data = {
+            "titel": "test project",
+            "beschrijving": "Dit is een test project.",
+            "opgave_bestand": SimpleUploadedFile("file.txt", b"file_content"),
+            "vak": vak,
+            "deadline": None,
+            "extra_deadline": None,
+            "max_score": 20,
+            "max_groep_grootte": 1,
+            "zichtbaar": True,
+            "gearchiveerd": False,
+        }
+        serializer = ProjectSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        project = serializer.save()
+        self.assertEqual(project.deadline, data["deadline"])
 
     def test_create_invalid_deadline(self):
         vak = VakFactory.create().vak_id

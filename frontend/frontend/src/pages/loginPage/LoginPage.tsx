@@ -13,7 +13,6 @@ export function LoginPage() {
     const { instance } = useMsal()
 
     const handleLogin = () => {
-        //TODO: implement authentication trough backend
         instance.loginRedirect(loginRequest).catch((e) => {
             console.log(e)
         })
@@ -21,6 +20,7 @@ export function LoginPage() {
 
     return (
         <>
+            {/* Background container */}
             <Box
                 position="fixed"
                 top={0}
@@ -36,6 +36,7 @@ export function LoginPage() {
                     backgroundSize: 'cover',
                 }}
             >
+                {/* Background image */}
                 <Box
                     className="background-image"
                     component="div"
@@ -57,6 +58,7 @@ export function LoginPage() {
                         zIndex: -1,
                     }}
                 />
+                {/* Content container */}
                 <Box
                     component="div"
                     className="contentContainer"
@@ -96,6 +98,7 @@ export function LoginPage() {
                             Pigeonhole
                         </Typography>
                     </Box>
+                    {/* Lower container with login button */}
                     <Box
                         component={'div'}
                         className="lowerContainer"

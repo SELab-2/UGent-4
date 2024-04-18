@@ -32,6 +32,7 @@ export function StudentScoreListItem({
 }: StudentScoreListItemProps) {
     const [name, setName] = useState(t('group') + ' ' + groupNumber)
 
+    // Get all necessary data
     useEffect(() => {
         async function fetchName() {
             if (studenten.length == 1) {
@@ -50,6 +51,7 @@ export function StudentScoreListItem({
         fetchName().catch((e) => console.error(e))
     }, [studenten])
 
+    // Function to download a single submission
     const downloadSubmission = () => {
         try {
             instance
@@ -89,6 +91,7 @@ export function StudentScoreListItem({
     return (
         <>
             <ListItem key={key} sx={{ margin: 0 }} disablePadding={true}>
+                {/* Inner list item for displaying submission details */}
                 <ListItem
                     sx={{
                         width: '100%',
@@ -101,6 +104,7 @@ export function StudentScoreListItem({
                         borderRadius: 2,
                     }}
                 >
+                    {/* Content section */}
                     <>
                         <ListItemText sx={{ maxWidth: 200 }} primary={name} />
                         <ListItemText
@@ -115,6 +119,7 @@ export function StudentScoreListItem({
                                     : t('no_submissions')
                             }
                         />
+                        {/* Score section */}
                         <ListItem sx={{ maxWidth: 100 }}>
                             {lastSubmission ? (
                                 <>
@@ -141,6 +146,7 @@ export function StudentScoreListItem({
                                 />
                             )}
                         </ListItem>
+                        {/* Button to download submission */}
                         <ListItem sx={{ maxWidth: 100 }}>
                             <IconButton
                                 onClick={downloadSubmission}
