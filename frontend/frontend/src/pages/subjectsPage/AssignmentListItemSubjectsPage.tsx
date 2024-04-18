@@ -12,6 +12,8 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import { useState } from 'react'
+import dayjs, { Dayjs } from 'dayjs'
+import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
 
 /**
  * This component is used to display a single assignment in the list of assignments.
@@ -27,6 +29,22 @@ import { useState } from 'react'
  * @param visibilityEvent: () => void - event to call to change visibility of assignment
  */
 
+interface AssignmentListItemSubjectsPageProps {
+    projectName: string
+    dueDate: Dayjs
+    submissions: number
+    score: Score
+    maxScore: number
+    isStudent: boolean
+    archived: boolean
+    visible: boolean
+    deleteEvent: () => void
+    archiveEvent: () => void
+    visibilityEvent: () => void
+    courseId: string
+    assignmentId: string
+}
+
 export function AssignmentListItemSubjectsPage({
     projectName,
     dueDate,
@@ -41,7 +59,7 @@ export function AssignmentListItemSubjectsPage({
     visibilityEvent,
     courseId,
     assignmentId,
-}) {
+}: AssignmentListItemSubjectsPageProps) {
     const navigate = useNavigate()
     const handleProjectClick = () => {
         console.log('Project clicked')
@@ -82,7 +100,7 @@ export function AssignmentListItemSubjectsPage({
                                 sx={{ maxWidth: 110 }}
                                 primary={
                                     dueDate
-                                        ? dueDate.toLocaleDateString()
+                                        ? dayjs(dueDate).format('DD.MM.YYYY')
                                         : t('no_deadline')
                                 }
                             />
@@ -104,7 +122,7 @@ export function AssignmentListItemSubjectsPage({
                                 <ListItemText
                                     sx={{ maxWidth: 100 }}
                                     primary={
-                                        score?.score
+                                        score
                                             ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
                                             : t('no_score_yet')
                                     }
@@ -127,7 +145,7 @@ export function AssignmentListItemSubjectsPage({
                                 sx={{ maxWidth: 110 }}
                                 primary={
                                     dueDate
-                                        ? dueDate.toLocaleDateString()
+                                        ? dayjs(dueDate).format('DD.MM.YYYY')
                                         : t('no_deadline')
                                 }
                             />
