@@ -38,6 +38,8 @@ class Project(models.Model):
         Standaard ingesteld op 20.
         max_groep_grootte (IntegerField): Een veld voor het instellen van de max grootte van de groep voor het project.
         Standaard ingesteld op 1.
+        student_groep (BooleanField): Een veld om aan te geven of het een individueel project is of niet.
+        Standaard ingesteld of False.
         zichtbaar (BooleanField): Een veld om aan te geven of het project zichtbaar is of niet.
         Standaard ingesteld op True.
         gearchiveerd (BooleanField): Een veld om aan te geven of het project gearchiveerd is of niet.
@@ -54,9 +56,10 @@ class Project(models.Model):
     opgave_bestand = models.FileField(upload_to=upload_to)
     vak = models.ForeignKey(Vak, on_delete=models.CASCADE)
     deadline = models.DateTimeField(null=True, blank=True)
-    extra_deadline = models.DateTimeField(null=True, blank=True, default=None)
+    extra_deadline = models.DateTimeField(null=True, blank=True)
     max_score = models.IntegerField(default=20)
     max_groep_grootte = models.IntegerField(default=1)
+    student_groep = models.BooleanField(default=False, blank=True)
     zichtbaar = models.BooleanField(default=True, blank=True)
     gearchiveerd = models.BooleanField(default=False, blank=True)
 
