@@ -22,7 +22,9 @@ import Dialog from '@mui/material/Dialog'
 
 import instance from '../../axiosConfig.ts'
 
-import Papa from 'papaparse'
+//import Papa from 'papaparse'
+
+//FIXME: wrong code is commented out, make it work for milestone3
 
 export interface User {
     user: number
@@ -113,52 +115,53 @@ export function AddChangeSubjectPage() {
     }
 
     const handleUploadStudent = () => {
-        const reader = new FileReader()
-
-        reader.onload = async ({ target }) => {
-            const csv = Papa.parse(target.result, {
-                header: true,
-            })
-
-            for (let i = 0; i < csv.data.length; i++) {
-                if (csv.data[i].email != '') {
-                    instance
-                        .get('gebruikers/?email=' + csv.data[i].email)
-                        .then((res) => {
-                            setStudents((oldstudents) => {
-                                if (res.data.length == 0) {
-                                    return oldstudents
-                                }
-
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-
-                                const data = res.data[0]
-
-                                const id = data.user
-                                if (data.is_lesgever) {
-                                    return oldstudents
-                                }
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
-                                    }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, data]
-                                }
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-            }
-        }
-
-        reader.readAsText(studentFile)
+        //     const reader = new FileReader()
+        //
+        //     reader.onload = async ({ target }) => {
+        //         const csv = Papa.parse(target.result, {
+        //             header: true,
+        //         })
+        //
+        //         for (let i = 0; i < csv.data.length; i++) {
+        //             if (csv.data[i].email != '') {
+        //                 instance
+        //                     .get('gebruikers/?email=' + csv.data[i].email)
+        //                     .then((res) => {
+        //                         setStudents((oldstudents) => {
+        //                             if (res.data.length == 0) {
+        //                                 return oldstudents
+        //                             }
+        //
+        //                             //This is like this to prevent the same user being in the list twice
+        //                             let found = false
+        //
+        //                             const data = res.data[0]
+        //
+        //                             const id = data.user
+        //                             if (data.is_lesgever) {
+        //                                 return oldstudents
+        //                             }
+        //                             for (const student of oldstudents) {
+        //                                 if (student.user == id) {
+        //                                     found = true
+        //                                 }
+        //                             }
+        //                             if (found) {
+        //                                 return oldstudents
+        //                             } else {
+        //                                 return [...oldstudents, data]
+        //                             }
+        //                         })
+        //                     })
+        //                     .catch((err) => {
+        //                         console.log(err)
+        //                     })
+        //             }
+        //         }
+        //     }
+        //
+        //     reader.readAsText(studentFile)
+        return
     }
 
     const handleCloseTeacher = () => {
@@ -225,51 +228,52 @@ export function AddChangeSubjectPage() {
     }
 
     const handleUploadTeacher = () => {
-        const reader = new FileReader()
-
-        reader.onload = async ({ target }) => {
-            const csv = Papa.parse(target.result, {
-                header: true,
-            })
-            for (let i = 0; i < csv.data.length; i++) {
-                if (csv.data[i].email != '') {
-                    instance
-                        .get('gebruikers/?email=' + csv.data[i].email)
-                        .then((res) => {
-                            setTeachers((oldteachers) => {
-                                if (res.data.length == 0) {
-                                    return oldteachers
-                                }
-
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-
-                                const data = res.data[0]
-
-                                const id = data.user
-                                if (!data.is_lesgever) {
-                                    return oldteachers
-                                }
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
-                                    }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, data]
-                                }
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-            }
-        }
-
-        reader.readAsText(teacherFile)
+        // const reader = new FileReader()
+        //
+        // reader.onload = async ({ target }) => {
+        //     const csv = Papa.parse(target.result, {
+        //         header: true,
+        //     })
+        //     for (let i = 0; i < csv.data.length; i++) {
+        //         if (csv.data[i].email != '') {
+        //             instance
+        //                 .get('gebruikers/?email=' + csv.data[i].email)
+        //                 .then((res) => {
+        //                     setTeachers((oldteachers) => {
+        //                         if (res.data.length == 0) {
+        //                             return oldteachers
+        //                         }
+        //
+        //                         //This is like this to prevent the same user being in the list twice
+        //                         let found = false
+        //
+        //                         const data = res.data[0]
+        //
+        //                         const id = data.user
+        //                         if (!data.is_lesgever) {
+        //                             return oldteachers
+        //                         }
+        //                         for (const teacher of oldteachers) {
+        //                             if (teacher.user == id) {
+        //                                 found = true
+        //                             }
+        //                         }
+        //                         if (found) {
+        //                             return oldteachers
+        //                         } else {
+        //                             return [...oldteachers, data]
+        //                         }
+        //                     })
+        //                 })
+        //                 .catch((err) => {
+        //                     console.log(err)
+        //                 })
+        //         }
+        //     }
+        // }
+        //
+        // reader.readAsText(teacherFile)
+        return
     }
 
     const handleSave = () => {
