@@ -11,7 +11,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
 
@@ -182,7 +182,10 @@ function ButtonActions({
 }: ButtonActionsProps) {
     const [visible, setVisible] = useState(startVisible)
 
-    const handleIconClick = (e, icon: string) => {
+    const handleIconClick = (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        icon: string
+    ) => {
         e.stopPropagation()
         console.log(icon + ' clicked')
         switch (icon) {

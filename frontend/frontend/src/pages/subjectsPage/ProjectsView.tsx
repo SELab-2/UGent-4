@@ -210,8 +210,20 @@ export function ProjectsView({
                                         dueDate={dayjs(
                                             project.assignment.deadline
                                         )}
-                                        submissions={project.submissions.length}
-                                        score={project.score}
+                                        submissions={
+                                            project.submissions
+                                                ? project.submissions.length
+                                                : 0
+                                        }
+                                        score={
+                                            project.score
+                                                ? project.score
+                                                : {
+                                                      score_id: 0,
+                                                      score: 0,
+                                                      indiening: 0,
+                                                  }
+                                        }
                                         maxScore={Number(
                                             project.assignment.max_score
                                         )}
