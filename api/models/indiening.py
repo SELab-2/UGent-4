@@ -92,7 +92,7 @@ def run_tests_async(instance):
     Args:
         instance: Het instantie-object van de indiening.
     """
-    indiening_id = instance.indiening_id
+    indiening_id = 6 #instance.indiening_id
     project_id = instance.groep.project.project_id
     result = run_tests_on(indiening_id, project_id)
     matches = re.findall(r"Testing \./.*", result[1])
