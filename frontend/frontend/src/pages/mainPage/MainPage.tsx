@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import instance from '../../axiosConfig.ts'
 import { AxiosError, AxiosResponse } from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { CourseCardSkeleton } from '../../components/CourseCardSkeleton.tsx'
 
 export interface Course {
     vak_id: number
@@ -42,23 +43,29 @@ export default function MainPage() {
     const [role, setRole] = useState<string>('')
     const [courses, setCourses] = useState<Course[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
+
+    //navigator for routing
     const navigator = useNavigate()
 
     useEffect(() => {
-        // Get the role of the person that has logged in
         console.log('requesting api')
-        instance
-            .get('/gebruikers/me/')
-            .then((response: AxiosResponse) => {
-                console.log(response.data)
-                setRole(response.data.is_lesgever ? 'teacher' : 'student')
-            })
-            .catch((e: AxiosError) => {
-                console.error(e)
-            })
+        //set loading to true every time the data is requested
 
-        // Get the courses, their projects, and their respective deadlines
+        // Get the courses, their projects, and their respective deadlines + the role of the user
         async function fetchData() {
+            //set loading to true every time the data is requested
+            setLoading(true)
+            await instance
+                .get('/gebruikers/me/')
+                .then((response: AxiosResponse) => {
+                    console.log(response.data)
+                    setRole(response.data.is_lesgever ? 'teacher' : 'student')
+                })
+                .catch((e: AxiosError) => {
+                    console.error(e)
+                })
+
             try {
                 const response = await instance.get<Course[]>('/vakken/')
                 setCourses(response.data)
@@ -66,7 +73,7 @@ export default function MainPage() {
                 console.error('Error fetching courses:', error)
             }
 
-            instance
+            await instance
                 .get('/projecten/')
                 .then((response: AxiosResponse) => {
                     const deadlines: Dayjs[] = []
@@ -83,6 +90,7 @@ export default function MainPage() {
                 .catch((e: AxiosError) => {
                     console.error(e)
                 })
+            setLoading(false)
         }
 
         fetchData().catch((e) => {
@@ -120,17 +128,37 @@ export default function MainPage() {
                     ArchivedView is the same but for the archived courses.  */}
                     <TabSwitcher
                         titles={['current_courses', 'archived']}
-                        nodes={[
-                            <CoursesView
-                                isStudent={role == 'student'}
-                                activecourses={courses}
-                            />,
-                            <ArchivedView
-                                isStudent={role == 'student'}
-                                archivedCourses={courses}
-                            />,
-                        ]}
+                        nodes={
+                            loading
+                                ? [
+                                      <Stack
+                                          flexDirection={{
+                                              xs: 'column-reverse',
+                                              md: 'row',
+                                          }}
+                                          minWidth={{
+                                              md: '60svw',
+                                              lg: '69svw',
+                                          }}
+                                      >
+                                          {[...Array(3)].map((_, index) => (
+                                              <CourseCardSkeleton key={index} />
+                                          ))}
+                                      </Stack>,
+                                  ]
+                                : [
+                                      <CoursesView
+                                          isStudent={role == 'student'}
+                                          activecourses={courses}
+                                      />,
+                                      <ArchivedView
+                                          isStudent={role == 'student'}
+                                          archivedCourses={courses}
+                                      />,
+                                  ]
+                        }
                     />
+
                     {/* Add a calendar to the right of the mainpage. */}
                     <Box
                         aria-label={'calendarView'}

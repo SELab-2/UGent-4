@@ -16,25 +16,24 @@ export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '60svw', lg: '69svw' }}
+                minWidth={{ md: '62svw', lg: '73svw' }}
             >
                 <Stack
                     direction={'column'}
-                    spacing={1}
                     width={'100%'}
-                    alignItems={'center'}
+                    alignItems={'flex-start'}
                 >
                     <Stack
                         flexDirection={'row'}
                         flexWrap={'wrap'}
                         width={'90%'}
                         sx={{
-                            gap: 2,
+                            gap: 1,
                             overflowY: { md: 'auto' },
                             maxHeight: '72svh',
                         }}
                     >
-                        {/* Map the list of the cirrent courses to CourseCards.
+                        {/* Map the list of the current courses to CourseCards.
                         A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
                         {activecourses.map((course: Course) => (
                             <CourseCard

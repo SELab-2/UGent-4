@@ -43,11 +43,15 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
+    const [loading, setLoading] = useState<boolean>(true)
+
     const navigate = useNavigate()
 
     // Get all necessary data from backend
     useEffect(() => {
         async function fetchData() {
+            // Set loading to true every time the data is requested
+            setLoading(true)
             try {
                 const courseResponse = await instance.get<Course>(
                     `/vakken/${courseId}/`
@@ -76,6 +80,8 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
+            // Set loading to false after data is fetched
+            setLoading(false)
         }
 
         fetchData().catch((error) =>
@@ -96,7 +102,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
 
     return (
         <>
-            {!course ? (
+            {loading ? (
                 // If course is not available, show a skeleton loading component
                 <Skeleton
                     variant={'rectangular'}
