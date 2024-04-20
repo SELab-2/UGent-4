@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import { Header } from '../../components/Header.tsx'
-import { useEffect, useState } from 'react'
+import { ChangeEvent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
@@ -104,7 +104,8 @@ export function AddChangeSubjectPage() {
         handleUploadStudent()
     }
 
-    const handleStudentFileChange = (e) => {
+    const handleStudentFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return
         if (e.target.files.length) {
             const inputFile = e.target.files[0]
             setStudentFile(inputFile)
@@ -217,7 +218,8 @@ export function AddChangeSubjectPage() {
         handleUploadTeacher()
     }
 
-    const handleTeacherFileChange = (e) => {
+    const handleTeacherFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files) return
         if (e.target.files.length) {
             const inputFile = e.target.files[0]
             setTeacherFile(inputFile)
