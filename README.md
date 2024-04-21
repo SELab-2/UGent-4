@@ -24,7 +24,9 @@ Er kan niet gepushed worden als er nog linting errors aanwezig zijn.
 
 ### Testen:
 
-- WIP
+Je kan visueel in de browser de testen volgen door het commando `npm run cypress-open` te runnen. Je zal dan ook de keuze krijgen om te kiezen tussen E2E testen of component testen te volgen.
+
+`npm run cypress-e2e` en `cypress-component` zullen de e2e testen en de component testen runnen en in de terminal tonen of ze slagen.
 
 # Backend
 
