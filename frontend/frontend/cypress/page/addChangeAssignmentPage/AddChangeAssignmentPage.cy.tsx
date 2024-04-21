@@ -1,6 +1,6 @@
-import {AddChangeAssignmentPage} from '../../src/pages/addChangeAssignmentPage/AddChangeAssignmentPage'; // Check if the file path is correct and if the required module exists in the specified location.
+import {AddChangeAssignmentPage} from '../../../src/pages/addChangeAssignmentPage/AddChangeAssignmentPage'; // Check if the file path is correct and if the required module exists in the specified location.
 import {BrowserRouter} from 'react-router-dom';
-import fixtures from '../fixtures/fixtures.json';
+import fixtures from '../../fixtures/fixtures.json';
 
 describe('AddChangeAssignmentPage', () => {
 
