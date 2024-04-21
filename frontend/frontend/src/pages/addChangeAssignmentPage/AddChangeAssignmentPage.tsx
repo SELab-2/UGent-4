@@ -33,7 +33,7 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 import AddRestrictionButton from './AddRestrictionButton.tsx'
 import { RestrictionCard } from '../../components/RestrictionCard.tsx'
 
-//TODO: add restriction functionality
+//TODO: Make sure loading of data is consistent and not all over the place
 /**
  * This page is used to add or change an assignment.
  * The page should only be accessible to teachers of the course.
@@ -83,6 +83,9 @@ interface errorChecks {
 
 export function AddChangeAssignmentPage() {
     const navigate = useNavigate()
+
+    //State for loading the data or showing skeletons
+    const [loading, setLoading] = useState(true)
 
     // State for the different fields of the assignment
     const [title, setTitle] = useState('')
@@ -148,8 +151,13 @@ export function AddChangeAssignmentPage() {
 
     //set the initial values of the assignment if it is an edit
     useEffect(() => {
-        if (assignmentId !== undefined) {
-            instance
+        //get the data
+        const fetchData = async () => {
+            //begin loading -> set loading to true
+            setLoading(true)
+
+            //get the assignment
+            await instance
                 .get<getAssignment>(`/projecten/${assignmentId}`)
                 .then((response) => {
                     const assignment = response.data
@@ -191,7 +199,7 @@ export function AddChangeAssignmentPage() {
                 })
 
             //get the restrictions
-            instance
+            await instance
                 .get(`/restricties/?project=${assignmentId}`)
                 .then(async (response) => {
                     const restrictions = response.data
@@ -200,7 +208,9 @@ export function AddChangeAssignmentPage() {
                         await instance
                             .get(
                                 `/restricties/${restr.restrictie_id}/script/`,
-                                { responseType: 'blob' }
+                                {
+                                    responseType: 'blob',
+                                }
                             )
                             .then((response) => {
                                 const blob = new Blob([response.data], {
@@ -221,7 +231,7 @@ export function AddChangeAssignmentPage() {
                 })
 
             //get the assignment file
-            instance
+            await instance
                 .get(`/projecten/${assignmentId}/opgave_bestand/`, {
                     responseType: 'blob',
                 })
@@ -238,6 +248,16 @@ export function AddChangeAssignmentPage() {
                 .catch((error) => {
                     console.error(error)
                 })
+
+            //end loading -> set loading to false
+            setLoading(false)
+        }
+
+        //if there is an assignmentId, get the data else use the default values
+        if (assignmentId !== undefined) {
+            fetchData().catch((error) => {
+                console.error(error)
+            })
         }
     }, [assignmentId, filename])
 

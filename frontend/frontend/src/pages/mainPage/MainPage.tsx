@@ -145,6 +145,20 @@ export default function MainPage() {
                                               <CourseCardSkeleton key={index} />
                                           ))}
                                       </Stack>,
+                                      <Stack
+                                          flexDirection={{
+                                              xs: 'column-reverse',
+                                              md: 'row',
+                                          }}
+                                          minWidth={{
+                                              md: '60svw',
+                                              lg: '69svw',
+                                          }}
+                                      >
+                                          {[...Array(3)].map((_, index) => (
+                                              <CourseCardSkeleton key={index} />
+                                          ))}
+                                      </Stack>,
                                   ]
                                 : [
                                       <CoursesView
