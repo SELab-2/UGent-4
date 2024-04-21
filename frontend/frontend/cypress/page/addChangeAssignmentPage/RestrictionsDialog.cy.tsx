@@ -1,4 +1,4 @@
-import RestrictionsDialog from '../../../src/pages/addChangeAssignmentPage/RestrictionsDialog'; // Check if the file path is correct and if the required module exists in the specified location.
+import RestrictionsDialog from '../../../src/pages/addChangeAssignmentPage/RestrictionsDialog';
 import {BrowserRouter} from 'react-router-dom';
 
 describe('RestrictionsDialog', () => {

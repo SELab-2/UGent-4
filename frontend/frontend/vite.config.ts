@@ -10,6 +10,7 @@ export default defineConfig({
             '@mui/material/Tooltip', // Include other MUI components as needed
             '@mui/material/Grid',
         ],
+        exclude: ['chunk-LTJERZ23.js?v=fff2b904'],
     },
     plugins: [
         react({
