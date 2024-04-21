@@ -93,7 +93,7 @@ class VakDetailViewTest(APITestCase):
             "vak_id": self.vak.vak_id,
             "naam": "nieuwe_vak_naam",
             "studenten": [student.user.id for student in self.studenten],
-            "teachers": [teacher.user.id for teacher in self.lesgevers],
+            "lesgevers": [teacher.user.id for teacher in self.lesgevers],
         }
         response = self.client.put(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -104,10 +104,18 @@ class VakDetailViewTest(APITestCase):
             "vak_id": "",
             "naam": "",
             "studenten": "",
-            "teachers": "",
+            "lesgevers": "",
         }
         response = self.client.put(self.url, data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_vak_detail_patch(self):
+        data = {
+            "naam": "nieuwe_vak_naam",
+        }
+        response = self.client.patch(self.url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["naam"], data["naam"])
 
     def test_vak_detail_delete(self):
         response = self.client.delete(self.url)

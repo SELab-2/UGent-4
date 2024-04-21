@@ -1,13 +1,22 @@
-import {AppBar, Box, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography,} from "@mui/material";
-import {useTranslation} from "react-i18next";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import EditIcon from "@mui/icons-material/Edit";
-import React from "react";
-import {AccountCircle} from "@mui/icons-material";
-import {useNavigate} from "react-router-dom";
-import {LanguageSwitcher} from "./LanguageSwitcher.tsx";
-import {useMsal} from "@azure/msal-react";
-import axios from "axios";
+import {
+    AppBar,
+    Box,
+    IconButton,
+    Menu,
+    MenuItem,
+    Toolbar,
+    Tooltip,
+    Typography,
+} from '@mui/material'
+import { useTranslation } from 'react-i18next'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import EditIcon from '@mui/icons-material/Edit'
+import React from 'react'
+import { AccountCircle } from '@mui/icons-material'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { LanguageSwitcher } from './LanguageSwitcher.tsx'
+import { useMsal } from '@azure/msal-react'
+import axios from 'axios'
 
 /**
  * Header component
@@ -22,116 +31,143 @@ import axios from "axios";
  * Interface for Header props
  */
 interface Props {
-    variant: "not_main" | "editable" | "default";
-    title: string;
+    variant: 'not_main' | 'editable' | 'default'
+    title: string
 }
 
 /**
  * Header component
  * @param {Props} variant, title - The variant and title of the header
  */
-export const Header = ({variant, title}: Props) => {
-    const {t} = useTranslation();
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const {instance} = useMsal();
+export const Header = ({ variant, title }: Props) => {
+    const { t } = useTranslation()
+    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
+    const { instance } = useMsal()
     /**
      * Function to handle menu opening
      * @param {React.MouseEvent<HTMLElement>} event - The event object
      */
     const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
+        setAnchorEl(event.currentTarget)
+    }
 
     /**
      * Function to handle edit action
      */
     const handleEdit = () => {
-        console.log("edit");
-        navigate("edit")
+        console.log('edit')
+        navigate('edit')
+    }
+
+    const handleBack = () => {
+        //cut of last part of the path
+        let path = location.pathname.slice(
+            0,
+            location.pathname.lastIndexOf('/')
+        )
+        //cut of the last part of the path again if the last part was a number
+        path = path.slice(0, path.lastIndexOf('/'))
+        //navigate to the new path or main page if there is no path
+        navigate(path || '/')
     }
 
     /**
      * Function to handle menu closing
      */
     const handleClose = () => {
-        setAnchorEl(null);
-    };
+        setAnchorEl(null)
+    }
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+    const location = useLocation()
 
     /**
      * Function to handle logout action
      */
     const logout = () => {
         // Clear the token from the cache so axios can't get access to the api
-        axios.defaults.headers.common['Authorization'] = null;
-        instance.logoutRedirect({
-            postLogoutRedirectUri: "/",
-        }).catch((e) => {
-            console.error(e)
-        });
-    };
+        axios.defaults.headers.common['Authorization'] = null
+        instance
+            .logoutRedirect({
+                postLogoutRedirectUri: '/',
+            })
+            .catch((e) => {
+                console.error(e)
+            })
+    }
 
     return (
         <>
             <AppBar
                 position="absolute"
-                sx={{margin: "auto", flexGrow: 1, alignItems: "space-between", width: "100%"}}
+                sx={{
+                    margin: 'auto',
+                    flexGrow: 1,
+                    alignItems: 'space-between',
+                    width: '100%',
+                }}
             >
                 <Toolbar>
+                    {/* Logo and Home Button */}
                     <Box>
-                        <Tooltip title={t("home")}>
+                        <Tooltip title={t('home')}>
                             <IconButton
-                                onClick={() => navigate("/")}
-                                sx={{padding: 0, borderRadius: 5}}
+                                onClick={() => navigate('/')}
+                                sx={{ padding: 0, borderRadius: 5 }}
                             >
                                 <Box
                                     component="img"
-                                    src={t("logo")}
+                                    src={t('logo')}
                                     alt="logo"
                                     sx={{
                                         height: 80,
                                         width: 80,
-                                        display: "block",
+                                        display: 'block',
                                         padding: 0,
                                         margin: 0,
                                     }}
                                 />
                             </IconButton>
                         </Tooltip>
-                        {variant !== "default" && (
-                            <Tooltip title={t("back")}>
+                        {/* Back Button (if variant is not default) */}
+                        {variant !== 'default' && (
+                            <Tooltip title={t('back')}>
                                 <IconButton
-                                    onClick={() => navigate(-1)}
+                                    onClick={handleBack}
                                     size="large"
                                     edge="start"
                                     color="inherit"
                                     aria-label="back"
-                                    sx={{mr: 2}}
+                                    sx={{ mr: 2 }}
                                 >
-                                    <ArrowBackIcon/>
+                                    <ArrowBackIcon />
                                 </IconButton>
                             </Tooltip>
                         )}
                     </Box>
+                    {/* Title */}
                     <Typography
-                        maxWidth={"88%"}
+                        maxWidth={'88%'}
                         variant="h5"
                         component="div"
                         overflow={'auto'}
-                        sx={{margin: "auto", textAlign: "center"}}
+                        sx={{ margin: 'auto', textAlign: 'center' }}
                     >
                         {title}
-                        {variant === "editable" && (
+                        {variant === 'editable' && (
                             <IconButton
                                 onClick={handleEdit}
                                 disableRipple={true}
-                                sx={{marginBottom: 1, color: "text.secondary"}}
+                                sx={{
+                                    marginBottom: 1,
+                                    color: 'text.secondary',
+                                }}
                             >
-                                <EditIcon/>
+                                <EditIcon />
                             </IconButton>
                         )}
                     </Typography>
+                    {/* User Menu */}
                     <div>
                         <IconButton
                             size="medium"
@@ -141,29 +177,29 @@ export const Header = ({variant, title}: Props) => {
                             onClick={handleMenu}
                             color="secondary"
                         >
-                            <AccountCircle fontSize={"large"}/>
+                            <AccountCircle fontSize={'large'} />
                         </IconButton>
                         <Menu
                             id="menu-appbar"
                             anchorEl={anchorEl}
                             anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
+                                vertical: 'top',
+                                horizontal: 'right',
                             }}
                             keepMounted
                             transformOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
+                                vertical: 'top',
+                                horizontal: 'right',
                             }}
                             open={Boolean(anchorEl)}
                             onClose={handleClose}
                         >
-                            <LanguageSwitcher/>
+                            <LanguageSwitcher />
                             <MenuItem onClick={logout}>Logout</MenuItem>
                         </Menu>
                     </div>
                 </Toolbar>
             </AppBar>
         </>
-    );
-};
+    )
+}

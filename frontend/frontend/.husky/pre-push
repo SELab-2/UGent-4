@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+echo "checking for linting errors before pushing..."
+
+cd ./frontend/frontend && npm run lint

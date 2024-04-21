@@ -15,3 +15,4 @@ data
 uploads
 /data/
 cypress/screenshots
+/package-lock.json

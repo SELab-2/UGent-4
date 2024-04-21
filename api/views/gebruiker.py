@@ -2,6 +2,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.contrib.auth.models import User
 from api.models.gebruiker import Gebruiker
 from api.serializers.gebruiker import GebruikerSerializer
 
@@ -37,14 +38,18 @@ def gebruiker_list(request):
             is_lesgever=(request.GET.get("is_lesgever").lower() == "true")
         )
 
+    if "email" in request.GET:
+        users = User.objects.filter(email__iexact=request.GET.get("email"))
+        gebruikers = gebruikers.filter(user__in=users)
+
     serializer = GebruikerSerializer(gebruikers, many=True)
     return Response(serializer.data)
 
 
-@api_view(["GET", "PUT"])
+@api_view(["GET", "PUT", "PATCH"])
 def gebruiker_detail(request, id):
     """
-    Een view om de gegevens van een specifieke gebruiker op te halen (GET) of bij te werken (PUT).
+    Een view om de gegevens van een specifieke gebruiker op te halen (GET) of bij te werken (PUT, PATCH).
 
     Args:
         id (int): De primaire sleutel van de gebruiker.
@@ -63,9 +68,16 @@ def gebruiker_detail(request, id):
             serializer = GebruikerSerializer(gebruiker)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
-    elif request.method == "PUT":
+    elif request.method in ["PUT", "PATCH"]:
         if request.user.is_superuser:
-            serializer = GebruikerSerializer(gebruiker, data=request.data)
+            if request.method == "PUT":
+                serializer = GebruikerSerializer(gebruiker, data=request.data)
+            else:
+                if not request.data.get("gepinde_vakken"):
+                    request.data["gepinde_vakken"] = gebruiker.gepinde_vakken.all()
+                serializer = GebruikerSerializer(
+                    gebruiker, data=request.data, partial=True
+                )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -79,12 +91,10 @@ def gebruiker_detail_me(request):
     Een view om de gegevens van de huidige gebruiker op te halen (GET).
 
     Returns:
-        Response: Gegevens van de gebruiker of een foutmelding als de gebruiker niet bestaat.
+        Response: Gegevens van de gebruiker.
     """
-    try:
-        gebruiker = Gebruiker.objects.get(pk=request.user.id)
-    except Gebruiker.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    gebruiker = Gebruiker.objects.get(pk=request.user.id)
 
     serializer = GebruikerSerializer(gebruiker)
     return Response(serializer.data)

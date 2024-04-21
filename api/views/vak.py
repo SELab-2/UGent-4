@@ -42,10 +42,11 @@ def vak_list(request, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@api_view(["GET", "PUT", "DELETE"])
+@api_view(["GET", "PUT", "PATCH", "DELETE"])
 def vak_detail(request, id, format=None):
     """
-    Een view om de gegevens van een specifiek vak op te halen (GET), bij te werken (PUT) of te verwijderen (DELETE).
+    Een view om de gegevens van een specifiek vak op te halen (GET),
+    bij te werken (PUT, PATCH) of te verwijderen (DELETE).
 
     Args:
         id (int): De primaire sleutel van het vak.
@@ -65,8 +66,16 @@ def vak_detail(request, id, format=None):
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
     if is_lesgever(request.user):
-        if request.method == "PUT":
-            serializer = VakSerializer(vak, data=request.data)
+        if request.method in ["PUT", "PATCH"]:
+            if request.method == "PUT":
+                serializer = VakSerializer(vak, data=request.data)
+            else:
+                data = request.data.copy()
+                if not data.get("studenten"):
+                    data.setlist("studenten", vak.studenten.all())
+                if not data.get("lesgevers"):
+                    data.setlist("lesgevers", vak.lesgevers.all())
+                serializer = VakSerializer(vak, data=data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
