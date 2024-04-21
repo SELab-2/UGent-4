@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "private": true,
+  "private": "true",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -9,7 +9,7 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "format": "prettier --write .",
-    "prepare": "cd ../.. && husky frontend/frontend/.husky"
+    "prepare": "cd ../.. && husky frontend/frontend/.husky",
     "cypress-open": "node_modules/.bin/cypress open",
     "cypress-e2e": "node_modules/.bin/cypress run",
     "cypress-component": "node_modules/.bin/cypress run --component"
