@@ -493,6 +493,7 @@ export function AddChangeAssignmentPage() {
                     </Box>
                     {/* Deadline section */}
                     <Box
+                        data-test-id="deadline-id"
                         aria-label={'deadline'}
                         padding={2}
                         display={'flex'}
