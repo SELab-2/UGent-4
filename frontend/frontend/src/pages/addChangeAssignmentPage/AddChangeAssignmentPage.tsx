@@ -1,8 +1,10 @@
 import {
     Box,
     Card,
+    CircularProgress,
     IconButton,
     ListItem,
+    Skeleton,
     Stack,
     TextField,
     Tooltip,
@@ -446,8 +448,12 @@ export function AddChangeAssignmentPage() {
         <>
             {/* Stack container for layout */}
             <Stack direction={'column'} paddingX={2}>
-                <Header variant={'default'} title={title} />
-
+                {/*very ugly but it works functionally*/}
+                {loading ? (
+                    <Header variant={'default'} title={''} />
+                ) : (
+                    <Header variant={'default'} title={title} />
+                )}
                 {/* Form for submitting assignment */}
                 <Stack
                     direction={'column'}
@@ -479,20 +485,28 @@ export function AddChangeAssignmentPage() {
                             >
                                 {t('assignmentName')}
                             </Typography>
-                            <TextField
-                                type="text"
-                                placeholder={'Title'}
-                                error={assignmentErrors.title}
-                                value={title}
-                                helperText={
-                                    assignmentErrors.title
-                                        ? t('name') + ' ' + t('is_required')
-                                        : ''
-                                }
-                                onChange={(event) =>
-                                    setTitle(event.target.value)
-                                }
-                            />
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
+                                />
+                            ) : (
+                                <TextField
+                                    type="text"
+                                    placeholder={'Title'}
+                                    error={assignmentErrors.title}
+                                    value={title}
+                                    helperText={
+                                        assignmentErrors.title
+                                            ? t('name') + ' ' + t('is_required')
+                                            : ''
+                                    }
+                                    onChange={(event) =>
+                                        setTitle(event.target.value)
+                                    }
+                                />
+                            )}
                         </Box>
                         {/* File Upload button */}
                         <Box
@@ -502,13 +516,25 @@ export function AddChangeAssignmentPage() {
                             flexDirection={'column'}
                             alignItems={'flex-start'}
                         >
-                            <FileUploadButton
-                                name={t('upload_assignment')}
-                                path={assignmentFile}
-                                onFileChange={handleFileChange}
-                                fileTypes={['.pdf', '.zip']}
-                                tooltip={t('uploadToolTip')}
-                            />
+                            {loading ? (
+                                <FileUploadButton
+                                    name={t('upload_assignment')}
+                                    tooltip={t('uploadToolTip')}
+                                    onFileChange={() => {
+                                        console.log('loading')
+                                    }}
+                                    fileTypes={['.pdf', '.zip']}
+                                    path={new File([], 'loading...')}
+                                />
+                            ) : (
+                                <FileUploadButton
+                                    name={t('upload_assignment')}
+                                    path={assignmentFile}
+                                    onFileChange={handleFileChange}
+                                    fileTypes={['.pdf', '.zip']}
+                                    tooltip={t('uploadToolTip')}
+                                />
+                            )}
                         </Box>
                     </Box>
                     {/* Deadline section */}
@@ -537,37 +563,45 @@ export function AddChangeAssignmentPage() {
                             >
                                 Deadline:
                             </Typography>
-                            <LocalizationProvider
-                                dateAdapter={AdapterDayjs}
-                                adapterLocale="nl"
-                            >
-                                <DateTimePicker
-                                    value={dueDate}
-                                    disablePast
-                                    label={t('optional')}
-                                    sx={{ width: 250 }}
-                                    viewRenderers={{
-                                        hours: renderTimeViewClock,
-                                        minutes: renderTimeViewClock,
-                                        seconds: renderTimeViewClock,
-                                    }}
-                                    onError={(newError) =>
-                                        SetDeadlineError(newError)
-                                    }
-                                    slotProps={{
-                                        field: {
-                                            clearable: true,
-                                            onClear: () => setCleared(true),
-                                        },
-                                        textField: {
-                                            helperText: errorMessage,
-                                        },
-                                    }}
-                                    onChange={(newValue) =>
-                                        setDueDate(newValue)
-                                    }
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
                                 />
-                            </LocalizationProvider>
+                            ) : (
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="nl"
+                                >
+                                    <DateTimePicker
+                                        value={dueDate}
+                                        disablePast
+                                        label={t('optional')}
+                                        sx={{ width: 250 }}
+                                        viewRenderers={{
+                                            hours: renderTimeViewClock,
+                                            minutes: renderTimeViewClock,
+                                            seconds: renderTimeViewClock,
+                                        }}
+                                        onError={(newError) =>
+                                            SetDeadlineError(newError)
+                                        }
+                                        slotProps={{
+                                            field: {
+                                                clearable: true,
+                                                onClear: () => setCleared(true),
+                                            },
+                                            textField: {
+                                                helperText: errorMessage,
+                                            },
+                                        }}
+                                        onChange={(newValue) =>
+                                            setDueDate(newValue)
+                                        }
+                                    />
+                                </LocalizationProvider>
+                            )}
                         </Box>
                         <Box
                             aria-label={'secondary_deadline'}
@@ -583,37 +617,45 @@ export function AddChangeAssignmentPage() {
                             >
                                 Extra Deadline:
                             </Typography>
-                            <LocalizationProvider
-                                dateAdapter={AdapterDayjs}
-                                adapterLocale="nl"
-                            >
-                                <DateTimePicker
-                                    value={extraDueDate}
-                                    disablePast
-                                    label={t('optional')}
-                                    sx={{ width: 250 }}
-                                    viewRenderers={{
-                                        hours: renderTimeViewClock,
-                                        minutes: renderTimeViewClock,
-                                        seconds: renderTimeViewClock,
-                                    }}
-                                    slotProps={{
-                                        field: {
-                                            clearable: true,
-                                            onClear: () => setCleared(true),
-                                        },
-                                        textField: {
-                                            error: deadlineCheckError,
-                                            helperText: deadlineCheckError
-                                                ? t('deadlineCheck')
-                                                : '',
-                                        },
-                                    }}
-                                    onChange={(newValue) =>
-                                        setExtraDueDate(newValue)
-                                    }
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
                                 />
-                            </LocalizationProvider>
+                            ) : (
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="nl"
+                                >
+                                    <DateTimePicker
+                                        value={extraDueDate}
+                                        disablePast
+                                        label={t('optional')}
+                                        sx={{ width: 250 }}
+                                        viewRenderers={{
+                                            hours: renderTimeViewClock,
+                                            minutes: renderTimeViewClock,
+                                            seconds: renderTimeViewClock,
+                                        }}
+                                        slotProps={{
+                                            field: {
+                                                clearable: true,
+                                                onClear: () => setCleared(true),
+                                            },
+                                            textField: {
+                                                error: deadlineCheckError,
+                                                helperText: deadlineCheckError
+                                                    ? t('deadlineCheck')
+                                                    : '',
+                                            },
+                                        }}
+                                        onChange={(newValue) =>
+                                            setExtraDueDate(newValue)
+                                        }
+                                    />
+                                </LocalizationProvider>
+                            )}
                         </Box>
                     </Box>
                     {/* Description section */}
@@ -634,26 +676,37 @@ export function AddChangeAssignmentPage() {
                             >
                                 {t('description')}
                             </Typography>
-                            <TextField
-                                type="text"
-                                placeholder={'Description'}
-                                variant={'standard'}
-                                multiline
-                                value={description}
-                                onChange={(event) =>
-                                    setDescription(event.target.value)
-                                }
-                                fullWidth
-                                error={assignmentErrors.description}
-                                helperText={
-                                    assignmentErrors.description
-                                        ? t('descriptionName') +
-                                          ' ' +
-                                          t('is_required')
-                                        : ''
-                                }
-                                sx={{ overflowY: 'auto', maxHeight: '25svh' }}
-                            />
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={'100%'}
+                                    height={60}
+                                />
+                            ) : (
+                                <TextField
+                                    type="text"
+                                    placeholder={'Description'}
+                                    variant={'standard'}
+                                    multiline
+                                    value={description}
+                                    onChange={(event) =>
+                                        setDescription(event.target.value)
+                                    }
+                                    fullWidth
+                                    error={assignmentErrors.description}
+                                    helperText={
+                                        assignmentErrors.description
+                                            ? t('descriptionName') +
+                                              ' ' +
+                                              t('is_required')
+                                            : ''
+                                    }
+                                    sx={{
+                                        overflowY: 'auto',
+                                        maxHeight: '25svh',
+                                    }}
+                                />
+                            )}
                         </Box>
                     </Card>
                     {/* Restrictions section */}
@@ -681,19 +734,31 @@ export function AddChangeAssignmentPage() {
                                         overflowY: 'auto',
                                     }}
                                 >
-                                    {restrictions.map((restriction, index) => {
-                                        return (
-                                            <ListItem key={index}>
-                                                <RestrictionCard
-                                                    restriction={restriction}
-                                                    restrictions={restrictions}
-                                                    setRestrictions={
-                                                        setRestrictions
-                                                    }
-                                                />
-                                            </ListItem>
-                                        )
-                                    })}
+                                    {loading ? (
+                                        <CircularProgress color={'primary'} />
+                                    ) : (
+                                        <>
+                                            {restrictions.map(
+                                                (restriction, index) => {
+                                                    return (
+                                                        <ListItem key={index}>
+                                                            <RestrictionCard
+                                                                restriction={
+                                                                    restriction
+                                                                }
+                                                                restrictions={
+                                                                    restrictions
+                                                                }
+                                                                setRestrictions={
+                                                                    setRestrictions
+                                                                }
+                                                            />
+                                                        </ListItem>
+                                                    )
+                                                }
+                                            )}
+                                        </>
+                                    )}
                                 </List>
                             </Box>
                             <Box
@@ -780,32 +845,42 @@ export function AddChangeAssignmentPage() {
                                 >
                                     Max Score
                                 </Typography>
-                                <TextField
-                                    sx={{ width: 80 }}
-                                    required
-                                    label={'Max Score'}
-                                    type={'number'}
-                                    value={maxScore}
-                                    onChange={(event) => {
-                                        if (event.target.value !== '') {
-                                            const newScore = Math.max(
-                                                parseInt(event.target.value),
-                                                0
-                                            )
-                                            SetMaxScore
-                                                ? SetMaxScore(newScore)
-                                                : undefined
-                                        } else {
-                                            SetMaxScore
-                                                ? SetMaxScore(
-                                                      parseInt(
-                                                          event.target.value
+                                {loading ? (
+                                    <Skeleton
+                                        variant={'text'}
+                                        width={60}
+                                        height={60}
+                                    />
+                                ) : (
+                                    <TextField
+                                        sx={{ width: 80 }}
+                                        required
+                                        label={'Max Score'}
+                                        type={'number'}
+                                        value={maxScore}
+                                        onChange={(event) => {
+                                            if (event.target.value !== '') {
+                                                const newScore = Math.max(
+                                                    parseInt(
+                                                        event.target.value
+                                                    ),
+                                                    0
+                                                )
+                                                SetMaxScore
+                                                    ? SetMaxScore(newScore)
+                                                    : undefined
+                                            } else {
+                                                SetMaxScore
+                                                    ? SetMaxScore(
+                                                          parseInt(
+                                                              event.target.value
+                                                          )
                                                       )
-                                                  )
-                                                : undefined
-                                        }
-                                    }}
-                                />
+                                                    : undefined
+                                            }
+                                        }}
+                                    />
+                                )}
                             </Box>
                         </Box>
                         {/* Submit and Cancel buttons */}
