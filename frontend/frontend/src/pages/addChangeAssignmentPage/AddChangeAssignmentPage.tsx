@@ -242,7 +242,7 @@ export function AddChangeAssignmentPage() {
                     const file: File = new File([blob], filename, {
                         type: response.headers['content-type'],
                     })
-
+                    console.log('file' + file.name)
                     setAssignmentFile(file)
                 })
                 .catch((error) => {

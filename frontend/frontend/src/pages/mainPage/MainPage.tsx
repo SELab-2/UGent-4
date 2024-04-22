@@ -120,7 +120,7 @@ export default function MainPage() {
                         marginTop: 10,
                         display: 'flex',
                         flexDirection: { md: 'row', xs: 'column-reverse' },
-                        gap: 3,
+                        gap: 2,
                     }}
                 >
                     {/* Two tabs to select either the current or archived courses,

@@ -26,10 +26,10 @@ export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
                     <Stack
                         flexDirection={'row'}
                         flexWrap={'wrap'}
-                        width={'90%'}
+                        width={'95%'}
                         sx={{
                             gap: 1,
-                            overflowY: { md: 'auto' },
+                            overflowY: 'auto',
                             maxHeight: '72svh',
                         }}
                     >

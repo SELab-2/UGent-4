@@ -5,7 +5,6 @@ import {
     CardContent,
     Divider,
     IconButton,
-    Skeleton,
     Typography,
 } from '@mui/material'
 import { t } from 'i18next'
@@ -16,6 +15,7 @@ import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
+import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -104,18 +104,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
         <>
             {loading ? (
                 // If course is not available, show a skeleton loading component
-                <Skeleton
-                    variant={'rectangular'}
-                    sx={{
-                        width: { xs: '100%', md: '60%' },
-                        minWidth: 350,
-                        maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
-                        padding: 0,
-                        margin: 1,
-                    }}
-                />
+                <CourseCardSkeleton />
             ) : (
                 // If course is available, show course details inside a card component
                 <Card
