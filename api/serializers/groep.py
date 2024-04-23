@@ -49,7 +49,7 @@ class GroepSerializer(serializers.ModelSerializer):
         Returns:
             Groep: De bijgewerkte groep.
         """
-        students_data = validated_data.pop("studenten", instance.studenten)
+        students_data = validated_data.pop("studenten", instance.studenten.all())
         new_project = validated_data.get("project", instance.project)
         validate_students(students_data, new_project, current_group=instance)
         validate_project(instance, new_project)

@@ -2,9 +2,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.shortcuts import redirect
 from api.models.vak import Vak
 from api.serializers.vak import VakSerializer
-from api.utils import has_permissions, is_lesgever, contains, get_gebruiker
+from api.utils import has_permissions, is_lesgever, get_gebruiker
 
 
 @api_view(["GET", "POST"])
@@ -79,12 +80,7 @@ def vak_detail(request, id, format=None):
             if request.method == "PUT":
                 serializer = VakSerializer(vak, data=request.data)
             else:
-                data = request.data.copy()
-                if not data.get("studenten"):
-                    data.setlist("studenten", vak.studenten.all())
-                if not data.get("lesgevers"):
-                    data.setlist("lesgevers", vak.lesgevers.all())
-                serializer = VakSerializer(vak, data=data, partial=True)
+                serializer = VakSerializer(vak, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
@@ -105,7 +101,7 @@ def vak_detail_accept_invite(request, id, format=None):
         id (int): De primaire sleutel van het vak.
 
     Returns:
-        Response: Gegevens van het vak of een foutmelding als de gebruiker niet geinvite was.
+        Response: Gegevens van het vak.
     """
     try:
         vak = Vak.objects.get(pk=id)
@@ -114,13 +110,10 @@ def vak_detail_accept_invite(request, id, format=None):
 
     gebruiker = get_gebruiker(request.user)
 
-    if contains(vak.invited, request.user):
-        if gebruiker.is_lesgever:
-            vak.lesgevers.add(gebruiker)
-        else:
-            vak.studenten.add(gebruiker)
+    if gebruiker.is_lesgever:
+        vak.lesgevers.add(gebruiker)
     else:
-        return Response(
-            status=status.HTTP_403_FORBIDDEN,
-            data={"error": "Deze gebruiker is niet geinviteerd voor dit vak"},
-        )
+        vak.studenten.add(gebruiker)
+    vak.save()
+    
+    return redirect('vak_detail', id=vak.vak_id)
