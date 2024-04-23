@@ -11,7 +11,7 @@ const dutch = {
     submissions: 'Indieningen',
     no_submission: 'niet ingediend',
     error: 'Er is iets misgegaan.',
-    assignment: 'Opgave:',
+    assignment: 'Opgave',
     filename: 'Ingediend bestand:',
     restrictions: 'Restricties:',
     current_projects: 'Huidige projecten',
@@ -90,6 +90,8 @@ const dutch = {
     failed: 'Gefaald',
     result: 'Resultaat',
     must_pass: 'Moet slagen',
+    loading: 'Laden',
+    file: 'Bestand',
 }
 
 export default dutch

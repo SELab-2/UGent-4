@@ -113,9 +113,14 @@ export function AddChangeAssignmentPage() {
     //confirmation dialogs
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [saveConfirmation, setSaveConfirmation] = useState(false)
+    const [cancelConfirmation, setCancelConfirmation] = useState(false)
 
     const closeSaveConfirmation = () => {
         setSaveConfirmation(false)
+    }
+
+    const closeCancel = () => {
+        setCancelConfirmation(false)
     }
 
     //open the delete confirmation dialog
@@ -837,6 +842,7 @@ export function AddChangeAssignmentPage() {
                                 display={'flex'}
                                 flexDirection={'row'}
                                 gap={1}
+                                height={40}
                                 alignItems={'center'}
                             >
                                 <Typography
@@ -893,7 +899,7 @@ export function AddChangeAssignmentPage() {
                         >
                             <Tooltip title={t('cancel')}>
                                 <IconButton
-                                    onClick={handleCancel}
+                                    onClick={() => setCancelConfirmation(true)}
                                     sx={{
                                         backgroundColor: 'secondary.main',
                                         borderRadius: 2,
@@ -943,6 +949,15 @@ export function AddChangeAssignmentPage() {
                     open={saveConfirmation}
                     handleClose={closeSaveConfirmation}
                     doAction={uploadAssignment}
+                />
+                {/* Confirmation popup for canceling changes*/}
+                <WarningPopup
+                    title={t('undo_changes_warning')}
+                    content={t('cant_be_undone')}
+                    buttonName={t('confirm')}
+                    open={cancelConfirmation}
+                    handleClose={closeCancel}
+                    doAction={handleCancel}
                 />
             </Stack>
         </>

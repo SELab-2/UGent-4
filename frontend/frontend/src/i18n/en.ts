@@ -11,7 +11,7 @@ const english = {
     submissions: 'Submissions',
     no_submission: 'no submission',
     error: 'Something went wrong.',
-    assignment: 'Assignment:',
+    assignment: 'Assignment',
     filename: 'Submitted file:',
     restrictions: 'Restrictions:',
     current_projects: 'Current projects',
@@ -90,6 +90,8 @@ const english = {
     failed: 'Failed',
     result: 'Result',
     must_pass: 'Must pass',
+    loading: 'Loading',
+    file: 'File',
 }
 
 export default english

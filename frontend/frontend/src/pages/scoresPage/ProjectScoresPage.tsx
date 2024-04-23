@@ -31,10 +31,12 @@ export interface Project {
     vak: number
     max_score: number
     max_groep_grootte: number
+    student_groep?: boolean
     deadline: Date | null
     extra_deadline: Date | null
     zichtbaar: boolean
     gearchiveerd: boolean
+    filename?: string
 }
 
 interface Groep {
