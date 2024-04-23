@@ -30,6 +30,9 @@ class Vak(models.Model):
     lesgevers = models.ManyToManyField(
         "Gebruiker", related_name="vak_lesgevers", blank=True
     )
+    invited = models.ManyToManyField(
+        "Gebruiker", related_name="vak_invited", blank=True
+    )
 
     def __str__(self):
         return self.naam

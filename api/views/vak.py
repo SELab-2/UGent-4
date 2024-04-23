@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.models.vak import Vak
 from api.serializers.vak import VakSerializer
-from api.utils import has_permissions, is_lesgever
+from api.utils import has_permissions, is_lesgever, contains, get_gebruiker
 
 
 @api_view(["GET", "POST"])
@@ -94,3 +94,33 @@ def vak_detail(request, id, format=None):
             vak.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def vak_detail_accept_invite(request, id, format=None):
+    """
+    Een view om de invite van een vak te accepteren (GET),
+
+    Args:
+        id (int): De primaire sleutel van het vak.
+
+    Returns:
+        Response: Gegevens van het vak of een foutmelding als de gebruiker niet geinvite was.
+    """
+    try:
+        vak = Vak.objects.get(pk=id)
+    except Vak.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    gebruiker = get_gebruiker(request.user)
+
+    if contains(vak.invited, request.user):
+        if gebruiker.is_lesgever:
+            vak.lesgevers.add(gebruiker)
+        else:
+            vak.studenten.add(gebruiker)
+    else:
+        return Response(
+            status=status.HTTP_403_FORBIDDEN,
+            data={"error": "Deze gebruiker is niet geinviteerd voor dit vak"},
+        )

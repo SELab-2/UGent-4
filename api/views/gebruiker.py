@@ -64,7 +64,11 @@ def gebruiker_detail(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if has_permissions(request.user) or gebruiker.is_lesgever or int(id) == request.user.id:
+        if (
+            has_permissions(request.user)
+            or gebruiker.is_lesgever
+            or int(id) == request.user.id
+        ):
             serializer = GebruikerSerializer(gebruiker)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
