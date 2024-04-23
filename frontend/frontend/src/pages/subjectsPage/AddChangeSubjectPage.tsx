@@ -99,6 +99,40 @@ function UserList(users,setSelected,setOpen) {
   )
 }
 
+function UploadPart(file,handleFileChange,setEmail,handleAdd){
+    return (
+        <>
+            <Box display={'flex'} flexDirection={'column'}>
+                <FileUploadButton
+                    name={t('upload_students')}
+                    fileTypes={['.csv']}
+                    tooltip={t('uploadToolTip')}
+                    onFileChange={handleFileChange}
+                    path={file}
+                />
+                <Box display={'flex'} flexDirection={'row'}>
+                    <TextField
+                        type="text"
+                        placeholder={t('studentnumber')}
+                        onChange={(event) =>
+                            setEmail(event.target.value)
+                        }
+                    />
+                    <Button
+                        variant={'contained'}
+                        color={'secondary'}
+                        size={'small'}
+                        disableElevation
+                        onClick={handleAdd}
+                    >
+                        {t('add')}
+                    </Button>
+                </Box>
+            </Box>
+        </>
+    )
+}
+
 export function AddChangeSubjectPage() {
     const params = useParams()
     // State for the different fields of the subject
@@ -467,33 +501,7 @@ export function AddChangeSubjectPage() {
                             gap={1}
                         >
                             {UserList(students, setSelectedStudent, setOpenStudent)}
-                            <Box display={'flex'} flexDirection={'column'}>
-                                <FileUploadButton
-                                    name={t('upload_students')}
-                                    fileTypes={['.csv']}
-                                    tooltip={t('uploadToolTip')}
-                                    onFileChange={handleStudentFileChange}
-                                    path={studentFile}
-                                />
-                                <Box display={'flex'} flexDirection={'row'}>
-                                    <TextField
-                                        type="text"
-                                        placeholder={t('studentnumber')}
-                                        onChange={(event) =>
-                                            setEmailStudent(event.target.value)
-                                        }
-                                    />
-                                    <Button
-                                        variant={'contained'}
-                                        color={'secondary'}
-                                        size={'small'}
-                                        disableElevation
-                                        onClick={handleAddStudent}
-                                    >
-                                        {t('add')}
-                                    </Button>
-                                </Box>
-                            </Box>
+                            {UploadPart(studentFile,handleStudentFileChange,setEmailStudent,handleAddStudent)}
                         </Box>
                     </Box>
 
@@ -535,34 +543,8 @@ export function AddChangeSubjectPage() {
                             alignItems={'center'}
                             gap={1}
                         >
-                            {UserList(teachers, setEmailTeacher, setOpenTeacher)}
-                            <Box display={'flex'} flexDirection={'column'}>
-                                <FileUploadButton
-                                    name={t('upload_teachers')}
-                                    fileTypes={['.csv']}
-                                    tooltip={t('uploadToolTip')}
-                                    onFileChange={handleTeacherFileChange}
-                                    path={teacherFile}
-                                />
-                                <Box display={'flex'} flexDirection={'row'}>
-                                    <TextField
-                                        type="text"
-                                        placeholder={t('teacher')}
-                                        onChange={(event) =>
-                                            setEmailTeacher(event.target.value)
-                                        }
-                                    />
-                                    <Button
-                                        variant={'contained'}
-                                        color={'secondary'}
-                                        size={'small'}
-                                        disableElevation
-                                        onClick={handleAddTeacher}
-                                    >
-                                        {t('add')}
-                                    </Button>
-                                </Box>
-                            </Box>
+                            {UserList(teachers, setSelectedTeacher, setOpenTeacher)}
+                            {UploadPart(teacherFile,handleTeacherFileChange,setEmailTeacher,handleAddTeacher)}
                         </Box>
                     </Box>
 
