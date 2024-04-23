@@ -32,6 +32,73 @@ export interface User {
     email: string
 }
 
+function UserList(users,setSelected,setOpen) {
+  return (
+    <>
+      <List
+          disablePadding={true}
+          sx={{
+              '& > :not(style)': {
+                  marginBottom: '8px',
+                  width: '75vw',
+              },
+          }}
+      >
+          {users.map((user) => {
+              const handleClickOpen = () => {
+                  setSelected(user.user)
+                  setOpen(true)
+              }
+
+              return (
+                  <>
+                      <ListItemButton
+                          sx={{
+                              width: '100%',
+                              height: 30,
+                              display: 'flex',
+                              flexDirection: 'row',
+                              justifyContent:
+                                  'space-between',
+                              paddingX: 1,
+                              paddingY: 3,
+                              borderRadius: 2,
+                          }}
+                      >
+                          <ListItemText
+                              sx={{ maxWidth: 100 }}
+                              primary={user.first_name}
+                          />
+                          <ListItemText
+                              sx={{ maxWidth: 100 }}
+                              primary={user.last_name}
+                          />
+                          <ListItemText
+                              sx={{ maxWidth: 100 }}
+                              primary={user.email}
+                          />
+                          <IconButton
+                              aria-label={'delete_file'}
+                              size={'small'}
+                              onClick={handleClickOpen}
+                              sx={{ marginBottom: 1 }}
+                          >
+                              <ClearIcon
+                                  color={'error'}
+                              />
+                          </IconButton>
+                      </ListItemButton>
+                      <Divider
+                          color={'text.main'}
+                      ></Divider>
+                  </>
+              )
+          })}
+      </List>
+    </>
+  )
+}
+
 export function AddChangeSubjectPage() {
     const params = useParams()
     // State for the different fields of the subject
@@ -399,66 +466,7 @@ export function AddChangeSubjectPage() {
                             alignItems={'center'}
                             gap={1}
                         >
-                            <List
-                                disablePadding={true}
-                                sx={{
-                                    '& > :not(style)': {
-                                        marginBottom: '8px',
-                                        width: '75vw',
-                                    },
-                                }}
-                            >
-                                {students.map((student) => {
-                                    const handleClickOpen = () => {
-                                        setSelectedStudent(student.user)
-                                        setOpenStudent(true)
-                                    }
-
-                                    return (
-                                        <>
-                                            <ListItemButton
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 30,
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    justifyContent:
-                                                        'space-between',
-                                                    paddingX: 1,
-                                                    paddingY: 3,
-                                                    borderRadius: 2,
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.first_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.last_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.email}
-                                                />
-                                                <IconButton
-                                                    aria-label={'delete_file'}
-                                                    size={'small'}
-                                                    onClick={handleClickOpen}
-                                                    sx={{ marginBottom: 1 }}
-                                                >
-                                                    <ClearIcon
-                                                        color={'error'}
-                                                    />
-                                                </IconButton>
-                                            </ListItemButton>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                        </>
-                                    )
-                                })}
-                            </List>
+                            {UserList(students, setSelectedStudent, setOpenStudent)}
                             <Box display={'flex'} flexDirection={'column'}>
                                 <FileUploadButton
                                     name={t('upload_students')}
@@ -527,66 +535,7 @@ export function AddChangeSubjectPage() {
                             alignItems={'center'}
                             gap={1}
                         >
-                            <List
-                                disablePadding={true}
-                                sx={{
-                                    '& > :not(style)': {
-                                        marginBottom: '8px',
-                                        width: '75vw',
-                                    },
-                                }}
-                            >
-                                {teachers.map((teacher) => {
-                                    const handleClickOpen = () => {
-                                        setSelectedTeacher(teacher.user)
-                                        setOpenTeacher(true)
-                                    }
-
-                                    return (
-                                        <>
-                                            <ListItemButton
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 30,
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    justifyContent:
-                                                        'space-between',
-                                                    paddingX: 1,
-                                                    paddingY: 3,
-                                                    borderRadius: 2,
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.first_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.last_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.email}
-                                                />
-                                                <IconButton
-                                                    aria-label={'delete_file'}
-                                                    size={'small'}
-                                                    onClick={handleClickOpen}
-                                                    sx={{ marginBottom: 1 }}
-                                                >
-                                                    <ClearIcon
-                                                        color={'error'}
-                                                    />
-                                                </IconButton>
-                                            </ListItemButton>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                        </>
-                                    )
-                                })}
-                            </List>
+                            {UserList(teachers, setEmailTeacher, setOpenTeacher)}
                             <Box display={'flex'} flexDirection={'column'}>
                                 <FileUploadButton
                                     name={t('upload_teachers')}
