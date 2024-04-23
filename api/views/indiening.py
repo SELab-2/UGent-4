@@ -7,7 +7,7 @@ from api.models.groep import Groep
 from api.models.vak import Vak
 from api.models.project import Project
 from api.serializers.indiening import IndieningSerializer
-from api.utils import is_lesgever, contains
+from api.utils import has_permissions, contains
 
 import os
 import tempfile
@@ -35,7 +35,7 @@ def indiening_list(request, format=None):
         Response: Een lijst van indieningen of een nieuw aangemaakte indiening.
     """
     if request.method == "GET":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             indieningen = Indiening.objects.all()
         else:
             groepen = Groep.objects.filter(studenten=request.user.id)
@@ -105,7 +105,7 @@ def indiening_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if is_lesgever(request.user) or contains(
+        if has_permissions(request.user) or contains(
             indiening.groep.studenten, request.user
         ):
             serializer = IndieningSerializer(indiening)
@@ -113,7 +113,7 @@ def indiening_detail(request, id, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     elif request.method == "DELETE":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             indiening.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_403_FORBIDDEN)
@@ -138,7 +138,7 @@ def indiening_detail_download_bestanden(request, id, format=None):
     except Indiening.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if is_lesgever(request.user) or contains(indiening.groep.studenten, request.user):
+    if has_permissions(request.user) or contains(indiening.groep.studenten, request.user):
         indiening_bestanden = IndieningBestand.objects.filter(indiening=indiening)
 
         temp_dir = tempfile.mkdtemp()

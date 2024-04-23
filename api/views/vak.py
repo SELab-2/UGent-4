@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.models.vak import Vak
 from api.serializers.vak import VakSerializer
-from api.utils import is_lesgever, contains
+from api.utils import has_permissions, is_lesgever
 
 
 @api_view(["GET", "POST"])
@@ -24,16 +24,21 @@ def vak_list(request, format=None):
         Response: Een lijst van vakken of een nieuw aangemaakt vak.
     """
     if request.method == "GET":
-        if is_lesgever(request.user):
-            vakken = Vak.objects.all()
-        else:
-            vakken = Vak.objects.filter(studenten=request.user.id)
+        vakken = Vak.objects.all()
+        if "in" in request.GET and request.GET.get("in").lower() == "true":
+            if is_lesgever(request.user):
+                vakken = vakken.filter(lesgevers=request.user.id)
+            else:
+                vakken = vakken.filter(studenten=request.user.id)
+
+        if "gearchiveerd" in request.GET and request.GET.get("gearchiveerd").lower() in ["true", "false"]:
+            vakken = vakken.filter(gearchiveerd=(request.GET.get("gearchiveerd").lower() == "true"))        
 
         serializer = VakSerializer(vakken, many=True)
         return Response(serializer.data)
 
     elif request.method == "POST":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             serializer = VakSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -61,11 +66,9 @@ def vak_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if is_lesgever(request.user) or contains(vak.studenten, request.user):
-            serializer = VakSerializer(vak)
-            return Response(serializer.data)
-        return Response(status=status.HTTP_403_FORBIDDEN)
-    if is_lesgever(request.user):
+        serializer = VakSerializer(vak)
+        return Response(serializer.data)
+    if has_permissions(request.user):
         if request.method in ["PUT", "PATCH"]:
             if request.method == "PUT":
                 serializer = VakSerializer(vak, data=request.data)

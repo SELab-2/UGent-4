@@ -6,7 +6,7 @@ from rest_framework import status
 from api.models.project import Project
 from api.models.vak import Vak
 from api.serializers.project import ProjectSerializer
-from api.utils import is_lesgever, contains
+from api.utils import has_permissions, contains
 
 
 @api_view(["GET", "POST"])
@@ -29,7 +29,7 @@ def project_list(request, format=None):
         Response: Een lijst van projecten of een nieuw aangemaakt project.
     """
     if request.method == "GET":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             projects = Project.objects.all()
         else:
             vakken = Vak.objects.filter(studenten=request.user.id)
@@ -46,7 +46,7 @@ def project_list(request, format=None):
         return Response(serializer.data)
 
     elif request.method == "POST":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             serializer = ProjectSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -74,12 +74,12 @@ def project_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if is_lesgever(request.user) or contains(project.vak.studenten, request.user):
+        if has_permissions(request.user) or contains(project.vak.studenten, request.user):
             serializer = ProjectSerializer(project)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-    if is_lesgever(request.user):
+    if has_permissions(request.user):
         if request.method in ["PUT", "PATCH"]:
             if request.method == "PUT":
                 serializer = ProjectSerializer(project, data=request.data)
@@ -115,6 +115,6 @@ def project_detail_download_opgave(request, id, format=None):
     except Project.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if is_lesgever(request.user) or contains(project.vak.studenten, request.user):
+    if has_permissions(request.user) or contains(project.vak.studenten, request.user):
         return FileResponse(project.opgave_bestand.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)

@@ -39,7 +39,7 @@ def get_graph_token():
         return None
 
 
-def is_lesgever(user):
+def has_permissions(user):
     """
     Controleert of de gebruiker een lesgever is.
 
@@ -51,6 +51,10 @@ def is_lesgever(user):
     """
     if user.is_superuser:
         return True
+    gebruiker = Gebruiker.objects.get(pk=user.id)
+    return gebruiker.is_lesgever
+
+def is_lesgever(user):
     gebruiker = Gebruiker.objects.get(pk=user.id)
     return gebruiker.is_lesgever
 
