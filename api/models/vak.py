@@ -15,6 +15,8 @@ class Vak(models.Model):
         waarmee meerdere gebruikers aan het vak kunnen worden gekoppeld als studenten.
         lesgevers (ManyToManyField): Een Many-to-Many relatie met het 'Gebruiker' model,
         waarmee meerdere gebruikers aan het vak kunnen worden gekoppeld als lesgevers.
+        invited (ManyToManyField): Een Many-To-Many relatie met het 'Gebruiker' model,
+        waarmee meerdere gebruikers aan het vak kunenn worden gekoppeld als geinviteerde.
 
     Methods:
         __str__(): Geeft een representatie van het model als een string terug, die de naam van het vak bevat.
