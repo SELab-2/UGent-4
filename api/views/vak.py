@@ -13,9 +13,11 @@ def vak_list(request, format=None):
     Een view om een lijst van vakken op te halen of een nieuw vak toe te voegen.
 
     GET:
-    Als de gebruiker een lesgever is, worden alle vakken opgehaald.
-    Als de gebruiker geen lesgever is, worden alleen de vakken opgehaald
-    waarin de ingelogde gebruiker zich bevindt.
+    Geeft alle vakken terug.
+
+    Optionele query parameters:
+        in (boolean): Filtert de vakken waarvan de gebruiker deel uitmaakt.
+        gearchiveerd (boolean): Toont alleen de gearchiveerde vakken.
 
     POST:
     Voegt een nieuw vak toe.
@@ -31,8 +33,12 @@ def vak_list(request, format=None):
             else:
                 vakken = vakken.filter(studenten=request.user.id)
 
-        if "gearchiveerd" in request.GET and request.GET.get("gearchiveerd").lower() in ["true", "false"]:
-            vakken = vakken.filter(gearchiveerd=(request.GET.get("gearchiveerd").lower() == "true"))        
+        if "gearchiveerd" in request.GET and request.GET.get(
+            "gearchiveerd"
+        ).lower() in ["true", "false"]:
+            vakken = vakken.filter(
+                gearchiveerd=(request.GET.get("gearchiveerd").lower() == "true")
+            )
 
         serializer = VakSerializer(vakken, many=True)
         return Response(serializer.data)

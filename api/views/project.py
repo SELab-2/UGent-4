@@ -74,7 +74,9 @@ def project_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if has_permissions(request.user) or contains(project.vak.studenten, request.user):
+        if has_permissions(request.user) or contains(
+            project.vak.studenten, request.user
+        ):
             serializer = ProjectSerializer(project)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)

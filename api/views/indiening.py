@@ -138,7 +138,9 @@ def indiening_detail_download_bestanden(request, id, format=None):
     except Indiening.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if has_permissions(request.user) or contains(indiening.groep.studenten, request.user):
+    if has_permissions(request.user) or contains(
+        indiening.groep.studenten, request.user
+    ):
         indiening_bestanden = IndieningBestand.objects.filter(indiening=indiening)
 
         temp_dir = tempfile.mkdtemp()
