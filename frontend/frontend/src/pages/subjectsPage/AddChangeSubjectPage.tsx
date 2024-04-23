@@ -133,6 +133,41 @@ function UploadPart(file,handleFileChange,setEmail,handleAdd){
     )
 }
 
+function DialogWindow(handleClose,open,handleRemove,str){
+    return (
+        <>
+            <Dialog onClose={handleClose} open={open}>
+                <Box padding={2} alignItems={'center'} gap={1}>
+                    <Typography>
+                        {' '}
+                        {str + '?'}{' '}
+                    </Typography>
+                    <Box display={'flex'} flexDirection={'row'}>
+                        <Button
+                            variant={'contained'}
+                            color={'secondary'}
+                            size={'small'}
+                            disableElevation
+                            onClick={handleClose}
+                        >
+                            {t('cancel')}
+                        </Button>
+                        <Button
+                            variant={'contained'}
+                            color={'secondary'}
+                            size={'small'}
+                            disableElevation
+                            onClick={handleRemove}
+                        >
+                            {t('delete')}
+                        </Button>
+                    </Box>
+                </Box>
+            </Dialog>
+        </>
+    )
+}
+
 export function AddChangeSubjectPage() {
     const params = useParams()
     // State for the different fields of the subject
@@ -280,6 +315,7 @@ export function AddChangeSubjectPage() {
     }
 
     const handleAddTeacher = () => {
+        console.log("handleAddTeacher")
         instance
             .get('gebruikers/?email=' + emailTeacher)
             .then((res) => {
@@ -505,34 +541,7 @@ export function AddChangeSubjectPage() {
                         </Box>
                     </Box>
 
-                    <Dialog onClose={handleCloseStudent} open={openStudent}>
-                        <Box padding={2} alignItems={'center'} gap={1}>
-                            <Typography>
-                                {' '}
-                                {t('delete_student') + '?'}{' '}
-                            </Typography>
-                            <Box display={'flex'} flexDirection={'row'}>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleCloseStudent}
-                                >
-                                    {t('cancel')}
-                                </Button>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleRemoveStudent}
-                                >
-                                    {t('delete')}
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Dialog>
+                    {DialogWindow(handleCloseStudent,openStudent,handleRemoveStudent,t('delete_student'))}
 
                     <Box display={'flex'} flexDirection={'column'} padding={2}>
                         <Typography>{t('teachers') + ':'}</Typography>
@@ -548,34 +557,8 @@ export function AddChangeSubjectPage() {
                         </Box>
                     </Box>
 
-                    <Dialog onClose={handleCloseStudent} open={openTeacher}>
-                        <Box padding={2} alignItems={'center'} gap={1}>
-                            <Typography>
-                                {' '}
-                                {t('delete_teacher') + '?'}{' '}
-                            </Typography>
-                            <Box display={'flex'} flexDirection={'row'}>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleCloseTeacher}
-                                >
-                                    {t('cancel')}
-                                </Button>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleRemoveTeacher}
-                                >
-                                    {t('delete')}
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Dialog>
+                    {DialogWindow(handleCloseTeacher,openTeacher,handleRemoveTeacher,t('delete_teacher'))}
+                    
                 </Stack>
             </Stack>
         </>
