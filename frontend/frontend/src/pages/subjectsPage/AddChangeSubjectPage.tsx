@@ -219,26 +219,7 @@ export function AddChangeSubjectPage() {
                     if (res.data.length == 0) {
                         return oldstudents
                     }
-
-                    //This is like this to prevent the same user being in the list twice
-                    let found = false
-
-                    const data = res.data[0]
-
-                    const id = data.user
-                    if (data.is_lesgever) {
-                        return oldstudents
-                    }
-                    for (const student of oldstudents) {
-                        if (student.user == id) {
-                            found = true
-                        }
-                    }
-                    if (found) {
-                        return oldstudents
-                    } else {
-                        return [...oldstudents, data]
-                    }
+                    return addUser(false,res.data[0],oldstudents)
                 })
             })
             .catch((err) => {
@@ -276,25 +257,7 @@ export function AddChangeSubjectPage() {
                                     return oldstudents
                                 }
 
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-
-                                const data = res.data[0]
-
-                                const id = data.user
-                                if (data.is_lesgever) {
-                                    return oldstudents
-                                }
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
-                                    }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, data]
-                                }
+                                return addUser(false,res.data[0],oldstudents)
                             })
                         })
                         .catch((err) => {
@@ -328,30 +291,14 @@ export function AddChangeSubjectPage() {
         instance
             .get('gebruikers/?email=' + emailTeacher)
             .then((res) => {
-                setTeachers((oldteacher) => {
+                setTeachers((oldteachers) => {
                     //This is like this to prevent the same user being in the list twice
 
                     if (res.data.length == 0) {
-                        return oldteacher
+                        return oldteachers
                     }
 
-                    const data = res.data[0]
-
-                    let found = false
-                    const id = data.user
-                    if (!data.is_lesgever) {
-                        return oldteacher
-                    }
-                    for (const teacher of oldteacher) {
-                        if (teacher.user == id) {
-                            found = true
-                        }
-                    }
-                    if (found) {
-                        return oldteacher
-                    } else {
-                        return [...oldteacher, data]
-                    }
+                    return addUser(true,res.data[0],oldteachers)
                 })
             })
             .catch((err) => {
@@ -387,25 +334,7 @@ export function AddChangeSubjectPage() {
                                     return oldteachers
                                 }
 
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-
-                                const data = res.data[0]
-
-                                const id = data.user
-                                if (!data.is_lesgever) {
-                                    return oldteachers
-                                }
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
-                                    }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, data]
-                                }
+                                return addUser(true,res.data[0],oldteachers)
                             })
                         })
                         .catch((err) => {
@@ -416,6 +345,25 @@ export function AddChangeSubjectPage() {
         }
 
         reader.readAsText(teacherFile)
+    }
+
+    const addUser = (isLesgever: boolean,userData: User,olduser: User[]):User[] => {
+        //This is like this to prevent the same user being in the list twice
+        let found = false
+        const id = userData.user
+        if (userData.is_lesgever!=isLesgever) {
+            return olduser
+        }
+        for (const teacher of olduser) {
+            if (teacher.user == id) {
+                found = true
+            }
+        }
+        if (found) {
+            return olduser
+        } else {
+            return [...olduser, userData]
+        }
     }
 
     const handleSave = () => {
