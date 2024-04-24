@@ -37,7 +37,7 @@ export interface project {
  * This is the main page of the application.
  * It contains a header, a tab switcher for current and archived courses, a deadline calendar, and an admin button.
  */
-export function MainPage() {
+export default function MainPage() {
     // State for role
     const [role, setRole] = useState<string>('')
     const [courses, setCourses] = useState<Course[]>([])

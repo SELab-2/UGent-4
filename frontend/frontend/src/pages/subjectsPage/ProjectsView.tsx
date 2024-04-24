@@ -45,7 +45,6 @@ export function ProjectsView({
 }: ProjectsViewProps) {
     const [projects, setProjects] = useState<ProjectStudent[]>([])
 
-    
     // useEffect hook to periodically fetch all data
     useEffect(() => {
         async function fetchGroup(
@@ -210,9 +209,21 @@ export function ProjectsView({
                                         projectName={project.assignment.titel}
                                         dueDate={dayjs(
                                             project.assignment.deadline
-                                        ).format('DD-MM-YYYY HH:mm')}
-                                        submissions={project.submissions}
-                                        score={project.score}
+                                        )}
+                                        submissions={
+                                            project.submissions
+                                                ? project.submissions.length
+                                                : 0
+                                        }
+                                        score={
+                                            project.score
+                                                ? project.score
+                                                : {
+                                                      score_id: 0,
+                                                      score: 0,
+                                                      indiening: 0,
+                                                  }
+                                        }
                                         maxScore={Number(
                                             project.assignment.max_score
                                         )}
@@ -231,9 +242,7 @@ export function ProjectsView({
                                             )
                                         }
                                         courseId={courseId}
-                                        assignmentId={
-                                            project.assignment.project_id
-                                        }
+                                        assignmentId={project.assignment.project_id.toString()}
                                     />
                                 ))}
                         </List>
