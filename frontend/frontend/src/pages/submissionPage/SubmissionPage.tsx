@@ -10,6 +10,7 @@ import {
     Divider,
     ListItem,
     Paper,
+    Skeleton,
     Typography,
 } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
@@ -69,6 +70,9 @@ export function SubmissionPage() {
     const [restrictions, setRestrictions] = useState<Restriction[]>([])
     const [fetchError, setFetchError] = useState(false)
 
+    //state to manage proper loading
+    const [loading, setLoading] = useState(true)
+
     // Function to download an artifact
     const downloadArtifact = (artifact: number) => {
         //TODO: artifacts are not yet implemented in the backend
@@ -124,28 +128,40 @@ export function SubmissionPage() {
 
     useEffect(() => {
         //get the project data
-        instance
-            .get<getAssignment>(`/projecten/${assignmentId}/`)
-            .then((res) => {
-                setProject(res.data)
-            })
-            .catch((err) => {
-                console.error(err)
-                setFetchError(true)
-            })
 
-        //get the restrictions for the submission
-        //TODO: artifacts are not yet implemented in the backend
-        instance
-            .get<Restriction[]>(`/restricties/?project=${assignmentId}`)
-            .then((res) => {
-                setRestrictions(res.data)
-            })
-            .catch((err) => {
+        const fetchdata = async () => {
+            //TODO: rewrite with async await
+            setLoading(true)
+            try {
+                const res = await instance.get<getAssignment>(
+                    `/projecten/${assignmentId}/`
+                )
+                setProject(res.data)
+
+                //Get the restrictions for the submission
+                //TODO: artifacts are not yet implemented in the backend
+                const restrictions = await instance.get<Restriction[]>(
+                    `/restricties/?project=${assignmentId}`
+                )
+                setRestrictions(restrictions.data)
+
+                //Get the submission file
+                const submission = await instance.get(
+                    '/indieningen/' + submissionId + '/'
+                )
+                setSubmission(submission.data)
+            } catch (err) {
                 console.error(err)
                 setFetchError(true)
-            })
-    }, [assignmentId])
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchdata().catch((err) => {
+            console.error(err)
+            setFetchError(true)
+        })
+    }, [assignmentId, submissionId])
 
     useEffect(() => {
         const intervalId = setInterval(async () => {
@@ -180,7 +196,9 @@ export function SubmissionPage() {
             <Grid2 container spacing={2}>
                 <Header
                     variant={'not_main'}
-                    title={project?.titel + ': ' + t('submission')}
+                    title={
+                        loading ? '' : project?.titel + ': ' + t('submission')
+                    }
                 />
                 <Box
                     sx={{
@@ -189,9 +207,9 @@ export function SubmissionPage() {
                         flexDirection: 'column',
                         height: '100%',
                         width: '100%',
-                        padding: 2,
                         gap: 2,
-                        overflowY: 'hidden',
+                        overflowY: 'auto',
+                        padding: 2,
                     }}
                 >
                     <Paper
@@ -211,18 +229,22 @@ export function SubmissionPage() {
                         <Typography variant={'h6'} fontWeight={'bold'}>
                             Deadline:
                         </Typography>
-                        <Typography variant={'body1'}>
-                            {project?.deadline
-                                ? dayjs(project.deadline).format(
-                                      'DD/MM/YYYY HH:MM'
-                                  )
-                                : 'error'}
-                        </Typography>
+                        {loading ? (
+                            <Skeleton variant={'text'} width={120} />
+                        ) : (
+                            <Typography variant={'body1'}>
+                                {project?.deadline
+                                    ? dayjs(project.deadline).format(
+                                          'DD/MM/YYYY HH:MM'
+                                      )
+                                    : 'error'}
+                            </Typography>
+                        )}
                     </Paper>
                     <Card
                         aria-label={'assignment-box'}
                         sx={{
-                            width: '99 %',
+                            width: '98%',
                             backgroundColor: 'background.default',
                             padding: 1,
                             paddingBottom: 3,
@@ -239,7 +261,15 @@ export function SubmissionPage() {
                             maxHeight={'25vh'}
                             sx={{ padding: 3, overflowY: 'auto' }}
                         >
-                            <Typography>{project?.beschrijving}</Typography>
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={'100%'}
+                                    height={60}
+                                />
+                            ) : (
+                                <Typography>{project?.beschrijving}</Typography>
+                            )}
                         </Box>
                     </Card>
                     <Box
@@ -266,12 +296,22 @@ export function SubmissionPage() {
                             startIcon={<DownloadIcon />}
                             onClick={downloadSubmission}
                         >
-                            {submission
-                                ? submission.indiening_bestanden[0].bestand.replace(
-                                      /^.*[\\/]/,
-                                      ''
-                                  )
-                                : 'error'}
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={120}
+                                    sx={{ bgcolor: 'secondary.main' }}
+                                />
+                            ) : (
+                                <>
+                                    {submission
+                                        ? submission.indiening_bestanden[0].bestand.replace(
+                                              /^.*[\\/]/,
+                                              ''
+                                          )
+                                        : 'error'}
+                                </>
+                            )}
                         </Button>
                     </Box>
                     <Card
@@ -288,68 +328,94 @@ export function SubmissionPage() {
                         </Typography>
                         <Box sx={{ padding: 1 }}>
                             <List sx={{ maxHeight: '13vh', overflowY: 'auto' }}>
-                                {restrictions.length > 0 ? (
-                                    restrictions.map((restriction, index) => {
-                                        return (
-                                            <Box key={index}>
-                                                <ListItem
-                                                    sx={{
-                                                        gap: 4,
-                                                        justifyContent:
-                                                            'space-between',
-                                                    }}
-                                                >
-                                                    <Typography
-                                                        variant={'body1'}
-                                                        fontWeight={'bold'}
-                                                    >
-                                                        {restriction.script}
-                                                    </Typography>
-                                                    <Typography
-                                                        variant={'body1'}
-                                                    >
-                                                        {
-                                                            restriction.restrictie_id
-                                                        }
-                                                    </Typography>
-                                                    <Typography
-                                                        variant={'body1'}
-                                                    >
-                                                        {restriction.moet_slagen
-                                                            ? 'Moet slagen'
-                                                            : 'Mag falen'}
-                                                    </Typography>
-                                                    {restriction.artifact && (
-                                                        <Button
-                                                            onClick={() =>
-                                                                downloadArtifact(
-                                                                    restriction.artifact
-                                                                        ? restriction.artifact
-                                                                        : 0
-                                                                )
-                                                            }
-                                                            startIcon={
-                                                                <DownloadIcon />
-                                                            }
-                                                        >
-                                                            Download artifact
-                                                        </Button>
-                                                    )}
-                                                </ListItem>
-                                                <Divider />
-                                            </Box>
-                                        )
-                                    })
+                                {loading ? (
+                                    [...Array(3).keys()].map((index) => (
+                                        <Skeleton
+                                            width={'100%'}
+                                            height={30}
+                                            key={index}
+                                            variant={'text'}
+                                        />
+                                    ))
                                 ) : (
-                                    <Box
-                                        width={'100%'}
-                                        display={'flex'}
-                                        justifyContent={'center'}
-                                    >
-                                        <Typography fontWeight={'bold'}>
-                                            {t('no_restrictions')}
-                                        </Typography>
-                                    </Box>
+                                    <>
+                                        {restrictions.length > 0 ? (
+                                            restrictions.map(
+                                                (restriction, index) => {
+                                                    return (
+                                                        <Box key={index}>
+                                                            <ListItem
+                                                                sx={{
+                                                                    gap: 4,
+                                                                    justifyContent:
+                                                                        'space-between',
+                                                                }}
+                                                            >
+                                                                <Typography
+                                                                    variant={
+                                                                        'body1'
+                                                                    }
+                                                                    fontWeight={
+                                                                        'bold'
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        restriction.script
+                                                                    }
+                                                                </Typography>
+                                                                <Typography
+                                                                    variant={
+                                                                        'body1'
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        restriction.restrictie_id
+                                                                    }
+                                                                </Typography>
+                                                                <Typography
+                                                                    variant={
+                                                                        'body1'
+                                                                    }
+                                                                >
+                                                                    {restriction.moet_slagen
+                                                                        ? 'Moet slagen'
+                                                                        : 'Mag falen'}
+                                                                </Typography>
+                                                                {restriction.artifact && (
+                                                                    <Button
+                                                                        onClick={() =>
+                                                                            downloadArtifact(
+                                                                                restriction.artifact
+                                                                                    ? restriction.artifact
+                                                                                    : 0
+                                                                            )
+                                                                        }
+                                                                        startIcon={
+                                                                            <DownloadIcon />
+                                                                        }
+                                                                    >
+                                                                        Download
+                                                                        artifact
+                                                                    </Button>
+                                                                )}
+                                                            </ListItem>
+                                                            <Divider />
+                                                        </Box>
+                                                    )
+                                                }
+                                            )
+                                        ) : (
+                                            <Box
+                                                width={'100%'}
+                                                display={'flex'}
+                                                justifyContent={'center'}
+                                            >
+                                                <Typography fontWeight={'bold'}>
+                                                    {t('no_restrictions')}
+                                                </Typography>
+                                            </Box>
+                                        )}
+                                    </>
                                 )}
                             </List>
                         </Box>
@@ -380,14 +446,23 @@ export function SubmissionPage() {
                             <Typography variant={'h6'} fontWeight={'bold'}>
                                 {t('status') + ':'}
                             </Typography>
-                            <Typography variant={'body1'}>
-                                {submission?.status === SubmissionStatus.PENDING
-                                    ? t('pending')
-                                    : submission?.status ===
-                                        SubmissionStatus.PASSED
-                                      ? t('passed')
-                                      : t('failed')}
-                            </Typography>
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={120}
+                                    height={40}
+                                />
+                            ) : (
+                                <Typography variant={'body1'}>
+                                    {submission?.status ===
+                                    SubmissionStatus.PENDING
+                                        ? t('pending')
+                                        : submission?.status ===
+                                            SubmissionStatus.PASSED
+                                          ? t('passed')
+                                          : t('failed')}
+                                </Typography>
+                            )}
                         </Box>
                         <Card
                             aria-label={'result-box'}
