@@ -34,74 +34,69 @@ export interface User {
     email: string
 }
 
-function UserList(users,setSelected,setOpen) {
-  return (
-    <>
-      <List
-          disablePadding={true}
-          sx={{
-              '& > :not(style)': {
-                  marginBottom: '8px',
-                  width: '75vw',
-              },
-          }}
-      >
-          {users.map((user) => {
-              const handleClickOpen = () => {
-                  setSelected(user.user)
-                  setOpen(true)
-              }
+function UserList(users, setSelected, setOpen) {
+    return (
+        <>
+            <List
+                disablePadding={true}
+                sx={{
+                    '& > :not(style)': {
+                        marginBottom: '8px',
+                        width: '75vw',
+                    },
+                }}
+            >
+                {users.map((user) => {
+                    const handleClickOpen = () => {
+                        setSelected(user.user)
+                        setOpen(true)
+                    }
 
-              return (
-                  <>
-                      <ListItemButton
-                          sx={{
-                              width: '100%',
-                              height: 30,
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent:
-                                  'space-between',
-                              paddingX: 1,
-                              paddingY: 3,
-                              borderRadius: 2,
-                          }}
-                      >
-                          <ListItemText
-                              sx={{ maxWidth: 100 }}
-                              primary={user.first_name}
-                          />
-                          <ListItemText
-                              sx={{ maxWidth: 100 }}
-                              primary={user.last_name}
-                          />
-                          <ListItemText
-                              sx={{ maxWidth: 100 }}
-                              primary={user.email}
-                          />
-                          <IconButton
-                              aria-label={'delete_file'}
-                              size={'small'}
-                              onClick={handleClickOpen}
-                              sx={{ marginBottom: 1 }}
-                          >
-                              <ClearIcon
-                                  color={'error'}
-                              />
-                          </IconButton>
-                      </ListItemButton>
-                      <Divider
-                          color={'text.main'}
-                      ></Divider>
-                  </>
-              )
-          })}
-      </List>
-    </>
-  )
+                    return (
+                        <>
+                            <ListItemButton
+                                sx={{
+                                    width: '100%',
+                                    height: 30,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    paddingX: 1,
+                                    paddingY: 3,
+                                    borderRadius: 2,
+                                }}
+                            >
+                                <ListItemText
+                                    sx={{ maxWidth: 100 }}
+                                    primary={user.first_name}
+                                />
+                                <ListItemText
+                                    sx={{ maxWidth: 100 }}
+                                    primary={user.last_name}
+                                />
+                                <ListItemText
+                                    sx={{ maxWidth: 100 }}
+                                    primary={user.email}
+                                />
+                                <IconButton
+                                    aria-label={'delete_file'}
+                                    size={'small'}
+                                    onClick={handleClickOpen}
+                                    sx={{ marginBottom: 1 }}
+                                >
+                                    <ClearIcon color={'error'} />
+                                </IconButton>
+                            </ListItemButton>
+                            <Divider color={'text.main'}></Divider>
+                        </>
+                    )
+                })}
+            </List>
+        </>
+    )
 }
 
-function UploadPart(file,handleFileChange,setEmail,handleAdd){
+function UploadPart(file, handleFileChange, setEmail, handleAdd) {
     return (
         <>
             <Box display={'flex'} flexDirection={'column'}>
@@ -116,9 +111,7 @@ function UploadPart(file,handleFileChange,setEmail,handleAdd){
                     <TextField
                         type="text"
                         placeholder={t('studentnumber')}
-                        onChange={(event) =>
-                            setEmail(event.target.value)
-                        }
+                        onChange={(event) => setEmail(event.target.value)}
                     />
                     <Button
                         variant={'contained'}
@@ -135,15 +128,12 @@ function UploadPart(file,handleFileChange,setEmail,handleAdd){
     )
 }
 
-function DialogWindow(handleClose,open,handleRemove,str){
+function DialogWindow(handleClose, open, handleRemove, str) {
     return (
         <>
             <Dialog onClose={handleClose} open={open}>
                 <Box padding={2} alignItems={'center'} gap={1}>
-                    <Typography>
-                        {' '}
-                        {str + '?'}{' '}
-                    </Typography>
+                    <Typography> {str + '?'} </Typography>
                     <Box display={'flex'} flexDirection={'row'}>
                         <Button
                             variant={'contained'}
@@ -191,7 +181,7 @@ export function AddChangeSubjectPage() {
         last_name: '',
         email: '',
     })
-    const [userLoaded,setUserLoaded] = useState(false)
+    const [userLoaded, setUserLoaded] = useState(false)
     const vakID = params.courseId
 
     const handleCloseStudent = () => {
@@ -219,7 +209,7 @@ export function AddChangeSubjectPage() {
                     if (res.data.length == 0) {
                         return oldstudents
                     }
-                    return addUser(false,res.data[0],oldstudents)
+                    return addUser(false, res.data[0], oldstudents)
                 })
             })
             .catch((err) => {
@@ -258,7 +248,7 @@ export function AddChangeSubjectPage() {
                                     return oldstudents
                                 }
 
-                                return addUser(false,res.data[0],oldstudents)
+                                return addUser(false, res.data[0], oldstudents)
                             })
                         })
                         .catch((err) => {
@@ -269,7 +259,6 @@ export function AddChangeSubjectPage() {
         }
 
         reader.readAsText(studentFile)
-
     }
 
     const handleCloseTeacher = () => {
@@ -300,7 +289,7 @@ export function AddChangeSubjectPage() {
                         return oldteachers
                     }
 
-                    return addUser(true,res.data[0],oldteachers)
+                    return addUser(true, res.data[0], oldteachers)
                 })
             })
             .catch((err) => {
@@ -337,7 +326,7 @@ export function AddChangeSubjectPage() {
                                     return oldteachers
                                 }
 
-                                return addUser(true,res.data[0],oldteachers)
+                                return addUser(true, res.data[0], oldteachers)
                             })
                         })
                         .catch((err) => {
@@ -348,14 +337,17 @@ export function AddChangeSubjectPage() {
         }
 
         reader.readAsText(teacherFile)
-
     }
 
-    const addUser = (isLesgever: boolean,userData: User,olduser: User[]):User[] => {
+    const addUser = (
+        isLesgever: boolean,
+        userData: User,
+        olduser: User[]
+    ): User[] => {
         //This is like this to prevent the same user being in the list twice
         let found = false
         const id = userData.user
-        if (userData.is_lesgever!=isLesgever) {
+        if (userData.is_lesgever != isLesgever) {
             return olduser
         }
         for (const teacher of olduser) {
@@ -385,12 +377,15 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
-        instance.get('/gebruikers/me/').then((res)=>{
-            setUser(res.data)
-            setUserLoaded(true)
-        }).catch((err) => {
-            console.log(err)
-        })
+        instance
+            .get('/gebruikers/me/')
+            .then((res) => {
+                setUser(res.data)
+                setUserLoaded(true)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
         instance
             .get('vakken/' + vakID)
             .then((res) => {
@@ -449,15 +444,11 @@ export function AddChangeSubjectPage() {
             })
     }, [vakID])
 
-    if(!userLoaded){
-        return (
-            <>
-            Loading...
-            </>
-        )
+    if (!userLoaded) {
+        return <>Loading...</>
     }
 
-    if(!user.is_lesgever){
+    if (!user.is_lesgever) {
         return ErrorPage()
     }
 
@@ -515,12 +506,26 @@ export function AddChangeSubjectPage() {
                             alignItems={'center'}
                             gap={1}
                         >
-                            {UserList(students, setSelectedStudent, setOpenStudent)}
-                            {UploadPart(studentFile,handleStudentFileChange,setEmailStudent,handleAddStudent)}
+                            {UserList(
+                                students,
+                                setSelectedStudent,
+                                setOpenStudent
+                            )}
+                            {UploadPart(
+                                studentFile,
+                                handleStudentFileChange,
+                                setEmailStudent,
+                                handleAddStudent
+                            )}
                         </Box>
                     </Box>
 
-                    {DialogWindow(handleCloseStudent,openStudent,handleRemoveStudent,t('delete_student'))}
+                    {DialogWindow(
+                        handleCloseStudent,
+                        openStudent,
+                        handleRemoveStudent,
+                        t('delete_student')
+                    )}
 
                     <Box display={'flex'} flexDirection={'column'} padding={2}>
                         <Typography>{t('teachers') + ':'}</Typography>
@@ -531,13 +536,26 @@ export function AddChangeSubjectPage() {
                             alignItems={'center'}
                             gap={1}
                         >
-                            {UserList(teachers, setSelectedTeacher, setOpenTeacher)}
-                            {UploadPart(teacherFile,handleTeacherFileChange,setEmailTeacher,handleAddTeacher)}
+                            {UserList(
+                                teachers,
+                                setSelectedTeacher,
+                                setOpenTeacher
+                            )}
+                            {UploadPart(
+                                teacherFile,
+                                handleTeacherFileChange,
+                                setEmailTeacher,
+                                handleAddTeacher
+                            )}
                         </Box>
                     </Box>
 
-                    {DialogWindow(handleCloseTeacher,openTeacher,handleRemoveTeacher,t('delete_teacher'))}
-                    
+                    {DialogWindow(
+                        handleCloseTeacher,
+                        openTeacher,
+                        handleRemoveTeacher,
+                        t('delete_teacher')
+                    )}
                 </Stack>
             </Stack>
         </>
