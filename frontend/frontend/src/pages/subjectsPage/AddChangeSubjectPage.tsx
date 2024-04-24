@@ -22,6 +22,8 @@ import Dialog from '@mui/material/Dialog'
 
 import instance from '../../axiosConfig.ts'
 
+import ErrorPage from '../ErrorPage.tsx'
+
 import Papa from 'papaparse'
 
 export interface User {
@@ -182,6 +184,14 @@ export function AddChangeSubjectPage() {
     const [openTeacher, setOpenTeacher] = useState(false)
     const [studentFile, setStudentFile] = useState<File | undefined>()
     const [teacherFile, setTeacherFile] = useState<File | undefined>()
+    const [user, setUser] = useState({
+        user: 0,
+        is_lesgever: false,
+        first_name: '',
+        last_name: '',
+        email: '',
+    })
+    const [userLoaded,setUserLoaded] = useState(false)
     const vakID = params.courseId
 
     const handleCloseStudent = () => {
@@ -315,7 +325,6 @@ export function AddChangeSubjectPage() {
     }
 
     const handleAddTeacher = () => {
-        console.log("handleAddTeacher")
         instance
             .get('gebruikers/?email=' + emailTeacher)
             .then((res) => {
@@ -424,6 +433,12 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
+        instance.get('/gebruikers/me/').then((res)=>{
+            setUser(res.data)
+            setUserLoaded(true)
+        }).catch((err) => {
+            console.log(err)
+        })
         instance
             .get('vakken/' + vakID)
             .then((res) => {
@@ -481,6 +496,18 @@ export function AddChangeSubjectPage() {
                 console.log(err)
             })
     }, [vakID])
+
+    if(!userLoaded){
+        return (
+            <>
+            Loading...
+            </>
+        )
+    }
+
+    if(!user.is_lesgever){
+        return ErrorPage()
+    }
 
     return (
         <>
