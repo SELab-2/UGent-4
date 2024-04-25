@@ -24,7 +24,7 @@ import instance from '../../axiosConfig.ts'
 
 import ErrorPage from '../ErrorPage.tsx'
 
-import Papa from 'papaparse'
+import Papa, {ParseConfig, ParseResult} from 'papaparse'
 
 export interface User {
     user: number
@@ -32,14 +32,6 @@ export interface User {
     first_name: string
     last_name: string
     email: string
-}
-
-export interface UserListDAO {
-    data: User[]
-}
-
-export interface UserDAO {
-    data: User
 }
 
 function UserList(users: User[], setSelected: React.Dispatch<React.SetStateAction<number>>, setOpen: React.Dispatch<React.SetStateAction<boolean>>) {
@@ -228,8 +220,6 @@ export function AddChangeSubjectPage() {
     }
 
     const handleStudentFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        console.log("e")
-        console.log(e)
         if (e.target.files==null){
             setStudentFile(undefined)
         } else if (e.target.files.length) {
@@ -245,7 +235,10 @@ export function AddChangeSubjectPage() {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            const csv : UserListDAO = Papa.parse(target.result, {
+            if (target==null){
+                return
+            }
+            const csv : ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
 
@@ -268,8 +261,9 @@ export function AddChangeSubjectPage() {
                 }
             }
         }
-
-        reader.readAsText(studentFile)
+        if(studentFile != undefined) {
+            reader.readAsText(studentFile)
+        }
     }
 
     const handleCloseTeacher = (): void => {
@@ -325,15 +319,12 @@ export function AddChangeSubjectPage() {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            const csv : UserListDAO = Papa.parse(target.result, {
+            if (target==null){
+                return
+            }
+            const csv : ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
-            console.log("csv")
-            console.log(csv)
-            console.log(typeof csv)
-            console.log("csv.data")
-            console.log(csv.data)
-            console.log(typeof csv.data)
             for (let i = 0; i < csv.data.length; i++) {
                 if (csv.data[i].email != '') {
                     instance
@@ -353,8 +344,9 @@ export function AddChangeSubjectPage() {
                 }
             }
         }
-
-        reader.readAsText(teacherFile)
+        if(teacherFile!=undefined){
+            reader.readAsText(teacherFile)
+        }
     }
 
     const addUser = (
