@@ -79,7 +79,7 @@ export function AssignmentPage() {
         }
 
         fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever])
+    }, [assignmentId, courseId, user.is_lesgever, submissionFile])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
