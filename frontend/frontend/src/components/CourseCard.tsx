@@ -15,7 +15,7 @@ import instance from '../axiosConfig.ts'
 import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
-import course, { project } from '../pages/mainPage/MainPage.tsx'
+import { Course, project } from '../pages/mainPage/MainPage.tsx'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -33,7 +33,7 @@ interface CourseCardProps {
 
 export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
     // State variables
-    const [course, setCourse] = useState<course>({
+    const [course, setCourse] = useState<Course>({
         vak_id: 0,
         naam: '',
         studenten: [],
@@ -49,7 +49,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
     useEffect(() => {
         async function fetchData() {
             try {
-                const courseResponse = await instance.get<course>(
+                const courseResponse = await instance.get<Course>(
                     `/vakken/${courseId}/`
                 )
                 const assignmentsResponse = await instance.get<project[]>(

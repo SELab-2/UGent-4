@@ -1,10 +1,10 @@
 import { Stack } from '@mui/material'
 import { CourseCard } from '../../components/CourseCard.tsx'
-import course from './MainPage.tsx'
+import { Course } from './MainPage.tsx'
 
 interface CourseCardProps {
     isStudent: boolean
-    archivedCourses: course[]
+    archivedCourses: Course[]
 }
 
 export function ArchivedView({ isStudent, archivedCourses }: CourseCardProps) {
