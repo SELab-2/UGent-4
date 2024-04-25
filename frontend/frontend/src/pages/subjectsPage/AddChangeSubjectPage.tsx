@@ -331,7 +331,6 @@ export function AddChangeSubjectPage() {
             const csv : ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
-            //const data = csv?.data
             for (let i = 0; i < csv.data.length; i++) {
                 if (csv.data[i].email != '') {
                     instance
