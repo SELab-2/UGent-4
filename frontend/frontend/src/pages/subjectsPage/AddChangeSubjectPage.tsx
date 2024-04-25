@@ -24,7 +24,7 @@ import instance from '../../axiosConfig.ts'
 
 import ErrorPage from '../ErrorPage.tsx'
 
-import Papa, {ParseConfig, ParseResult} from 'papaparse'
+import Papa, {ParseResult} from 'papaparse'
 
 export interface User {
     user: number
@@ -96,12 +96,12 @@ function UserList(users: User[], setSelected: React.Dispatch<React.SetStateActio
     )
 }
 
-function UploadPart(file: File | undefined, handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void, setEmail: React.Dispatch<React.SetStateAction<string>>, handleAdd: () => void) {
+function UploadPart(file: File | undefined, handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void, setEmail: React.Dispatch<React.SetStateAction<string>>, handleAdd: () => void, str: string) {
     return (
         <>
             <Box display={'flex'} flexDirection={'column'}>
                 <FileUploadButton
-                    name={t('upload_students')}
+                    name={str}
                     fileTypes={['.csv']}
                     tooltip={t('uploadToolTip')}
                     onFileChange={handleFileChange}
@@ -238,6 +238,9 @@ export function AddChangeSubjectPage() {
             if (target==null){
                 return
             }
+            if (typeof target.result != 'string') {
+                return
+            }
             const csv : ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
@@ -322,9 +325,13 @@ export function AddChangeSubjectPage() {
             if (target==null){
                 return
             }
+            if (typeof target.result != 'string') {
+                return
+            }
             const csv : ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
+            //const data = csv?.data
             for (let i = 0; i < csv.data.length; i++) {
                 if (csv.data[i].email != '') {
                     instance
@@ -525,7 +532,8 @@ export function AddChangeSubjectPage() {
                                 studentFile,
                                 handleStudentFileChange,
                                 setEmailStudent,
-                                handleAddStudent
+                                handleAddStudent,
+                                t('upload_students')
                             )}
                         </Box>
                     </Box>
@@ -555,7 +563,8 @@ export function AddChangeSubjectPage() {
                                 teacherFile,
                                 handleTeacherFileChange,
                                 setEmailTeacher,
-                                handleAddTeacher
+                                handleAddTeacher,
+                                t('upload_teachers')
                             )}
                         </Box>
                     </Box>
