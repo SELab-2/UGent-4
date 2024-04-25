@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import { Header } from '../../components/Header.tsx'
-import React, { useEffect, useState, ChangeEvent } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
@@ -24,7 +24,7 @@ import instance from '../../axiosConfig.ts'
 
 import ErrorPage from '../ErrorPage.tsx'
 
-import Papa, {ParseResult} from 'papaparse'
+import Papa, { ParseResult } from 'papaparse'
 
 export interface User {
     user: number
@@ -34,7 +34,11 @@ export interface User {
     email: string
 }
 
-function UserList(users: User[], setSelected: React.Dispatch<React.SetStateAction<number>>, setOpen: React.Dispatch<React.SetStateAction<boolean>>) {
+function UserList(
+    users: User[],
+    setSelected: React.Dispatch<React.SetStateAction<number>>,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+) {
     return (
         <>
             <List
@@ -96,7 +100,13 @@ function UserList(users: User[], setSelected: React.Dispatch<React.SetStateActio
     )
 }
 
-function UploadPart(file: File | undefined, handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void, setEmail: React.Dispatch<React.SetStateAction<string>>, handleAdd: () => void, str: string) {
+function UploadPart(
+    file: File | undefined,
+    handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
+    setEmail: React.Dispatch<React.SetStateAction<string>>,
+    handleAdd: () => void,
+    str: string
+) {
     return (
         <>
             <Box display={'flex'} flexDirection={'column'}>
@@ -128,7 +138,12 @@ function UploadPart(file: File | undefined, handleFileChange: (e: ChangeEvent<HT
     )
 }
 
-function DialogWindow(handleClose: () => void, open:boolean, handleRemove: () => void, str:string) {
+function DialogWindow(
+    handleClose: () => void,
+    open: boolean,
+    handleRemove: () => void,
+    str: string
+) {
     return (
         <>
             <Dialog onClose={handleClose} open={open}>
@@ -166,7 +181,7 @@ export function AddChangeSubjectPage() {
     const [title, setTitle] = useState<string>('')
     const [emailStudent, setEmailStudent] = useState<string>('')
     const [emailTeacher, setEmailTeacher] = useState<string>('')
-    const [students , setStudents] = useState<User[]>([])
+    const [students, setStudents] = useState<User[]>([])
     const [teachers, setTeachers] = useState<User[]>([])
     const [selectedStudent, setSelectedStudent] = useState<number>(0)
     const [openStudent, setOpenStudent] = useState<boolean>(false)
@@ -219,8 +234,10 @@ export function AddChangeSubjectPage() {
         handleUploadStudent()
     }
 
-    const handleStudentFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        if (e.target.files==null){
+    const handleStudentFileChange = (
+        e: ChangeEvent<HTMLInputElement>
+    ): void => {
+        if (e.target.files == null) {
             setStudentFile(undefined)
         } else if (e.target.files.length) {
             const inputFile = e.target.files[0]
@@ -235,13 +252,13 @@ export function AddChangeSubjectPage() {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            if (target==null){
+            if (target == null) {
                 return
             }
             if (typeof target.result != 'string') {
                 return
             }
-            const csv : ParseResult<User> = Papa.parse(target.result, {
+            const csv: ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
 
@@ -264,7 +281,7 @@ export function AddChangeSubjectPage() {
                 }
             }
         }
-        if(studentFile != undefined) {
+        if (studentFile != undefined) {
             reader.readAsText(studentFile)
         }
     }
@@ -306,10 +323,12 @@ export function AddChangeSubjectPage() {
         handleUploadTeacher()
     }
 
-    const handleTeacherFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
-        if (e.target.files==null){
+    const handleTeacherFileChange = (
+        e: ChangeEvent<HTMLInputElement>
+    ): void => {
+        if (e.target.files == null) {
             setTeacherFile(undefined)
-        }else if (e.target.files.length) {
+        } else if (e.target.files.length) {
             const inputFile = e.target.files[0]
             setTeacherFile(inputFile)
         } else {
@@ -322,13 +341,13 @@ export function AddChangeSubjectPage() {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            if (target==null){
+            if (target == null) {
                 return
             }
             if (typeof target.result != 'string') {
                 return
             }
-            const csv : ParseResult<User> = Papa.parse(target.result, {
+            const csv: ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
             for (let i = 0; i < csv.data.length; i++) {
@@ -350,7 +369,7 @@ export function AddChangeSubjectPage() {
                 }
             }
         }
-        if(teacherFile!=undefined){
+        if (teacherFile != undefined) {
             reader.readAsText(teacherFile)
         }
     }
