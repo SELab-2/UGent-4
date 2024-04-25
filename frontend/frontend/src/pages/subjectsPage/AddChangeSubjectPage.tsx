@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import Button from '@mui/material/Button'
 import { Header } from '../../components/Header.tsx'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState, ChangeEvent } from 'react'
 import { useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
@@ -34,74 +34,77 @@ export interface User {
     email: string
 }
 
-function UserList(users,setSelected,setOpen) {
-  return (
-    <>
-      <List
-          disablePadding={true}
-          sx={{
-              '& > :not(style)': {
-                  marginBottom: '8px',
-                  width: '75vw',
-              },
-          }}
-      >
-          {users.map((user) => {
-              const handleClickOpen = () => {
-                  setSelected(user.user)
-                  setOpen(true)
-              }
-
-              return (
-                  <>
-                      <ListItemButton
-                          sx={{
-                              width: '100%',
-                              height: 30,
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent:
-                                  'space-between',
-                              paddingX: 1,
-                              paddingY: 3,
-                              borderRadius: 2,
-                          }}
-                      >
-                          <ListItemText
-                              sx={{ maxWidth: 100 }}
-                              primary={user.first_name}
-                          />
-                          <ListItemText
-                              sx={{ maxWidth: 100 }}
-                              primary={user.last_name}
-                          />
-                          <ListItemText
-                              sx={{ maxWidth: 100 }}
-                              primary={user.email}
-                          />
-                          <IconButton
-                              aria-label={'delete_file'}
-                              size={'small'}
-                              onClick={handleClickOpen}
-                              sx={{ marginBottom: 1 }}
-                          >
-                              <ClearIcon
-                                  color={'error'}
-                              />
-                          </IconButton>
-                      </ListItemButton>
-                      <Divider
-                          color={'text.main'}
-                      ></Divider>
-                  </>
-              )
-          })}
-      </List>
-    </>
-  )
+export interface UserListDAO {
+    data: User[]
 }
 
-function UploadPart(file,handleFileChange,setEmail,handleAdd){
+export interface UserDAO {
+    data: User
+}
+
+function UserList(users: User[], setSelected: React.Dispatch<React.SetStateAction<number>>, setOpen: React.Dispatch<React.SetStateAction<boolean>>) {
+    return (
+        <>
+            <List
+                disablePadding={true}
+                sx={{
+                    '& > :not(style)': {
+                        marginBottom: '8px',
+                        width: '75vw',
+                    },
+                }}
+            >
+                {users.map((user) => {
+                    const handleClickOpen = () => {
+                        setSelected(user.user)
+                        setOpen(true)
+                    }
+
+                    return (
+                        <>
+                            <ListItemButton
+                                sx={{
+                                    width: '100%',
+                                    height: 30,
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between',
+                                    paddingX: 1,
+                                    paddingY: 3,
+                                    borderRadius: 2,
+                                }}
+                            >
+                                <ListItemText
+                                    sx={{ maxWidth: 100 }}
+                                    primary={user.first_name}
+                                />
+                                <ListItemText
+                                    sx={{ maxWidth: 100 }}
+                                    primary={user.last_name}
+                                />
+                                <ListItemText
+                                    sx={{ maxWidth: 100 }}
+                                    primary={user.email}
+                                />
+                                <IconButton
+                                    aria-label={'delete_file'}
+                                    size={'small'}
+                                    onClick={handleClickOpen}
+                                    sx={{ marginBottom: 1 }}
+                                >
+                                    <ClearIcon color={'error'} />
+                                </IconButton>
+                            </ListItemButton>
+                            <Divider color={'text.main'}></Divider>
+                        </>
+                    )
+                })}
+            </List>
+        </>
+    )
+}
+
+function UploadPart(file: File | undefined, handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void, setEmail: React.Dispatch<React.SetStateAction<string>>, handleAdd: () => void) {
     return (
         <>
             <Box display={'flex'} flexDirection={'column'}>
@@ -110,15 +113,13 @@ function UploadPart(file,handleFileChange,setEmail,handleAdd){
                     fileTypes={['.csv']}
                     tooltip={t('uploadToolTip')}
                     onFileChange={handleFileChange}
-                    path={file}
+                    path={file != null ? file : undefined}
                 />
                 <Box display={'flex'} flexDirection={'row'}>
                     <TextField
                         type="text"
                         placeholder={t('studentnumber')}
-                        onChange={(event) =>
-                            setEmail(event.target.value)
-                        }
+                        onChange={(event) => setEmail(event.target.value)}
                     />
                     <Button
                         variant={'contained'}
@@ -135,15 +136,12 @@ function UploadPart(file,handleFileChange,setEmail,handleAdd){
     )
 }
 
-function DialogWindow(handleClose,open,handleRemove,str){
+function DialogWindow(handleClose: () => void, open:boolean, handleRemove: () => void, str:string) {
     return (
         <>
             <Dialog onClose={handleClose} open={open}>
                 <Box padding={2} alignItems={'center'} gap={1}>
-                    <Typography>
-                        {' '}
-                        {str + '?'}{' '}
-                    </Typography>
+                    <Typography> {str + '?'} </Typography>
                     <Box display={'flex'} flexDirection={'row'}>
                         <Button
                             variant={'contained'}
@@ -173,33 +171,33 @@ function DialogWindow(handleClose,open,handleRemove,str){
 export function AddChangeSubjectPage() {
     const params = useParams()
     // State for the different fields of the subject
-    const [title, setTitle] = useState('')
-    const [emailStudent, setEmailStudent] = useState('')
-    const [emailTeacher, setEmailTeacher] = useState('')
-    const [students, setStudents] = useState<User[]>([])
+    const [title, setTitle] = useState<string>('')
+    const [emailStudent, setEmailStudent] = useState<string>('')
+    const [emailTeacher, setEmailTeacher] = useState<string>('')
+    const [students , setStudents] = useState<User[]>([])
     const [teachers, setTeachers] = useState<User[]>([])
-    const [selectedStudent, setSelectedStudent] = useState(0)
-    const [openStudent, setOpenStudent] = useState(false)
-    const [selectedTeacher, setSelectedTeacher] = useState(0)
-    const [openTeacher, setOpenTeacher] = useState(false)
-    const [studentFile, setStudentFile] = useState<File | undefined>()
-    const [teacherFile, setTeacherFile] = useState<File | undefined>()
-    const [user, setUser] = useState({
+    const [selectedStudent, setSelectedStudent] = useState<number>(0)
+    const [openStudent, setOpenStudent] = useState<boolean>(false)
+    const [selectedTeacher, setSelectedTeacher] = useState<number>(0)
+    const [openTeacher, setOpenTeacher] = useState<boolean>(false)
+    const [studentFile, setStudentFile] = useState<File>()
+    const [teacherFile, setTeacherFile] = useState<File>()
+    const [user, setUser] = useState<User>({
         user: 0,
         is_lesgever: false,
         first_name: '',
         last_name: '',
         email: '',
     })
-    const [userLoaded,setUserLoaded] = useState(false)
+    const [userLoaded, setUserLoaded] = useState<boolean>(false)
     const vakID = params.courseId
 
-    const handleCloseStudent = () => {
+    const handleCloseStudent = (): void => {
         setOpenStudent(false)
     }
 
-    const handleRemoveStudent = () => {
-        setStudents((oldstudents) => {
+    const handleRemoveStudent = (): void => {
+        setStudents((oldstudents: User[]): User[] => {
             for (let i = 0; i < oldstudents.length; i++) {
                 if (oldstudents[i].user == selectedStudent) {
                     oldstudents.splice(i, 1)
@@ -211,7 +209,7 @@ export function AddChangeSubjectPage() {
         setOpenStudent(false)
     }
 
-    const handleAddStudent = () => {
+    const handleAddStudent = (): void => {
         instance
             .get('gebruikers/?email=' + emailStudent)
             .then((res) => {
@@ -219,7 +217,7 @@ export function AddChangeSubjectPage() {
                     if (res.data.length == 0) {
                         return oldstudents
                     }
-                    return addUser(false,res.data[0],oldstudents)
+                    return addUser(false, res.data[0], oldstudents)
                 })
             })
             .catch((err) => {
@@ -229,8 +227,12 @@ export function AddChangeSubjectPage() {
         handleUploadStudent()
     }
 
-    const handleStudentFileChange = (e) => {
-        if (e.target.files.length) {
+    const handleStudentFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
+        console.log("e")
+        console.log(e)
+        if (e.target.files==null){
+            setStudentFile(undefined)
+        } else if (e.target.files.length) {
             const inputFile = e.target.files[0]
             setStudentFile(inputFile)
         } else {
@@ -239,11 +241,11 @@ export function AddChangeSubjectPage() {
         }
     }
 
-    const handleUploadStudent = () => {
+    const handleUploadStudent = (): void => {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            const csv = Papa.parse(target.result, {
+            const csv : UserListDAO = Papa.parse(target.result, {
                 header: true,
             })
 
@@ -257,7 +259,7 @@ export function AddChangeSubjectPage() {
                                     return oldstudents
                                 }
 
-                                return addUser(false,res.data[0],oldstudents)
+                                return addUser(false, res.data[0], oldstudents)
                             })
                         })
                         .catch((err) => {
@@ -270,7 +272,7 @@ export function AddChangeSubjectPage() {
         reader.readAsText(studentFile)
     }
 
-    const handleCloseTeacher = () => {
+    const handleCloseTeacher = (): void => {
         setOpenTeacher(false)
     }
 
@@ -287,7 +289,7 @@ export function AddChangeSubjectPage() {
         setOpenTeacher(false)
     }
 
-    const handleAddTeacher = () => {
+    const handleAddTeacher = (): void => {
         instance
             .get('gebruikers/?email=' + emailTeacher)
             .then((res) => {
@@ -298,7 +300,7 @@ export function AddChangeSubjectPage() {
                         return oldteachers
                     }
 
-                    return addUser(true,res.data[0],oldteachers)
+                    return addUser(true, res.data[0], oldteachers)
                 })
             })
             .catch((err) => {
@@ -307,8 +309,10 @@ export function AddChangeSubjectPage() {
         handleUploadTeacher()
     }
 
-    const handleTeacherFileChange = (e) => {
-        if (e.target.files.length) {
+    const handleTeacherFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
+        if (e.target.files==null){
+            setTeacherFile(undefined)
+        }else if (e.target.files.length) {
             const inputFile = e.target.files[0]
             setTeacherFile(inputFile)
         } else {
@@ -317,13 +321,19 @@ export function AddChangeSubjectPage() {
         }
     }
 
-    const handleUploadTeacher = () => {
+    const handleUploadTeacher = (): void => {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            const csv = Papa.parse(target.result, {
+            const csv : UserListDAO = Papa.parse(target.result, {
                 header: true,
             })
+            console.log("csv")
+            console.log(csv)
+            console.log(typeof csv)
+            console.log("csv.data")
+            console.log(csv.data)
+            console.log(typeof csv.data)
             for (let i = 0; i < csv.data.length; i++) {
                 if (csv.data[i].email != '') {
                     instance
@@ -334,7 +344,7 @@ export function AddChangeSubjectPage() {
                                     return oldteachers
                                 }
 
-                                return addUser(true,res.data[0],oldteachers)
+                                return addUser(true, res.data[0], oldteachers)
                             })
                         })
                         .catch((err) => {
@@ -347,11 +357,15 @@ export function AddChangeSubjectPage() {
         reader.readAsText(teacherFile)
     }
 
-    const addUser = (isLesgever: boolean,userData: User,olduser: User[]):User[] => {
+    const addUser = (
+        isLesgever: boolean,
+        userData: User,
+        olduser: User[]
+    ): User[] => {
         //This is like this to prevent the same user being in the list twice
         let found = false
         const id = userData.user
-        if (userData.is_lesgever!=isLesgever) {
+        if (userData.is_lesgever != isLesgever) {
             return olduser
         }
         for (const teacher of olduser) {
@@ -366,7 +380,7 @@ export function AddChangeSubjectPage() {
         }
     }
 
-    const handleSave = () => {
+    const handleSave = (): void => {
         const studentIDs = students.map((student) => student.user)
         const teacherIDs = teachers.map((teacher) => teacher.user)
         instance
@@ -381,12 +395,15 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
-        instance.get('/gebruikers/me/').then((res)=>{
-            setUser(res.data)
-            setUserLoaded(true)
-        }).catch((err) => {
-            console.log(err)
-        })
+        instance
+            .get('/gebruikers/me/')
+            .then((res) => {
+                setUser(res.data)
+                setUserLoaded(true)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
         instance
             .get('vakken/' + vakID)
             .then((res) => {
@@ -445,15 +462,11 @@ export function AddChangeSubjectPage() {
             })
     }, [vakID])
 
-    if(!userLoaded){
-        return (
-            <>
-            Loading...
-            </>
-        )
+    if (!userLoaded) {
+        return <>Loading...</>
     }
 
-    if(!user.is_lesgever){
+    if (!user.is_lesgever) {
         return ErrorPage()
     }
 
@@ -511,12 +524,26 @@ export function AddChangeSubjectPage() {
                             alignItems={'center'}
                             gap={1}
                         >
-                            {UserList(students, setSelectedStudent, setOpenStudent)}
-                            {UploadPart(studentFile,handleStudentFileChange,setEmailStudent,handleAddStudent)}
+                            {UserList(
+                                students,
+                                setSelectedStudent,
+                                setOpenStudent
+                            )}
+                            {UploadPart(
+                                studentFile,
+                                handleStudentFileChange,
+                                setEmailStudent,
+                                handleAddStudent
+                            )}
                         </Box>
                     </Box>
 
-                    {DialogWindow(handleCloseStudent,openStudent,handleRemoveStudent,t('delete_student'))}
+                    {DialogWindow(
+                        handleCloseStudent,
+                        openStudent,
+                        handleRemoveStudent,
+                        t('delete_student')
+                    )}
 
                     <Box display={'flex'} flexDirection={'column'} padding={2}>
                         <Typography>{t('teachers') + ':'}</Typography>
@@ -527,13 +554,26 @@ export function AddChangeSubjectPage() {
                             alignItems={'center'}
                             gap={1}
                         >
-                            {UserList(teachers, setSelectedTeacher, setOpenTeacher)}
-                            {UploadPart(teacherFile,handleTeacherFileChange,setEmailTeacher,handleAddTeacher)}
+                            {UserList(
+                                teachers,
+                                setSelectedTeacher,
+                                setOpenTeacher
+                            )}
+                            {UploadPart(
+                                teacherFile,
+                                handleTeacherFileChange,
+                                setEmailTeacher,
+                                handleAddTeacher
+                            )}
                         </Box>
                     </Box>
 
-                    {DialogWindow(handleCloseTeacher,openTeacher,handleRemoveTeacher,t('delete_teacher'))}
-                    
+                    {DialogWindow(
+                        handleCloseTeacher,
+                        openTeacher,
+                        handleRemoveTeacher,
+                        t('delete_teacher')
+                    )}
                 </Stack>
             </Stack>
         </>
