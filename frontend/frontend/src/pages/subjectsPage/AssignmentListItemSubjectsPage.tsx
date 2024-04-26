@@ -97,10 +97,12 @@ export function AssignmentListItemSubjectsPage({
                                 primary={projectName}
                             />
                             <ListItemText
-                                sx={{ maxWidth: 110 }}
+                                sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
-                                        ? dayjs(dueDate).format('DD.MM.YYYY')
+                                        ? dayjs(dueDate).format(
+                                            'DD/MM/YYYY HH:mm'
+                                        )
                                         : t('no_deadline')
                                 }
                             />
@@ -142,10 +144,12 @@ export function AssignmentListItemSubjectsPage({
                                 primary={projectName}
                             />
                             <ListItemText
-                                sx={{ maxWidth: 110 }}
+                                sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
-                                        ? dayjs(dueDate).format('DD.MM.YYYY')
+                                        ? dayjs(dueDate).format(
+                                            'DD/MM/YYYY HH:mm'
+                                        )
                                         : t('no_deadline')
                                 }
                             />

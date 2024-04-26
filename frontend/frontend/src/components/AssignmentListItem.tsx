@@ -13,7 +13,7 @@ interface AssignmentListItemProps {
     id: string
     courseId: string
     projectName: string
-    dueDate?: Date
+    dueDate?: string
     status: boolean
     isStudent: boolean
 }
@@ -70,10 +70,10 @@ export function AssignmentListItem({
                     />
                     {/* Due Date */}
                     <ListItemText
-                        sx={{ maxWidth: 110 }}
+                        sx={{ maxWidth: 150 }}
                         primary={
-                            dueDate instanceof Date && dueDate
-                                ? dueDate.toLocaleDateString()
+                            dueDate
+                                ? dueDate
                                 : t('no_deadline')
                         }
                     />

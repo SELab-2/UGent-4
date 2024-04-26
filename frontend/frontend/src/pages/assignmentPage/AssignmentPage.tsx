@@ -209,7 +209,7 @@ export function AssignmentPage() {
                                 <strong>Deadline </strong>
                                 {assignment
                                     ? dayjs(assignment.deadline).format(
-                                          'DD/MM/YYYY-HH:MM'
+                                          'DD/MM/YYYY HH:mm'
                                       )
                                     : 'no deadline'}
                             </Typography>
@@ -378,8 +378,10 @@ export function AssignmentPage() {
                                 <Typography variant="h6" color="text.primary">
                                     <strong>Deadline </strong>
                                     {assignment
-                                        ? assignment.deadline?.toString()
-                                        : 'no deadline'}
+                                        ? dayjs(assignment.deadline).format(
+                                            'DD/MM/YYYY HH:mm'
+                                        )
+                                      : 'no deadline'}
                                 </Typography>
                                 <div style={{ flexGrow: 1 }} />
                                 <Button
@@ -467,7 +469,9 @@ export function AssignmentPage() {
                                                     id={submission.indiening_id.toString()}
                                                     timestamp={dayjs(
                                                         submission.tijdstip
-                                                    ).toDate()}
+                                                    ).format(
+                                                        'DD/MM/YYYY HH:mm'
+                                                    )}
                                                     status={!submission.status}
                                                     assignment_id={assignmentId}
                                                     course_id={courseId}
