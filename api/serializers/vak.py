@@ -1,5 +1,7 @@
 from rest_framework import serializers
 from api.models.vak import Vak
+from api.models.project import Project
+from api.serializers.groep import GroepSerializer
 
 
 class VakSerializer(serializers.ModelSerializer):
@@ -58,7 +60,29 @@ class VakSerializer(serializers.ModelSerializer):
         instance.lesgevers.set(teachers_data)
 
         instance.save()
+
+        add_students_to_group(instance)
+
         return instance
+
+def add_students_to_group(instance):
+    """
+    Voeg studenten automatisch toe aan een projectgroep als het een individueel project is.
+
+    Args:
+        instance (Vak): Een object dat een vak vertegenwoordigt met een verzameling van studenten.
+    """
+    projecten = Project.objects.filter(vak=instance.vak_id)
+    for project in projecten:
+        if project.student_groep or project.max_groep_grootte == 1:
+            for student in instance.studenten.all():
+                try:
+                    serializer = GroepSerializer(data={"studenten": [student], "project": project.project_id})
+                    if serializer.is_valid():
+                        serializer.save()
+                except Exception:
+                    pass
+
 
 
 def validate_students_teachers(students_data, teachers_data):
