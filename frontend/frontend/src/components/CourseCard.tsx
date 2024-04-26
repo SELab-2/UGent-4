@@ -371,9 +371,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    new Date(
-                                                                        assignment.deadline
-                                                                    ) || null
+                                                                    dayjs(assignment.deadline).format(
+                                                                        'DD/MM/YYYY HH:mm'
+                                                                    ) || undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
