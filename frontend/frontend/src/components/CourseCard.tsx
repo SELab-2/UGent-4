@@ -16,6 +16,7 @@ import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
+import dayjs from 'dayjs'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -286,9 +287,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            new Date(
-                                                                assignment.deadline
-                                                            ) || null
+                                                            dayjs(assignment.deadline).format(
+                                                                'DD/MM/YYYY HH:mm'
+                                                            ) || undefined
                                                         }
                                                         status={
                                                             assignment.project_id ===
@@ -328,9 +329,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    new Date(
-                                                                        assignment.deadline
-                                                                    ) || null
+                                                                    dayjs(assignment.deadline).format(
+                                                                        'DD/MM/YYYY HH:mm'
+                                                                    ) || undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
@@ -370,9 +371,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    new Date(
-                                                                        assignment.deadline
-                                                                    ) || null
+                                                                    dayjs(assignment.deadline).format(
+                                                                        'DD/MM/YYYY HH:mm'
+                                                                    ) || undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
