@@ -313,10 +313,6 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                             >
                                                 <List disablePadding={true}>
                                                     {assignments
-                                                        .filter(
-                                                            (assignment) =>
-                                                                assignment.zichtbaar
-                                                        )
                                                         .map((assignment) => (
                                                             <AssignmentListItem
                                                                 key={
