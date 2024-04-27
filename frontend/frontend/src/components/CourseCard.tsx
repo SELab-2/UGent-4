@@ -90,9 +90,15 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
         navigate(`/course/${courseId}`)
     }
 
-    const archive = () => {
+    const archive = async () => {
         console.log('Archive clicked')
-        //update db
+        try {
+            await instance.patch(`/vakken/${courseId}/`, {
+                gearchiveerd: true,
+            })
+        } catch(error) {
+            console.error('Error updating data:', error)
+        }
     }
 
     return (
