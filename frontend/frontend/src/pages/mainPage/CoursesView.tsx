@@ -39,22 +39,7 @@ export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCo
                     >
                         {/* Map the list of the cirrent courses to CourseCards.
                         A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
-                        {activecourses.sort((a: Course, b: Course) => {
-                            if(pinnedCourses.includes(a.vak_id)){
-                                if(pinnedCourses.includes(b.vak_id)){
-                                    return pinnedCourses.indexOf(a.vak_id) - pinnedCourses.indexOf(b.vak_id)
-                                } else {
-                                    return -1
-                                }
-                            } else {
-                                if(pinnedCourses.includes(b.vak_id)){
-                                    return 1
-                                } else {
-                                    return 0
-                                }
-                            }
-                        })
-                        .map((course: Course) => (
+                        {activecourses.map((course: Course) => (
                             <CourseCard
                                 key={course.naam}
                                 courseId={course.vak_id.toString()}

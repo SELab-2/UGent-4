@@ -45,6 +45,7 @@ export default function MainPage() {
     const [role, setRole] = useState<string>('')
     const [courses, setCourses] = useState<Course[]>([])
     const [pinnedCourses, setPinnedCourses] = useState<number[]>([])
+    const [courseOrder, setCourseOrder] = useState<number[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
     const navigator = useNavigate()
 
@@ -94,6 +95,19 @@ export default function MainPage() {
         fetchData().catch((e) => {
             console.error(e)
         })
+    }, [])
+
+    // Logging order of courses
+    // This only changes on page reload
+    useEffect(() => {
+        instance
+            .get('/gebruikers/me/')
+            .then((response: AxiosResponse) => {
+                setCourseOrder(response.data.gepinde_vakken)
+            })
+            .catch((e: AxiosError) => {
+                console.error(e)
+            })
     }, [])
 
     useEffect(() => {}, [courses])
@@ -164,14 +178,42 @@ export default function MainPage() {
                         nodes={[
                             <CoursesView
                                 isStudent={role == 'student'}
-                                activecourses={courses.filter((course) => !course.gearchiveerd)}
+                                activecourses={courses.filter((course) => !course.gearchiveerd).sort((a: Course, b: Course) => {
+                                    if(courseOrder.includes(a.vak_id)){
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return courseOrder.indexOf(a.vak_id) - courseOrder.indexOf(b.vak_id)
+                                        } else {
+                                            return -1
+                                        }
+                                    } else {
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return 1
+                                        } else {
+                                            return 0
+                                        }
+                                    }
+                                })}
                                 pinnedCourses={pinnedCourses}
                                 archiveCourse={archiveCourse}
                                 pinCourse={pinCourse}
                             />,
                             <ArchivedView
                                 isStudent={role == 'student'}
-                                archivedCourses={courses.filter((course) => course.gearchiveerd)}
+                                archivedCourses={courses.filter((course) => course.gearchiveerd).sort((a: Course, b: Course) => {
+                                    if(courseOrder.includes(a.vak_id)){
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return courseOrder.indexOf(a.vak_id) - courseOrder.indexOf(b.vak_id)
+                                        } else {
+                                            return -1
+                                        }
+                                    } else {
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return 1
+                                        } else {
+                                            return 0
+                                        }
+                                    }
+                                })}
                                 pinnedCourses={pinnedCourses}
                                 pinCourse={pinCourse}
                             />,

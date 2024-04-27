@@ -33,22 +33,7 @@ export function ArchivedView({ isStudent, archivedCourses, pinnedCourses, pinCou
                         }}
                     >
                         {/* Map the list of the cirrent courses to CourseCards. */}
-                        {archivedCourses.sort((a: Course, b: Course) => {
-                            if(pinnedCourses.includes(a.vak_id)){
-                                if(pinnedCourses.includes(b.vak_id)){
-                                    return 0
-                                } else {
-                                    return -1
-                                }
-                            } else {
-                                if(pinnedCourses.includes(b.vak_id)){
-                                    return 1
-                                } else {
-                                    return 0
-                                }
-                            }
-                        })
-                        .map((course) => {
+                        {archivedCourses.map((course) => {
                             return (
                                 <CourseCard
                                     courseId={course.vak_id.toString()}
