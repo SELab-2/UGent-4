@@ -41,6 +41,7 @@ export interface project {
  */
 export default function MainPage() {
     // State for role
+    const [user, setUser] = useState<number>(0)
     const [role, setRole] = useState<string>('')
     const [courses, setCourses] = useState<Course[]>([])
     const [pinnedCourses, setPinnedCourses] = useState<number[]>([])
@@ -54,6 +55,7 @@ export default function MainPage() {
             .get('/gebruikers/me/')
             .then((response: AxiosResponse) => {
                 console.log(response.data)
+                setUser(response.data.user)
                 setRole(response.data.is_lesgever ? 'teacher' : 'student')
                 setPinnedCourses(response.data.gepinde_vakken)
             })
@@ -114,6 +116,23 @@ export default function MainPage() {
         }
     }
 
+    const pinCourse = async (courseId: number) => {
+        let newPinnedCourses = []
+        if(pinnedCourses.includes(courseId)){
+            newPinnedCourses = pinnedCourses.filter((pinnedId) => pinnedId !== courseId)
+        } else {
+            newPinnedCourses = [...pinnedCourses, courseId]
+        }
+        setPinnedCourses(newPinnedCourses)
+        try {
+            await instance.patch(`/gebruikers/${user}/`, {
+                gepinde_vakken: newPinnedCourses,
+            })
+        } catch (error) {
+            console.error('Error updating data:', error)
+        }
+    }
+
     return (
         <>
             <Stack
@@ -148,10 +167,13 @@ export default function MainPage() {
                                 activecourses={courses.filter((course) => !course.gearchiveerd)}
                                 pinnedCourses={pinnedCourses}
                                 archiveCourse={archiveCourse}
+                                pinCourse={pinCourse}
                             />,
                             <ArchivedView
                                 isStudent={role == 'student'}
                                 archivedCourses={courses.filter((course) => course.gearchiveerd)}
+                                pinnedCourses={pinnedCourses}
+                                pinCourse={pinCourse}
                             />,
                         ]}
                     />
