@@ -10,6 +10,7 @@ import { useEffect, useState } from 'react'
 import instance from '../../axiosConfig.ts'
 import { AxiosError, AxiosResponse } from 'axios'
 import { useNavigate } from 'react-router-dom'
+import WarningPopup from '../../components/WarningPopup.tsx'
 
 export interface Course {
     vak_id: number
@@ -93,6 +94,24 @@ export default function MainPage() {
 
     useEffect(() => {}, [courses])
 
+    const [openArchivePopup, setOpenArchivePopup] = useState(false)
+    const [archiveCourseId, setArchiveCourseId] = useState(0)
+
+    const archiveCourse = (courseId: number) => {
+        setArchiveCourseId(courseId)
+        setOpenArchivePopup(true)
+    }
+    const doArchive = async () => {
+        console.log('Archive clicked')
+        try {
+            await instance.patch(`/vakken/${archiveCourseId}/`, {
+                gearchiveerd: true,
+            })
+        } catch(error) {
+            console.error('Error updating data:', error)
+        }
+    }
+
     return (
         <>
             <Stack
@@ -125,6 +144,7 @@ export default function MainPage() {
                             <CoursesView
                                 isStudent={role == 'student'}
                                 activecourses={courses.filter((course) => !course.gearchiveerd)}
+                                archiveCourse={archiveCourse}
                             />,
                             <ArchivedView
                                 isStudent={role == 'student'}
@@ -164,6 +184,14 @@ export default function MainPage() {
                         </Button>
                     </Box>
                 )}
+                <WarningPopup
+                            title={t('archive_course_warning')}
+                            content={t('will_archive_projects')}
+                            buttonName={t('archive')}
+                            open={openArchivePopup}
+                            handleClose={() => setOpenArchivePopup(false)}
+                            doAction={doArchive}
+                />
             </Stack>
         </>
     )

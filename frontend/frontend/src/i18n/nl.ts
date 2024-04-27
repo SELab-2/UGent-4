@@ -90,6 +90,8 @@ const dutch = {
     failed: 'Gefaald',
     result: 'Resultaat',
     must_pass: 'Moet slagen',
+    archive_course_warning: 'Vak Archiveren?',
+    will_archive_projects: 'Alle opdrachten worden gearchiveerd.',
 }
 
 export default dutch

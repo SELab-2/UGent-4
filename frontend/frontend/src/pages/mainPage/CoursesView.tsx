@@ -7,9 +7,10 @@ import { Course } from './MainPage.tsx'
 interface CourseCardProps {
     isStudent: boolean
     activecourses: Course[]
+    archiveCourse: (courseId: number) => void
 }
 
-export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
+export function CoursesView({ isStudent, activecourses, archiveCourse }: CourseCardProps) {
     const navigate = useNavigate()
 
     return (
@@ -42,6 +43,7 @@ export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
                                 courseId={course.vak_id.toString()}
                                 archived={false}
                                 isStudent={isStudent}
+                                archiveEvent={() => archiveCourse(course.vak_id)}
                             />
                         ))}
                     </Stack>
