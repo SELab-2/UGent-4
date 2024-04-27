@@ -16,6 +16,7 @@ export interface Course {
     naam: string
     studenten: number[]
     lesgevers: number[]
+    gearchiveerd: boolean
 }
 
 export interface project {
@@ -123,11 +124,11 @@ export default function MainPage() {
                         nodes={[
                             <CoursesView
                                 isStudent={role == 'student'}
-                                activecourses={courses}
+                                activecourses={courses.filter((course) => !course.gearchiveerd)}
                             />,
                             <ArchivedView
                                 isStudent={role == 'student'}
-                                archivedCourses={courses}
+                                archivedCourses={courses.filter((course) => course.gearchiveerd)}
                             />,
                         ]}
                     />
