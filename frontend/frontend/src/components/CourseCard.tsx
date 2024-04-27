@@ -30,15 +30,17 @@ interface CourseCardProps {
     courseId: string
     archived: boolean
     isStudent: boolean
+    archiveEvent: () => void
 }
 
-export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
+export function CourseCard({ courseId, archived, isStudent, archiveEvent }: CourseCardProps) {
     // State variables
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
         naam: '',
         studenten: [],
         lesgevers: [],
+        gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
     const [teachers, setTeachers] = useState<
@@ -88,11 +90,6 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
     const handleCardClick = () => {
         console.log('Card clicked')
         navigate(`/course/${courseId}`)
-    }
-
-    const archive = () => {
-        console.log('Archive clicked')
-        //update db
     }
 
     return (
@@ -396,7 +393,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                 }}
                                             >
                                                 <IconButton
-                                                    onClick={archive}
+                                                    onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:
                                                             'secondary.main',

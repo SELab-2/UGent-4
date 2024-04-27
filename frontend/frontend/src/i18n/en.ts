@@ -90,6 +90,8 @@ const english = {
     failed: 'Failed',
     result: 'Result',
     must_pass: 'Must pass',
+    archive_course_warning: 'Archive Course?',
+    will_archive_projects: 'This will archive all projects.',
 }
 
 export default english
