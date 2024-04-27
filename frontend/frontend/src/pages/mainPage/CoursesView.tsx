@@ -42,7 +42,7 @@ export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCo
                         {activecourses.sort((a: Course, b: Course) => {
                             if(pinnedCourses.includes(a.vak_id)){
                                 if(pinnedCourses.includes(b.vak_id)){
-                                    return 0
+                                    return pinnedCourses.indexOf(a.vak_id) - pinnedCourses.indexOf(b.vak_id)
                                 } else {
                                     return -1
                                 }
