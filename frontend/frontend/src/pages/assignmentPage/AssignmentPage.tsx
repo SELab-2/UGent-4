@@ -156,20 +156,24 @@ export function AssignmentPage() {
                 },
             }
             const groupResponse = await instance.get(
-                `/groepen/?project=${assignmentId}`
+                `/groepen/?student=${user.user}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data[0]
-                const formData = new FormData()
-                formData.append('groep', group.groep_id)
-                formData.append('indiening_bestanden', submissionFile)
+                const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
+                if (group){
+                    const formData = new FormData()
+                    formData.append('groep', group.groep_id)
+                    formData.append('indiening_bestanden', submissionFile)
 
-                await instance
-                    .post('/indieningen/', formData, config)
-                    .catch((error) => {
-                        console.error(error)
-                    })
-                setSubmissionFile(undefined)
+                    await instance
+                        .post('/indieningen/', formData, config)
+                        .catch((error) => {
+                            console.error(error)
+                        })
+                    setSubmissionFile(undefined)
+                } else {
+                    console.error('Group not found for assingmentId: ', assignmentId)
+                }
             }
         }
     }
