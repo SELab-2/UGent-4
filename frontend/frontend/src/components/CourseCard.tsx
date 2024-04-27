@@ -172,8 +172,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                             gap={0.5}
                                             overflow={'auto'}
                                         >
-                                            {teachers.map((teacher) => (
+                                            {teachers.map((teacher, index) => (
                                                 <Typography
+                                                    key={index}
                                                     padding={0}
                                                     margin={0}
                                                     variant={'subtitle1'}
