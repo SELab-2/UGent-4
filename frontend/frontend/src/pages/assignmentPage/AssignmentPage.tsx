@@ -500,7 +500,7 @@ export function AssignmentPage() {
                                         name={t('upload')}
                                         path={submissionFile}
                                         onFileChange={handleFileChange}
-                                        fileTypes={['.zip']}
+                                        fileTypes={['.zip, .pdf, .txt']}
                                         tooltip={t('uploadToolTip')}
                                     />
                                 }
