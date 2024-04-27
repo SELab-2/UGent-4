@@ -43,6 +43,7 @@ export default function MainPage() {
     // State for role
     const [role, setRole] = useState<string>('')
     const [courses, setCourses] = useState<Course[]>([])
+    const [pinnedCourses, setPinnedCourses] = useState<number[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
     const navigator = useNavigate()
 
@@ -54,6 +55,7 @@ export default function MainPage() {
             .then((response: AxiosResponse) => {
                 console.log(response.data)
                 setRole(response.data.is_lesgever ? 'teacher' : 'student')
+                setPinnedCourses(response.data.gepinde_vakken)
             })
             .catch((e: AxiosError) => {
                 console.error(e)
@@ -144,6 +146,7 @@ export default function MainPage() {
                             <CoursesView
                                 isStudent={role == 'student'}
                                 activecourses={courses.filter((course) => !course.gearchiveerd)}
+                                pinnedCourses={pinnedCourses}
                                 archiveCourse={archiveCourse}
                             />,
                             <ArchivedView

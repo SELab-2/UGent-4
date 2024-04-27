@@ -7,10 +7,11 @@ import { Course } from './MainPage.tsx'
 interface CourseCardProps {
     isStudent: boolean
     activecourses: Course[]
+    pinnedCourses: number[]
     archiveCourse: (courseId: number) => void
 }
 
-export function CoursesView({ isStudent, activecourses, archiveCourse }: CourseCardProps) {
+export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCourse }: CourseCardProps) {
     const navigate = useNavigate()
 
     return (
@@ -37,7 +38,22 @@ export function CoursesView({ isStudent, activecourses, archiveCourse }: CourseC
                     >
                         {/* Map the list of the cirrent courses to CourseCards.
                         A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
-                        {activecourses.map((course: Course) => (
+                        {activecourses.sort((a: Course, b: Course) => {
+                            if(pinnedCourses.includes(a.vak_id)){
+                                if(pinnedCourses.includes(b.vak_id)){
+                                    return 0
+                                } else {
+                                    return -1
+                                }
+                            } else {
+                                if(pinnedCourses.includes(b.vak_id)){
+                                    return 1
+                                } else {
+                                    return 0
+                                }
+                            }
+                        })
+                        .map((course: Course) => (
                             <CourseCard
                                 key={course.naam}
                                 courseId={course.vak_id.toString()}

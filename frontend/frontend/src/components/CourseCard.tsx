@@ -30,7 +30,7 @@ interface CourseCardProps {
     courseId: string
     archived: boolean
     isStudent: boolean
-    archiveEvent: () => void
+    archiveEvent?: () => void
 }
 
 export function CourseCard({ courseId, archived, isStudent, archiveEvent }: CourseCardProps) {
