@@ -39,6 +39,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
         naam: '',
         studenten: [],
         lesgevers: [],
+        gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
     const [teachers, setTeachers] = useState<
