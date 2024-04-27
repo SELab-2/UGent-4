@@ -81,7 +81,7 @@ export function GroupsPage() {
                 instance
                     .post('/groepen', {
                         studenten: group.studenten,
-                        vak: courseId,
+                        project: parseInt(assignmentId),
                     })
                     .then((response) => {
                         console.log(response)
@@ -94,7 +94,7 @@ export function GroupsPage() {
                     .put('/groepen/' + group.groep_id + '/', {
                         groep_id: group.groep_id,
                         studenten: group.studenten,
-                        vak: courseId,
+                        project: parseInt(assignmentId),
                     })
                     .then((response) => {
                         console.log(response)
