@@ -523,6 +523,7 @@ export function AddChangeAssignmentPage() {
                                 adapterLocale="nl"
                             >
                                 <DateTimePicker
+                                    format="DD/MM/YYYY HH:mm"
                                     value={dueDate}
                                     disablePast
                                     label={t('optional')}
@@ -569,6 +570,7 @@ export function AddChangeAssignmentPage() {
                                 adapterLocale="nl"
                             >
                                 <DateTimePicker
+                                    format="DD/MM/YYYY HH:mm"
                                     value={extraDueDate}
                                     disablePast
                                     label={t('optional')}

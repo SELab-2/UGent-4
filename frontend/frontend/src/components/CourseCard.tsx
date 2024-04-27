@@ -16,6 +16,7 @@ import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
+import dayjs from 'dayjs'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -29,15 +30,17 @@ interface CourseCardProps {
     courseId: string
     archived: boolean
     isStudent: boolean
+    archiveEvent: () => void
 }
 
-export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
+export function CourseCard({ courseId, archived, isStudent, archiveEvent }: CourseCardProps) {
     // State variables
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
         naam: '',
         studenten: [],
         lesgevers: [],
+        gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
     const [teachers, setTeachers] = useState<
@@ -87,11 +90,6 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
     const handleCardClick = () => {
         console.log('Card clicked')
         navigate(`/course/${courseId}`)
-    }
-
-    const archive = () => {
-        console.log('Archive clicked')
-        //update db
     }
 
     return (
@@ -171,8 +169,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                             gap={0.5}
                                             overflow={'auto'}
                                         >
-                                            {teachers.map((teacher) => (
+                                            {teachers.map((teacher, index) => (
                                                 <Typography
+                                                    key={index}
                                                     padding={0}
                                                     margin={0}
                                                     variant={'subtitle1'}
@@ -286,9 +285,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            new Date(
-                                                                assignment.deadline
-                                                            ) || null
+                                                            dayjs(assignment.deadline).format(
+                                                                'DD/MM/YYYY HH:mm'
+                                                            ) || undefined
                                                         }
                                                         status={
                                                             assignment.project_id ===
@@ -311,10 +310,6 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                             >
                                                 <List disablePadding={true}>
                                                     {assignments
-                                                        .filter(
-                                                            (assignment) =>
-                                                                assignment.zichtbaar
-                                                        )
                                                         .map((assignment) => (
                                                             <AssignmentListItem
                                                                 key={
@@ -328,9 +323,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    new Date(
-                                                                        assignment.deadline
-                                                                    ) || null
+                                                                    dayjs(assignment.deadline).format(
+                                                                        'DD/MM/YYYY HH:mm'
+                                                                    ) || undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
@@ -370,9 +365,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    new Date(
-                                                                        assignment.deadline
-                                                                    ) || null
+                                                                    dayjs(assignment.deadline).format(
+                                                                        'DD/MM/YYYY HH:mm'
+                                                                    ) || undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
@@ -398,7 +393,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                 }}
                                             >
                                                 <IconButton
-                                                    onClick={archive}
+                                                    onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:
                                                             'secondary.main',

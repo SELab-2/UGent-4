@@ -214,7 +214,7 @@ export function SubmissionPage() {
                         <Typography variant={'body1'}>
                             {project?.deadline
                                 ? dayjs(project.deadline).format(
-                                      'DD/MM/YYYY HH:MM'
+                                      'DD/MM/YYYY HH:mm'
                                   )
                                 : 'error'}
                         </Typography>

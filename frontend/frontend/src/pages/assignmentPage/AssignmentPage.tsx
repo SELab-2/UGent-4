@@ -79,7 +79,7 @@ export function AssignmentPage() {
         }
 
         fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever])
+    }, [assignmentId, courseId, user.is_lesgever, submissionFile])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -156,20 +156,24 @@ export function AssignmentPage() {
                 },
             }
             const groupResponse = await instance.get(
-                `/groepen/?project=${assignmentId}`
+                `/groepen/?student=${user.user}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data[0]
-                const formData = new FormData()
-                formData.append('groep', group.groep_id)
-                formData.append('indiening_bestanden', submissionFile)
+                const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
+                if (group){
+                    const formData = new FormData()
+                    formData.append('groep', group.groep_id)
+                    formData.append('indiening_bestanden', submissionFile)
 
-                await instance
-                    .post('/indieningen/', formData, config)
-                    .catch((error) => {
-                        console.error(error)
-                    })
-                setSubmissionFile(undefined)
+                    await instance
+                        .post('/indieningen/', formData, config)
+                        .catch((error) => {
+                            console.error(error)
+                        })
+                    setSubmissionFile(undefined)
+                } else {
+                    console.error('Group not found for assingmentId: ', assignmentId)
+                }
             }
         }
     }
@@ -209,7 +213,7 @@ export function AssignmentPage() {
                                 <strong>Deadline </strong>
                                 {assignment
                                     ? dayjs(assignment.deadline).format(
-                                          'DD/MM/YYYY-HH:MM'
+                                          'DD/MM/YYYY HH:mm'
                                       )
                                     : 'no deadline'}
                             </Typography>
@@ -378,8 +382,10 @@ export function AssignmentPage() {
                                 <Typography variant="h6" color="text.primary">
                                     <strong>Deadline </strong>
                                     {assignment
-                                        ? assignment.deadline?.toString()
-                                        : 'no deadline'}
+                                        ? dayjs(assignment.deadline).format(
+                                            'DD/MM/YYYY HH:mm'
+                                        )
+                                      : 'no deadline'}
                                 </Typography>
                                 <div style={{ flexGrow: 1 }} />
                                 <Button
@@ -467,7 +473,9 @@ export function AssignmentPage() {
                                                     id={submission.indiening_id.toString()}
                                                     timestamp={dayjs(
                                                         submission.tijdstip
-                                                    ).toDate()}
+                                                    ).format(
+                                                        'DD/MM/YYYY HH:mm'
+                                                    )}
                                                     status={!submission.status}
                                                     assignment_id={assignmentId}
                                                     course_id={courseId}
