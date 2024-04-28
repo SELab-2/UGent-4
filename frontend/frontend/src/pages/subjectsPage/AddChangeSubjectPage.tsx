@@ -2,8 +2,10 @@ import {
     Box,
     Divider,
     IconButton,
+    ListItem,
     ListItemButton,
     ListItemText,
+    Skeleton,
     Stack,
     TextField,
     Typography,
@@ -49,6 +51,9 @@ export function AddChangeSubjectPage() {
     const [studentFile, setStudentFile] = useState<File | undefined>()
     const [teacherFile, setTeacherFile] = useState<File | undefined>()
     const vakID = params.courseId
+
+    // state for spinners
+    const [loading, setLoading] = useState(false)
 
     const handleCloseStudent = () => {
         setOpenStudent(false)
@@ -293,82 +298,88 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
-        instance
-            .get('vakken/' + vakID)
-            .then((res) => {
-                setTitle(res.data.naam)
-                for (const id of res.data.studenten) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setStudents((oldstudents) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
+        async function fetchData() {
+            setLoading(true)
+            await instance
+                .get('vakken/' + vakID)
+                .then(async (res) => {
+                    setTitle(res.data.naam)
+                    for (const id of res.data.studenten) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setStudents((oldstudents) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const student of oldstudents) {
+                                        if (student.user == id) {
+                                            found = true
+                                        }
                                     }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, res.data]
-                                }
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-                for (const id of res.data.lesgevers) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setTeachers((oldteachers) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
+                                    if (found) {
+                                        return oldstudents
+                                    } else {
+                                        return [...oldstudents, res.data]
                                     }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, res.data]
-                                }
+                                })
                             })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                    for (const id of res.data.lesgevers) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setTeachers((oldteachers) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const teacher of oldteachers) {
+                                        if (teacher.user == id) {
+                                            found = true
+                                        }
+                                    }
+                                    if (found) {
+                                        return oldteachers
+                                    } else {
+                                        return [...oldteachers, res.data]
+                                    }
+                                })
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            setLoading(false)
+        }
+        fetchData().catch((err) => {
+            console.log(err)
+        })
     }, [vakID])
 
     return (
         <>
             <Stack direction={'column'}>
-                <Header variant={'default'} title={title} />
+                <Header variant={'default'} title={loading ? '' : title} />
                 <Stack
                     direction={'column'}
                     spacing={1}
                     marginTop={11}
                     sx={{
                         width: '100%',
-                        height: '70 %',
+                        height: '70%',
                         backgroundColor: 'background.default',
                     }}
                 >
                     <Button
                         variant={'contained'}
                         color={'secondary'}
-                        size={'small'}
                         disableElevation
                         onClick={handleSave}
                     >
@@ -389,11 +400,22 @@ export function AddChangeSubjectPage() {
                         >
                             {t('subject_name') + ':'}
                         </Typography>
-                        <TextField
-                            type="text"
-                            placeholder={t('title')}
-                            onChange={(event) => setTitle(event.target.value)}
-                        />
+                        {loading ? (
+                            <Skeleton
+                                variant={'text'}
+                                width={200}
+                                height={60}
+                            />
+                        ) : (
+                            <TextField
+                                type="text"
+                                placeholder={t('title')}
+                                onChange={(event) =>
+                                    setTitle(event.target.value)
+                                }
+                                sx={{ height: 60 }}
+                            />
+                        )}
                     </Box>
 
                     <Box display={'flex'} flexDirection={'column'} padding={2}>
@@ -410,60 +432,122 @@ export function AddChangeSubjectPage() {
                                 sx={{
                                     '& > :not(style)': {
                                         marginBottom: '8px',
-                                        width: '75vw',
+                                        width: '65vw',
                                     },
+                                    maxHeight: '36vh',
+                                    overflowY: 'auto',
                                 }}
                             >
-                                {students.map((student) => {
-                                    const handleClickOpen = () => {
-                                        setSelectedStudent(student.user)
-                                        setOpenStudent(true)
-                                    }
+                                {loading ? (
+                                    [...Array(3)].map((_, index) => (
+                                        <ListItem
+                                            sx={{ margin: 0, padding: 0 }}
+                                        >
+                                            <Skeleton
+                                                width={'100%'}
+                                                height={50}
+                                                key={index}
+                                                variant={'text'}
+                                            />
+                                        </ListItem>
+                                    ))
+                                ) : (
+                                    <>
+                                        {students.map((student) => {
+                                            const handleClickOpen = () => {
+                                                setSelectedStudent(student.user)
+                                                setOpenStudent(true)
+                                            }
 
-                                    return (
-                                        <>
-                                            <ListItemButton
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 30,
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    justifyContent:
-                                                        'space-between',
-                                                    paddingX: 1,
-                                                    paddingY: 3,
-                                                    borderRadius: 2,
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.first_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.last_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.email}
-                                                />
-                                                <IconButton
-                                                    aria-label={'delete_file'}
-                                                    size={'small'}
-                                                    onClick={handleClickOpen}
-                                                    sx={{ marginBottom: 1 }}
-                                                >
-                                                    <ClearIcon
-                                                        color={'error'}
-                                                    />
-                                                </IconButton>
-                                            </ListItemButton>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                        </>
-                                    )
-                                })}
+                                            return (
+                                                <>
+                                                    <ListItemButton
+                                                        sx={{
+                                                            width: '100%',
+                                                            height: 30,
+                                                            display: 'flex',
+                                                            flexDirection:
+                                                                'row',
+                                                            justifyContent:
+                                                                'space-between',
+                                                            paddingX: 1,
+                                                            paddingY: 3,
+                                                            borderRadius: 2,
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            display={'flex'}
+                                                            flexDirection={
+                                                                'row'
+                                                            }
+                                                            gap={1}
+                                                            alignItems={
+                                                                'center'
+                                                            }
+                                                        >
+                                                            <ListItemText
+                                                                sx={{
+                                                                    maxWidth: 100,
+                                                                }}
+                                                                primary={
+                                                                    student.first_name
+                                                                }
+                                                            />
+                                                            <ListItemText
+                                                                sx={{
+                                                                    maxWidth: 100,
+                                                                }}
+                                                                primary={
+                                                                    student.last_name
+                                                                }
+                                                            />
+                                                        </Box>
+                                                        <Box
+                                                            display={'flex'}
+                                                            flexDirection={
+                                                                'row'
+                                                            }
+                                                            gap={1}
+                                                            alignItems={
+                                                                'center'
+                                                            }
+                                                        >
+                                                            <ListItemText
+                                                                sx={{
+                                                                    maxWidth: 200,
+                                                                }}
+                                                                primary={
+                                                                    student.email
+                                                                }
+                                                            />
+                                                            <IconButton
+                                                                aria-label={
+                                                                    'delete_file'
+                                                                }
+                                                                size={'small'}
+                                                                onClick={
+                                                                    handleClickOpen
+                                                                }
+                                                                sx={{
+                                                                    marginBottom: 0.5,
+                                                                }}
+                                                            >
+                                                                <ClearIcon
+                                                                    color={
+                                                                        'error'
+                                                                    }
+                                                                />
+                                                            </IconButton>
+                                                        </Box>
+                                                    </ListItemButton>
+                                                    <Divider
+                                                        color={'text.main'}
+                                                    ></Divider>
+                                                </>
+                                            )
+                                        })}
+                                    </>
+                                )}
                             </List>
                             <Box display={'flex'} flexDirection={'column'}>
                                 <FileUploadButton
@@ -473,15 +557,35 @@ export function AddChangeSubjectPage() {
                                     onFileChange={handleStudentFileChange}
                                     path={studentFile}
                                 />
-                                <Box display={'flex'} flexDirection={'row'}>
-                                    <TextField
-                                        type="text"
-                                        placeholder={t('studentnumber')}
-                                        onChange={(event) =>
-                                            setEmailStudent(event.target.value)
-                                        }
-                                    />
+                                <Box
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    gap={1}
+                                    alignItems={'center'}
+                                >
+                                    {loading ? (
+                                        <Skeleton
+                                            variant={'text'}
+                                            width={200}
+                                            height={80}
+                                        />
+                                    ) : (
+                                        <TextField
+                                            type="text"
+                                            placeholder={t('studentnumber')}
+                                            onChange={(event) =>
+                                                setEmailStudent(
+                                                    event.target.value
+                                                )
+                                            }
+                                        />
+                                    )}
                                     <Button
+                                        sx={{
+                                            height: 'auto',
+                                            width: 'auto',
+                                            padding: 1,
+                                        }}
                                         variant={'contained'}
                                         color={'secondary'}
                                         size={'small'}
@@ -496,12 +600,21 @@ export function AddChangeSubjectPage() {
                     </Box>
 
                     <Dialog onClose={handleCloseStudent} open={openStudent}>
-                        <Box padding={2} alignItems={'center'} gap={1}>
+                        <Box
+                            padding={2}
+                            alignItems={'center'}
+                            gap={1}
+                            alignContent={'center'}
+                        >
                             <Typography>
                                 {' '}
                                 {t('delete_student') + '?'}{' '}
                             </Typography>
-                            <Box display={'flex'} flexDirection={'row'}>
+                            <Box
+                                display={'flex'}
+                                flexDirection={'row'}
+                                alignItems={'center'}
+                            >
                                 <Button
                                     variant={'contained'}
                                     color={'secondary'}
@@ -538,60 +651,125 @@ export function AddChangeSubjectPage() {
                                 sx={{
                                     '& > :not(style)': {
                                         marginBottom: '8px',
-                                        width: '75vw',
+                                        width: '65vw',
                                     },
+                                    overflowY: 'auto',
+                                    maxHeight: '20vh',
                                 }}
                             >
-                                {teachers.map((teacher) => {
-                                    const handleClickOpen = () => {
-                                        setSelectedTeacher(teacher.user)
-                                        setOpenTeacher(true)
-                                    }
+                                {' '}
+                                {loading ? (
+                                    [...Array(3)].map((_, index) => (
+                                        <ListItem
+                                            sx={{ margin: 0, padding: 0 }}
+                                        >
+                                            <Skeleton
+                                                width={'100%'}
+                                                height={50}
+                                                key={index}
+                                                variant={'text'}
+                                            />
+                                        </ListItem>
+                                    ))
+                                ) : (
+                                    <>
+                                        {teachers.map((teacher) => {
+                                            const handleClickOpen = () => {
+                                                setSelectedTeacher(teacher.user)
+                                                setOpenTeacher(true)
+                                            }
 
-                                    return (
-                                        <>
-                                            <ListItemButton
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 30,
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    justifyContent:
-                                                        'space-between',
-                                                    paddingX: 1,
-                                                    paddingY: 3,
-                                                    borderRadius: 2,
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.first_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.last_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.email}
-                                                />
-                                                <IconButton
-                                                    aria-label={'delete_file'}
-                                                    size={'small'}
-                                                    onClick={handleClickOpen}
-                                                    sx={{ marginBottom: 1 }}
-                                                >
-                                                    <ClearIcon
-                                                        color={'error'}
-                                                    />
-                                                </IconButton>
-                                            </ListItemButton>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                        </>
-                                    )
-                                })}
+                                            return (
+                                                <>
+                                                    <ListItemButton
+                                                        sx={{
+                                                            width: '100%',
+                                                            height: 30,
+                                                            display: 'flex',
+                                                            flexDirection:
+                                                                'row',
+                                                            justifyContent:
+                                                                'space-between',
+                                                            paddingX: 1,
+                                                            paddingY: 3,
+                                                            borderRadius: 2,
+                                                        }}
+                                                    >
+                                                        <Box
+                                                            display={'flex'}
+                                                            flexDirection={
+                                                                'row'
+                                                            }
+                                                            gap={1}
+                                                            alignItems={
+                                                                'center'
+                                                            }
+                                                        >
+                                                            <ListItemText
+                                                                sx={{
+                                                                    maxWidth: 100,
+                                                                }}
+                                                                primary={
+                                                                    teacher.first_name
+                                                                }
+                                                            />
+                                                            <ListItemText
+                                                                sx={{
+                                                                    maxWidth: 100,
+                                                                }}
+                                                                primary={
+                                                                    teacher.last_name
+                                                                }
+                                                            />
+                                                        </Box>
+                                                        <Box
+                                                            display={'flex'}
+                                                            flexDirection={
+                                                                'row'
+                                                            }
+                                                            gap={1}
+                                                            alignItems={
+                                                                'center'
+                                                            }
+                                                        >
+                                                            <ListItemText
+                                                                sx={{
+                                                                    maxWidth: 300,
+                                                                    textOverflow:
+                                                                        'ellipsis',
+                                                                }}
+                                                                primary={
+                                                                    teacher.email
+                                                                }
+                                                            />
+                                                            <IconButton
+                                                                aria-label={
+                                                                    'delete_file'
+                                                                }
+                                                                size={'small'}
+                                                                onClick={
+                                                                    handleClickOpen
+                                                                }
+                                                                sx={{
+                                                                    marginBottom: 0.5,
+                                                                }}
+                                                            >
+                                                                <ClearIcon
+                                                                    color={
+                                                                        'error'
+                                                                    }
+                                                                />
+                                                            </IconButton>
+                                                        </Box>
+                                                    </ListItemButton>
+                                                    <Divider
+                                                        color={'text.main'}
+                                                    ></Divider>
+                                                </>
+                                            )
+                                        })}
+                                    </>
+                                )}
                             </List>
                             <Box display={'flex'} flexDirection={'column'}>
                                 <FileUploadButton
@@ -601,15 +779,33 @@ export function AddChangeSubjectPage() {
                                     onFileChange={handleTeacherFileChange}
                                     path={teacherFile}
                                 />
-                                <Box display={'flex'} flexDirection={'row'}>
-                                    <TextField
-                                        type="text"
-                                        placeholder={t('teacher')}
-                                        onChange={(event) =>
-                                            setEmailTeacher(event.target.value)
-                                        }
-                                    />
+                                <Box
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    gap={1}
+                                    alignItems={'center'}
+                                >
+                                    {loading ? (
+                                        <Skeleton
+                                            variant={'text'}
+                                            width={200}
+                                            height={80}
+                                        />
+                                    ) : (
+                                        <>
+                                            <TextField
+                                                type="text"
+                                                placeholder={t('teacher')}
+                                                onChange={(event) =>
+                                                    setEmailTeacher(
+                                                        event.target.value
+                                                    )
+                                                }
+                                            />
+                                        </>
+                                    )}
                                     <Button
+                                        sx={{ padding: 1 }}
                                         variant={'contained'}
                                         color={'secondary'}
                                         size={'small'}
