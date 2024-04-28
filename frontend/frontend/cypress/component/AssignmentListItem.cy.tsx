@@ -6,7 +6,7 @@ describe('AssignmentListItem', () => {
   const mockProps = {
     id: fixtures.id,
     projectName: fixtures.project,
-    dueDate: new Date(),
+    dueDate: new Date().toLocaleDateString(),
     status: false,
     isStudent: true,
   };
@@ -41,7 +41,7 @@ describe('AssignmentListItem', () => {
 
   it('renders as teacher', () => {
     mockProps.isStudent = false;
-    mockProps.dueDate = new Date();
+    mockProps.dueDate = new Date().toLocaleDateString();
     cy.mount(<BrowserRouter><AssignmentListItem {...mockProps} /></BrowserRouter>);
     cy.get('.MuiListItem-root').should('exist');
     cy.get('.MuiListItemText-root').should('exist').should('have.text', fixtures.project + new Date().toLocaleDateString());

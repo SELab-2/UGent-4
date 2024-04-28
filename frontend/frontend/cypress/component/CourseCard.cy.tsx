@@ -11,6 +11,10 @@ describe('CourseCard', () => {
 
     it('renders', () => {
         cy.mount(<BrowserRouter><CourseCard {...mockProps} /></BrowserRouter>);
-        // TODO fix login of zo, want data wordt opgevraagd aan api, maar moet toestemming hebben
+        // data is fetched from the backend, so we can't check that
+        cy.get('.MuiCard-root').should('exist');
+        cy.get('.MuiCardContent-root').should('exist');
+        cy.should('have.text', 'undefined: undefined: 0ProjectDeadlineStatus');
+
     });
 });

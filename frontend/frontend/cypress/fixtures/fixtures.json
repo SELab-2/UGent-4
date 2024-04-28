@@ -4,6 +4,7 @@
   "project": "Test Project",
   "score": "10",
   "tooltip": "Test Tooltip",
+  "studenten": ["1", "2", "3"],
   "groupMemberNames": ["Test Student 1", "Test Student 2", "Test Student 3"],
   "title": "Test Title",
   "itemList": [{"opdracht": "test 1", "deadline": "12-12-2025","status": "fail", "score": "8"}, 
