@@ -19,6 +19,7 @@ import PushPinIcon from '@mui/icons-material/PushPin';
 import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
+
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course

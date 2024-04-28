@@ -38,4 +38,5 @@ class IndieningSerializer(serializers.ModelSerializer):
             "status",
             "result",
             "indiening_bestanden",
+            "artefacten",
         ]

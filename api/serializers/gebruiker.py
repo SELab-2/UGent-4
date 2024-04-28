@@ -62,7 +62,7 @@ class GebruikerSerializer(serializers.ModelSerializer):
             validate_lesgever_change(instance)
         instance.is_lesgever = is_lesgever
 
-        gepinde_vakken = validated_data.pop("gepinde_vakken", instance.gepinde_vakken)
+        gepinde_vakken = validated_data.pop("gepinde_vakken", instance.gepinde_vakken.all())
         validate_gepinde_vakken(instance, gepinde_vakken)
         instance.gepinde_vakken.set(gepinde_vakken)
 
