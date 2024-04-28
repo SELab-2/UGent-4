@@ -111,6 +111,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
             ) : (
                 // If course is available, show course details inside a card component
                 <Card
+                    id={`course${courseId}`}
                     elevation={1}
                     sx={{
                         width: { xs: '100%', md: '60%' },
@@ -126,6 +127,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                         {/* Clickable area for the card */}
                         <CardActionArea onClick={handleCardClick}>
                             <Box
+                                id='courseInfo'
                                 aria-label={'courseHeader'}
                                 sx={{
                                     backgroundColor: 'secondary.main',
@@ -139,6 +141,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                             >
                                 {/* Course name and teachers */}
                                 <Box
+                                
                                     width={'70%'}
                                     height={'100%'}
                                     display={'flex'}
@@ -209,21 +212,23 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                             {isStudent ? (
                                 // Display assignments for students
                                 <Box
+                                    id='student'
                                     display={'flex'}
                                     flexDirection={'row'}
                                     justifyContent={'space-between'}
                                     pl={3}
                                     pr={3}
                                 >
-                                    <Typography width={30}>Project</Typography>
-                                    <Typography width={30}>Deadline</Typography>
-                                    <Typography width={30}>Status</Typography>
+                                    <Typography id='project' width={30}>Project</Typography>
+                                    <Typography id='deadline' width={30}>Deadline</Typography>
+                                    <Typography id='status' width={30}>Status</Typography>
                                 </Box>
                             ) : (
                                 // Display assignments for teachers
                                 <>
                                     {archived ? (
                                         <Box
+                                            id='teacherArchived'
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -231,15 +236,16 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                                             pr={3}
                                             width={{ xs: '81%', sm: '85%' }}
                                         >
-                                            <Typography maxWidth={100}>
+                                            <Typography id='project' maxWidth={100}>
                                                 Project
                                             </Typography>
-                                            <Typography minWidth={50}>
+                                            <Typography id='deadline' minWidth={50}>
                                                 Deadline
                                             </Typography>
                                         </Box>
                                     ) : (
                                         <Box
+                                            id='teacherNonArchived'
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -247,10 +253,10 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                                             pr={3}
                                             width={{ xs: '71%', sm: '75%' }}
                                         >
-                                            <Typography maxWidth={100}>
+                                            <Typography id='project' maxWidth={100}>
                                                 Project
                                             </Typography>
-                                            <Typography minWidth={50}>
+                                            <Typography id='deadline' minWidth={50}>
                                                 Deadline
                                             </Typography>
                                         </Box>
@@ -279,7 +285,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                                                         key={
                                                             assignment.project_id
                                                         }
-                                                        id={assignment.project_id.toString()}
+                                                        id={`project${assignment.project_id}`}
                                                         courseId={courseId}
                                                         projectName={
                                                             assignment.titel
@@ -315,7 +321,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                                                                 key={
                                                                     assignment.project_id
                                                                 }
-                                                                id={assignment.project_id.toString()}
+                                                                id={`project${assignment.project_id}`}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -357,7 +363,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                                                                 key={
                                                                     assignment.project_id
                                                                 }
-                                                                id={assignment.project_id.toString()}
+                                                                id={`project${assignment.project_id}`}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -393,6 +399,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                                                 }}
                                             >
                                                 <IconButton
+                                                    id='archiveButton'
                                                     onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:

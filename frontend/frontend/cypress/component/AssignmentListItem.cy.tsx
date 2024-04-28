@@ -14,29 +14,35 @@ describe('AssignmentListItem', () => {
   it('renders with cross', () => {
     cy.mount(<BrowserRouter><AssignmentListItem {...mockProps} /></BrowserRouter>);
     cy.get('.MuiListItem-root').should('exist');
-    cy.get('.MuiListItemText-root').should('exist').should('have.text', fixtures.project + new Date().toLocaleDateString());
-    cy.get('[data-testid="HighlightOffIcon"]').should('exist');
-    cy.get('[data-testid="CheckCircleOutlineIcon"]').should('not.exist');
+    cy.get('#project' + fixtures.id).should('exist');
+    cy.get('#projectName').should('contain.text', fixtures.project);
+    cy.get('#dueDate').should('contain.text', new Date().toLocaleDateString());
+    cy.get('#cross').should('exist');
+    cy.get('#check').should('not.exist');
   });
 
   it('renders with checkmark', () => {
     mockProps.status = true;
     cy.mount(<BrowserRouter><AssignmentListItem {...mockProps} /></BrowserRouter>);
     cy.get('.MuiListItem-root').should('exist');
-    cy.get('.MuiListItemText-root').should('exist').should('have.text', fixtures.project + new Date().toLocaleDateString());
-    cy.get('[data-testid="HighlightOffIcon"]').should('not.exist');
-    cy.get('[data-testid="CheckCircleOutlineIcon"]').should('exist');
+    cy.get('#project' + fixtures.id).should('exist');
+    cy.get('#projectName').should('contain.text', fixtures.project);
+    cy.get('#dueDate').should('contain.text', new Date().toLocaleDateString());
+    cy.get('#cross').should('not.exist');
+    cy.get('#check').should('exist');
   });
 
   it('renders with no due date', () => {
     mockProps.dueDate = undefined;
     cy.mount(<BrowserRouter><AssignmentListItem {...mockProps} /></BrowserRouter>);
     cy.get('.MuiListItem-root').should('exist');
-    cy.get('.MuiListItemText-root').should('exist').should('have.text', fixtures.project); 
+    cy.get('#project' + fixtures.id).should('exist');
+    cy.get('#projectName').should('contain.text', fixtures.project);
     // normaal zou hier 'no deadline' moeten staan in de correcte taal, maar blijkbaar gaat dat niet in de testen
     // omdat er hier niet echt een taal is ingesteld?
-    cy.get('[data-testid="HighlightOffIcon"]').should('not.exist');
-    cy.get('[data-testid="CheckCircleOutlineIcon"]').should('exist');
+    cy.get('#dueDate').should('not.contain.text', new Date().toLocaleDateString());
+    cy.get('#cross').should('not.exist');
+    cy.get('#check').should('exist');
   });
 
   it('renders as teacher', () => {
@@ -44,8 +50,10 @@ describe('AssignmentListItem', () => {
     mockProps.dueDate = new Date().toLocaleDateString();
     cy.mount(<BrowserRouter><AssignmentListItem {...mockProps} /></BrowserRouter>);
     cy.get('.MuiListItem-root').should('exist');
-    cy.get('.MuiListItemText-root').should('exist').should('have.text', fixtures.project + new Date().toLocaleDateString());
-    cy.get('[data-testid="HighlightOffIcon"]').should('not.exist');
-    cy.get('[data-testid="CheckCircleOutlineIcon"]').should('not.exist');
+    cy.get('#project' + fixtures.id).should('exist');
+    cy.get('#projectName').should('contain.text', fixtures.project);
+    cy.get('#dueDate').should('contain.text', new Date().toLocaleDateString());
+    cy.get('#cross').should('not.exist');
+    cy.get('#check').should('not.exist');
   });
 });
