@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import Button from '@mui/material/Button'
+import Button from './CustomComponents'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { ChangeEvent } from 'react'
 import { Box, IconButton, Tooltip, Typography } from '@mui/material'
@@ -63,21 +63,10 @@ export default function InputFileUpload({
                 {/* Tooltip for the upload button */}
                 <Tooltip title={tooltip}>
                     <Button
-                        variant={'contained'}
-                        color={'secondary'}
-                        size={'small'}
-                        startIcon={<UploadFileIcon color={'info'} />}
-                        disableElevation
+                        startIcon={<UploadFileIcon />}
                         component="label"
                         role={undefined}
                         tabIndex={-1}
-                        sx={{
-                            padding: 1,
-                            '& .MuiButton-startIcon': {
-                                margin: 0,
-                                marginRight: 1,
-                            },
-                        }}
                     >
                         {/* Hidden input for file selection */}
                         <Typography

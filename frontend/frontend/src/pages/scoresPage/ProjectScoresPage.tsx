@@ -1,5 +1,6 @@
 import { Header } from '../../components/Header'
-import { Box, Button, Stack, styled } from '@mui/material'
+import Button from '../../components/CustomComponents.tsx'
+import { Box, Stack, styled } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { StudentsView } from './StudentsView.tsx'
 import { t } from 'i18next'
@@ -306,45 +307,48 @@ export function ProjectScoresPage() {
                         flexDirection="row"
                         sx={{ width: '50%', height: 'auto' }}
                     >
-                        <Button
-                            onClick={exportSubmissions}
-                            variant="contained"
-                            color="secondary"
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={5}
+                            marginY={6}
                         >
-                            {t('export_submissions')}
-                        </Button>
+                            <Button onClick={exportSubmissions}>
+                                {t('export_submissions')}
+                            </Button>
 
-                        <Button
-                            variant={'contained'}
-                            color={'secondary'}
-                            component="label"
-                        >
-                            {t('upload_scores')}
-                            <VisuallyHiddenInput
-                                type="file"
-                                value={undefined}
-                                accept={['.csv'].join(',')}
-                                multiple={false}
-                                onChange={uploadScores}
-                            />
-                        </Button>
+                            <Button variant={'contained'}>
+                                {t('upload_scores')}
+                                <VisuallyHiddenInput
+                                    type="file"
+                                    value={undefined}
+                                    accept={['.csv'].join(',')}
+                                    multiple={false}
+                                    onChange={uploadScores}
+                                />
+                            </Button>
+                        </Stack>
                     </Box>
                     <Box
                         display="flex"
                         flexDirection="row-reverse"
                         sx={{ width: '50%', height: 'auto' }}
                     >
-                        <Button
-                            onClick={() => setOpenSaveScoresPopup(true)}
-                            variant="contained"
-                            startIcon={<SaveIcon />}
-                        />
-                        <Button
-                            onClick={() => setOpenDeleteScoresPopup(true)}
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<CloseIcon />}
-                        />
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={5}
+                            marginY={6}
+                        >
+                            <Button
+                                onClick={() => setOpenSaveScoresPopup(true)}
+                                startIcon={<SaveIcon />}
+                            />
+                            <Button
+                                onClick={() => setOpenDeleteScoresPopup(true)}
+                                startIcon={<CloseIcon />}
+                            />
+                        </Stack>
                     </Box>
                 </Box>
                 {/* Popup for confirming saving scores */}

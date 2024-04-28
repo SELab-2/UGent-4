@@ -2,9 +2,9 @@ import { Header } from '../../components/Header.tsx'
 import { useParams } from 'react-router-dom'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
+import Button from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Button,
     Card,
     CircularProgress,
     Divider,

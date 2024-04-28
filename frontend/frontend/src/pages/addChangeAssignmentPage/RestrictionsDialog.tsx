@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ChangeEvent, useState } from 'react'
-import Button from '@mui/material/Button'
+import Button from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'

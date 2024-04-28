@@ -1,7 +1,7 @@
 import { Header } from '../../components/Header.tsx'
+import Button from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Button,
     Grid,
     IconButton,
     MenuItem,
@@ -384,19 +384,8 @@ export function GroupsPage() {
                                 spacing={10}
                                 marginY={6}
                             >
-                                <Button
-                                    variant={'contained'}
-                                    disableElevation
-                                    sx={{
-                                        backgroundColor: 'secondary.main',
-                                        padding: 1,
-                                    }}
-                                    onClick={randomGroups}
-                                >
-                                    <Typography
-                                        color="text.primary"
-                                        fontWeight={'bold'}
-                                    >
+                                <Button onClick={randomGroups}>
+                                    <Typography fontWeight={'bold'}>
                                         {t('random')} {t('groups')}
                                     </Typography>
                                 </Button>

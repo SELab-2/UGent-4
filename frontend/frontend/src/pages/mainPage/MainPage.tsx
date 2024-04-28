@@ -1,5 +1,6 @@
 import { Header } from '../../components/Header.tsx'
-import { Box, Button, Stack } from '@mui/material'
+import Button from '../../components/CustomComponents.tsx'
+import { Box, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ArchivedView } from './ArchivedView.tsx'
 import { CoursesView } from './CoursesView.tsx'
@@ -125,15 +126,17 @@ export default function MainPage() {
             await instance.patch(`/vakken/${archiveCourseId}/`, {
                 gearchiveerd: true,
             })
-        } catch(error) {
+        } catch (error) {
             console.error('Error updating data:', error)
         }
     }
 
     const pinCourse = async (courseId: number) => {
         let newPinnedCourses = []
-        if(pinnedCourses.includes(courseId)){
-            newPinnedCourses = pinnedCourses.filter((pinnedId) => pinnedId !== courseId)
+        if (pinnedCourses.includes(courseId)) {
+            newPinnedCourses = pinnedCourses.filter(
+                (pinnedId) => pinnedId !== courseId
+            )
         } else {
             newPinnedCourses = [...pinnedCourses, courseId]
         }
@@ -178,42 +181,68 @@ export default function MainPage() {
                         nodes={[
                             <CoursesView
                                 isStudent={role == 'student'}
-                                activecourses={courses.filter((course) => !course.gearchiveerd).sort((a: Course, b: Course) => {
-                                    if(courseOrder.includes(a.vak_id)){
-                                        if(courseOrder.includes(b.vak_id)){
-                                            return courseOrder.indexOf(a.vak_id) - courseOrder.indexOf(b.vak_id)
+                                activecourses={courses
+                                    .filter((course) => !course.gearchiveerd)
+                                    .sort((a: Course, b: Course) => {
+                                        if (courseOrder.includes(a.vak_id)) {
+                                            if (
+                                                courseOrder.includes(b.vak_id)
+                                            ) {
+                                                return (
+                                                    courseOrder.indexOf(
+                                                        a.vak_id
+                                                    ) -
+                                                    courseOrder.indexOf(
+                                                        b.vak_id
+                                                    )
+                                                )
+                                            } else {
+                                                return -1
+                                            }
                                         } else {
-                                            return -1
+                                            if (
+                                                courseOrder.includes(b.vak_id)
+                                            ) {
+                                                return 1
+                                            } else {
+                                                return 0
+                                            }
                                         }
-                                    } else {
-                                        if(courseOrder.includes(b.vak_id)){
-                                            return 1
-                                        } else {
-                                            return 0
-                                        }
-                                    }
-                                })}
+                                    })}
                                 pinnedCourses={pinnedCourses}
                                 archiveCourse={archiveCourse}
                                 pinCourse={pinCourse}
                             />,
                             <ArchivedView
                                 isStudent={role == 'student'}
-                                archivedCourses={courses.filter((course) => course.gearchiveerd).sort((a: Course, b: Course) => {
-                                    if(courseOrder.includes(a.vak_id)){
-                                        if(courseOrder.includes(b.vak_id)){
-                                            return courseOrder.indexOf(a.vak_id) - courseOrder.indexOf(b.vak_id)
+                                archivedCourses={courses
+                                    .filter((course) => course.gearchiveerd)
+                                    .sort((a: Course, b: Course) => {
+                                        if (courseOrder.includes(a.vak_id)) {
+                                            if (
+                                                courseOrder.includes(b.vak_id)
+                                            ) {
+                                                return (
+                                                    courseOrder.indexOf(
+                                                        a.vak_id
+                                                    ) -
+                                                    courseOrder.indexOf(
+                                                        b.vak_id
+                                                    )
+                                                )
+                                            } else {
+                                                return -1
+                                            }
                                         } else {
-                                            return -1
+                                            if (
+                                                courseOrder.includes(b.vak_id)
+                                            ) {
+                                                return 1
+                                            } else {
+                                                return 0
+                                            }
                                         }
-                                    } else {
-                                        if(courseOrder.includes(b.vak_id)){
-                                            return 1
-                                        } else {
-                                            return 0
-                                        }
-                                    }
-                                })}
+                                    })}
                                 pinnedCourses={pinnedCourses}
                                 pinCourse={pinCourse}
                             />,
@@ -241,8 +270,6 @@ export default function MainPage() {
                         }}
                     >
                         <Button
-                            variant={'contained'}
-                            color={'secondary'}
                             on-click={() => navigator('/addTeacher')}
                             aria-label={'admin-button'}
                             sx={{ margin: 5 }}
@@ -252,12 +279,12 @@ export default function MainPage() {
                     </Box>
                 )}
                 <WarningPopup
-                            title={t('archive_course_warning')}
-                            content={t('will_archive_projects')}
-                            buttonName={t('archive')}
-                            open={openArchivePopup}
-                            handleClose={() => setOpenArchivePopup(false)}
-                            doAction={doArchive}
+                    title={t('archive_course_warning')}
+                    content={t('will_archive_projects')}
+                    buttonName={t('archive')}
+                    open={openArchivePopup}
+                    handleClose={() => setOpenArchivePopup(false)}
+                    doAction={doArchive}
                 />
             </Stack>
         </>

@@ -2,15 +2,8 @@ import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
-import {
-    Box,
-    Button,
-    Card,
-    Divider,
-    List,
-    Stack,
-    Typography,
-} from '@mui/material'
+import { Button } from '../../components/CustomComponents.tsx'
+import { Box, Card, Divider, List, Stack, Typography } from '@mui/material'
 import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
 import { ChangeEvent, useEffect, useState } from 'react'
@@ -159,8 +152,10 @@ export function AssignmentPage() {
                 `/groepen/?student=${user.user}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
-                if (group){
+                const group = groupResponse.data.find(
+                    (group: Group) => String(group.project) === assignmentId
+                )
+                if (group) {
                     const formData = new FormData()
                     formData.append('groep', group.groep_id)
                     formData.append('indiening_bestanden', submissionFile)
@@ -172,7 +167,10 @@ export function AssignmentPage() {
                         })
                     setSubmissionFile(undefined)
                 } else {
-                    console.error('Group not found for assingmentId: ', assignmentId)
+                    console.error(
+                        'Group not found for assingmentId: ',
+                        assignmentId
+                    )
                 }
             }
         }
@@ -327,27 +325,15 @@ export function AssignmentPage() {
                         >
                             <Stack direction={'row'}>
                                 {submissions.length > 0 && (
-                                    <Button
-                                        sx={{
-                                            bgcolor: 'secondary.main',
-                                            textTransform: 'none',
-                                        }}
-                                        onClick={downloadAllSubmissions}
-                                    >
-                                        <Typography color="secondary.contrastText">
+                                    <Button onClick={downloadAllSubmissions}>
+                                        <Typography>
                                             {t('export')} {t('submissions')}
                                         </Typography>
                                     </Button>
                                 )}
                                 <div style={{ flexGrow: 1 }} />
-                                <Button
-                                    sx={{
-                                        bgcolor: 'secondary.main',
-                                        textTransform: 'none',
-                                    }}
-                                    onClick={adjustScores}
-                                >
-                                    <Typography color="secondary.contrastText">
+                                <Button onClick={adjustScores}>
+                                    <Typography>
                                         {t('adjust_scores')}
                                     </Typography>
                                 </Button>
@@ -383,21 +369,13 @@ export function AssignmentPage() {
                                     <strong>Deadline </strong>
                                     {assignment
                                         ? dayjs(assignment.deadline).format(
-                                            'DD/MM/YYYY HH:mm'
-                                        )
-                                      : 'no deadline'}
+                                              'DD/MM/YYYY HH:mm'
+                                          )
+                                        : 'no deadline'}
                                 </Typography>
                                 <div style={{ flexGrow: 1 }} />
-                                <Button
-                                    sx={{
-                                        bgcolor: 'secondary.main',
-                                        textTransform: 'none',
-                                    }}
-                                    onClick={goToGroups}
-                                >
-                                    <Typography color="secondary.contrastText">
-                                        {t('group')}
-                                    </Typography>
+                                <Button onClick={goToGroups}>
+                                    <Typography>{t('group')}</Typography>
                                 </Button>
                             </Stack>
                         </Box>
@@ -504,17 +482,11 @@ export function AssignmentPage() {
                                         tooltip={t('uploadToolTip')}
                                     />
                                 }
-                                <Button
-                                    sx={{
-                                        bgcolor: 'secondary.main',
-                                        textTransform: 'none',
-                                    }}
-                                    onClick={uploadIndiening}
-                                >
-                                    <Typography color="secondary.contrastText">
-                                        Confirm Upload
-                                    </Typography>
-                                </Button>
+                                <Box sx={{ paddingY: '8px' }}>
+                                    <Button onClick={uploadIndiening}>
+                                        <Typography>Confirm Upload</Typography>
+                                    </Button>
+                                </Box>
                                 <div style={{ flexGrow: 1 }} />
                             </Stack>
                         </Box>

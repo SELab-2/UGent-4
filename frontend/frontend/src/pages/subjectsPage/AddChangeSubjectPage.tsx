@@ -8,8 +8,8 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import Button from '@mui/material/Button'
 import { Header } from '../../components/Header.tsx'
+import Button from '../../components/CustomComponents.tsx'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import List from '@mui/material/List'
@@ -57,8 +57,10 @@ function UserList(
                         setSelected(user.user)
                         setOpen(true)
                     }
-                    {/* The list of users is mapped onto buttons
-                    This makes it possible to click through on a person. */}
+                    {
+                        /* The list of users is mapped onto buttons
+                    This makes it possible to click through on a person. */
+                    }
                     return (
                         <>
                             <ListItemButton
@@ -129,13 +131,7 @@ function UploadPart(
                         placeholder={t('studentnumber')}
                         onChange={(event) => setEmail(event.target.value)}
                     />
-                    <Button
-                        variant={'contained'}
-                        color={'secondary'}
-                        size={'small'}
-                        disableElevation
-                        onClick={handleAdd}
-                    >
+                    <Button size={'small'} onClick={handleAdd}>
                         {t('add')}
                     </Button>
                 </Box>
@@ -159,22 +155,10 @@ function DialogWindow(
                 <Box padding={2} alignItems={'center'} gap={1}>
                     <Typography> {str + '?'} </Typography>
                     <Box display={'flex'} flexDirection={'row'}>
-                        <Button
-                            variant={'contained'}
-                            color={'secondary'}
-                            size={'small'}
-                            disableElevation
-                            onClick={handleClose}
-                        >
+                        <Button size={'small'} onClick={handleClose}>
                             {t('cancel')}
                         </Button>
-                        <Button
-                            variant={'contained'}
-                            color={'secondary'}
-                            size={'small'}
-                            disableElevation
-                            onClick={handleRemove}
-                        >
+                        <Button size={'small'} onClick={handleRemove}>
                             {t('delete')}
                         </Button>
                     </Box>

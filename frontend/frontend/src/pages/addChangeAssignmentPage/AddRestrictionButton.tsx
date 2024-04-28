@@ -1,5 +1,5 @@
 import * as React from 'react'
-import Button from '@mui/material/Button'
+import Button from '../../components/CustomComponents.tsx'
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -9,7 +9,6 @@ import RestrictionsDialog from './RestrictionsDialog'
 import { t } from 'i18next'
 import { IconButton } from '@mui/material'
 import { restriction } from './AddChangeAssignmentPage.tsx'
-
 
 /**
  * Component for an "Add Restriction" button that opens a dialog for adding restrictions.
@@ -40,7 +39,6 @@ export default function AddRestrictionButton({
                     bgcolor: 'secondary.main',
                     marginRight: 1,
                 }}
-
                 onClick={() => {
                     setOpen(true)
                     setScroll('paper')
