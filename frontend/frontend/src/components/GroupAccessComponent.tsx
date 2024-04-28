@@ -43,6 +43,7 @@ export function GroupAccessComponent({
                  {/* Button to navigate to groups page */}
                 {allowGroups ? (
                     <Button
+                        id='groupButton'
                         variant={'contained'}
                         disableElevation
                         onClick={handleClick}
@@ -58,6 +59,7 @@ export function GroupAccessComponent({
                 )}
                 {/* Switch to toggle group access */}
                 <Switch
+                    id='groupSwitch'
                     checked={allowGroups}
                     onChange={() => setAllowGroups(!allowGroups)}
                     color={'primary'}

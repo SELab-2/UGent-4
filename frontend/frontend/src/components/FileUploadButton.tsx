@@ -63,6 +63,7 @@ export default function InputFileUpload({
                 {/* Tooltip for the upload button */}
                 <Tooltip title={tooltip}>
                     <Button
+                        id='uploadButton'
                         variant={'contained'}
                         color={'secondary'}
                         size={'small'}
@@ -122,6 +123,7 @@ export default function InputFileUpload({
                     {/* Button to clear selected file */}
                     {path && (
                         <IconButton
+                            id='clearButton'
                             aria-label={'delete_file'}
                             size={'small'}
                             onClick={clearFile}

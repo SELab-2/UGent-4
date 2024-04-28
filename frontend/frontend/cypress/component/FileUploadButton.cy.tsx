@@ -12,11 +12,21 @@ describe('FileUploadButton', () => {
 
     it('renders', () => {
         cy.mount(<InputFileUpload {...mockProps} />);
-        cy.get('.MuiButton-root').should('exist').should('have.text', fixtures.name);
+        cy.get('#uploadButton').should('exist').should('have.text', fixtures.name);
         cy.get('input[type=file]').should('exist');
         cy.contains(fixtures.tooltip).should('not.exist');
-        cy.get('.MuiButton-root').trigger('mouseover');
+        cy.get('#uploadButton').trigger('mouseover');
         cy.contains(fixtures.tooltip).should('be.visible');
-        // check the delete button
+        cy.get('#uploadButton').trigger('mouseout');
+        cy.contains(fixtures.tooltip).should('not.exist');
+        cy.get('#clearButton').should('exist');
     });
+
+    it('no path', () => {
+        mockProps.path = '';
+        cy.mount(<InputFileUpload {...mockProps} />);
+        cy.get('#uploadButton').should('exist').should('have.text', fixtures.name);
+        cy.get('#clearButton').should('not.exist');
+    });
+
 });

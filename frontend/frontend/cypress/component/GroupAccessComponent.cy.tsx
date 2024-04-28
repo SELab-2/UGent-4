@@ -10,8 +10,8 @@ describe('GroupAccessComponent', () => {
 
     it('toggles group access', () => {
         cy.mount(<BrowserRouter><GroupAccessComponent {...mockProps} /></BrowserRouter>)
-        cy.get('.MuiButton-root').should('not.exist')
-        cy.get('.MuiSwitch-root').click()
-        cy.get('.MuiButton-root').should('exist')
+        cy.get('#groupButton').should('not.exist')
+        cy.get('#groupSwitch').click()
+        cy.get('#groupButton').should('exist')
     })
 })
