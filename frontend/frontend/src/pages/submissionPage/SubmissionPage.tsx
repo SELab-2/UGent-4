@@ -195,6 +195,7 @@ export function SubmissionPage() {
                     }}
                 >
                     <Paper
+                        // Shows the deadline of the submission's project
                         aria-label={'deadline'}
                         elevation={1}
                         sx={{
@@ -220,6 +221,7 @@ export function SubmissionPage() {
                         </Typography>
                     </Paper>
                     <Card
+                        // This card shows the assignment description.
                         aria-label={'assignment-box'}
                         sx={{
                             width: '99 %',
@@ -243,6 +245,8 @@ export function SubmissionPage() {
                         </Box>
                     </Card>
                     <Box
+                        // This box shows the filename of the submission and 
+                        // allows the user to download the submission.
                         aria-label={'file-box'}
                         color={'text.primary'}
                         sx={{
@@ -275,6 +279,7 @@ export function SubmissionPage() {
                         </Button>
                     </Box>
                     <Card
+                        // This card shows the restrictions for the submission.
                         aria-label={'restrictions'}
                         sx={{
                             padding: 1,
@@ -355,6 +360,7 @@ export function SubmissionPage() {
                         </Box>
                     </Card>
                     <Box
+                        // This box shows the status and result of the submission.
                         aria-label={'result-box'}
                         sx={{
                             padding: 1,
@@ -366,6 +372,7 @@ export function SubmissionPage() {
                         }}
                     >
                         <Box
+                            // This box shows the status of the submission.
                             aria-label={'status-box'}
                             sx={{
                                 padding: 1,
@@ -390,6 +397,7 @@ export function SubmissionPage() {
                             </Typography>
                         </Box>
                         <Card
+                            // This card shows the result of the submission.
                             aria-label={'result-box'}
                             sx={{
                                 padding: 1,
