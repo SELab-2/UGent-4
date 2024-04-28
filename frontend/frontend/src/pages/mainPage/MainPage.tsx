@@ -10,12 +10,14 @@ import { useEffect, useState } from 'react'
 import instance from '../../axiosConfig.ts'
 import { AxiosError, AxiosResponse } from 'axios'
 import { useNavigate } from 'react-router-dom'
+import WarningPopup from '../../components/WarningPopup.tsx'
 
 export interface Course {
     vak_id: number
     naam: string
     studenten: number[]
     lesgevers: number[]
+    gearchiveerd: boolean
 }
 
 export interface project {
@@ -39,8 +41,11 @@ export interface project {
  */
 export default function MainPage() {
     // State for role
+    const [user, setUser] = useState<number>(0)
     const [role, setRole] = useState<string>('')
     const [courses, setCourses] = useState<Course[]>([])
+    const [pinnedCourses, setPinnedCourses] = useState<number[]>([])
+    const [courseOrder, setCourseOrder] = useState<number[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
     const navigator = useNavigate()
 
@@ -51,7 +56,9 @@ export default function MainPage() {
             .get('/gebruikers/me/')
             .then((response: AxiosResponse) => {
                 console.log(response.data)
+                setUser(response.data.user)
                 setRole(response.data.is_lesgever ? 'teacher' : 'student')
+                setPinnedCourses(response.data.gepinde_vakken)
             })
             .catch((e: AxiosError) => {
                 console.error(e)
@@ -90,7 +97,55 @@ export default function MainPage() {
         })
     }, [])
 
+    // Logging order of courses
+    // This only changes on page reload
+    useEffect(() => {
+        instance
+            .get('/gebruikers/me/')
+            .then((response: AxiosResponse) => {
+                setCourseOrder(response.data.gepinde_vakken)
+            })
+            .catch((e: AxiosError) => {
+                console.error(e)
+            })
+    }, [])
+
     useEffect(() => {}, [courses])
+
+    const [openArchivePopup, setOpenArchivePopup] = useState(false)
+    const [archiveCourseId, setArchiveCourseId] = useState(0)
+
+    const archiveCourse = (courseId: number) => {
+        setArchiveCourseId(courseId)
+        setOpenArchivePopup(true)
+    }
+    const doArchive = async () => {
+        console.log('Archive clicked')
+        try {
+            await instance.patch(`/vakken/${archiveCourseId}/`, {
+                gearchiveerd: true,
+            })
+        } catch(error) {
+            console.error('Error updating data:', error)
+        }
+    }
+
+    const pinCourse = async (courseId: number) => {
+        let newPinnedCourses = []
+        if(pinnedCourses.includes(courseId)){
+            newPinnedCourses = pinnedCourses.filter((pinnedId) => pinnedId !== courseId)
+        } else {
+            newPinnedCourses = [...pinnedCourses, courseId]
+        }
+        setPinnedCourses(newPinnedCourses)
+        try {
+            await instance.patch(`/gebruikers/${user}/`, {
+                gepinde_vakken: newPinnedCourses,
+            })
+        } catch (error) {
+            console.error('Error updating data:', error)
+        }
+    }
 
     return (
         <>
@@ -123,11 +178,44 @@ export default function MainPage() {
                         nodes={[
                             <CoursesView
                                 isStudent={role == 'student'}
-                                activecourses={courses}
+                                activecourses={courses.filter((course) => !course.gearchiveerd).sort((a: Course, b: Course) => {
+                                    if(courseOrder.includes(a.vak_id)){
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return courseOrder.indexOf(a.vak_id) - courseOrder.indexOf(b.vak_id)
+                                        } else {
+                                            return -1
+                                        }
+                                    } else {
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return 1
+                                        } else {
+                                            return 0
+                                        }
+                                    }
+                                })}
+                                pinnedCourses={pinnedCourses}
+                                archiveCourse={archiveCourse}
+                                pinCourse={pinCourse}
                             />,
                             <ArchivedView
                                 isStudent={role == 'student'}
-                                archivedCourses={courses}
+                                archivedCourses={courses.filter((course) => course.gearchiveerd).sort((a: Course, b: Course) => {
+                                    if(courseOrder.includes(a.vak_id)){
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return courseOrder.indexOf(a.vak_id) - courseOrder.indexOf(b.vak_id)
+                                        } else {
+                                            return -1
+                                        }
+                                    } else {
+                                        if(courseOrder.includes(b.vak_id)){
+                                            return 1
+                                        } else {
+                                            return 0
+                                        }
+                                    }
+                                })}
+                                pinnedCourses={pinnedCourses}
+                                pinCourse={pinCourse}
                             />,
                         ]}
                     />
@@ -163,6 +251,14 @@ export default function MainPage() {
                         </Button>
                     </Box>
                 )}
+                <WarningPopup
+                            title={t('archive_course_warning')}
+                            content={t('will_archive_projects')}
+                            buttonName={t('archive')}
+                            open={openArchivePopup}
+                            handleClose={() => setOpenArchivePopup(false)}
+                            doAction={doArchive}
+                />
             </Stack>
         </>
     )

@@ -149,10 +149,12 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
-                        sx={{ maxWidth: 100 }}
+                        sx={{ maxWidth: 150 }}
                         primary={
                             submitted
-                                ? dayjs(submitted.tijdstip).format('DD-MM-YYYY')
+                                ? dayjs(submitted.tijdstip).format(
+                                    'DD/MM/YYYY HH:mm'
+                                )
                                 : '-'
                         }
                     />

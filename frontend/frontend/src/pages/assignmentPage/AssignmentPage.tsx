@@ -79,7 +79,7 @@ export function AssignmentPage() {
         }
 
         fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever])
+    }, [assignmentId, courseId, user.is_lesgever, submissionFile])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -156,20 +156,24 @@ export function AssignmentPage() {
                 },
             }
             const groupResponse = await instance.get(
-                `/groepen/?project=${assignmentId}`
+                `/groepen/?student=${user.user}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data[0]
-                const formData = new FormData()
-                formData.append('groep', group.groep_id)
-                formData.append('indiening_bestanden', submissionFile)
+                const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
+                if (group){
+                    const formData = new FormData()
+                    formData.append('groep', group.groep_id)
+                    formData.append('indiening_bestanden', submissionFile)
 
-                await instance
-                    .post('/indieningen/', formData, config)
-                    .catch((error) => {
-                        console.error(error)
-                    })
-                setSubmissionFile(undefined)
+                    await instance
+                        .post('/indieningen/', formData, config)
+                        .catch((error) => {
+                            console.error(error)
+                        })
+                    setSubmissionFile(undefined)
+                } else {
+                    console.error('Group not found for assingmentId: ', assignmentId)
+                }
             }
         }
     }
@@ -194,7 +198,7 @@ export function AssignmentPage() {
                             backgroundColor: 'background.default',
                         }}
                     >
-                        {/*deadline and groep button */}
+                        {/*deadline and group button */}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -209,7 +213,7 @@ export function AssignmentPage() {
                                 <strong>Deadline </strong>
                                 {assignment
                                     ? dayjs(assignment.deadline).format(
-                                          'DD/MM/YYYY-HH:MM'
+                                          'DD/MM/YYYY HH:mm'
                                       )
                                     : 'no deadline'}
                             </Typography>
@@ -219,7 +223,7 @@ export function AssignmentPage() {
                             />
                         </Box>
 
-                        {/*Opgave*/}
+                        {/* Assignment description */}
                         <Card
                             elevation={1}
                             sx={{
@@ -244,7 +248,10 @@ export function AssignmentPage() {
                             </Stack>
                         </Card>
 
-                        {/*Indieningen*/}
+                        {/* This renders a list of submissions.
+                        It shows metadata about the submissions and allows the teacher to download them.
+                        The metadata includes group number, submission time, score, and status.
+                        */}
                         <Card
                             elevation={1}
                             sx={{
@@ -308,13 +315,7 @@ export function AssignmentPage() {
                             </Box>
                         </Card>
 
-                        {/*<AddRestrictionButton></AddRestrictionButton>*/}
-
-                        {/* <Button sx={{bgcolor: 'secondary.main'}}>
-                            <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
-                        </Button> */}
-
-                        {/*Export- en Aanpasknop*/}
+                        {/*Export- and edit-button*/}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -378,8 +379,10 @@ export function AssignmentPage() {
                                 <Typography variant="h6" color="text.primary">
                                     <strong>Deadline </strong>
                                     {assignment
-                                        ? assignment.deadline?.toString()
-                                        : 'no deadline'}
+                                        ? dayjs(assignment.deadline).format(
+                                            'DD/MM/YYYY HH:mm'
+                                        )
+                                      : 'no deadline'}
                                 </Typography>
                                 <div style={{ flexGrow: 1 }} />
                                 <Button
@@ -396,7 +399,7 @@ export function AssignmentPage() {
                             </Stack>
                         </Box>
 
-                        {/*Opgave*/}
+                        {/* Assignment */}
                         <Card
                             elevation={1}
                             sx={{
@@ -421,7 +424,7 @@ export function AssignmentPage() {
                             </Stack>
                         </Card>
 
-                        {/*Indieningen*/}
+                        {/* Submissions */}
                         <Card
                             elevation={1}
                             sx={{
@@ -467,7 +470,9 @@ export function AssignmentPage() {
                                                     id={submission.indiening_id.toString()}
                                                     timestamp={dayjs(
                                                         submission.tijdstip
-                                                    ).toDate()}
+                                                    ).format(
+                                                        'DD/MM/YYYY HH:mm'
+                                                    )}
                                                     status={!submission.status}
                                                     assignment_id={assignmentId}
                                                     course_id={courseId}
@@ -479,7 +484,7 @@ export function AssignmentPage() {
                             </Box>
                         </Card>
 
-                        {/*Upload knop*/}
+                        {/*Upload button, this is what the student will see. */}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -492,7 +497,7 @@ export function AssignmentPage() {
                                         name={t('upload')}
                                         path={submissionFile}
                                         onFileChange={handleFileChange}
-                                        fileTypes={['.zip']}
+                                        fileTypes={['.zip', '.pdf', '.txt']}
                                         tooltip={t('uploadToolTip')}
                                     />
                                 }

@@ -81,7 +81,7 @@ export function GroupsPage() {
                 instance
                     .post('/groepen', {
                         studenten: group.studenten,
-                        vak: courseId,
+                        project: parseInt(assignmentId),
                     })
                     .then((response) => {
                         console.log(response)
@@ -94,7 +94,7 @@ export function GroupsPage() {
                     .put('/groepen/' + group.groep_id + '/', {
                         groep_id: group.groep_id,
                         studenten: group.studenten,
-                        vak: courseId,
+                        project: parseInt(assignmentId),
                     })
                     .then((response) => {
                         console.log(response)
@@ -356,6 +356,8 @@ export function GroupsPage() {
                                     </Grid>
                                     <Grid item minWidth={3}>
                                         <TextField
+                                            // The teacher can specify the maximum group size
+                                            // If a number smaller than 1 is entered, the input will be ignored
                                             aria-label={'maxGroupSize'}
                                             value={newGroupSize}
                                             type={'number'}
@@ -385,6 +387,8 @@ export function GroupsPage() {
                                 marginY={6}
                             >
                                 <Button
+                                    // If a teacher doesn't want to create groups manually,
+                                    // they can randomize the groups with a single click.
                                     variant={'contained'}
                                     disableElevation
                                     sx={{
@@ -401,6 +405,8 @@ export function GroupsPage() {
                                     </Typography>
                                 </Button>
                                 <Box
+                                    // If the students are allowed to choose their own groups,
+                                    // the teacher can enable this feature with a switch.
                                     display={'flex'}
                                     flexDirection={'row'}
                                     alignItems={'center'}
@@ -436,6 +442,9 @@ export function GroupsPage() {
                                 alignItems={'flex-start'}
                             >
                                 <Table
+                                    // The teacher can see the available students 
+                                    // on the left side of the screen.
+                                    // They are displayed in a table with a sticky header.
                                     aria-label={'studentTable'}
                                     stickyHeader
                                     sx={{ maxHeight: '50svh' }}
@@ -461,6 +470,7 @@ export function GroupsPage() {
                                                               student
                                                           )}
                                                     <IconButton
+                                                        // people can be added to groups by clicking on the plus icon
                                                         disabled={
                                                             newGroups[
                                                                 parseInt(
@@ -493,6 +503,8 @@ export function GroupsPage() {
                                     </TableBody>
                                 </Table>
                                 <Table
+                                    // The teacher can see the students in the specified group
+                                    // on the right side of the screen.
                                     aria-label={'groupTable'}
                                     stickyHeader
                                     sx={{ maxHeight: '5    0svh' }}
@@ -504,6 +516,7 @@ export function GroupsPage() {
                                                     {t('group')}
                                                 </Typography>
                                                 <Select
+                                                    // The teacher can select a group from the dropdown menu
                                                     aria-label={'groupSelect'}
                                                     value={currentGroup}
                                                     sx={{ width: 200 }}
@@ -538,6 +551,7 @@ export function GroupsPage() {
                                                             student
                                                         )}
                                                         <IconButton
+                                                            // The teacher can remove students from the group by clicking on the cross icon
                                                             onClick={() => {
                                                                 removeStudent(
                                                                     student,
@@ -573,6 +587,7 @@ export function GroupsPage() {
                         <Box pr={5} pb={5} display={'flex'} gap={1}>
                             <Tooltip title={t('cancel')}>
                                 <IconButton
+                                    // The teacher can cancel the group changes by clicking on the cross icon.
                                     onClick={handleCancel}
                                     sx={{
                                         backgroundColor: 'secondary.main',
@@ -584,6 +599,7 @@ export function GroupsPage() {
                             </Tooltip>
                             <Tooltip title={t('submit')}>
                                 <IconButton
+                                    // The teacher can save the group changes by clicking on the save icon.
                                     type="submit"
                                     aria-label={'submit'}
                                     sx={{
