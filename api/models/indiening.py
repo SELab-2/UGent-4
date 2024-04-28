@@ -5,6 +5,10 @@ from api.docker.python_entrypoint import run_tests_on
 from threading import Thread
 from django.db import transaction
 import re
+import zipfile
+import os
+
+from api.models.restrictie import Restrictie
 
 
 STATUS_CHOICES = (
@@ -53,6 +57,7 @@ class Indiening(models.Model):
     tijdstip = models.DateTimeField(auto_now_add=True)
     status = models.IntegerField(default=0, choices=STATUS_CHOICES)
     result = models.TextField(default="", blank=True)
+    artefacten = models.FileField(blank=True)
 
     def __str__(self):
         return str(self.indiening_id)
@@ -95,19 +100,15 @@ def run_tests_async(instance):
     indiening_id = instance.indiening_id
     project_id = instance.groep.project.project_id
     result = run_tests_on(indiening_id, project_id)
-    matches = re.findall(r"Testing \./.*", result[1])
-    try:
-        first_match_index = result[1].find(matches[0])
-        result = result[1][first_match_index:]
-        status = -1 if result[0] else 1
-    except Exception:
-        result = result[1]
-        status = -1
+
 
     with transaction.atomic():
-        instance.status = status
+        instance.status = -1 if "FAIL" in result else 1
         instance.result = result
+        instance.artefacten = f'data/indieningen/indiening_{indiening_id}/artefacten.zip'
         instance.save()
+
+    
 
 
 @receiver(post_save, sender=Indiening)
@@ -123,5 +124,12 @@ def indiening_post_init(sender, instance, created, **kwargs):
         kwargs: Extra argumenten.
     """
     if created:
-        thread = Thread(target=run_tests_async, args=(instance,))
-        thread.start()
+        restricties = Restrictie.objects.filter(project=instance.groep.project)
+        if len(restricties) == 0:
+            with transaction.atomic():
+                instance.status = 1
+                instance.result = "No tests: OK"
+                instance.save()
+        else:
+            thread = Thread(target=run_tests_async, args=(instance,))
+            thread.start()

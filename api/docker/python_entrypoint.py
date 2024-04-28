@@ -22,4 +22,4 @@ def run_tests_on(indiening_id, project_id):
         child.sendline(dot_env_values.get("SUDO_PASSWORD"))
     output = child.read().decode("utf-8")
     child.close()
-    return ": FAIL" in output, output
+    return output
