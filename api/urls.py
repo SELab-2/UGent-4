@@ -21,12 +21,13 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 from .views.views import home
 from .views.gebruiker import gebruiker_list, gebruiker_detail, gebruiker_detail_me
-from .views.vak import vak_list, vak_detail
+from .views.vak import vak_list, vak_detail, vak_detail_accept_invite
 from .views.project import project_list, project_detail, project_detail_download_opgave
 from .views.indiening import (
     indiening_list,
     indiening_detail,
     indiening_detail_download_bestanden,
+    indiening_detail_download_artefacten
 )
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
@@ -45,6 +46,7 @@ urlpatterns = [
     path("api/gebruikers/me/", gebruiker_detail_me, name="gebruiker_detail_me"),
     path("api/vakken/", vak_list, name="vak_list"),
     path("api/vakken/<int:id>/", vak_detail, name="vak_detail"),
+    path("api/vakken/<int:id>/accept_invite/", vak_detail_accept_invite, name="vak_detail_accept_invite"),
     path("api/projecten/", project_list, name="project_list"),
     path("api/projecten/<int:id>/", project_detail, name="project_detail"),
     path(
@@ -58,6 +60,10 @@ urlpatterns = [
         "api/indieningen/<int:id>/indiening_bestanden/",
         indiening_detail_download_bestanden,
         name="indiening_detail_download_bestanden",
+    ),
+    path("api/indieningen/<int:id>/artefacten",
+        indiening_detail_download_artefacten,
+        name = "indiening_detail_download_artefacten",
     ),
     path("api/scores/", score_list, name="score_list"),
     path("api/scores/<int:id>/", score_detail, name="score_detail"),

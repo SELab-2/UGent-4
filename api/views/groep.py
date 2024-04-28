@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.models.groep import Groep
 from api.serializers.groep import GroepSerializer
-from api.utils import is_lesgever, contains
+from api.utils import has_permissions, contains
 
 
 @api_view(["GET", "POST"])
@@ -28,7 +28,7 @@ def groep_list(request, format=None):
         Response: Een lijst van groepen of een nieuw aangemaakte groep.
     """
     if request.method == "GET":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             groepen = Groep.objects.all()
         else:
             groepen = Groep.objects.filter(studenten=request.user.id)
@@ -51,7 +51,7 @@ def groep_list(request, format=None):
         return Response(serializer.data)
 
     elif request.method == "POST":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             serializer = GroepSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -78,12 +78,12 @@ def groep_detail(request, id, format=None):
     except Groep.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == "GET":
-        if is_lesgever(request.user) or contains(groep.studenten, request.user):
+        if has_permissions(request.user) or contains(groep.studenten, request.user):
             serializer = GroepSerializer(groep)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-    if is_lesgever(request.user):
+    if has_permissions(request.user):
         if request.method in ["PUT", "PATCH"]:
             if request.method == "PUT":
                 serializer = GroepSerializer(groep, data=request.data)

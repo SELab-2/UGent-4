@@ -1,7 +1,8 @@
 #!/bin/bash
 cd data
+mkdir artefacten
 
-for filename in ./restricties/*; do
+for filename in ../restricties/*; do
     echo -n "Testing ${filename}: "
 
     if [[ "$filename" == *.sh ]]
@@ -12,3 +13,6 @@ for filename in ./restricties/*; do
 	    python3 $filename
     fi
 done
+
+zip -r artefacten.zip artefacten 
+rm -rf artefacten
