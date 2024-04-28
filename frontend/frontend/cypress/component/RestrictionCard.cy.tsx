@@ -11,7 +11,7 @@ describe('RestrictionCard', () => {
 
     it('renders', () => {
         cy.mount(<RestrictionCard {...mockProps} />);
-        cy.get('.MuiTypography-root').should('exist').should('have.text', 'This is a test script');
-        cy.get('.MuiSvgIcon-root').should('exist');
+        cy.get('#script').should('exist').should('have.text', 'This is a test script');
+        cy.get('#closeButton').should('exist').click();
     });
 });

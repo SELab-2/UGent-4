@@ -4,9 +4,8 @@ describe('LanguageSwitcher', () => {
 
     it('renders', () => {
         cy.mount(<LanguageSwitcher />)
-        cy.get('li').each(($li) => {
-            expect($li.text()).to.match(/en|nl/);
-        });
+        cy.get('#en').should('exist').should('have.text', 'en');
+        cy.get('#nl').should('exist').should('have.text', 'nl');
     });
 
 })

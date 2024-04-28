@@ -12,22 +12,23 @@ describe('SubmissionListItemStudentPage', () => {
 
     it('renders correct submission', () => {
         cy.mount(<BrowserRouter><SubmissionListItemStudentPage {...mockProps} /></BrowserRouter>);
-        cy.get('.MuiListItem-root').should('exist');
+        cy.get('#assignment' + mockProps.id).should('exist');
         cy.get('.MuiListItemButton-root').should('exist');
-
-        cy.get('.MuiListItemText-root').should('exist').should('have.text', mockProps.id + mockProps.timestamp);
-        cy.get('[data-testid="CheckCircleOutlineIcon"]').should('exist');
-        cy.get('[data-testid="HighlightOffIcon"]').should('not.exist');
+        cy.get('#submissionId').should('exist').should('have.text', mockProps.id);
+        cy.get('#submissionTimestamp').should('exist').should('have.text', mockProps.timestamp);
+        cy.get('#check').should('exist');
+        cy.get('#cross').should('not.exist');
     });
 
     it('renders incorrect submission', () => {
         mockProps.status = false;
         cy.mount(<BrowserRouter><SubmissionListItemStudentPage {...mockProps} /></BrowserRouter>);
-        cy.get('.MuiListItem-root').should('exist');
+        cy.get('#assignment' + mockProps.id).should('exist');
         cy.get('.MuiListItemButton-root').should('exist');
-
-        cy.get('.MuiListItemText-root').should('exist').should('have.text', mockProps.id + mockProps.timestamp);
-        cy.get('[data-testid="HighlightOffIcon"]').should('exist');
-        cy.get('[data-testid="CheckCircleOutlineIcon"]').should('not.exist');
+        cy.get('#submissionId').should('exist').should('have.text', mockProps.id);
+        cy.get('#submissionTimestamp').should('exist').should('have.text', mockProps.timestamp);
+        cy.get('#check').should('not.exist');
+        cy.get('#cross').should('exist');
     });
+
 });

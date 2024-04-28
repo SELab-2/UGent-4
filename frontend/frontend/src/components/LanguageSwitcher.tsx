@@ -19,6 +19,7 @@ export function LanguageSwitcher() {
             {/* Map through language options and render a MenuItem for each */}
             {Object.keys(locales).map((locale) => (
                 <MenuItem
+                    id={locale}
                     key={locale}
                     onClick={() => {
                         i18n.changeLanguage(locale).then(() =>
