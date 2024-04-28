@@ -1,4 +1,5 @@
 import {
+    CircularProgress,
     Divider,
     IconButton,
     ListItem,
@@ -31,10 +32,13 @@ export function StudentScoreListItem({
     changeScore,
 }: StudentScoreListItemProps) {
     const [name, setName] = useState(t('group') + ' ' + groupNumber)
+    // state for loaders
+    const [loading, setLoading] = useState(true)
 
     // Get all necessary data
     useEffect(() => {
         async function fetchName() {
+            setLoading(true)
             if (studenten.length == 1) {
                 const studentId = studenten[0]
                 const studentResponse = await instance.get(
@@ -46,6 +50,7 @@ export function StudentScoreListItem({
                         studentResponse.data.last_name
                 )
             }
+            setLoading(false)
         }
 
         fetchName().catch((e) => console.error(e))
@@ -106,7 +111,14 @@ export function StudentScoreListItem({
                 >
                     {/* Content section */}
                     <>
-                        <ListItemText sx={{ maxWidth: 200 }} primary={name} />
+                        {loading ? (
+                            <CircularProgress size={20} color={'primary'} />
+                        ) : (
+                            <ListItemText
+                                sx={{ maxWidth: 200 }}
+                                primary={name}
+                            />
+                        )}
                         <ListItemText
                             sx={{ maxWidth: 300 }}
                             primary={

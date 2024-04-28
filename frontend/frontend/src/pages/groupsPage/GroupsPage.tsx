@@ -66,14 +66,14 @@ export function GroupsPage() {
     const [loading, setLoading] = useState(true)
 
     // handle confirmation dialog
-    const confirmSave = () => {
+    const confirmSave = async () => {
         if (newGroups[0].groep_id === undefined) {
             // delete the old groups and replace them with the new groups
-            instance
+            await instance
                 .get('/groepen/?project=' + assignmentId)
-                .then((response) => {
+                .then(async (response) => {
                     for (const group of response.data) {
-                        instance
+                        await instance
                             .delete('/groepen/' + group.groep_id + '/')
                             .catch((error) => {
                                 console.log(error)
@@ -490,6 +490,7 @@ export function GroupsPage() {
                                     display={'flex'}
                                     flexDirection={'row'}
                                     alignItems={'center'}
+                                    gap={2}
                                 >
                                     <Typography
                                         color="text.primary"
