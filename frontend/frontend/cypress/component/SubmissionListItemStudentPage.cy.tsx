@@ -12,7 +12,7 @@ describe('SubmissionListItemStudentPage', () => {
 
     it('renders correct submission', () => {
         cy.mount(<BrowserRouter><SubmissionListItemStudentPage {...mockProps} /></BrowserRouter>);
-        cy.get('#assignment' + mockProps.id).should('exist');
+        cy.get('#submission' + mockProps.id).should('exist');
         cy.get('.MuiListItemButton-root').should('exist');
         cy.get('#submissionId').should('exist').should('have.text', mockProps.id);
         cy.get('#submissionTimestamp').should('exist').should('have.text', mockProps.timestamp);
@@ -23,7 +23,7 @@ describe('SubmissionListItemStudentPage', () => {
     it('renders incorrect submission', () => {
         mockProps.status = false;
         cy.mount(<BrowserRouter><SubmissionListItemStudentPage {...mockProps} /></BrowserRouter>);
-        cy.get('#assignment' + mockProps.id).should('exist');
+        cy.get('#submission' + mockProps.id).should('exist');
         cy.get('.MuiListItemButton-root').should('exist');
         cy.get('#submissionId').should('exist').should('have.text', mockProps.id);
         cy.get('#submissionTimestamp').should('exist').should('have.text', mockProps.timestamp);

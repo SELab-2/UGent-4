@@ -47,7 +47,7 @@ export function SubmissionListItemStudentPage({
 
     return (
         <>
-            <ListItem id={`assignment${id}`} key={id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={`submission${id}`} key={id} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: '100%',
