@@ -8,9 +8,14 @@ export default defineConfig({
             '@emotion/react',
             '@emotion/styled',
             '@mui/material/Tooltip', // Include other MUI components as needed
-            '@mui/material/Grid',
         ],
-        exclude: ['chunk-LTJERZ23.js?v=fff2b904'],
+        exclude: [
+            'chunk-LTJERZ23.js?v=fff2b904',
+            'chunk-OLZKTZWI.js?v=fff2b904',
+            'chunk-6ZDRAOHK.js?v=fff2b904',
+            'chunk-BWG3R63Q.js?v=fff2b904',
+            '@mui/material/Grid', // Exclude other MUI components as needed
+        ],
     },
     plugins: [
         react({
