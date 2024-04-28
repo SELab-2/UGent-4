@@ -11,9 +11,11 @@ describe('RestrictionsDialog', () => {
 
     it('renders the dialog', () => {
         cy.mount(<BrowserRouter><RestrictionsDialog {...mockProps} /></BrowserRouter>);
-        // Deze component bestaat eigenlijk enkel uit buttons en een input voor files
-        cy.get('input').should('exist');
-        cy.get('button').should('exist');
+        cy.get('#upload').should('exist');
+        cy.get('#newScript').should('exist');
+        cy.get('#fileExtensionCheck').should('exist');
+        cy.get('#filesPresentCheck').should('exist');
+        cy.get('#mustPassSwitch').should('exist').click();
     });
 
 });

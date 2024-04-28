@@ -460,6 +460,7 @@ export function AddChangeAssignmentPage() {
                                 {t('assignmentName')}
                             </Typography>
                             <TextField
+                                id='titleField'
                                 type="text"
                                 placeholder={'Title'}
                                 error={assignmentErrors.title}
@@ -476,6 +477,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                         {/* File Upload button */}
                         <Box
+                            id='uploadButton'
                             padding={0}
                             marginRight={3}
                             display={'flex'}
@@ -512,13 +514,14 @@ export function AddChangeAssignmentPage() {
                             alignItems={'center'}
                         >
                             <Typography
+                                id='deadline'
                                 variant={'h6'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
                                 Deadline:
                             </Typography>
-                            <LocalizationProvider
+                            <LocalizationProvider  
                                 dateAdapter={AdapterDayjs}
                                 adapterLocale="nl"
                             >
@@ -543,6 +546,9 @@ export function AddChangeAssignmentPage() {
                                         },
                                         textField: {
                                             helperText: errorMessage,
+                                            inputProps: {
+                                                id: 'deadlineField',
+                                            },
                                         },
                                     }}
                                     onChange={(newValue) =>
@@ -559,6 +565,7 @@ export function AddChangeAssignmentPage() {
                             alignItems={'center'}
                         >
                             <Typography
+                                id='extraDeadline'
                                 variant={'h6'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
@@ -590,6 +597,9 @@ export function AddChangeAssignmentPage() {
                                             helperText: deadlineCheckError
                                                 ? t('deadlineCheck')
                                                 : '',
+                                            inputProps: {
+                                                id: 'extraDeadlineField',
+                                            },
                                         },
                                     }}
                                     onChange={(newValue) =>
@@ -618,6 +628,7 @@ export function AddChangeAssignmentPage() {
                                 {t('description')}
                             </Typography>
                             <TextField
+                                id='descriptionField'
                                 type="text"
                                 placeholder={'Description'}
                                 variant={'standard'}
@@ -724,6 +735,7 @@ export function AddChangeAssignmentPage() {
                             >
                                 {visible ? (
                                     <IconButton
+                                        id='visibilityOn'
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -731,6 +743,7 @@ export function AddChangeAssignmentPage() {
                                     </IconButton>
                                 ) : (
                                     <IconButton
+                                        id='visibilityOff'
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -741,6 +754,7 @@ export function AddChangeAssignmentPage() {
                                 )}
                                 <Tooltip title={t('remove')}>
                                     <IconButton
+                                        id='delete'
                                         color={'warning'}
                                         onClick={openDeleteConfirmation}
                                     >
@@ -758,12 +772,14 @@ export function AddChangeAssignmentPage() {
                                 alignItems={'center'}
                             >
                                 <Typography
+                                    id='maxScore'
                                     fontWeight={'bold'}
                                     color={'text.primary'}
                                 >
-                                    Max Score
+                                    Max Score:
                                 </Typography>
                                 <TextField
+                                    id='maxScoreField'
                                     sx={{ width: 80 }}
                                     required
                                     label={'Max Score'}
@@ -801,6 +817,7 @@ export function AddChangeAssignmentPage() {
                         >
                             <Tooltip title={t('cancel')}>
                                 <IconButton
+                                    id='cancel'
                                     onClick={handleCancel}
                                     sx={{
                                         backgroundColor: 'secondary.main',
@@ -812,6 +829,7 @@ export function AddChangeAssignmentPage() {
                             </Tooltip>
                             <Tooltip title={t('submit')}>
                                 <IconButton
+                                    id='submit'
                                     type="submit"
                                     aria-label={'submit'}
                                     sx={{

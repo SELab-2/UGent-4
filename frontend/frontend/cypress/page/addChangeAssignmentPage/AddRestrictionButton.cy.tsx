@@ -10,9 +10,13 @@ describe('AddRestrictionsButton', () => {
 
     it('renders the restrictions add button', () => {
         cy.mount(<BrowserRouter><AddRestrictionButton {...mockProps} /></BrowserRouter>);
-        // niet veel interessants om te testen, enkel of de button en de dialog bestaan
-        cy.get('button').should('exist');
-        cy.get('path').should('exist');
+        cy.get('#addRestrictionButton').should('exist').click();
+        cy.get('#upload').should('exist');
+        cy.get('#newScript').should('exist');
+        cy.get('#fileExtensionCheck').should('exist');
+        cy.get('#filesPresentCheck').should('exist');
+        cy.get('#mustPassSwitch').should('exist').click();
+        cy.get('#cancelButton').should('exist').click();
     });
 
 });

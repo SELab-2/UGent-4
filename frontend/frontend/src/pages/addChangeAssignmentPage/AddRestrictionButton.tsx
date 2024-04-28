@@ -36,6 +36,7 @@ export default function AddRestrictionButton({
         <>
             {/* Add Restriction Button */}
             <IconButton
+                id='addRestrictionButton'
                 sx={{
                     bgcolor: 'secondary.main',
                     marginRight: 1,
@@ -68,7 +69,7 @@ export default function AddRestrictionButton({
                 </DialogContent>
                 <DialogActions>
                     {/* Cancel Button */}
-                    <Button onClick={handleClose}>{t('cancel')}</Button>
+                    <Button id='cancelButton' onClick={handleClose}>{t('cancel')}</Button>
                 </DialogActions>
             </Dialog>
         </>
