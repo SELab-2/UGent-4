@@ -87,7 +87,7 @@ export function AddChangeAssignmentPage() {
     const navigate = useNavigate()
 
     //State for loading the data or showing skeletons
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     // State for the different fields of the assignment
     const [title, setTitle] = useState('')
