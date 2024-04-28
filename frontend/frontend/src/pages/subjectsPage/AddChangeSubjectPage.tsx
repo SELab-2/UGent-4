@@ -1,8 +1,9 @@
 import {
     Box,
+    Card,
     Divider,
     IconButton,
-    ListItemButton,
+    ListItem,
     ListItemText,
     Stack,
     TextField,
@@ -43,12 +44,42 @@ function UserList(
 ) {
     return (
         <>
+        <Card
+            elevation={1}
+            sx={{
+                color: 'text.primary',
+                backgroundColor: 'background.default',
+                borderRadius: 5,
+                padding: '20px',
+                width: '75vw',
+            }}
+        >
+            <Box
+                display={'flex'}
+                flexDirection={'row'}
+                justifyContent={'space-between'}
+                pl={3}
+                pr={3}
+            >
+                <Typography sx={{ fontWeight: 'bold' }}>
+                    {t('first_name')}
+                </Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                    {t('last_name')}
+                </Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>
+                    email
+                </Typography>
+                <Typography sx={{ fontWeight: 'bold' }}>
+
+                </Typography>
+            </Box>
+            <Divider color={'text.main'}></Divider>
             <List
                 disablePadding={true}
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '75vw',
                     },
                 }}
             >
@@ -61,7 +92,7 @@ function UserList(
                     This makes it possible to click through on a person. */}
                     return (
                         <>
-                            <ListItemButton
+                            <ListItem
                                 sx={{
                                     width: '100%',
                                     height: 30,
@@ -93,12 +124,13 @@ function UserList(
                                 >
                                     <ClearIcon color={'error'} />
                                 </IconButton>
-                            </ListItemButton>
+                            </ListItem>
                             <Divider color={'text.main'}></Divider>
                         </>
                     )
                 })}
             </List>
+        </Card>
         </>
     )
 }
