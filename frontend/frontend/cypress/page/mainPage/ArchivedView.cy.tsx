@@ -5,15 +5,23 @@ describe('ArchivedView', () => {
 
     const mockProps = {
         isStudent: false,
-        activecourses: []
+        archivedCourses: [],
       };
 
-    it('renders the ArchivedView', () => {
+    it('renders no archived courses', () => {
         cy.mount(<BrowserRouter><ArchivedView {...mockProps} /></BrowserRouter>);
-        // Op deze pagina staat er voorloop letterlijk geen enkele gegarandeerde component,
-        // dus we testen of er een div bestaat.
-        //TODO: om de een of andere reden geeft cypress hier een type error, los die op.
         cy.get('div').should('exist');
+        cy.contains('Project').should('not.exist');
+        cy.contains('Deadline').should('not.exist');
+    });
+
+    it('renders archived courses', () => {
+        mockProps.archivedCourses = [{vak_id: 1},{vak_id: 2},];
+        cy.mount(<BrowserRouter><ArchivedView {...mockProps} /></BrowserRouter>);
+        cy.get('div').should('exist');
+        cy.contains('Project').should('exist');
+        cy.contains('Deadline').should('exist');
+        cy.get('.MuiPaper-root').should('have.length', mockProps.archivedCourses.length);
     });
 
 });
