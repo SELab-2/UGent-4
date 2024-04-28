@@ -8,6 +8,7 @@ import ErrorPage from './pages/ErrorPage.tsx'
 import MainPage from './pages/mainPage/MainPage.tsx'
 import { GroupsPage } from './pages/groupsPage/GroupsPage.tsx'
 import { AssignmentPage } from './pages/assignmentPage/AssignmentPage.tsx'
+import {ChooseGroup} from "./pages/groupsPage/ChooseGroup.tsx";
 
 //TODO: add change/add course page when implemented
 const router = createBrowserRouter([
@@ -49,6 +50,11 @@ const router = createBrowserRouter([
     {
         path: '/course/:courseId/edit',
         element: <AddChangeSubjectPage />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: '/groups/choose',
+        element: <ChooseGroup />,
         errorElement: <ErrorPage />,
     },
     {
