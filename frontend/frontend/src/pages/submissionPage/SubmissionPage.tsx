@@ -74,17 +74,17 @@ export function SubmissionPage() {
     const [loading, setLoading] = useState(true)
 
     // Function to download an artifact
-    const downloadArtifact = (artifact: number) => {
-        //TODO: artifacts are not yet implemented in the backend
+    const downloadArtifacts = () => {
+        //TODO: test when changes are pulled to the backend
         instance
-            .get(`/api/submissions/${assignmentId}/${artifact}`, {
+            .get(`/indieningen/${submissionId}/artefacten/`, {
                 responseType: 'blob',
             })
             .then((res) => {
                 const url = window.URL.createObjectURL(res.data)
                 const a = document.createElement('a')
                 a.href = url
-                a.download = artifact.toString()
+                a.download = 'artifacts.zip'
                 document.body.appendChild(a)
                 a.click()
                 a.remove()
@@ -130,7 +130,6 @@ export function SubmissionPage() {
         //get the project data
 
         const fetchdata = async () => {
-            //TODO: rewrite with async await
             setLoading(true)
             try {
                 const res = await instance.get<getAssignment>(
@@ -139,7 +138,6 @@ export function SubmissionPage() {
                 setProject(res.data)
 
                 //Get the restrictions for the submission
-                //TODO: artifacts are not yet implemented in the backend
                 const restrictions = await instance.get<Restriction[]>(
                     `/restricties/?project=${assignmentId}`
                 )
@@ -383,12 +381,8 @@ export function SubmissionPage() {
                                                                 </Typography>
                                                                 {restriction.artifact && (
                                                                     <Button
-                                                                        onClick={() =>
-                                                                            downloadArtifact(
-                                                                                restriction.artifact
-                                                                                    ? restriction.artifact
-                                                                                    : 0
-                                                                            )
+                                                                        onClick={
+                                                                            downloadArtifacts
                                                                         }
                                                                         startIcon={
                                                                             <DownloadIcon />
