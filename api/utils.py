@@ -39,6 +39,22 @@ def get_graph_token():
         return None
 
 
+def has_permissions(user):
+    """
+    Controleert of de gebruiker permissies heeft.
+
+    Args:
+        user (User): De gebruiker waarvan moet worden gecontroleerd of deze permissies heeft.
+
+    Returns:
+        bool: True als de gebruiker permissies heeft, anders False.
+    """
+    if user.is_superuser:
+        return True
+    gebruiker = Gebruiker.objects.get(pk=user.id)
+    return gebruiker.is_lesgever
+
+
 def is_lesgever(user):
     """
     Controleert of de gebruiker een lesgever is.
@@ -49,8 +65,6 @@ def is_lesgever(user):
     Returns:
         bool: True als de gebruiker een lesgever is, anders False.
     """
-    if user.is_superuser:
-        return True
     gebruiker = Gebruiker.objects.get(pk=user.id)
     return gebruiker.is_lesgever
 

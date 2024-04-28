@@ -8,6 +8,8 @@ import re
 import zipfile
 import os
 
+from api.models.restrictie import Restrictie
+
 
 STATUS_CHOICES = (
     (-1, "FAIL"),
@@ -122,5 +124,12 @@ def indiening_post_init(sender, instance, created, **kwargs):
         kwargs: Extra argumenten.
     """
     if created:
-        thread = Thread(target=run_tests_async, args=(instance,))
-        thread.start()
+        restricties = Restrictie.objects.filter(project=instance.groep.project)
+        if len(restricties) == 0:
+            with transaction.atomic():
+                instance.status = 1
+                instance.result = "No tests: OK"
+                instance.save()
+        else:
+            thread = Thread(target=run_tests_async, args=(instance,))
+            thread.start()
