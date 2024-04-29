@@ -100,6 +100,7 @@ export function AssignmentPage() {
                         )
                         setGroups(groupsResponse.data)
                     } else {
+                        //FIXME : change to get submissions for student
                         const submissionsResponse = await instance.get(
                             `/indieningen/?vak=${courseId}`
                         )

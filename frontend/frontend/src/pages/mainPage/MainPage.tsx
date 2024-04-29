@@ -40,7 +40,7 @@ export interface project {
  */
 export default function MainPage() {
     // State for role
-    const [role, setRole] = useState<string>('')
+    const [role, setRole] = useState<string>('student')
     const [courses, setCourses] = useState<Course[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
     const [loading, setLoading] = useState<boolean>(true)
@@ -67,7 +67,8 @@ export default function MainPage() {
                 })
 
             try {
-                const response = await instance.get<Course[]>('/vakken/')
+                const response =
+                    await instance.get<Course[]>('/vakken/?in=true')
                 setCourses(response.data)
             } catch (error) {
                 console.error('Error fetching courses:', error)
