@@ -5,9 +5,16 @@ import { Course } from './MainPage.tsx'
 interface CourseCardProps {
     isStudent: boolean
     archivedCourses: Course[]
+    pinnedCourses: number[]
+    pinCourse: (courseId: number) => void
 }
 
-export function ArchivedView({ isStudent, archivedCourses }: CourseCardProps) {
+export function ArchivedView({
+    isStudent,
+    archivedCourses,
+    pinnedCourses,
+    pinCourse,
+}: CourseCardProps) {
     return (
         <>
             <Stack
@@ -36,6 +43,10 @@ export function ArchivedView({ isStudent, archivedCourses }: CourseCardProps) {
                                     courseId={course.vak_id.toString()}
                                     archived={true}
                                     isStudent={isStudent}
+                                    pinned={pinnedCourses.includes(
+                                        course.vak_id
+                                    )}
+                                    pinEvent={() => pinCourse(course.vak_id)}
                                 />
                             )
                         })}

@@ -15,7 +15,7 @@ interface ProjectStudent {
     assignment: Project
     group?: Group
     lastSubmission?: Submission
-    submissions?: Submission[]
+    submissions?: number
     score?: Score
 }
 
@@ -235,7 +235,6 @@ export function ProjectsView({
                                                 submissions={
                                                     project.submissions
                                                         ? project.submissions
-                                                              .length
                                                         : 0
                                                 }
                                                 score={

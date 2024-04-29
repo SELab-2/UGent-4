@@ -7,12 +7,13 @@ from api.models.groep import Groep
 from api.models.vak import Vak
 from api.models.project import Project
 from api.serializers.indiening import IndieningSerializer
-from api.utils import is_lesgever, contains
+from api.utils import has_permissions, contains
 
 import os
 import tempfile
 import zipfile
 from django.http import HttpResponse
+from django.http import FileResponse
 
 
 @api_view(["GET", "POST"])
@@ -35,7 +36,7 @@ def indiening_list(request, format=None):
         Response: Een lijst van indieningen of een nieuw aangemaakte indiening.
     """
     if request.method == "GET":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             indieningen = Indiening.objects.all()
         else:
             groepen = Groep.objects.filter(studenten=request.user.id)
@@ -105,7 +106,7 @@ def indiening_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if is_lesgever(request.user) or contains(
+        if has_permissions(request.user) or contains(
             indiening.groep.studenten, request.user
         ):
             serializer = IndieningSerializer(indiening)
@@ -113,7 +114,7 @@ def indiening_detail(request, id, format=None):
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     elif request.method == "DELETE":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             indiening.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_403_FORBIDDEN)
@@ -138,7 +139,9 @@ def indiening_detail_download_bestanden(request, id, format=None):
     except Indiening.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if is_lesgever(request.user) or contains(indiening.groep.studenten, request.user):
+    if has_permissions(request.user) or contains(
+        indiening.groep.studenten, request.user
+    ):
         indiening_bestanden = IndieningBestand.objects.filter(indiening=indiening)
 
         temp_dir = tempfile.mkdtemp()
@@ -155,4 +158,28 @@ def indiening_detail_download_bestanden(request, id, format=None):
             response["Content-Disposition"] = f"attachment; filename={zip_file_name}"
             return response
 
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def indiening_detail_download_artefacten(request, id, format=None):
+    """
+    Een view om de artefacten van een specifieke indiening te downloaden.
+
+    Args:
+        id (int): De primaire sleutel van de indiening.
+        format (str, optional): Het gewenste formaat voor de respons. Standaard is None.
+
+    Returns:
+        Response: Een bestandsrespons met de artefacten van de indiening als bijlage,
+        indien de gebruiker een lesgever is.
+        Anders wordt een foutmelding geretourneerd.
+    """
+    try:
+        indiening = Indiening.objects.get(pk=id)
+    except Project.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if is_lesgever(request.user):
+        return FileResponse(indiening.artefacten.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)

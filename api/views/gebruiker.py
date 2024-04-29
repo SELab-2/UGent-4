@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from api.models.gebruiker import Gebruiker
 from api.serializers.gebruiker import GebruikerSerializer
 
-from api.utils import is_lesgever
+from api.utils import has_permissions
 
 
 @api_view(["GET"])
@@ -25,7 +25,7 @@ def gebruiker_list(request):
         Response: Een lijst van gebruikers.
     """
 
-    if is_lesgever(request.user):
+    if has_permissions(request.user):
         gebruikers = Gebruiker.objects.all()
     else:
         gebruikers = Gebruiker.objects.filter(user=request.user.id)
@@ -64,7 +64,11 @@ def gebruiker_detail(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if is_lesgever(request.user) or int(id) == request.user.id:
+        if (
+            has_permissions(request.user)
+            or gebruiker.is_lesgever
+            or int(id) == request.user.id
+        ):
             serializer = GebruikerSerializer(gebruiker)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
@@ -73,8 +77,6 @@ def gebruiker_detail(request, id):
             if request.method == "PUT":
                 serializer = GebruikerSerializer(gebruiker, data=request.data)
             else:
-                if not request.data.get("gepinde_vakken"):
-                    request.data["gepinde_vakken"] = gebruiker.gepinde_vakken.all()
                 serializer = GebruikerSerializer(
                     gebruiker, data=request.data, partial=True
                 )

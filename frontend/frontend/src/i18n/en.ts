@@ -92,6 +92,8 @@ const english = {
     must_pass: 'Must pass',
     loading: 'Loading',
     file: 'File',
+    archive_course_warning: 'Archive Course?',
+    will_archive_projects: 'This will archive all projects.',
 }
 
 export default english

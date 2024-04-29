@@ -35,7 +35,6 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 import AddRestrictionButton from './AddRestrictionButton.tsx'
 import { RestrictionCard } from '../../components/RestrictionCard.tsx'
 
-//TODO: Make sure loading of data is consistent and not all over the place
 /**
  * This page is used to add or change an assignment.
  * The page should only be accessible to teachers of the course.
@@ -249,7 +248,7 @@ export function AddChangeAssignmentPage() {
                     const file: File = new File([blob], filename, {
                         type: response.headers['content-type'],
                     })
-                    console.log('file' + file.name)
+
                     setAssignmentFile(file)
                 })
                 .catch((error) => {
@@ -483,6 +482,7 @@ export function AddChangeAssignmentPage() {
                             gap={2}
                             alignItems={'center'}
                         >
+                            {/* Here the user gets to specify the assignment name */}
                             <Typography
                                 variant={'h6'}
                                 color={'text.primary'}
@@ -542,7 +542,9 @@ export function AddChangeAssignmentPage() {
                             )}
                         </Box>
                     </Box>
-                    {/* Deadline section */}
+                    {/* Deadline section.
+                    There is both the normal deadline, 
+                    and an extra deadline in case people need more time. */}
                     <Box
                         aria-label={'deadline'}
                         padding={2}
@@ -561,6 +563,7 @@ export function AddChangeAssignmentPage() {
                             gap={2}
                             alignItems={'center'}
                         >
+                            {/* This section renders the normal deadline. */}
                             <Typography
                                 variant={'h6'}
                                 color={'text.primary'}
@@ -580,6 +583,7 @@ export function AddChangeAssignmentPage() {
                                     adapterLocale="nl"
                                 >
                                     <DateTimePicker
+                                        format="DD/MM/YYYY HH:mm"
                                         value={dueDate}
                                         disablePast
                                         label={t('optional')}
@@ -615,6 +619,7 @@ export function AddChangeAssignmentPage() {
                             gap={2}
                             alignItems={'center'}
                         >
+                            {/* This section renders the extra deadline. */}
                             <Typography
                                 variant={'h6'}
                                 color={'text.primary'}
@@ -634,6 +639,7 @@ export function AddChangeAssignmentPage() {
                                     adapterLocale="nl"
                                 >
                                     <DateTimePicker
+                                        format="DD/MM/YYYY HH:mm"
                                         value={extraDueDate}
                                         disablePast
                                         label={t('optional')}
@@ -699,6 +705,7 @@ export function AddChangeAssignmentPage() {
                                     }
                                     fullWidth
                                     error={assignmentErrors.description}
+                                    // Show an error message if the description is not filled in.
                                     helperText={
                                         assignmentErrors.description
                                             ? t('descriptionName') +
@@ -733,6 +740,7 @@ export function AddChangeAssignmentPage() {
                                 {t('restrictions')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>
+                                {/*This list will render the restrictions that are added to the assignment.*/}
                                 <List
                                     sx={{
                                         maxHeight: '18vh',
@@ -772,16 +780,16 @@ export function AddChangeAssignmentPage() {
                                 justifyContent={'flex-end'}
                             >
                                 <Tooltip title={t('add_restriction')}>
-                                    {/*<IconButton color={"primary"}
-                                                disabled={allowedTypes.length === 0}
-                                onClick={handleAddRestriction}><AddIcon/></IconButton>*/}
                                     <AddRestrictionButton
+                                        // When this button is clicked, a pop up will show.
+                                        // This popup will allow you to choose to make a restriction yourself,
+                                        // create one starting from a template,
+                                        // or choose a file from the system.
                                         restrictions={restrictions}
                                         setRestrictions={(newRestrictions) =>
                                             setRestrictions(newRestrictions)
                                         }
                                     ></AddRestrictionButton>
-                                    {/*<Button>Show restrictions</Button>*/}
                                 </Tooltip>
                             </Box>
                         </Card>
@@ -811,6 +819,8 @@ export function AddChangeAssignmentPage() {
                             >
                                 {visible ? (
                                     <IconButton
+                                        // Allows the teacher to select whether
+                                        // the assignment is visible to students or not.
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -837,6 +847,7 @@ export function AddChangeAssignmentPage() {
                                     </IconButton>
                                 </Tooltip>
                             </Box>
+                            {/* This section allows the teacher to set the maximum score for the assignment.*/}
                             <Box
                                 aria-label={'maxScore'}
                                 display={'flex'}

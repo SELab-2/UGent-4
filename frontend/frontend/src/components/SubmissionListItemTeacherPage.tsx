@@ -46,8 +46,8 @@ export function SubmissionListItemTeacherPage({
     }
 
     // State for submitted data and score
-    const [submitted, setSubmitted] = useState<unknown>()
-    const [score, setScore] = useState<unknown>()
+    const [submitted, setSubmitted] = useState<Submission>()
+    const [score, setScore] = useState<Score>()
     useEffect(() => {
         async function fetchData() {
             try {
@@ -149,10 +149,12 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
-                        sx={{ maxWidth: 100 }}
+                        sx={{ maxWidth: 150 }}
                         primary={
                             submitted
-                                ? dayjs(submitted.tijdstip).format('DD-MM-YYYY')
+                                ? dayjs(submitted.tijdstip).format(
+                                      'DD/MM/YYYY HH:mm'
+                                  )
                                 : '-'
                         }
                     />

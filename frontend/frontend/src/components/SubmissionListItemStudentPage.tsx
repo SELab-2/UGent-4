@@ -11,7 +11,7 @@ import { t } from 'i18next'
 
 interface SubmissionListItemStudentPageProps {
     id: string
-    timestamp?: Date
+    timestamp?: string
     status: boolean
     assignment_id: string
     course_id: string
@@ -74,12 +74,8 @@ export function SubmissionListItemStudentPage({
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
-                        sx={{ maxWidth: 110 }}
-                        primary={
-                            timestamp
-                                ? timestamp.toLocaleDateString()
-                                : t('time')
-                        }
+                        sx={{ maxWidth: 150 }}
+                        primary={timestamp ? timestamp : t('time')}
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>

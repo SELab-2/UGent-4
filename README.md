@@ -2,7 +2,7 @@
 
 # Wiki
 
-- Raadpleeg de wiki voor uitgebreidere informatie, waaronder Use-Cases en API-Documentatie.
+- Raadpleeg de wiki voor uitgebreidere informatie, waaronder Use-Cases en API-Documentatie en Website-documentatie.
 
 # Frontend
 

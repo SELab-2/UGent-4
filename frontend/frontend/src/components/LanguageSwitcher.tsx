@@ -7,7 +7,6 @@ const locales = {
     nl: { title: 'Nederlands' },
 }
 
-
 /**
  * Component to switch between different language options.
  * This component renders a list of menu items, each representing a language option.

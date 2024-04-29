@@ -11,6 +11,7 @@ import { t } from 'i18next'
 import { useEffect, useState } from 'react'
 import instance from '../../axiosConfig'
 import { Indiening } from './ProjectScoresPage.tsx'
+import dayjs from 'dayjs'
 
 interface StudentScoreListItemProps {
     key: number
@@ -125,9 +126,9 @@ export function StudentScoreListItem({
                                 lastSubmission
                                     ? t('last_submission') +
                                       ' ' +
-                                      new Date(
-                                          lastSubmission.tijdstip
-                                      ).toLocaleString()
+                                      dayjs(lastSubmission.tijdstip).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
                                     : t('no_submissions')
                             }
                         />
