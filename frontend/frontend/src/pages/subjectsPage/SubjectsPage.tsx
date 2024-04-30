@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header'
-import { Box, IconButton, Stack } from '@mui/material'
+import { Box, CircularProgress, IconButton, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -10,6 +10,7 @@ import instance from '../../axiosConfig.ts'
 import { useEffect, useState } from 'react'
 import ErrorPage from '../ErrorPage.tsx'
 import { Course } from '../mainPage/MainPage.tsx'
+import { CopyToClipboard } from '../../components/CopyToClipboard.tsx'
 
 interface Project {
     project_id: number
@@ -32,8 +33,8 @@ interface Project {
  * Any other UI on the course's page is also handled in this view
  */
 export function SubjectsPage() {
-    let { courseId } = useParams()
-    courseId = String(courseId)
+    const { courseId, accept_invite } = useParams()
+    const courseID = String(courseId)
 
     const navigate = useNavigate()
 
@@ -47,35 +48,69 @@ export function SubjectsPage() {
         email: '',
     })
     const [fetchError, setFetchError] = useState(false)
+    const [userLoading, setUserLoading] = useState(true)
+
+    //variable for invitation link popup close
+    const [inviteOpen, setInviteOpen] = useState(false)
+
+    async function confirmJoinCourse() {
+        await instance.get(`/vakken/${courseID}/accept_invite/`)
+        setInviteOpen(false)
+        navigate(`/course/${courseID}`)
+    }
 
     useEffect(() => {
         // Get the data for this course.
-        async function fetchData() {
+        async function fetchUser() {
             try {
-                const courseResponse = await instance.get(
-                    `/vakken/${courseId}/`
-                )
-                const assignmentsResponse = await instance.get(
-                    `/projecten/?vak=${courseId}`
-                )
-                setCourse(courseResponse.data)
-                setAssignments(assignmentsResponse.data)
-
+                setUserLoading(true)
                 const userResponse = await instance.get('/gebruikers/me/')
                 setUser(userResponse.data)
             } catch (error) {
                 console.error('Error fetching data:', error)
                 setFetchError(true)
+            } finally {
+                setUserLoading(false)
             }
         }
+        async function fetchData() {
+            try {
+                const courseResponse = await instance.get(
+                    `/vakken/${courseID}/`
+                )
+                const assignmentsResponse = await instance.get(
+                    `/projecten/?vak=${courseID}`
+                )
+                setCourse(courseResponse.data)
+                setAssignments(assignmentsResponse.data)
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                setFetchError(true)
+            }
+        }
+        // Fetch user first
+        fetchUser().catch((error) =>
+            console.error('Error fetching data:', error)
+        )
+
+        // check if the url is a special url for accepting an invitation
+        if (accept_invite !== undefined) {
+            if (user.is_lesgever) {
+                navigate(`/course/${courseID}`)
+            } else {
+                setInviteOpen(true)
+            }
+        }
+
+        // Fetch the course and assignments
         fetchData().catch((error) =>
             console.error('Error fetching data:', error)
         )
-    }, [courseId])
+    }, [accept_invite, courseID, navigate, user.is_lesgever])
 
     const addProject = () => {
         console.log('add project')
-        navigate(`/course/${courseId}/assignment/edit/`)
+        navigate(`/course/${courseID}/assignment/edit/`)
     }
 
     const [openDeletePopup, setOpenDeletePopup] = useState(false)
@@ -139,131 +174,203 @@ export function SubjectsPage() {
 
     return (
         <>
-            {user.is_lesgever ? (
-                <>
-                    {/* The code below shows the page from the perspecitve of the teacher. */}
-                    <Stack
-                        direction={'column'}
-                        spacing={0}
-                        sx={{
-                            width: '99%',
-                            height: '100%',
-                            backgroundColor: 'background.default',
-                        }}
-                    >
-                        <Header variant={'editable'} title={course.naam} />
-                        <Box
-                            sx={{ width: '100%', height: '70%', marginTop: 10 }}
-                        >
-                            {/* Give the student the option to select current or archived projects. */}
-                            <TabSwitcher
-                                titles={['current_projects', 'archived']}
-                                nodes={[
-                                    <ProjectsView
-                                        gebruiker={user}
-                                        archived={false}
-                                        assignments={assignments}
-                                        deleteAssignment={deleteAssignment}
-                                        archiveAssignment={archiveAssignment}
-                                        changeVisibilityAssignment={
-                                            changeVisibilityAssignment
-                                        }
-                                        courseId={courseId}
-                                    />,
-                                    <ProjectsView
-                                        gebruiker={user}
-                                        archived={true}
-                                        assignments={assignments}
-                                        deleteAssignment={deleteAssignment}
-                                        archiveAssignment={archiveAssignment}
-                                        changeVisibilityAssignment={
-                                            changeVisibilityAssignment
-                                        }
-                                        courseId={courseId}
-                                    />,
-                                ]}
-                            />
-                        </Box>
-                        <Box
-                            display="flex"
-                            flexDirection="row-reverse"
-                            sx={{ width: '100%', height: '30%' }}
-                        >
-                            <IconButton
-                                onClick={addProject}
-                                color="primary"
-                                edge="end"
-                                aria-label="add-project"
-                            >
-                                <AddCircleIcon
-                                    sx={{ fontSize: 60, height: '100%' }}
-                                />
-                            </IconButton>
-                        </Box>
-                        <WarningPopup
-                            title={t('delete_project_warning')}
-                            content={t('cant_be_undone')}
-                            buttonName={t('delete')}
-                            open={openDeletePopup}
-                            handleClose={() => setOpenDeletePopup(false)}
-                            doAction={doDelete}
-                        />
-                        <WarningPopup
-                            title={t('archive_project_warning')}
-                            content={t('cant_be_undone')}
-                            buttonName={t('archive')}
-                            open={openArchivePopup}
-                            handleClose={() => setOpenArchivePopup(false)}
-                            doAction={doArchive}
-                        />
-                    </Stack>
-                </>
+            {userLoading ? (
+                <Box
+                    display={'flex'}
+                    justifyContent={'center'}
+                    alignItems={'center'}
+                    sx={{ height: '100vh', width: '100vw' }}
+                >
+                    <CircularProgress color="primary" size={80} />
+                </Box>
             ) : (
                 <>
-                    {/* The colon is the "else" of the ternary operator.
+                    {user.is_lesgever ? (
+                        <>
+                            {/* The code below shows the page from the perspecitve of the teacher. */}
+                            <Stack
+                                direction={'column'}
+                                spacing={0}
+                                sx={{
+                                    width: '99%',
+                                    height: '100%',
+                                    backgroundColor: 'background.default',
+                                }}
+                            >
+                                <Header
+                                    variant={'editable'}
+                                    title={course.naam}
+                                />
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        height: '70%',
+                                        marginTop: 10,
+                                    }}
+                                >
+                                    {/* Give the student the option to select current or archived projects. */}
+                                    <TabSwitcher
+                                        titles={[
+                                            'current_projects',
+                                            'archived',
+                                        ]}
+                                        nodes={[
+                                            <ProjectsView
+                                                gebruiker={user}
+                                                archived={false}
+                                                assignments={assignments}
+                                                deleteAssignment={
+                                                    deleteAssignment
+                                                }
+                                                archiveAssignment={
+                                                    archiveAssignment
+                                                }
+                                                changeVisibilityAssignment={
+                                                    changeVisibilityAssignment
+                                                }
+                                                courseId={courseID}
+                                            />,
+                                            <ProjectsView
+                                                gebruiker={user}
+                                                archived={true}
+                                                assignments={assignments}
+                                                deleteAssignment={
+                                                    deleteAssignment
+                                                }
+                                                archiveAssignment={
+                                                    archiveAssignment
+                                                }
+                                                changeVisibilityAssignment={
+                                                    changeVisibilityAssignment
+                                                }
+                                                courseId={courseID}
+                                            />,
+                                        ]}
+                                    />
+                                </Box>
+                                <Box
+                                    display="flex"
+                                    flexDirection="row"
+                                    justifyContent="space-between"
+                                    sx={{ width: '100%', height: '30%' }}
+                                >
+                                    <CopyToClipboard
+                                        invitationLink={
+                                            window.location.href +
+                                            '/accept_invitation'
+                                        }
+                                    />
+
+                                    <IconButton
+                                        onClick={addProject}
+                                        color="primary"
+                                        edge="end"
+                                        aria-label="add-project"
+                                    >
+                                        <AddCircleIcon
+                                            sx={{
+                                                fontSize: 60,
+                                                height: '100%',
+                                            }}
+                                        />
+                                    </IconButton>
+                                </Box>
+                                <WarningPopup
+                                    title={t('delete_project_warning')}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('delete')}
+                                    open={openDeletePopup}
+                                    handleClose={() =>
+                                        setOpenDeletePopup(false)
+                                    }
+                                    doAction={doDelete}
+                                />
+                                <WarningPopup
+                                    title={t('archive_project_warning')}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('archive')}
+                                    open={openArchivePopup}
+                                    handleClose={() =>
+                                        setOpenArchivePopup(false)
+                                    }
+                                    doAction={doArchive}
+                                />
+                            </Stack>
+                        </>
+                    ) : (
+                        <>
+                            {/* The colon is the "else" of the ternary operator.
                 This means that all the code below is applicable to the student's view. */}
-                    <Stack
-                        direction={'column'}
-                        spacing={10}
-                        sx={{
-                            width: '100%',
-                            height: '100%',
-                            backgroundColor: 'background.default',
-                        }}
-                    >
-                        <Header variant={'default'} title={course.naam} />
-                        <Box
-                            sx={{ width: '100%', height: '70%', marginTop: 10 }}
-                        >
-                            <TabSwitcher
-                                titles={['current_projects', 'archived']}
-                                nodes={[
-                                    <ProjectsView
-                                        gebruiker={user}
-                                        archived={false}
-                                        assignments={assignments}
-                                        deleteAssignment={() => undefined}
-                                        archiveAssignment={() => undefined}
-                                        changeVisibilityAssignment={() =>
-                                            undefined
-                                        }
-                                        courseId={courseId}
-                                    />,
-                                    <ProjectsView
-                                        gebruiker={user}
-                                        archived={true}
-                                        assignments={assignments}
-                                        deleteAssignment={() => undefined}
-                                        archiveAssignment={() => undefined}
-                                        changeVisibilityAssignment={() =>
-                                            undefined
-                                        }
-                                        courseId={courseId}
-                                    />,
-                                ]}
-                            />
-                        </Box>
-                    </Stack>
+                            <Stack
+                                direction={'column'}
+                                spacing={10}
+                                sx={{
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: 'background.default',
+                                }}
+                            >
+                                <Header
+                                    variant={'default'}
+                                    title={course.naam}
+                                />
+                                <Box
+                                    sx={{
+                                        width: '100%',
+                                        height: '70%',
+                                        marginTop: 10,
+                                    }}
+                                >
+                                    <TabSwitcher
+                                        titles={[
+                                            'current_projects',
+                                            'archived',
+                                        ]}
+                                        nodes={[
+                                            <ProjectsView
+                                                gebruiker={user}
+                                                archived={false}
+                                                assignments={assignments}
+                                                deleteAssignment={() =>
+                                                    undefined
+                                                }
+                                                archiveAssignment={() =>
+                                                    undefined
+                                                }
+                                                changeVisibilityAssignment={() =>
+                                                    undefined
+                                                }
+                                                courseId={courseID}
+                                            />,
+                                            <ProjectsView
+                                                gebruiker={user}
+                                                archived={true}
+                                                assignments={assignments}
+                                                deleteAssignment={() =>
+                                                    undefined
+                                                }
+                                                archiveAssignment={() =>
+                                                    undefined
+                                                }
+                                                changeVisibilityAssignment={() =>
+                                                    undefined
+                                                }
+                                                courseId={courseID}
+                                            />,
+                                        ]}
+                                    />
+                                    <WarningPopup
+                                        title={t('join_course')}
+                                        content={t('acces')}
+                                        buttonName={t('join')}
+                                        open={inviteOpen}
+                                        handleClose={() => navigate('/')}
+                                        doAction={confirmJoinCourse}
+                                    />
+                                </Box>
+                            </Stack>
+                        </>
+                    )}
                 </>
             )}
         </>
