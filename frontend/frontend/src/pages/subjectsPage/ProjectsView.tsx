@@ -1,3 +1,4 @@
+import { Card } from '../../components/CustomComponents.tsx'
 import { Box, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { t } from 'i18next'
@@ -141,114 +142,126 @@ export function ProjectsView({
 
     return (
         <>
-            <Box
-                aria-label={'courseHeader'}
-                sx={{
-                    backgroundColor: 'secondary.main',
-                    margin: 0,
-                    height: 50,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    padding: 3,
-                }}
-            >
-                {!gebruiker.is_lesgever ? (
-                    <>
-                        {/* Show the UI from the perspective of a student. */}
-                        <Typography variant={'h4'}>Project</Typography>
-                        <Typography variant={'h4'}>Deadline</Typography>
-                        <Typography variant={'h4'}>
-                            {t('submissions')}
-                        </Typography>
-                        <Typography variant={'h4'}>Score</Typography>
-                    </>
-                ) : (
-                    <>
-                        {/* Show the UI from the perspective of a teacher. */}
-                        <Typography variant={'h4'}>Project</Typography>
-                        <Typography variant={'h4'}>Deadline</Typography>
-                        <Typography variant={'h4'}>{t('edit')}</Typography>
-                    </>
-                )}
-            </Box>
-            <Box
-                aria-label={'assignmentList'}
-                sx={{
-                    backgroundColor: 'background.default',
-                    height: 340,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    padding: 1,
-                    borderRadius: 2,
-                    paddingBottom: 0,
-                }}
-            >
-                <Box display={'flex'} flexDirection={'row'}>
-                    <Box sx={{ width: '100%', height: 320, overflow: 'auto' }}>
-                        {/* The list below will display the projects with their information */}
-                        <List disablePadding={true}>
-                            {projects
-                                .map((project, index) => ({
-                                    ...project,
-                                    index,
-                                }))
-                                .filter(
-                                    (project) =>
-                                        project.assignment.gearchiveerd ==
-                                        archived
-                                )
-                                .filter(
-                                    (project) =>
-                                        project.assignment.zichtbaar ||
-                                        gebruiker.is_lesgever
-                                )
-                                .map((project) => (
-                                    <AssignmentListItemSubjectsPage
-                                        key={project.assignment.project_id}
-                                        projectName={project.assignment.titel}
-                                        dueDate={dayjs(
-                                            project.assignment.deadline
-                                        )}
-                                        submissions={
-                                            project.submissions
-                                                ? project.submissions
-                                                : 0
-                                        }
-                                        score={
-                                            project.score
-                                                ? project.score
-                                                : {
-                                                      score_id: 0,
-                                                      score: 0,
-                                                      indiening: 0,
-                                                  }
-                                        }
-                                        maxScore={Number(
-                                            project.assignment.max_score
-                                        )}
-                                        isStudent={!gebruiker.is_lesgever}
-                                        archived={archived}
-                                        visible={project.assignment.zichtbaar}
-                                        deleteEvent={() =>
-                                            deleteAssignment(project.index)
-                                        }
-                                        archiveEvent={() =>
-                                            archiveAssignment(project.index)
-                                        }
-                                        visibilityEvent={() =>
-                                            changeVisibilityAssignment(
-                                                project.index
-                                            )
-                                        }
-                                        courseId={courseId}
-                                        assignmentId={project.assignment.project_id.toString()}
-                                    />
-                                ))}
-                        </List>
+            <Card>
+                <Box
+                    aria-label={'courseHeader'}
+                    sx={{
+                        backgroundColor: 'secondary.main',
+                        margin: 0,
+                        height: 50,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
+                        padding: 3,
+                    }}
+                >
+                    {!gebruiker.is_lesgever ? (
+                        <>
+                            {/* Show the UI from the perspective of a student. */}
+                            <Typography variant={'h4'}>Project</Typography>
+                            <Typography variant={'h4'}>Deadline</Typography>
+                            <Typography variant={'h4'}>
+                                {t('submissions')}
+                            </Typography>
+                            <Typography variant={'h4'}>Score</Typography>
+                        </>
+                    ) : (
+                        <>
+                            {/* Show the UI from the perspective of a teacher. */}
+                            <Typography variant={'h4'}>Project</Typography>
+                            <Typography variant={'h4'}>Deadline</Typography>
+                            <Typography variant={'h4'}>{t('edit')}</Typography>
+                        </>
+                    )}
+                </Box>
+                <Box
+                    aria-label={'assignmentList'}
+                    sx={{
+                        backgroundColor: 'background.default',
+                        height: 340,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        padding: 1,
+                        borderRadius: 2,
+                        paddingBottom: 0,
+                    }}
+                >
+                    <Box display={'flex'} flexDirection={'row'}>
+                        <Box
+                            sx={{
+                                width: '100%',
+                                height: 320,
+                                overflow: 'auto',
+                            }}
+                        >
+                            {/* The list below will display the projects with their information */}
+                            <List disablePadding={true}>
+                                {projects
+                                    .map((project, index) => ({
+                                        ...project,
+                                        index,
+                                    }))
+                                    .filter(
+                                        (project) =>
+                                            project.assignment.gearchiveerd ==
+                                            archived
+                                    )
+                                    .filter(
+                                        (project) =>
+                                            project.assignment.zichtbaar ||
+                                            gebruiker.is_lesgever
+                                    )
+                                    .map((project) => (
+                                        <AssignmentListItemSubjectsPage
+                                            key={project.assignment.project_id}
+                                            projectName={
+                                                project.assignment.titel
+                                            }
+                                            dueDate={dayjs(
+                                                project.assignment.deadline
+                                            )}
+                                            submissions={
+                                                project.submissions
+                                                    ? project.submissions
+                                                    : 0
+                                            }
+                                            score={
+                                                project.score
+                                                    ? project.score
+                                                    : {
+                                                          score_id: 0,
+                                                          score: 0,
+                                                          indiening: 0,
+                                                      }
+                                            }
+                                            maxScore={Number(
+                                                project.assignment.max_score
+                                            )}
+                                            isStudent={!gebruiker.is_lesgever}
+                                            archived={archived}
+                                            visible={
+                                                project.assignment.zichtbaar
+                                            }
+                                            deleteEvent={() =>
+                                                deleteAssignment(project.index)
+                                            }
+                                            archiveEvent={() =>
+                                                archiveAssignment(project.index)
+                                            }
+                                            visibilityEvent={() =>
+                                                changeVisibilityAssignment(
+                                                    project.index
+                                                )
+                                            }
+                                            courseId={courseId}
+                                            assignmentId={project.assignment.project_id.toString()}
+                                        />
+                                    ))}
+                            </List>
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
+            </Card>
         </>
     )
 }
