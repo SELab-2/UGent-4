@@ -1,6 +1,6 @@
+import { Divider } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Divider,
     IconButton,
     ListItemButton,
     ListItemText,

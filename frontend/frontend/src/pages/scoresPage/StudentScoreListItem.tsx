@@ -1,10 +1,5 @@
-import {
-    Divider,
-    IconButton,
-    ListItem,
-    ListItemText,
-    TextField,
-} from '@mui/material'
+import { Divider } from '../../components/CustomComponents.tsx'
+import { IconButton, ListItem, ListItemText, TextField } from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
@@ -115,7 +110,7 @@ export function StudentScoreListItem({
                                     ? t('last_submission') +
                                       ' ' +
                                       dayjs(lastSubmission.tijdstip).format(
-                                        'DD/MM/YYYY HH:mm'
+                                          'DD/MM/YYYY HH:mm'
                                       )
                                     : t('no_submissions')
                             }

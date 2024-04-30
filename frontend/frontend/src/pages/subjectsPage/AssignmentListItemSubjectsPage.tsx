@@ -1,5 +1,5 @@
+import { Divider } from '../../components/CustomComponents.tsx'
 import {
-    Divider,
     IconButton,
     ListItem,
     ListItemButton,
@@ -101,8 +101,8 @@ export function AssignmentListItemSubjectsPage({
                                 primary={
                                     dueDate
                                         ? dayjs(dueDate).format(
-                                            'DD/MM/YYYY HH:mm'
-                                        )
+                                              'DD/MM/YYYY HH:mm'
+                                          )
                                         : t('no_deadline')
                                 }
                             />
@@ -148,8 +148,8 @@ export function AssignmentListItemSubjectsPage({
                                 primary={
                                     dueDate
                                         ? dayjs(dueDate).format(
-                                            'DD/MM/YYYY HH:mm'
-                                        )
+                                              'DD/MM/YYYY HH:mm'
+                                          )
                                         : t('no_deadline')
                                 }
                             />

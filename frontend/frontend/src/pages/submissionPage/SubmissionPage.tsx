@@ -2,15 +2,8 @@ import { Header } from '../../components/Header.tsx'
 import { useParams } from 'react-router-dom'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
-import { Button, Card } from '../../components/CustomComponents.tsx'
-import {
-    Box,
-    CircularProgress,
-    Divider,
-    ListItem,
-    Paper,
-    Typography,
-} from '@mui/material'
+import { Button, Card, Divider } from '../../components/CustomComponents.tsx'
+import { Box, CircularProgress, ListItem, Typography } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import List from '@mui/material/List'

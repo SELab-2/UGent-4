@@ -1,4 +1,5 @@
-import { Box, Divider, Typography } from '@mui/material'
+import { Divider } from '../../components/CustomComponents.tsx'
+import { Box, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { StudentScoreListItem } from './StudentScoreListItem.tsx'
 import { t } from 'i18next'
