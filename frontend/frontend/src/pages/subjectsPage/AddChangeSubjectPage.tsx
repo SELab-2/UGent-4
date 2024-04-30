@@ -9,7 +9,7 @@ import {
     Typography,
 } from '@mui/material'
 import { Header } from '../../components/Header.tsx'
-import Button from '../../components/CustomComponents.tsx'
+import { Button } from '../../components/CustomComponents.tsx'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import List from '@mui/material/List'

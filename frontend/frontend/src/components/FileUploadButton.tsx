@@ -1,5 +1,5 @@
 import { styled } from '@mui/material/styles'
-import Button from './CustomComponents'
+import { Button } from './CustomComponents'
 import UploadFileIcon from '@mui/icons-material/UploadFile'
 import { ChangeEvent } from 'react'
 import { Box, IconButton, Tooltip, Typography } from '@mui/material'

@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header.tsx'
-import Button from '../../components/CustomComponents.tsx'
+import { Button } from '../../components/CustomComponents.tsx'
 import {
     Box,
     Grid,

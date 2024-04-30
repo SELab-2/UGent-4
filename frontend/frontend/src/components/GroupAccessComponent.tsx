@@ -1,4 +1,4 @@
-import Button from './CustomComponents'
+import { Button } from './CustomComponents'
 import { Box, Typography } from '@mui/material'
 import { t } from 'i18next'
 import Switch from '@mui/material/Switch'

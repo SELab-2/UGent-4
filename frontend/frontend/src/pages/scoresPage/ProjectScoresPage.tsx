@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header'
-import Button from '../../components/CustomComponents.tsx'
+import { Button } from '../../components/CustomComponents.tsx'
 import { Box, Stack, styled } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { StudentsView } from './StudentsView.tsx'

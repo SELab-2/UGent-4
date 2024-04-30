@@ -1,4 +1,4 @@
-import Button from '../../components/CustomComponents.tsx'
+import { Button } from '../../components/CustomComponents.tsx'
 import { Box, Typography } from '@mui/material'
 import { t } from 'i18next'
 import { useMsal } from '@azure/msal-react'

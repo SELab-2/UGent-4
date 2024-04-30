@@ -1,4 +1,4 @@
-import Button from './CustomComponents'
+import { Button } from './CustomComponents'
 import {
     DialogActions,
     DialogContent,

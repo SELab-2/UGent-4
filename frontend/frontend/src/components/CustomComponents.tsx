@@ -42,7 +42,7 @@ export const Card = ({ children, ...props }: any) => {
     )
 }
 
-export const Divider = () => {
+export const Divider = ({ children, ...props }: any) => {
     return (
         <BaseDivider
             sx={{
@@ -50,7 +50,10 @@ export const Divider = () => {
                 borderColor: 'text.primary',
                 borderRadius: 5,
             }}
-        ></BaseDivider>
+            {...props}
+        >
+            {children}
+        </BaseDivider>
     )
 }
 
