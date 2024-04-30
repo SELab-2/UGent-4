@@ -94,7 +94,10 @@ export function SubjectsPage() {
         )
 
         // check if the url is a special url for accepting an invitation
-        if (accept_invite !== undefined) {
+        if (
+            accept_invite !== undefined &&
+            accept_invite === 'accept_invitation'
+        ) {
             if (user.is_lesgever) {
                 navigate(`/course/${courseID}`)
             } else {
