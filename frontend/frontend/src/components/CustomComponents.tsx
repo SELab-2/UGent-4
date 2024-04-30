@@ -32,8 +32,9 @@ export const Card = ({ children, ...props }: any) => {
         <BaseCard
             elevation={0}
             style={{
-                border: `3px outset ${theme.palette.primary.dark}`,
+                border: `3px solid ${theme.palette.primary.dark}`,
                 borderRadius: 12,
+                backgroundColor: `${theme.palette.background.paper}`,
             }}
             {...props}
         >

@@ -2,8 +2,8 @@ import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
-import { Button } from '../../components/CustomComponents.tsx'
-import { Box, Card, Divider, List, Stack, Typography } from '@mui/material'
+import { Button, Card, Divider } from '../../components/CustomComponents.tsx'
+import { Box, List, Stack, Typography } from '@mui/material'
 import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
 import { ChangeEvent, useEffect, useState } from 'react'
@@ -223,12 +223,10 @@ export function AssignmentPage() {
 
                         {/*Opgave*/}
                         <Card
-                            elevation={1}
                             sx={{
                                 color: 'text.primary',
                                 padding: '20px',
                                 backgroundColor: 'background.default',
-                                borderRadius: 5,
                             }}
                         >
                             <Stack direction={'column'}>
@@ -248,11 +246,9 @@ export function AssignmentPage() {
 
                         {/*Indieningen*/}
                         <Card
-                            elevation={1}
                             sx={{
                                 color: 'text.primary',
                                 backgroundColor: 'background.default',
-                                borderRadius: 5,
                                 padding: '20px',
                             }}
                         >
@@ -382,12 +378,10 @@ export function AssignmentPage() {
 
                         {/*Opgave*/}
                         <Card
-                            elevation={1}
                             sx={{
                                 color: 'text.primary',
                                 padding: '20px',
                                 backgroundColor: 'background.default',
-                                borderRadius: 5,
                             }}
                         >
                             <Stack direction={'column'}>
@@ -407,11 +401,9 @@ export function AssignmentPage() {
 
                         {/*Indieningen*/}
                         <Card
-                            elevation={1}
                             sx={{
                                 color: 'text.primary',
                                 backgroundColor: 'background.default',
-                                borderRadius: 5,
                                 padding: '20px',
                             }}
                         >

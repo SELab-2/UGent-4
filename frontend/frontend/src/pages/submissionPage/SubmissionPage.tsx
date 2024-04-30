@@ -2,10 +2,9 @@ import { Header } from '../../components/Header.tsx'
 import { useParams } from 'react-router-dom'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
-import { Button } from '../../components/CustomComponents.tsx'
+import { Button, Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Card,
     CircularProgress,
     Divider,
     ListItem,
@@ -194,11 +193,9 @@ export function SubmissionPage() {
                         overflowY: 'hidden',
                     }}
                 >
-                    <Paper
+                    <Card
                         aria-label={'deadline'}
-                        elevation={1}
                         sx={{
-                            backgroundColor: 'background.default',
                             padding: 1,
                             minWidth: 100,
                             maxWidth: 250,
@@ -218,12 +215,11 @@ export function SubmissionPage() {
                                   )
                                 : 'error'}
                         </Typography>
-                    </Paper>
+                    </Card>
                     <Card
                         aria-label={'assignment-box'}
                         sx={{
                             width: '99 %',
-                            backgroundColor: 'background.default',
                             padding: 1,
                             paddingBottom: 3,
                         }}
@@ -278,7 +274,6 @@ export function SubmissionPage() {
                         aria-label={'restrictions'}
                         sx={{
                             padding: 1,
-                            backgroundColor: 'background.default',
                             maxWidth: '60%',
                             height: '20vh',
                         }}
@@ -393,7 +388,6 @@ export function SubmissionPage() {
                             aria-label={'result-box'}
                             sx={{
                                 padding: 1,
-                                backgroundColor: 'background.default',
                                 color: 'text.primary',
                                 gap: 2,
                                 maxHeight: '15vh',
