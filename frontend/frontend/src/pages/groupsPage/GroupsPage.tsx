@@ -77,12 +77,18 @@ export function GroupsPage() {
                             })
                     }
                 })
+                .catch((error) => {
+                    console.log(error)
+                })
 
             for (const group of newGroups) {
                 instance
                     .post('/groepen', {
                         studenten: group.studenten,
                         project: parseInt(assignmentId),
+                    })
+                    .catch((error) => {
+                        console.log(error)
                     })
             }
         } else {
@@ -93,6 +99,9 @@ export function GroupsPage() {
                         groep_id: group.groep_id,
                         studenten: group.studenten,
                         project: parseInt(assignmentId),
+                    })
+                    .catch((error) => {
+                        console.log(error)
                     })
             }
         }
@@ -138,6 +147,9 @@ export function GroupsPage() {
         instance.get('/vakken/' + courseId).then((response) => {
             setAvailableStudents(response.data.studenten)
         })
+        .catch((error) => {
+            console.log(error)
+        })
     }
 
     //get the current groups and group size from the backend
@@ -156,20 +168,32 @@ export function GroupsPage() {
                                 response.data.last_name
                         )
                     })
+                    .catch((error) => {
+                        console.log(error)
+                    })
             }
 
             setStudentNames(() => newStudentNames)
+        })
+        .catch((error) => {
+            console.log(error)
         })
 
         instance.get('/projecten/' + assignmentId).then((response) => {
             setNewGroupSize(response.data.max_groep_grootte)
             setAssignmentName(response.data.titel)
         })
+        .catch((error) => {
+            console.log(error)
+        })
 
         instance
             .get<Group[]>(`/groepen/?project=${assignmentId}`)
             .then((response) => {
                 setNewGroups(response.data)
+            })
+            .catch((error) => {
+                console.log(error)
             })
     }, [assignmentId, courseId])
 
