@@ -22,7 +22,7 @@ import Dialog from '@mui/material/Dialog'
 
 import instance from '../../axiosConfig.ts'
 
-import ErrorPage from '../ErrorPage.tsx'
+//import ErrorPage from '../ErrorPage.tsx'
 
 import Papa, { ParseResult } from 'papaparse'
 
@@ -198,15 +198,19 @@ export function AddChangeSubjectPage() {
     const [openTeacher, setOpenTeacher] = useState<boolean>(false)
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
-    const [user, setUser] = useState<User>({
-        user: 0,
-        is_lesgever: false,
-        first_name: '',
-        last_name: '',
-        email: '',
-    })
-    const [userLoaded, setUserLoaded] = useState<boolean>(false)
-    const vakID = params.courseId
+
+    // const [user, setUser] = useState<User>({
+    //     user: 0,
+    //     is_lesgever: false,
+    //     first_name: '',
+    //     last_name: '',
+    //     email: '',
+    // })
+    // const [userLoaded, setUserLoaded] = useState<boolean>
+
+    const [vakID,setVakID]= useState(params.courseId)
+
+    //const vakID = params.courseId
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
@@ -413,92 +417,109 @@ export function AddChangeSubjectPage() {
     const handleSave = (): void => {
         const studentIDs = students.map((student) => student.user)
         const teacherIDs = teachers.map((teacher) => teacher.user)
-        instance
-            .put('vakken/' + vakID + '/', {
-                naam: title,
-                studenten: studentIDs,
-                lesgevers: teacherIDs,
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        if(vakID==undefined){
+            instance
+                .post('vakken/'  , {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                }).then((res) => {
+                    setVakID(res.data.vak_id)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }else{
+            instance
+                .put('vakken/' + vakID + '/', {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
     }
 
     useEffect(() => {
-        instance
-            .get('/gebruikers/me/')
-            .then((res) => {
-                setUser(res.data)
-                setUserLoaded(true)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        instance
-            .get('vakken/' + vakID)
-            .then((res) => {
-                setTitle(res.data.naam)
-                for (const id of res.data.studenten) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setStudents((oldstudents) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
+        // instance
+        //     .get('/gebruikers/me/')
+        //     .then((res) => {
+        //         setUser(res.data)
+        //         setUserLoaded(true)
+        //     })
+        //     .catch((err) => {
+        //         console.log(err)
+        //     })
+        if(vakID!=undefined){
+            instance
+                .get('vakken/' + vakID)
+                .then((res) => {
+                    setTitle(res.data.naam)
+                    for (const id of res.data.studenten) {
+                        instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setStudents((oldstudents) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const student of oldstudents) {
+                                        if (student.user == id) {
+                                            found = true
+                                        }
                                     }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, res.data]
-                                }
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-                for (const id of res.data.lesgevers) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setTeachers((oldteachers) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
+                                    if (found) {
+                                        return oldstudents
+                                    } else {
+                                        return [...oldstudents, res.data]
                                     }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, res.data]
-                                }
+                                })
                             })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                    for (const id of res.data.lesgevers) {
+                        instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setTeachers((oldteachers) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const teacher of oldteachers) {
+                                        if (teacher.user == id) {
+                                            found = true
+                                        }
+                                    }
+                                    if (found) {
+                                        return oldteachers
+                                    } else {
+                                        return [...oldteachers, res.data]
+                                    }
+                                })
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
     }, [vakID])
 
-    if (!userLoaded) {
-        return <>Loading...</>
-    }
-
-    if (!user.is_lesgever) {
-        return ErrorPage()
-    }
+    // if (!userLoaded) {
+    //     return <>Loading...</>
+    // }
+    //
+    // if (!user.is_lesgever) {
+    //     return ErrorPage()
+    // }
 
     return (
         <>
