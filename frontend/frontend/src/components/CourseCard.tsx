@@ -119,7 +119,7 @@ export function CourseCard({
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
                         maxWidth: 420,
-                        backgroundColor: 'background.default',
+                        backgroundColor: 'background.paper',
                         borderRadius: 5,
                         padding: 0,
                         margin: 1,
@@ -236,7 +236,6 @@ export function CourseCard({
                         <Box
                             aria-label={'assignmentList'}
                             sx={{
-                                backgroundColor: 'back',
                                 height: 150,
                                 display: 'flex',
                                 flexDirection: 'column',
