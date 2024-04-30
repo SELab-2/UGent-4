@@ -1,4 +1,9 @@
-import { Button as BaseButton } from '@mui/material'
+import {
+    Button as BaseButton,
+    Card as BaseCard,
+    Divider as BaseDivider,
+} from '@mui/material'
+import theme from '../Theme.ts'
 
 export const Button = ({ children, ...props }: any) => {
     return (
@@ -22,4 +27,31 @@ export const Button = ({ children, ...props }: any) => {
     )
 }
 
-export default Button
+export const Card = ({ children, ...props }: any) => {
+    return (
+        <BaseCard
+            elevation={0}
+            style={{
+                border: `3px outset ${theme.palette.primary.dark}`,
+                borderRadius: 12,
+            }}
+            {...props}
+        >
+            {children}
+        </BaseCard>
+    )
+}
+
+export const Divider = () => {
+    return (
+        <BaseDivider
+            sx={{
+                border: '1px solid',
+                borderColor: 'text.primary',
+                borderRadius: 5,
+            }}
+        ></BaseDivider>
+    )
+}
+
+export default { Button, Card, Divider }
