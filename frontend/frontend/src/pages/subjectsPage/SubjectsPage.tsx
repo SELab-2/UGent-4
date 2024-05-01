@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header'
-import { Box, CircularProgress, IconButton, Stack } from '@mui/material'
+import { Box, CircularProgress, IconButton, Stack, Tooltip, Card } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -11,6 +11,8 @@ import { useEffect, useState } from 'react'
 import ErrorPage from '../ErrorPage.tsx'
 import { Course } from '../mainPage/MainPage.tsx'
 import { CopyToClipboard } from '../../components/CopyToClipboard.tsx'
+import { User } from "./AddChangeSubjectPage"
+import StudentPopUp from './StudentPopUp.tsx'
 
 interface Project {
     project_id: number
@@ -47,6 +49,7 @@ export function SubjectsPage() {
         last_name: '',
         email: '',
     })
+    const [students, setStudents] = useState<User[]>([])
     const [fetchError, setFetchError] = useState(false)
     const [userLoading, setUserLoading] = useState(true)
 
@@ -88,6 +91,20 @@ export function SubjectsPage() {
                 setFetchError(true)
             }
         }
+        async function fetchStudents() {
+            let temp_students = [];
+            for (let s of course?.studenten ?? []) {
+                try {
+                    const userResponse = await instance.get(`/gebruikers/${s}/`);
+                    temp_students.push(userResponse.data);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                    setFetchError(true);
+                }
+            }
+            // Update the state with the fetched data
+            setStudents(temp_students);
+        }
         // Fetch user first
         fetchUser().catch((error) =>
             console.error('Error fetching data:', error)
@@ -107,6 +124,9 @@ export function SubjectsPage() {
 
         // Fetch the course and assignments
         fetchData().catch((error) =>
+            console.error('Error fetching data:', error)
+        )
+        fetchStudents().catch((error) =>
             console.error('Error fetching data:', error)
         )
     }, [accept_invite, courseID, navigate, user.is_lesgever])
@@ -298,6 +318,18 @@ export function SubjectsPage() {
                                     }
                                     doAction={doArchive}
                                 />
+                                <Card
+                                    sx={{
+                                        padding: 0,
+                                        backgroundColor: 'background.default',
+                                        width: 'fit-content',
+                                        height: 'fit-content',
+                                    }}
+                                >
+                                    <StudentPopUp
+                                        students={students}
+                                    ></StudentPopUp>
+                                </Card>
                             </Stack>
                         </>
                     ) : (
@@ -371,6 +403,18 @@ export function SubjectsPage() {
                                         doAction={confirmJoinCourse}
                                     />
                                 </Box>
+                                <Card
+                                    sx={{
+                                        padding: 0,
+                                        backgroundColor: 'background.default',
+                                        width: 'fit-content',
+                                        height: 'fit-content',
+                                    }}
+                                >
+                                    <StudentPopUp
+                                        students={students}
+                                    ></StudentPopUp>
+                                </Card>
                             </Stack>
                         </>
                     )}
