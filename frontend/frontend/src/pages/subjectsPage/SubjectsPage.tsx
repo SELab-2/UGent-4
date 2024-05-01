@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header'
-import { Box, CircularProgress, IconButton, Stack, Tooltip, Card } from '@mui/material'
+import { Box, CircularProgress, IconButton, Stack, Card } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
