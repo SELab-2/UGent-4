@@ -92,6 +92,11 @@ const dutch = {
     must_pass: 'Moet slagen',
     archive_course_warning: 'Vak Archiveren?',
     will_archive_projects: 'Alle opdrachten worden gearchiveerd.',
+    copied: 'Gekopieerd!',
+    copy: 'Kopieer naar klembord',
+    join_course: 'Voeg vak toe?',
+    join: 'Voeg toe',
+    acces: 'Dit geeft je toegang tot het vak.',
 }
 
 export default dutch
