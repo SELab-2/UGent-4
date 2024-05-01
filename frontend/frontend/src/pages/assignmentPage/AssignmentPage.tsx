@@ -67,8 +67,11 @@ export function AssignmentPage() {
                         )
                         setGroups(groupsResponse.data)
                     } else {
+                        const groupResponse = await instance.get(`/groepen/?student=${user.user}`)
+                        const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
+
                         const submissionsResponse = await instance.get(
-                            `/indieningen/?vak=${courseId}`
+                            `/indieningen/?groep=${group.groep_id}`
                         )
                         setSubmissions(submissionsResponse.data)
                     }
