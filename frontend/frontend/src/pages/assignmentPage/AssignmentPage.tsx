@@ -459,7 +459,8 @@ export function AssignmentPage() {
                             <Box style={{ maxHeight: 300, overflow: 'auto' }}>
                                 <Divider color={'text.main'}></Divider>
                                 <List disablePadding={true}>
-                                    {submissions.map((submission) => (
+                                    {submissions.sort((a, b) => dayjs(b.tijdstip).valueOf() - dayjs(a.tijdstip).valueOf())
+                                    .map((submission) => (
                                         <Box key={submission.indiening_id}>
                                             <Divider
                                                 color={'text.main'}
