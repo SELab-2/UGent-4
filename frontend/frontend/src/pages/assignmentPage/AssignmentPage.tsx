@@ -69,11 +69,13 @@ export function AssignmentPage() {
                     } else {
                         const groupResponse = await instance.get(`/groepen/?student=${user.user}`)
                         const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
-
-                        const submissionsResponse = await instance.get(
-                            `/indieningen/?groep=${group.groep_id}`
-                        )
-                        setSubmissions(submissionsResponse.data)
+                        setGroups([group])
+                        if (group){
+                            const submissionsResponse = await instance.get(
+                                `/indieningen/?groep=${group.groep_id}`
+                            )
+                            setSubmissions(submissionsResponse.data)
+                        }
                     }
                 }
             } catch (error) {
@@ -82,7 +84,7 @@ export function AssignmentPage() {
         }
 
         fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever, submissionFile])
+    }, [assignmentId, courseId, user.is_lesgever, submissionFile, groups])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
