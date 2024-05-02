@@ -67,10 +67,15 @@ export function AssignmentPage() {
                         )
                         setGroups(groupsResponse.data)
                     } else {
-                        const submissionsResponse = await instance.get(
-                            `/indieningen/?vak=${courseId}`
-                        )
-                        setSubmissions(submissionsResponse.data)
+                        const groupResponse = await instance.get(`/groepen/?student=${user.user}`)
+                        const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
+                        setGroups([group])
+                        if (group){
+                            const submissionsResponse = await instance.get(
+                                `/indieningen/?groep=${group.groep_id}`
+                            )
+                            setSubmissions(submissionsResponse.data)
+                        }
                     }
                 }
             } catch (error) {
@@ -79,7 +84,7 @@ export function AssignmentPage() {
         }
 
         fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever, submissionFile])
+    }, [assignmentId, courseId, user.is_lesgever, submissionFile, groups])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -454,7 +459,8 @@ export function AssignmentPage() {
                             <Box style={{ maxHeight: 300, overflow: 'auto' }}>
                                 <Divider color={'text.main'}></Divider>
                                 <List disablePadding={true}>
-                                    {submissions.map((submission) => (
+                                    {submissions.sort((a, b) => dayjs(b.tijdstip).valueOf() - dayjs(a.tijdstip).valueOf())
+                                    .map((submission) => (
                                         <Box key={submission.indiening_id}>
                                             <Divider
                                                 color={'text.main'}
