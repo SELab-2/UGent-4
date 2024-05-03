@@ -57,8 +57,10 @@ function UserList(
                         setSelected(user.user)
                         setOpen(true)
                     }
-                    {/* The list of users is mapped onto buttons
-                    This makes it possible to click through on a person. */}
+                    {
+                        /* The list of users is mapped onto buttons
+                    This makes it possible to click through on a person. */
+                    }
                     return (
                         <>
                             <ListItemButton
@@ -109,6 +111,7 @@ function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
+    email: string,
     handleAdd: () => void,
     str: string
 ) {
@@ -125,16 +128,22 @@ function UploadPart(
                 <Box display={'flex'} flexDirection={'row'}>
                     {/* This box allows you to add extra people by their email. */}
                     <TextField
+                        value={email}
                         type="text"
                         placeholder={t('studentnumber')}
-                        onChange={(event) => setEmail(event.target.value)}
+                        onChange={(event) => {
+                            setEmail(event.target.value)
+                        }}
                     />
                     <Button
                         variant={'contained'}
                         color={'secondary'}
                         size={'small'}
                         disableElevation
-                        onClick={handleAdd}
+                        onClick={() => {
+                            handleAdd()
+                            setEmail('')
+                        }}
                     >
                         {t('add')}
                     </Button>
@@ -566,6 +575,7 @@ export function AddChangeSubjectPage() {
                                 studentFile,
                                 handleStudentFileChange,
                                 setEmailStudent,
+                                emailStudent,
                                 handleAddStudent,
                                 t('upload_students')
                             )}
@@ -597,6 +607,7 @@ export function AddChangeSubjectPage() {
                                 teacherFile,
                                 handleTeacherFileChange,
                                 setEmailTeacher,
+                                emailTeacher,
                                 handleAddTeacher,
                                 t('upload_teachers')
                             )}
