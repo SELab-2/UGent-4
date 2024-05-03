@@ -8,7 +8,7 @@ export default defineConfig({
             '@emotion/react',
             '@emotion/styled',
             '@mui/material/Tooltip', // Include other MUI components as needed
-            '@mui/material/Grid',
+            '@mui/material',
         ],
     },
     plugins: [
