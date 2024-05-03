@@ -57,6 +57,7 @@ export function GroupsPage() {
     const [newGroupSize, setNewGroupSize] = useState(1)
     const [currentGroup, setCurrentGroup] = useState('')
     const [availableStudents, setAvailableStudents] = useState<number[]>([])
+    const [assignmentName, setAssignmentName] = useState('')
 
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
@@ -76,6 +77,9 @@ export function GroupsPage() {
                             })
                     }
                 })
+                .catch((error) => {
+                    console.log(error)
+                })
 
             for (const group of newGroups) {
                 instance
@@ -83,8 +87,8 @@ export function GroupsPage() {
                         studenten: group.studenten,
                         project: parseInt(assignmentId),
                     })
-                    .then((response) => {
-                        console.log(response)
+                    .catch((error) => {
+                        console.log(error)
                     })
             }
         } else {
@@ -96,8 +100,8 @@ export function GroupsPage() {
                         studenten: group.studenten,
                         project: parseInt(assignmentId),
                     })
-                    .then((response) => {
-                        console.log(response)
+                    .catch((error) => {
+                        console.log(error)
                     })
             }
         }
@@ -127,16 +131,11 @@ export function GroupsPage() {
         setCurrentGroup('0')
         setNewGroups(() => {
             const newGroups = []
-            console.log(
-                'new amount of groups' +
-                    Math.ceil(availableStudents.length / newValue)
-            )
             for (
                 let i = 0;
                 i < Math.ceil(availableStudents.length / newValue);
                 i++
             ) {
-                console.log('new group' + i)
                 newGroups.push({
                     studenten: [],
                     project: parseInt(assignmentId),
@@ -147,6 +146,9 @@ export function GroupsPage() {
 
         instance.get('/vakken/' + courseId).then((response) => {
             setAvailableStudents(response.data.studenten)
+        })
+        .catch((error) => {
+            console.log(error)
         })
     }
 
@@ -165,24 +167,33 @@ export function GroupsPage() {
                                 ' ' +
                                 response.data.last_name
                         )
-                        console.log(
-                            'available names:' +
-                                Array.from(newStudentNames.entries())
-                        )
+                    })
+                    .catch((error) => {
+                        console.log(error)
                     })
             }
 
             setStudentNames(() => newStudentNames)
         })
+        .catch((error) => {
+            console.log(error)
+        })
 
         instance.get('/projecten/' + assignmentId).then((response) => {
             setNewGroupSize(response.data.max_groep_grootte)
+            setAssignmentName(response.data.titel)
+        })
+        .catch((error) => {
+            console.log(error)
         })
 
         instance
             .get<Group[]>(`/groepen/?project=${assignmentId}`)
             .then((response) => {
                 setNewGroups(response.data)
+            })
+            .catch((error) => {
+                console.log(error)
             })
     }, [assignmentId, courseId])
 
@@ -258,12 +269,10 @@ export function GroupsPage() {
             (student) => student !== studentId
         )
         setAvailableStudents(updatedAvailableStudents)
-        console.log('group id: ' + groupId)
         // Then, create a new copy of the newGroups array with the updated group
         const updatedNewGroups = newGroups.map((group, index) => {
             if (index === groupId) {
                 // Create a new copy of the group with the updated studenten array
-                console.log('group.studenten: ' + group.studenten)
                 return {
                     ...group,
                     studenten: [...group.studenten, studentId],
@@ -316,7 +325,7 @@ export function GroupsPage() {
             >
                 <Header
                     variant={'default'}
-                    title={'Project 1: groepen'}
+                    title={assignmentName + ": " + t('groups')}
                 ></Header>
                 <Stack
                     marginTop={12}
@@ -453,7 +462,7 @@ export function GroupsPage() {
                                         <TableRow>
                                             <TableCell>
                                                 <Typography fontWeight={'bold'}>
-                                                    {t('studenten')}
+                                                    {t('students')}
                                                 </Typography>
                                             </TableCell>
                                         </TableRow>
