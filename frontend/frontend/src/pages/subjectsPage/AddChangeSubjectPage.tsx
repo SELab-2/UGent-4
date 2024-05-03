@@ -57,8 +57,10 @@ function UserList(
                         setSelected(user.user)
                         setOpen(true)
                     }
-                    {/* The list of users is mapped onto buttons
-                    This makes it possible to click through on a person. */}
+                    {
+                        /* The list of users is mapped onto buttons
+                    This makes it possible to click through on a person. */
+                    }
                     return (
                         <>
                             <ListItemButton
@@ -86,12 +88,21 @@ function UserList(
                                     primary={user.email}
                                 />
                                 <IconButton
+                                    disabled={
+                                        users.length == 1 &&
+                                        users[0].is_lesgever
+                                    }
                                     aria-label={'delete_file'}
                                     size={'small'}
                                     onClick={handleClickOpen}
-                                    sx={{ marginBottom: 1 }}
+                                    sx={{
+                                        '&:disabled': {
+                                            color: 'text.primary',
+                                        },
+                                        color: 'error.main',
+                                    }}
                                 >
-                                    <ClearIcon color={'error'} />
+                                    <ClearIcon />
                                 </IconButton>
                             </ListItemButton>
                             <Divider color={'text.main'}></Divider>
@@ -302,6 +313,9 @@ export function AddChangeSubjectPage() {
     // This function will remove a teacher from the list.
     // It does so by looping through the list and removing the teacher with the correct ID.
     const handleRemoveTeacher = () => {
+        if (teachers.length == 1) {
+            return
+        }
         setTeachers((oldteacher) => {
             for (let i = 0; i < oldteacher.length; i++) {
                 if (oldteacher[i].user == selectedTeacher) {
