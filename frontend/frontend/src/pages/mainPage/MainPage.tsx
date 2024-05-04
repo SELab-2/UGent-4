@@ -25,7 +25,7 @@ export interface project {
     titel: string
     beschrijving: string
     opgave_bestand: File | null
-    vak_id: number
+    vak: number
     deadline: string
     extra_deadline: string | null
     max_score: number

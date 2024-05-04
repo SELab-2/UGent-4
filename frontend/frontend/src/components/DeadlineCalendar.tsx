@@ -9,6 +9,7 @@ import { Badge, SxProps, Stack, Typography, Box, List, ListItem, ListItemButton,
 import { useEffect, useRef, useState } from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useNavigate } from 'react-router-dom'
+import { t } from 'i18next'
 
 /*
  * This component is a calendar that displays deadlines.
@@ -102,6 +103,9 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
             width={'100%'}
             alignItems={'center'}
         >
+            <Typography>
+                {t('deadlines_on')}: {selectedDay?.format('DD/MM/YYYY')}
+            </Typography>
             <List>
                 {assignments
                 .filter((assignment: project) =>
@@ -214,10 +218,15 @@ export function DeadlineCalendar({ deadlines, assignments }: DeadlineCalendarPro
 
 const dateStyle: SxProps = {
     '& .MuiPickersDay-root.Mui-selected': {
-        color: 'text.primary',
+        color: 'secondary.contrastText',
         backgroundColor: 'secondary.main',
     },
     '& .MuiPickersDay-root.Mui-selected:hover': {
+        color: 'secondary.contrastText',
+        backgroundColor: 'secondary.main',
+    },
+    '& .MuiPickersDay-root.Mui-selected:not(hover)': {
+        color: 'secondary.contrastText',
         backgroundColor: 'secondary.main',
     },
 }
