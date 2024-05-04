@@ -23,7 +23,7 @@ export interface project {
     titel: string
     beschrijving: string
     opgave_bestand: File | null
-    vak_id: number
+    vak: number
     deadline: string
     extra_deadline: string | null
     max_score: number
@@ -105,9 +105,7 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
             <List>
                 {assignments
                 .filter((assignment: project) =>
-                    dayjs(assignment.deadline, 'YYYY-MM-DD-HH:mm:ss').date() == selectedDay?.date() &&
-                    dayjs(assignment.deadline, 'YYYY-MM-DD-HH:mm:ss').month() == selectedDay?.month() &&
-                    dayjs(assignment.deadline, 'YYYY-MM-DD-HH:mm:ss').year() == selectedDay?.year()
+                    dayjs(assignment.deadline).isSame(selectedDay, 'day')
                 ).map((assignment: project) => 
                     <ListItem>
                         <ListItemButton
