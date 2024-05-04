@@ -1,5 +1,12 @@
 import { Header } from '../../components/Header'
-import { Box, CircularProgress, Grid, IconButton, Stack } from '@mui/material'
+import {
+    Box,
+    Card,
+    CircularProgress,
+    Grid,
+    IconButton,
+    Stack,
+} from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -9,6 +16,9 @@ import instance from '../../axiosConfig.ts'
 import { useEffect, useState } from 'react'
 import ErrorPage from '../ErrorPage.tsx'
 import { Course } from '../mainPage/MainPage.tsx'
+import { CopyToClipboard } from '../../components/CopyToClipboard.tsx'
+import { User } from './AddChangeSubjectPage'
+import StudentPopUp from './StudentPopUp.tsx'
 import AddCircleIcon from '@mui/icons-material/AddCircle'
 
 interface Project {
@@ -32,8 +42,8 @@ interface Project {
  * Any other UI on the course's page is also handled in this view
  */
 export function SubjectsPage() {
-    let { courseId } = useParams()
-    courseId = String(courseId)
+    const { courseId, accept_invite } = useParams()
+    const courseID = String(courseId)
 
     const navigate = useNavigate()
 
@@ -46,15 +56,36 @@ export function SubjectsPage() {
         last_name: '',
         email: '',
     })
+    const [students, setStudents] = useState<User[]>([])
     const [fetchError, setFetchError] = useState(false)
 
-    //state for loading the page
-    //TODO: add a loading spinner
+    //variable for invitation link popup close
+    const [inviteOpen, setInviteOpen] = useState(false)
+
+    async function confirmJoinCourse() {
+        await instance.get(`/vakken/${courseID}/accept_invite/`)
+        setInviteOpen(false)
+        navigate(`/course/${courseID}`)
+    }
+
+    // State for loading the page
     const [loading, setLoading] = useState(true)
     const [userLoading, setUserLoading] = useState(true)
 
     useEffect(() => {
         // Get the data for this course.
+        async function fetchUser() {
+            try {
+                setUserLoading(true)
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
+            } catch (error) {
+                console.error('Error fetching data:', error)
+                setFetchError(true)
+            } finally {
+                setUserLoading(false)
+            }
+        }
         async function fetchData() {
             try {
                 setLoading(true)
@@ -64,10 +95,10 @@ export function SubjectsPage() {
                 setUserLoading(false)
 
                 const courseResponse = await instance.get(
-                    `/vakken/${courseId}/`
+                    `/vakken/${courseID}/`
                 )
                 const assignmentsResponse = await instance.get(
-                    `/projecten/?vak=${courseId}`
+                    `/projecten/?vak=${courseID}`
                 )
                 setCourse(courseResponse.data)
                 setAssignments(assignmentsResponse.data)
@@ -79,14 +110,49 @@ export function SubjectsPage() {
                 setLoading(false)
             }
         }
+        async function fetchStudents() {
+            const temp_students = []
+            for (const s of course?.studenten ?? []) {
+                try {
+                    const userResponse = await instance.get(`/gebruikers/${s}/`)
+                    temp_students.push(userResponse.data)
+                } catch (error) {
+                    console.error('Error fetching data:', error)
+                    setFetchError(true)
+                }
+            }
+            // Update the state with the fetched data
+            setStudents(temp_students)
+        }
+        // Fetch user first
+        fetchUser().catch((error) =>
+            console.error('Error fetching data:', error)
+        )
+
+        // check if the url is a special url for accepting an invitation
+        if (
+            accept_invite !== undefined &&
+            accept_invite === 'accept_invitation'
+        ) {
+            if (user.is_lesgever) {
+                navigate(`/course/${courseID}`)
+            } else {
+                setInviteOpen(true)
+            }
+        }
+
+        // Fetch the course and assignments
         fetchData().catch((error) =>
             console.error('Error fetching data:', error)
         )
-    }, [courseId])
+        fetchStudents().catch((error) =>
+            console.error('Error fetching data:', error)
+        )
+    }, [accept_invite, courseID, navigate, user.is_lesgever])
 
     const addProject = () => {
         console.log('add project')
-        navigate(`/course/${courseId}/assignment/edit/`)
+        navigate(`/course/${courseID}/assignment/edit/`)
     }
 
     const [openDeletePopup, setOpenDeletePopup] = useState(false)
@@ -206,7 +272,7 @@ export function SubjectsPage() {
                                                 changeVisibilityAssignment={
                                                     changeVisibilityAssignment
                                                 }
-                                                courseId={courseId}
+                                                courseId={courseID}
                                             />,
                                             <ProjectsView
                                                 gebruiker={user}
@@ -221,24 +287,35 @@ export function SubjectsPage() {
                                                 changeVisibilityAssignment={
                                                     changeVisibilityAssignment
                                                 }
-                                                courseId={courseId}
+                                                courseId={courseID}
                                             />,
                                         ]}
                                     />
                                 </Box>
                                 <Box
                                     display="flex"
-                                    flexDirection="row-reverse"
+                                    flexDirection="row"
+                                    justifyContent="space-between"
                                     sx={{ width: '100%', height: '30%' }}
                                 >
+                                    <CopyToClipboard
+                                        invitationLink={
+                                            window.location.href +
+                                            '/accept_invitation'
+                                        }
+                                    />
                                     <IconButton
                                         onClick={addProject}
                                         color="primary"
                                         edge="end"
                                         aria-label="add-project"
-                                        size="small"
                                     >
-                                        <AddCircleIcon fontSize={'large'} />
+                                        <AddCircleIcon
+                                            sx={{
+                                                fontSize: 60,
+                                                height: '100%',
+                                            }}
+                                        />
                                     </IconButton>
                                 </Box>
                                 <WarningPopup
@@ -306,7 +383,7 @@ export function SubjectsPage() {
                                                 changeVisibilityAssignment={() =>
                                                     undefined
                                                 }
-                                                courseId={courseId}
+                                                courseId={courseID}
                                             />,
                                             <ProjectsView
                                                 gebruiker={user}
@@ -321,11 +398,31 @@ export function SubjectsPage() {
                                                 changeVisibilityAssignment={() =>
                                                     undefined
                                                 }
-                                                courseId={courseId}
+                                                courseId={courseID}
                                             />,
                                         ]}
                                     />
+                                    <WarningPopup
+                                        title={t('join_course')}
+                                        content={t('acces')}
+                                        buttonName={t('join')}
+                                        open={inviteOpen}
+                                        handleClose={() => navigate('/')}
+                                        doAction={confirmJoinCourse}
+                                    />
                                 </Box>
+                                <Card
+                                    sx={{
+                                        padding: 0,
+                                        backgroundColor: 'background.default',
+                                        width: 'fit-content',
+                                        height: 'fit-content',
+                                    }}
+                                >
+                                    <StudentPopUp
+                                        students={students}
+                                    ></StudentPopUp>
+                                </Card>
                             </Stack>
                         </>
                     )}

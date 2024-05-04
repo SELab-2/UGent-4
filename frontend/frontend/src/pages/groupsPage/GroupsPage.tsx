@@ -59,6 +59,7 @@ export function GroupsPage() {
     const [currentGroup, setCurrentGroup] = useState('')
     const [availableStudents, setAvailableStudents] = useState<number[]>([])
     const [projectName, setProjectName] = useState('')
+
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
 
@@ -80,6 +81,9 @@ export function GroupsPage() {
                             })
                     }
                 })
+                .catch((error) => {
+                    console.log(error)
+                })
 
             for (const group of newGroups) {
                 if (group.studenten.length !== 0) {
@@ -88,8 +92,8 @@ export function GroupsPage() {
                             studenten: group.studenten,
                             project: parseInt(assignmentId),
                         })
-                        .then((response) => {
-                            console.log(response)
+                        .catch((error) => {
+                            console.log(error)
                         })
                 }
             }
@@ -103,8 +107,8 @@ export function GroupsPage() {
                             studenten: group.studenten,
                             project: parseInt(assignmentId),
                         })
-                        .then((response) => {
-                            console.log(response)
+                        .catch((error) => {
+                            console.log(error)
                         })
                 }
             }
@@ -135,16 +139,11 @@ export function GroupsPage() {
         setCurrentGroup('0')
         setNewGroups(() => {
             const newGroups = []
-            console.log(
-                'new amount of groups' +
-                    Math.ceil(availableStudents.length / newValue)
-            )
             for (
                 let i = 0;
                 i < Math.ceil(availableStudents.length / newValue);
                 i++
             ) {
-                console.log('new group' + i)
                 newGroups.push({
                     studenten: [],
                     project: parseInt(assignmentId),
@@ -164,9 +163,13 @@ export function GroupsPage() {
                 })
             setLoading(false)
         }
-        fetchCourse().catch((error) => {
-            console.error(error)
-        })
+        fetchCourse()
+            .catch((error) => {
+                console.error(error)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }
 
     //get the current groups and group size from the backend
@@ -179,6 +182,21 @@ export function GroupsPage() {
                 .then(async (response) => {
                     const newStudentNames = new Map<number, string>()
 
+                    for (const student of response.data.studenten) {
+                        await instance
+                            .get('/gebruikers/' + student)
+                            .then((response) => {
+                                newStudentNames.set(
+                                    student,
+                                    response.data.first_name +
+                                        ' ' +
+                                        response.data.last_name
+                                )
+                            })
+                            .catch((error) => {
+                                console.log(error)
+                            })
+                    }
                     for (const student of response.data.studenten) {
                         await instance
                             .get('/gebruikers/' + student)
@@ -209,6 +227,9 @@ export function GroupsPage() {
                 .then((response) => {
                     setProjectName(response.data.titel)
                     setNewGroupSize(response.data.max_groep_grootte)
+                })
+                .catch((error) => {
+                    console.log(error)
                 })
                 .catch((error) => {
                     console.log('error fetching project')
@@ -245,9 +266,13 @@ export function GroupsPage() {
             setLoading(false)
         }
 
-        fetchData().catch((error) => {
-            console.error(error)
-        })
+        fetchData()
+            .catch((error) => {
+                console.error(error)
+            })
+            .catch((error) => {
+                console.log(error)
+            })
     }, [assignmentId, courseId, newGroupSize, studentNames.size])
 
     useEffect(() => {
@@ -322,12 +347,10 @@ export function GroupsPage() {
             (student) => student !== studentId
         )
         setAvailableStudents(updatedAvailableStudents)
-        console.log('group id: ' + groupId)
         // Then, create a new copy of the newGroups array with the updated group
         const updatedNewGroups = newGroups.map((group, index) => {
             if (index === groupId) {
                 // Create a new copy of the group with the updated studenten array
-                console.log('group.studenten: ' + group.studenten)
                 return {
                     ...group,
                     studenten: [...group.studenten, studentId],
@@ -552,7 +575,7 @@ export function GroupsPage() {
                                                     <Typography
                                                         fontWeight={'bold'}
                                                     >
-                                                        {t('studenten')}
+                                                        {t('students')}
                                                     </Typography>
                                                 </TableCell>
                                             </TableRow>

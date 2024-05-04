@@ -94,6 +94,11 @@ const english = {
     file: 'File',
     archive_course_warning: 'Archive Course?',
     will_archive_projects: 'This will archive all projects.',
+    copied: 'Copied!',
+    copy: 'Copy to clipboard',
+    join_course: 'Join course?',
+    join: 'Join',
+    acces: 'This gives you access to the course.',
 }
 
 export default english

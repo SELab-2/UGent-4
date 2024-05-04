@@ -122,12 +122,21 @@ function UserList(
                                                 primary={user.email}
                                             />
                                             <IconButton
+                                                disabled={
+                                                    users.length == 1 &&
+                                                    users[0].is_lesgever
+                                                }
                                                 aria-label={'delete_file'}
                                                 size={'small'}
                                                 onClick={handleClickOpen}
-                                                sx={{ marginBottom: 1 }}
+                                                sx={{
+                                                    '&:disabled': {
+                                                        color: 'text.primary',
+                                                    },
+                                                    color: 'error.main',
+                                                }}
                                             >
-                                                <ClearIcon color={'error'} />
+                                                <ClearIcon />
                                             </IconButton>
                                         </Box>
                                     </ListItemButton>
@@ -148,6 +157,7 @@ function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
+    email: string,
     handleAdd: () => void,
     str: string
 ) {
@@ -169,16 +179,22 @@ function UploadPart(
                 >
                     {/* This box allows you to add extra people by their email. */}
                     <TextField
+                        value={email}
                         type="text"
                         placeholder={t('studentnumber')}
-                        onChange={(event) => setEmail(event.target.value)}
+                        onChange={(event) => {
+                            setEmail(event.target.value)
+                        }}
                     />
                     <Button
                         variant={'contained'}
                         color={'secondary'}
                         size={'small'}
                         disableElevation
-                        onClick={handleAdd}
+                        onClick={() => {
+                            handleAdd()
+                            setEmail('')
+                        }}
                     >
                         {t('add')}
                     </Button>
@@ -631,6 +647,7 @@ export function AddChangeSubjectPage() {
                                 studentFile,
                                 handleStudentFileChange,
                                 setEmailStudent,
+                                emailStudent,
                                 handleAddStudent,
                                 t('upload_students')
                             )}
@@ -663,6 +680,7 @@ export function AddChangeSubjectPage() {
                                 teacherFile,
                                 handleTeacherFileChange,
                                 setEmailTeacher,
+                                emailTeacher,
                                 handleAddTeacher,
                                 t('upload_teachers')
                             )}

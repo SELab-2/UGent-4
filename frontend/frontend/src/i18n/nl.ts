@@ -94,6 +94,11 @@ const dutch = {
     will_archive_projects: 'Alle opdrachten worden gearchiveerd.',
     loading: 'Laden',
     file: 'Bestand',
+    copied: 'Gekopieerd!',
+    copy: 'Kopieer naar klembord',
+    join_course: 'Voeg vak toe?',
+    join: 'Voeg toe',
+    acces: 'Dit geeft je toegang tot het vak.',
 }
 
 export default dutch
