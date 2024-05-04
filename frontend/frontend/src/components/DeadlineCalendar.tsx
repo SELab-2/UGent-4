@@ -10,6 +10,7 @@ import { useEffect, useRef, useState } from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
+import { project } from '../pages/mainPage/MainPage.tsx'
 
 /*
  * This component is a calendar that displays deadlines.
@@ -18,20 +19,6 @@ import { t } from 'i18next'
  * The deadlines are passed as an array of Dayjs objects.
  * The deadlines are displayed as a badge on the day of the deadline.
  */
-
-export interface project {
-    project_id: number
-    titel: string
-    beschrijving: string
-    opgave_bestand: File | null
-    vak: number
-    deadline: string
-    extra_deadline: string | null
-    max_score: number
-    max_groepsgrootte: number
-    zichtbaar: boolean
-    gearchiveerd: boolean
-}
 
 function fakeFetch(
     date: Dayjs,
