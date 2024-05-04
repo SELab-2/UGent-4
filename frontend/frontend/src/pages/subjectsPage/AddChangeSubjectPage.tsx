@@ -199,18 +199,7 @@ export function AddChangeSubjectPage() {
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
 
-    // const [user, setUser] = useState<User>({
-    //     user: 0,
-    //     is_lesgever: false,
-    //     first_name: '',
-    //     last_name: '',
-    //     email: '',
-    // })
-    // const [userLoaded, setUserLoaded] = useState<boolean>
-
     const [vakID,setVakID]= useState(params.courseId)
-
-    //const vakID = params.courseId
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
@@ -444,15 +433,6 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
-        // instance
-        //     .get('/gebruikers/me/')
-        //     .then((res) => {
-        //         setUser(res.data)
-        //         setUserLoaded(true)
-        //     })
-        //     .catch((err) => {
-        //         console.log(err)
-        //     })
         if(vakID!=undefined){
             instance
                 .get('vakken/' + vakID)
@@ -512,14 +492,6 @@ export function AddChangeSubjectPage() {
                 })
         }
     }, [vakID])
-
-    // if (!userLoaded) {
-    //     return <>Loading...</>
-    // }
-    //
-    // if (!user.is_lesgever) {
-    //     return ErrorPage()
-    // }
 
     return (
         <>
