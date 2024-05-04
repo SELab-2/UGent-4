@@ -166,6 +166,7 @@ class IndieningDetailDownloadBestandenTest(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
 class IndieningDetailDownloadArtefactenTest(TestCase):
     def setUp(self):
         self.client = APIClient()
@@ -182,20 +183,23 @@ class IndieningDetailDownloadArtefactenTest(TestCase):
     def test_indiening_detail_download_artefacten_get_invalid_as_teacher(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-    
+
     def test_indiening_detail_download_artefacten_get_as_teacher(self):
-        content = b'Some file content'
-        file_content = ContentFile(content, name='data/indieningen/indiening_{self.indiening.indiening_id}/artefacten.zip')
+        content = b"Some file content"
+        file_content = ContentFile(
+            content,
+            name="data/indieningen/indiening_{self.indiening.indiening_id}/artefacten.zip",
+        )
         self.indiening.artefacten.save(file_content.name, file_content)
         self.indiening.save()
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
     def test_indiening_detail_download_artefacten_get_as_student(self):
         self.client.force_login(self.student.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-    
+
     def test_indiening_detail_download_artefacten_get_invalid(self):
         self.url = reverse("indiening_detail_download_artefacten", kwargs={"id": 69})
         response = self.client.get(self.url)

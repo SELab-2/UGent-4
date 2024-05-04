@@ -1,7 +1,6 @@
 import factory
 from api.models.vak import Vak
 from factory.django import DjangoModelFactory
-from factory import Faker
 from .gebruiker import GebruikerFactory
 from datetime import date
 
