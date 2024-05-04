@@ -1,22 +1,17 @@
-import { User } from "./AddChangeSubjectPage"
+import { User } from './AddChangeSubjectPage'
 import * as React from 'react'
-import { IconButton, Button} from '@mui/material'
+import { Button, IconButton, List, ListItem, ListItemText } from '@mui/material'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
-import CloseIcon from '@mui/icons-material/Close';
+import CloseIcon from '@mui/icons-material/Close'
 import DialogContent from '@mui/material/DialogContent'
-import {List, ListItem, ListItemText} from "@mui/material"
 import { t } from 'i18next'
-
 
 interface StudentPopUpProps {
     students: User[]
 }
 
-
-export default function StudentPopUp({
-    students,
-}: StudentPopUpProps) {
+export default function StudentPopUp({ students }: StudentPopUpProps) {
     const [open, setOpen] = React.useState(false)
 
     const handleClose = () => {
@@ -29,7 +24,6 @@ export default function StudentPopUp({
             <Button
                 variant="contained"
                 color="secondary"
-
                 onClick={() => {
                     setOpen(true)
                 }}

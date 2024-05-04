@@ -124,7 +124,7 @@ interface DeadlineCalendarProps {
 export function DeadlineCalendar({ deadlines, assignments }: DeadlineCalendarProps) {
     const requestAbortController = useRef<AbortController | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [highlightedDays, setHighlightedDays] = useState([1, 2, 15])
+    const [highlightedDays, setHighlightedDays] = useState<number[]>([])
     const [value, setValue] = useState<Dayjs | null>(dayjs())
 
     const fetchHighlightedDays = (date: Dayjs) => {

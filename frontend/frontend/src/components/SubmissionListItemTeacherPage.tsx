@@ -153,8 +153,8 @@ export function SubmissionListItemTeacherPage({
                         primary={
                             submitted
                                 ? dayjs(submitted.tijdstip).format(
-                                    'DD/MM/YYYY HH:mm'
-                                )
+                                      'DD/MM/YYYY HH:mm'
+                                  )
                                 : '-'
                         }
                     />
