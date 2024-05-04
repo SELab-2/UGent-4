@@ -14,6 +14,7 @@ class VakListViewTest(APITestCase):
         self.lesgevers = GebruikerFactory.create_batch(2, is_lesgever=True)
         self.vak1 = VakFactory.create()
         self.vak1.studenten.add(self.studenten[0])
+        self.vak1.lesgevers.add(self.lesgevers[0])
         self.vak2 = VakFactory.create()
         self.client.force_login(self.teacher.user)
         self.url = reverse("vak_list")
@@ -28,6 +29,26 @@ class VakListViewTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2)
+    
+    def test_vak_list_get_in_as_teacher(self):
+        self.client.force_login(self.lesgevers[0].user)
+        response = self.client.get(self.url, {"in": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+    
+    def test_vak_list_get_in_as_student(self):
+        self.client.force_login(self.studenten[0].user)
+        response = self.client.get(self.url, {"in": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+    
+    def test_vak_list_archived(self):
+        self.client.force_login(self.lesgevers[0].user)
+        self.vak1.gearchiveerd = True
+        self.vak1.save()
+        response = self.client.get(self.url, {"gearchiveerd": True})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
 
     def test_vak_list_post(self):
         data = {
@@ -120,3 +141,32 @@ class VakDetailViewTest(APITestCase):
         self.client.force_login(self.studenten[1].user)
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class VakDetailAcceptInviteViewTest(APITestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.vak = VakFactory.create()
+        self.student = GebruikerFactory.create(is_lesgever=False)
+        self.teacher = GebruikerFactory.create(is_lesgever=True)
+        self.client.force_login(self.student.user)
+        self.url = reverse("vak_detail_accept_invite", args=[self.vak.vak_id])
+        self.vak_url = reverse("vak_detail", args=[self.vak.vak_id])
+    
+    def test_vak_detail_accept_invite_as_student(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        response = self.client.get(self.vak_url)
+        self.assertIn(self.student.user.id, response.data["studenten"])
+
+    def test_vak_detail_accept_invite_as_teacher(self):
+        self.client.force_login(self.teacher.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_302_FOUND)
+        response = self.client.get(self.vak_url)
+        self.assertIn(self.teacher.user.id, response.data["lesgevers"])
+    
+    def test_vak_detail_accept_invite_invalid(self):
+        response = self.client.get(reverse("vak_detail_accept_invite", args=[69]))
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    

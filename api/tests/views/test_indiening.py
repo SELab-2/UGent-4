@@ -5,6 +5,7 @@ from rest_framework.test import APIClient
 from django.urls import reverse
 from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.files.base import ContentFile
 
 
 class IndieningListViewTest(TestCase):
@@ -162,5 +163,40 @@ class IndieningDetailDownloadBestandenTest(TestCase):
 
     def test_indiening_detail_download_bestanden_get_invalid(self):
         self.url = reverse("indiening_detail_download_bestanden", kwargs={"id": 69})
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+class IndieningDetailDownloadArtefactenTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.teacher = GebruikerFactory.create(is_lesgever=True)
+        self.student = GebruikerFactory.create(is_lesgever=False)
+        self.client.force_login(self.teacher.user)
+        self.indiening = IndieningFactory.create()
+        self.indiening.groep.studenten.add(self.student)
+        self.url = reverse(
+            "indiening_detail_download_artefacten",
+            kwargs={"id": self.indiening.indiening_id},
+        )
+
+    def test_indiening_detail_download_artefacten_get_invalid_as_teacher(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_indiening_detail_download_artefacten_get_as_teacher(self):
+        content = b'Some file content'
+        file_content = ContentFile(content, name='data/indieningen/indiening_{self.indiening.indiening_id}/artefacten.zip')
+        self.indiening.artefacten.save(file_content.name, file_content)
+        self.indiening.save()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_indiening_detail_download_artefacten_get_as_student(self):
+        self.client.force_login(self.student.user)
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+    
+    def test_indiening_detail_download_artefacten_get_invalid(self):
+        self.url = reverse("indiening_detail_download_artefacten", kwargs={"id": 69})
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
