@@ -47,6 +47,7 @@ export default function MainPage() {
     const [pinnedCourses, setPinnedCourses] = useState<number[]>([])
     const [courseOrder, setCourseOrder] = useState<number[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
+    const [assignments, setAssignments] = useState<project[]>([])
     const navigator = useNavigate()
 
     useEffect(() => {
@@ -77,15 +78,20 @@ export default function MainPage() {
                 .get('/projecten/')
                 .then((response: AxiosResponse) => {
                     const deadlines: Dayjs[] = []
+                    const assignments: project[] = []
                     response.data.forEach((project: project) => {
                         if (project.zichtbaar && !project.gearchiveerd) {
                             deadlines.push(
                                 dayjs(project.deadline, 'YYYY-MM-DD-HH:mm:ss')
                             )
+                            assignments.push(
+                                project
+                            )
                         }
                     })
                     console.log(deadlines)
                     setDeadlines(deadlines)
+                    setAssignments(assignments)
                 })
                 .catch((e: AxiosError) => {
                     console.error(e)
@@ -227,7 +233,7 @@ export default function MainPage() {
                         alignContent={'center'}
                         height={'50%'}
                     >
-                        <DeadlineCalendar deadlines={deadlines} />
+                        <DeadlineCalendar deadlines={deadlines} assignments={assignments} />
                     </Box>
                 </Box>
                 {role === 'admin' && (

@@ -5,9 +5,10 @@ import {
     PickersDayProps,
 } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
-import { Badge, SxProps } from '@mui/material'
+import { Badge, SxProps, Stack, Typography, Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
+import { useNavigate } from 'react-router-dom'
 
 /*
  * This component is a calendar that displays deadlines.
@@ -16,6 +17,20 @@ import AssignmentIcon from '@mui/icons-material/Assignment'
  * The deadlines are passed as an array of Dayjs objects.
  * The deadlines are displayed as a badge on the day of the deadline.
  */
+
+export interface project {
+    project_id: number
+    titel: string
+    beschrijving: string
+    opgave_bestand: File | null
+    vak_id: number
+    deadline: string
+    extra_deadline: string | null
+    max_score: number
+    max_groepsgrootte: number
+    zichtbaar: boolean
+    gearchiveerd: boolean
+}
 
 function fakeFetch(
     date: Dayjs,
@@ -67,11 +82,57 @@ function ServerDay(
     )
 }
 
-interface DeadlineCalendarProps {
-    deadlines: Dayjs[]
+interface DeadlineMenuProps {
+    assignments: project[]
+    selectedDay: Dayjs | null
 }
 
-export function DeadlineCalendar({ deadlines }: DeadlineCalendarProps) {
+function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
+    const navigate = useNavigate()
+
+    const handleProjectClick = (courseId: number, projectId: number) => {
+        console.log('Project clicked')
+        navigate(`/course/${courseId}/assignment/${projectId}`)
+    }
+
+    return (
+        <Stack
+            direction={'column'}
+            spacing={1}
+            width={'100%'}
+            alignItems={'center'}
+        >
+            <List>
+                {assignments
+                .filter((assignment: project) =>
+                    dayjs(assignment.deadline, 'YYYY-MM-DD-HH:mm:ss').date() == selectedDay?.date() &&
+                    dayjs(assignment.deadline, 'YYYY-MM-DD-HH:mm:ss').month() == selectedDay?.month() &&
+                    dayjs(assignment.deadline, 'YYYY-MM-DD-HH:mm:ss').year() == selectedDay?.year()
+                ).map((assignment: project) => 
+                    <ListItem>
+                        <ListItemButton
+                            sx={{
+                                border: 1
+                            }}
+                            onClick={() => handleProjectClick(assignment.vak, assignment.project_id)}
+                        >
+                            <ListItemText
+                                primary={assignment.titel}
+                            />
+                        </ListItemButton>
+                    </ListItem>
+                )}
+            </List>
+        </Stack>
+    )
+}
+
+interface DeadlineCalendarProps {
+    deadlines: Dayjs[]
+    assignments: project[]
+}
+
+export function DeadlineCalendar({ deadlines, assignments }: DeadlineCalendarProps) {
     const requestAbortController = useRef<AbortController | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [highlightedDays, setHighlightedDays] = useState([1, 2, 15])
@@ -123,24 +184,32 @@ export function DeadlineCalendar({ deadlines }: DeadlineCalendarProps) {
 
     return (
         <>
-            {/*Calendar*/}
-            <DateCalendar
-                readOnly={true}
-                value={value}
-                onChange={(newValue) => setValue(newValue)}
-                onMonthChange={(newValue) => handleMonthChange(newValue)}
-                renderLoading={() => <DayCalendarSkeleton />}
-                loading={isLoading}
-                sx={dateStyle}
-                slots={{
-                    day: ServerDay,
-                }}
-                slotProps={{
-                    day: {
-                        highlightedDays,
-                    } as never,
-                }}
-            />
+            <Stack
+                direction={"column"}
+            >
+                {/*Calendar*/}
+                <DateCalendar
+                    readOnly={false}
+                    value={value}
+                    onChange={(newValue) => setValue(newValue)}
+                    onMonthChange={(newValue) => handleMonthChange(newValue)}
+                    renderLoading={() => <DayCalendarSkeleton />}
+                    loading={isLoading}
+                    sx={dateStyle}
+                    slots={{
+                        day: ServerDay,
+                    }}
+                    slotProps={{
+                        day: {
+                            highlightedDays,
+                        } as never,
+                    }}
+                />
+                <DeadlineMenu
+                    assignments={assignments}
+                    selectedDay={value}
+                />
+            </Stack>
         </>
     )
 }
