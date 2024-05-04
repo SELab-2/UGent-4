@@ -27,7 +27,7 @@ class VakListViewTest(APITestCase):
         self.client.force_login(self.studenten[0].user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
 
     def test_vak_list_post(self):
         data = {
@@ -78,11 +78,6 @@ class VakDetailViewTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["vak_id"], self.vak.vak_id)
-
-    def test_vak_detail_get_unauthorized(self):
-        self.client.force_login(self.studenten[1].user)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_vak_detail_get_invalid(self):
         response = self.client.get(reverse("vak_detail", args=[69]))

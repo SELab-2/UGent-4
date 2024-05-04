@@ -12,7 +12,7 @@ class VakSerializerTest(APITestCase):
 
     def test_contains_expected_fields(self):
         data = self.serializer.data
-        self.assertCountEqual(data.keys(), ["vak_id", "naam", "studenten", "lesgevers"])
+        self.assertCountEqual(data.keys(), ["vak_id", "naam", "jaartal", "gearchiveerd", "studenten", "lesgevers"])
 
     def test_vak_id_field_content(self):
         data = self.serializer.data
