@@ -53,7 +53,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: '/groups/choose',
+        path: '/groups/:assignmentId/choose',
         element: <ChooseGroup />,
         errorElement: <ErrorPage />,
     },

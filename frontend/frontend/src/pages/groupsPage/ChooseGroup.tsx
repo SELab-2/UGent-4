@@ -17,7 +17,8 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import {Header} from "../../components/Header.tsx";
 import { t } from 'i18next'
 import AddCircle from '@mui/icons-material/AddCircle'
-import ClearIcon from '@mui/icons-material/Clear'
+import { useParams } from 'react-router-dom'
+import instance from "../../axiosConfig.ts";
 
 export interface Group {
     groep_id?: number
@@ -25,14 +26,88 @@ export interface Group {
     project: number
 }
 
+export interface User {
+    user: number
+    is_lesgever: boolean
+    first_name: string
+    last_name: string
+    email: string
+}
+
+
 export function ChooseGroup() {
 
-    const [groups,setGroups]=useState([1,2,3]);
+    const params = useParams()
+
+
+    const [studenten,setStudenten]=useState<Record<number, User>>({});
+    const [groups,setGroups]=useState<Group[]>([]);
     const [open,setOpen] = useState<boolean>(false);
+
+    //const assignmentId = params.assignmentId
+    const assignmentId = 14
 
     const handleClose = () => {
         setOpen(false);
     }
+
+    useEffect(()=>{
+        instance.get('projecten/'+assignmentId)
+            .then((res) =>{
+                instance.get('vakken/'+res.data.vak)
+                    .then((res) => {
+                        //setStudenten(res.data.studenten)
+                        for (let i=0;i<res.data.studenten.length;i++){
+                            const studentid=res.data.studenten[i]
+                            instance.get('gebruikers/'+studentid)
+                                .then((res) => {
+                                    setStudenten((oldstudenten) => {
+                                        console.log("insetStudenten")
+                                        console.log(res.data)
+                                        console.log(oldstudenten)
+                                        //return oldstudenten
+                                        return {...oldstudenten,[res.data.user]: res.data}
+                                    })
+                                })
+                                .catch((err) => {
+                                    console.log(err)
+                                })
+                        }
+                    })
+                    .catch((err) => {
+                        console.log(err)
+                    })
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+
+
+        instance.get('groepen/?project='+assignmentId)
+            .then((res) => {
+                for (let i=0;i<res.data.length;i++){
+                    setGroups((oldGroups)=> {
+
+                        let found = false
+                        const id = res.data[i].groep_id
+                        for (const group of oldGroups) {
+                            if (group.groep_id == id) {
+                                found = true
+                            }
+                        }
+                        if (found) {
+                            return oldGroups
+                        } else {
+                            return [...oldGroups,res.data[i]]
+                        }
+                    })
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
+
+    },[])
 
 
     return (
@@ -58,6 +133,23 @@ export function ChooseGroup() {
                             padding: '20px',
                         }}
                     >
+                        <Box
+                            display={'flex'}
+                            flexDirection={'row'}
+                            justifyContent={'space-between'}
+                            pl={3}
+                            pr={3}
+                        >
+                            <Typography sx={{ fontWeight: 'bold' }}>
+                                {t('group_number')}
+                            </Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}>
+                                {t('members')}
+                            </Typography>
+                            <Typography sx={{ fontWeight: 'bold' }}>
+
+                            </Typography>
+                        </Box>
                     <List
                         disablePadding={true}
                         sx={{
@@ -66,8 +158,8 @@ export function ChooseGroup() {
                             },
                         }}
                     >
-                        {groups.map((id) => {
-                            const group=getGroup(id)
+                        {groups.map((group: Group) => {
+                            //const group=getGroup(id)
                             return (
                                 <>
                                     <ListItem
@@ -87,10 +179,25 @@ export function ChooseGroup() {
                                             primary={group.groep_id}
                                         />
 
+                                        <Box flexDirection={'column'}>
+                                            {group.studenten.map((studentid)=>{
 
-                                        <Link href="#" onClick={()=>{setOpen(true)}} >
-                                            {group.studenten.length}
-                                        </Link>
+                                                //return studenten[studentid].first_name
+
+                                                //console.log(students)
+                                                if(studenten[studentid]!=undefined){
+                                                    return (
+                                                        <>
+                                                            <Typography>
+                                                                {studenten[studentid].first_name+" "+studenten[studentid].last_name}
+                                                            </Typography>
+                                                        </>
+                                                        )
+                                                }
+                                            })}
+
+                                        </Box>
+
                                         <IconButton
                                             size={'small'}
                                             sx={{ marginBottom: 1 }}
@@ -119,10 +226,10 @@ export function ChooseGroup() {
     )
 }
 
-function getGroup(id: number): Group {
-    return {
-        groep_id: id,
-        studenten: [1,2,3],
-        project: 5
-    }
-}
+// function getGroup(id: number): Group {
+//     return {
+//         groep_id: id,
+//         studenten: [17,18],
+//         project: 5
+//     }
+// }
