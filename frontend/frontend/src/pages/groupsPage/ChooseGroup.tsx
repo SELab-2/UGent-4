@@ -44,6 +44,8 @@ export function ChooseGroup() {
     const [groups,setGroups]=useState<Group[]>([]);
     const [open,setOpen] = useState<boolean>(false);
 
+    const [user, setUser] = useState<User>()
+
     //const assignmentId = params.assignmentId
     const assignmentId = 14
 
@@ -52,6 +54,14 @@ export function ChooseGroup() {
     }
 
     useEffect(()=>{
+        instance
+            .get('/gebruikers/me/')
+            .then((res) => {
+                setUser(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
         instance.get('projecten/'+assignmentId)
             .then((res) =>{
                 instance.get('vakken/'+res.data.vak)
@@ -160,12 +170,34 @@ export function ChooseGroup() {
                     >
                         {groups.map((group: Group) => {
                             //const group=getGroup(id)
+
+                            const handleJoin = () =>{
+                                //console.log(groups)
+                                setGroups((oldGroups)=>{
+                                    console.log("setGroups")
+                                    for (let i = 0; i < oldGroups.length; i++) {
+                                        if(oldGroups[i].groep_id==group.groep_id){
+                                            console.log(oldGroups[i])
+                                            const newgroup={
+                                                groep_id: group.groep_id,
+                                                project: group.project,
+                                                studenten: [...group.studenten,user.user],
+                                            }
+                                            oldGroups[i]=newgroup
+                                            console.log(oldGroups[i])
+                                        }
+                                    }
+                                    return oldGroups
+                                })
+                                //console.log(groups)
+                            }
+
                             return (
                                 <>
                                     <ListItem
                                         sx={{
                                             width: '100%',
-                                            height: 30,
+                                            //minheight: 30,
                                             display: 'flex',
                                             flexDirection: 'row',
                                             justifyContent: 'space-between',
@@ -179,12 +211,13 @@ export function ChooseGroup() {
                                             primary={group.groep_id}
                                         />
 
-                                        <Box flexDirection={'column'}>
+                                        <ListItemText
+                                            sx={{ maxWidth: 100 }}
+                                            primary={group.studenten}
+                                        />
+
+                                        <Box display={'flex'} flexDirection={'column'}>
                                             {group.studenten.map((studentid)=>{
-
-                                                //return studenten[studentid].first_name
-
-                                                //console.log(students)
                                                 if(studenten[studentid]!=undefined){
                                                     return (
                                                         <>
@@ -201,6 +234,7 @@ export function ChooseGroup() {
                                         <IconButton
                                             size={'small'}
                                             sx={{ marginBottom: 1 }}
+                                            onClick={handleJoin}
                                         >
                                             <AddCircle />
                                         </IconButton>
