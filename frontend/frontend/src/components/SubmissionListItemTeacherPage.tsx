@@ -3,6 +3,7 @@ import {
     ListItemText,
     ListItemIcon,
     ListItemButton,
+    Box,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -11,6 +12,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import { useEffect, useState } from 'react'
 import instance from '../axiosConfig'
 import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
+import { t } from 'i18next'
 import dayjs from 'dayjs'
 
 interface SubmissionListItemTeacherPageProps {
@@ -126,11 +128,8 @@ export function SubmissionListItemTeacherPage({
                 <ListItemButton
                     sx={{
                         width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 1,
+                        height: 40,
+                        paddingX: 4,
                         paddingY: 3,
                         borderRadius: 2,
                     }}
@@ -139,7 +138,7 @@ export function SubmissionListItemTeacherPage({
                     {/* Display group id */}
                     <ListItemText
                         sx={{
-                            maxWidth: 10,
+                            maxWidth: '24%',
                             color: 'primary.main',
                             '&:hover': {
                                 color: 'primary.light',
@@ -149,47 +148,59 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
-                        sx={{ maxWidth: 150 }}
+                        sx={{ minWidth: '24%' }}
                         primary={
                             submitted
                                 ? dayjs(submitted.tijdstip).format(
-                                    'DD/MM/YYYY HH:mm'
-                                )
+                                      'DD/MM/YYYY HH:mm'
+                                  )
                                 : '-'
                         }
                     />
                     {/* Display score */}
                     <ListItemText
-                        sx={{ maxWidth: 50 }}
-                        primary={score ? `${Number(score.score)}` + '/20' : '-'}
+                        sx={{ minWidth: '24%' }}
+                        primary={
+                            score
+                                ? `${Number(score.score)}` + '/20'
+                                : t('no_score_yet')
+                        }
                     />
                     {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        {submitted?.status ? (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
-                        ) : (
-                            submitted !== undefined && (
-                                <CheckCircleOutlineIcon
-                                    sx={{ color: 'success.main' }}
-                                />
-                            )
-                        )}
-                    </ListItemIcon>
-                    {/* Display download icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        <div onClick={handleDownloadClick}>
-                            {submitted ? (
-                                <DownloadIcon
-                                    sx={{
-                                        color: 'primary.main',
-                                        '&:hover': { color: 'primary.light' },
-                                    }}
+                    <ListItemText sx={{ minWidth: '24%' }}>
+                        <ListItemIcon>
+                            {submitted?.status ? (
+                                <HighlightOffIcon
+                                    sx={{ color: 'error.main' }}
                                 />
                             ) : (
-                                <DownloadIcon sx={{ color: 'gray' }} />
+                                submitted !== undefined && (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: 'success.main' }}
+                                    />
+                                )
                             )}
-                        </div>
-                    </ListItemIcon>
+                        </ListItemIcon>
+                    </ListItemText>
+                    {/* Display download icon */}
+                    <ListItemText sx={{ maxWidth: '4%' }}>
+                        <ListItemIcon>
+                            <div onClick={handleDownloadClick}>
+                                {submitted ? (
+                                    <DownloadIcon
+                                        sx={{
+                                            color: 'primary.main',
+                                            '&:hover': {
+                                                color: 'primary.light',
+                                            },
+                                        }}
+                                    />
+                                ) : (
+                                    <DownloadIcon sx={{ color: 'gray' }} />
+                                )}
+                            </div>
+                        </ListItemIcon>
+                    </ListItemText>
                 </ListItemButton>
             </ListItem>
         </>

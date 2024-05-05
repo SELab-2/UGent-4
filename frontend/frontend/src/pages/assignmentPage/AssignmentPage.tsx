@@ -196,7 +196,7 @@ export function AssignmentPage() {
                             backgroundColor: 'background.default',
                         }}
                     >
-                        {/*deadline and groep button */}
+                        {/*Opgave and groep button */}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -207,32 +207,11 @@ export function AssignmentPage() {
                                 width: '100%',
                             }}
                         >
-                            <Typography variant="h6" color="text.primary">
-                                <strong>Deadline </strong>
-                                {assignment
-                                    ? dayjs(assignment.deadline).format(
-                                          'DD/MM/YYYY HH:mm'
-                                      )
-                                    : 'no deadline'}
-                            </Typography>
-                            <GroupAccessComponent
-                                assignmentid={parseInt(assignmentId)}
-                                courseid={parseInt(courseId)}
-                            />
-                        </Box>
-
-                        {/*Opgave*/}
-                        <Card
-                            sx={{
-                                color: 'text.primary',
-                                padding: '20px',
-                                backgroundColor: 'background.default',
-                            }}
-                        >
                             <Stack direction={'column'}>
                                 <Typography
+                                    variant="h5"
+                                    color={'text.primary'}
                                     sx={{
-                                        textDecoration: 'underline',
                                         fontWeight: 'bold',
                                     }}
                                 >
@@ -242,69 +221,95 @@ export function AssignmentPage() {
                                     {assignment ? assignment.beschrijving : ''}
                                 </Typography>
                             </Stack>
-                        </Card>
+                            <GroupAccessComponent
+                                assignmentid={parseInt(assignmentId)}
+                                courseid={parseInt(courseId)}
+                            />
+                        </Box>
 
-                        {/*Indieningen*/}
-                        <Card
+                        {/*Deadline*/}
+                        <Box
                             sx={{
-                                color: 'text.primary',
-                                backgroundColor: 'background.default',
                                 padding: '20px',
                             }}
                         >
-                            <Box
-                                display={'flex'}
-                                flexDirection={'row'}
-                                justifyContent={'space-between'}
-                                pl={3}
-                                pr={3}
+                            <Typography variant="h5" color="text.primary">
+                                <strong>Deadline </strong>
+                                {assignment
+                                    ? dayjs(assignment.deadline).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
+                                    : 'no deadline'}
+                            </Typography>
+                        </Box>
+
+                        {/*Indieningen*/}
+                        <Box paddingLeft={'17px'} paddingRight={'17px'}>
+                            <Card
+                                sx={{
+                                    color: 'text.primary',
+                                    backgroundColor: 'background.default',
+                                }}
                             >
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    {t('group')}
-                                </Typography>
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    {t('time')}
-                                </Typography>
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    Score
-                                </Typography>
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    Status
-                                </Typography>
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    {t('download')}
-                                </Typography>
-                            </Box>
-                            <Box style={{ maxHeight: 300, overflow: 'auto' }}>
-                                <Divider color={'text.main'}></Divider>
-                                <List disablePadding={true}>
-                                    {groups.map((group) => (
-                                        <Box key={group.groep_id}>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                            <Box
-                                                display={'flex'}
-                                                flexDirection={'row'}
-                                                justifyContent={'space-between'}
-                                                pl={3}
-                                                pr={3}
-                                            >
-                                                <SubmissionListItemTeacherPage
-                                                    group_id={
-                                                        group.groep_id
-                                                            ? group.groep_id.toString()
-                                                            : ''
+                                <Box
+                                    bgcolor={'primary.light'}
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    justifyContent={'space-between'}
+                                    sx={{
+                                        padding: '20px',
+                                    }}
+                                >
+                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                        {t('group')}
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                        {t('time')}
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                        Score
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                        Status
+                                    </Typography>
+                                    <Typography sx={{ fontWeight: 'bold' }}>
+                                        {t('download')}
+                                    </Typography>
+                                </Box>
+                                <Box
+                                    style={{ maxHeight: 300, overflow: 'auto' }}
+                                >
+                                    <List disablePadding={true}>
+                                        {groups.map((group) => (
+                                            <Box key={group.groep_id}>
+                                                <Divider
+                                                    color={'text.main'}
+                                                ></Divider>
+                                                <Box
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    justifyContent={
+                                                        'space-between'
                                                     }
-                                                    assignment_id={assignmentId}
-                                                    course_id={courseId}
-                                                />
+                                                >
+                                                    <SubmissionListItemTeacherPage
+                                                        group_id={
+                                                            group.groep_id
+                                                                ? group.groep_id.toString()
+                                                                : ''
+                                                        }
+                                                        assignment_id={
+                                                            assignmentId
+                                                        }
+                                                        course_id={courseId}
+                                                    />
+                                                </Box>
                                             </Box>
-                                        </Box>
-                                    ))}
-                                </List>
-                            </Box>
-                        </Card>
+                                        ))}
+                                    </List>
+                                </Box>
+                            </Card>
+                        </Box>
 
                         {/*<AddRestrictionButton></AddRestrictionButton>*/}
 
@@ -388,7 +393,6 @@ export function AssignmentPage() {
                         <Box
                             sx={{
                                 padding: '20px',
-                                backgroundColor: 'background.default',
                             }}
                         >
                             <Typography variant="h6" color="text.primary">
