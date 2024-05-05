@@ -42,6 +42,14 @@ naam=""
 # Schrijf in dit veld je leeftijd.
 leeftijd=0
 
+#@param
+# Ben je lesgever?
+lesgever=False
+
+#@param
+# Welke bestanden moeten aanwezig zijn?
+bestanden=["main.py", "test.py"]
+
 # de constante pi, nodig voor wanneer we de omtrek berekenen van het object dat de student indient.
 pi=3.14159
 

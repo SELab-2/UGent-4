@@ -17,13 +17,12 @@ export default function RestrictionTemplateUI(restrictionCode: string) {
 
     return (
         <>
-            {params.map(param => {
+            {params.map((param, index) => {
                 switch (param.type) {
-                    // there are four cases: integer, string, boolean, and list
                     // for integer, we will use a number input
-                    case 'integer':
+                    case 'number':
                         return (
-                            <div>
+                            <div key={index} style={{ marginBottom: '25px' }}>
                                 <label>{param.description}</label>
                                 <input type='number' value={param.value as number} />
                             </div>
@@ -31,7 +30,7 @@ export default function RestrictionTemplateUI(restrictionCode: string) {
                     // for string, we will use a text input
                     case 'string':
                         return (
-                            <div>
+                            <div key={index} style={{ marginBottom: '25px' }}>
                                 <label>{param.description}</label>
                                 <input type='text' value={param.value as string} />
                             </div>
@@ -39,7 +38,7 @@ export default function RestrictionTemplateUI(restrictionCode: string) {
                     // for boolean, we will use a checkbox
                     case 'boolean':
                         return (
-                            <div>
+                            <div key={index} style={{ marginBottom: '25px' }}>
                                 <label>{param.description}</label>
                                 <input type='checkbox' checked={param.value as boolean} />
                             </div>
@@ -47,18 +46,21 @@ export default function RestrictionTemplateUI(restrictionCode: string) {
                     // for lists, we will use a drop down menu
                     case 'array':
                         return (
-                            <div>
+                            <div key={index} style={{ marginBottom: '25px' }}>
                                 <label>{param.description}</label>
                                 <select>
-                                    {Array.isArray(param.value) && param.value.map((item: string) => <option value={item}>{item}</option>)}
+                                    {Array.isArray(param.value) && param.value.map((item: string, idx: number) => (
+                                        <option key={idx} value={item}>{item}</option>
+                                    ))}
                                 </select>
                             </div>
                         );
+                    default:
+                        return null; // Handle unsupported types
                 }
             })}
-        
+</>
 
-        </>
     )
 }
 
@@ -101,6 +103,9 @@ function parseParams(code: string) {
             params.push({type: Array.isArray(parsedValue) ? 'array' : typeof(parsedValue), description, variable, value: parsedValue});
         }
     }
+
+    console.log("params length:");
+    console.log(params.length);
 
     return params;
 }
