@@ -3,6 +3,7 @@ import { t } from 'i18next'
 import { TextField, Checkbox, List, ListItem, ListItemText, IconButton, Button } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Typography from '@mui/material/Typography'
 
 /**
  * This UI will show different fields for parameters regarding the restrictions template.
@@ -43,36 +44,58 @@ export default function RestrictionTemplateUI({restrictionCode} : {restrictionCo
             {params.map((param, index) => (
                 <div key={index} style={{ marginBottom: '20px' }}>
                     {param.type === 'number' && (
-                        <TextField
-                            label={param.description}
-                            type='number'
-                            value={param.value}
-                            fullWidth
-                        />
+                        <>
+                            <Typography variant={'body2'}>
+                                {param.description}
+                            </Typography>
+                            <TextField
+                                //label={param.description}
+                                type='number'
+                                value={param.value}
+                                fullWidth
+                            />
+                        </>
+                        
                     )}
                     {param.type === 'string' && (
-                        <TextField
-                            label={param.description}
-                            type='text'
-                            value={param.value}
-                            fullWidth
-                        />
+                        <>
+                            <Typography variant={'body2'}>
+                                {param.description}
+                            </Typography>
+                            <TextField
+                                //label={param.description}
+                                type='text'
+                                value={param.value}
+                                fullWidth
+                            />
+                        </>
+                        
                     )}
                     {param.type === 'boolean' && (
-                        <Checkbox
-                            checked={param.value}
-                            color="primary"
-                            inputProps={{ 'aria-label': param.description }}
-                        />
+                        <>
+                            <Typography variant={'body2'}>
+                                {param.description}
+                            </Typography>
+                            <Checkbox
+                                checked={param.value}
+                                color="primary"
+                                inputProps={{ 'aria-label': param.description }}
+                            />
+                        </>
+
+                        
                     )}
                     {param.type === 'array' && (
                         <div>
+                            <Typography variant={'body2'}>
+                                {param.description}
+                            </Typography>
                             <List>
                                 {arrayValues.map((item, idx) => (
                                     <ListItem key={idx}>
                                         <ListItemText>
                                             <TextField
-                                                label={param.description}
+                                                //label={param.description}
                                                 type='text'
                                                 value={item.value}
                                                 onChange={(event) => handleArrayChange(idx, event)}

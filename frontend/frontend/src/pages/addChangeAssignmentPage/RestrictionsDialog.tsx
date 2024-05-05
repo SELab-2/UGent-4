@@ -146,6 +146,7 @@ export default function RestrictionsDialog({
         <Button
             key="FileExtensionCheck"
             onClick={() => {
+                setTextFieldContent(code)
                 if (openTemplateInUI) {
                     handleClickOpenTemplateInterface()
                 } else {
@@ -158,6 +159,7 @@ export default function RestrictionsDialog({
         <Button
             key="FilesPresentCheck"
             onClick={() => {
+                setTextFieldContent(code)
                 if (openTemplateInUI) {
                     handleClickOpenTemplateInterface()
                 } else {
