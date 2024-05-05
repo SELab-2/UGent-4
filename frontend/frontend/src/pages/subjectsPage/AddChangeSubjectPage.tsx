@@ -2,8 +2,10 @@ import {
     Box,
     Divider,
     IconButton,
+    ListItem,
     ListItemButton,
     ListItemText,
+    Skeleton,
     Stack,
     TextField,
     Typography,
@@ -35,6 +37,7 @@ export interface User {
 // This function takes a list of users and will render it.
 // It can be used for both the teachers and the students.
 function UserList(
+    loading: boolean,
     users: User[],
     setSelected: React.Dispatch<React.SetStateAction<number>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -46,56 +49,101 @@ function UserList(
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '75vw',
+                        width: '65vw',
                     },
+                    minHeight: '20vh',
+                    maxHeight: '30vh',
+                    overflowY: 'auto',
                 }}
             >
-                {users.map((user) => {
-                    const handleClickOpen = () => {
-                        setSelected(user.user)
-                        setOpen(true)
-                    }
-                    {/* The list of users is mapped onto buttons
-                    This makes it possible to click through on a person. */}
-                    return (
-                        <>
-                            <ListItemButton
-                                sx={{
-                                    width: '100%',
-                                    height: 30,
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    paddingX: 1,
-                                    paddingY: 3,
-                                    borderRadius: 2,
-                                }}
-                            >
-                                <ListItemText
-                                    sx={{ maxWidth: 100 }}
-                                    primary={user.first_name}
-                                />
-                                <ListItemText
-                                    sx={{ maxWidth: 100 }}
-                                    primary={user.last_name}
-                                />
-                                <ListItemText
-                                    sx={{ maxWidth: 100 }}
-                                    primary={user.email}
-                                />
-                                <IconButton
-                                    aria-label={'delete_file'}
-                                    size={'small'}
-                                    onClick={handleClickOpen}
-                                    sx={{ marginBottom: 1 }}
-                                >
-                                    <ClearIcon color={'error'} />
-                                </IconButton>
-                            </ListItemButton>
-                            <Divider color={'text.main'}></Divider>
-                        </>
-                    )
-                })}
+                {loading ? (
+                    [...Array(5)].map((_, index) => (
+                        <ListItem key={index} sx={{ padding: 0, margin: 0 }}>
+                            <Skeleton
+                                variant={'text'}
+                                width={'100%'}
+                                height={60}
+                            />
+                        </ListItem>
+                    ))
+                ) : (
+                    <>
+                        {users.map((user) => {
+                            const handleClickOpen = () => {
+                                setSelected(user.user)
+                                setOpen(true)
+                            }
+                            {
+                                /* The list of users is mapped onto buttons
+                    This makes it possible to click through on a person. */
+                            }
+                            return (
+                                <>
+                                    <ListItemButton
+                                        sx={{
+                                            width: '100%',
+                                            height: 30,
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            paddingX: 1,
+                                            paddingY: 2,
+                                            borderRadius: 2,
+                                        }}
+                                    >
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={1}
+                                            alignItems={'center'}
+                                        >
+                                            <ListItemText
+                                                sx={{ maxWidth: 100 }}
+                                                primary={user.first_name}
+                                            />
+                                            <ListItemText
+                                                sx={{ maxWidth: 100 }}
+                                                primary={user.last_name}
+                                            />
+                                        </Box>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={1}
+                                            alignItems={'center'}
+                                        >
+                                            <ListItemText
+                                                sx={{
+                                                    maxWidth: 300,
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                                primary={user.email}
+                                            />
+                                            <IconButton
+                                                disabled={
+                                                    users.length == 1 &&
+                                                    users[0].is_lesgever
+                                                }
+                                                aria-label={'delete_file'}
+                                                size={'small'}
+                                                onClick={handleClickOpen}
+                                                sx={{
+                                                    '&:disabled': {
+                                                        color: 'text.primary',
+                                                    },
+                                                    color: 'error.main',
+                                                }}
+                                            >
+                                                <ClearIcon />
+                                            </IconButton>
+                                        </Box>
+                                    </ListItemButton>
+                                    <Divider color={'text.main'}></Divider>
+                                </>
+                            )
+                        })}
+                    </>
+                )}
             </List>
         </>
     )
@@ -107,6 +155,7 @@ function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
+    email: string,
     handleAdd: () => void,
     str: string
 ) {
@@ -120,19 +169,30 @@ function UploadPart(
                     onFileChange={handleFileChange}
                     path={file != null ? file : undefined}
                 />
-                <Box display={'flex'} flexDirection={'row'}>
+                <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignItems={'center'}
+                    gap={1}
+                >
                     {/* This box allows you to add extra people by their email. */}
                     <TextField
+                        value={email}
                         type="text"
                         placeholder={t('studentnumber')}
-                        onChange={(event) => setEmail(event.target.value)}
+                        onChange={(event) => {
+                            setEmail(event.target.value)
+                        }}
                     />
                     <Button
                         variant={'contained'}
                         color={'secondary'}
                         size={'small'}
                         disableElevation
-                        onClick={handleAdd}
+                        onClick={() => {
+                            handleAdd()
+                            setEmail('')
+                        }}
                     >
                         {t('add')}
                     </Button>
@@ -198,6 +258,9 @@ export function AddChangeSubjectPage() {
     const [teacherFile, setTeacherFile] = useState<File>()
 
     const [vakID,setVakID]= useState(params.courseId)
+
+    // state for spinners
+    const [loading, setLoading] = useState(false)
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
@@ -431,13 +494,24 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
-        if(vakID!=undefined){
-            instance
-                .get('vakken/' + vakID)
+        async function fetchData() {
+            setLoading(true)
+            setUserLoaded(false)
+            await instance
+                .get('/gebruikers/me/')
                 .then((res) => {
+                    setUser(res.data)
+                    setUserLoaded(true)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            await instance
+                .get('vakken/' + vakID)
+                .then(async (res) => {
                     setTitle(res.data.naam)
                     for (const id of res.data.studenten) {
-                        instance
+                        await instance
                             .get('gebruikers/' + id)
                             .then((res) => {
                                 setStudents((oldstudents) => {
@@ -461,7 +535,7 @@ export function AddChangeSubjectPage() {
                             })
                     }
                     for (const id of res.data.lesgevers) {
-                        instance
+                        await instance
                             .get('gebruikers/' + id)
                             .then((res) => {
                                 setTeachers((oldteachers) => {
@@ -488,20 +562,26 @@ export function AddChangeSubjectPage() {
                 .catch((err) => {
                     console.log(err)
                 })
+            setLoading(false)
         }
+        if(vakID!=undefined){
+          fetchData().catch((err) => {
+              console.log(err)
+          })
+         }
     }, [vakID])
 
     return (
         <>
             <Stack direction={'column'}>
-                <Header variant={'default'} title={title} />
+                <Header variant={'default'} title={loading ? '' : title} />
                 <Stack
                     direction={'column'}
                     spacing={1}
                     marginTop={11}
                     sx={{
                         width: '100%',
-                        height: '70 %',
+                        height: '70%',
                         backgroundColor: 'background.default',
                     }}
                 >
@@ -509,7 +589,6 @@ export function AddChangeSubjectPage() {
                         /* This is the large save button on the top of the page */
                         variant={'contained'}
                         color={'secondary'}
-                        size={'small'}
                         disableElevation
                         onClick={handleSave}
                     >
@@ -532,23 +611,35 @@ export function AddChangeSubjectPage() {
                         >
                             {t('subject_name') + ':'}
                         </Typography>
-                        <TextField
-                            type="text"
-                            placeholder={t('title')}
-                            onChange={(event) => setTitle(event.target.value)}
-                        />
+                        {loading ? (
+                            <Skeleton
+                                variant={'text'}
+                                width={200}
+                                height={60}
+                            />
+                        ) : (
+                            <TextField
+                                type="text"
+                                placeholder={t('title')}
+                                onChange={(event) =>
+                                    setTitle(event.target.value)
+                                }
+                                sx={{ height: 60 }}
+                            />
+                        )}
                     </Box>
 
                     <Box display={'flex'} flexDirection={'column'} padding={2}>
                         <Typography>{t('students') + ':'}</Typography>
                         <Box
-                            padding={2}
+                            padding={1}
                             display={'flex'}
                             flexDirection={'row'}
                             alignItems={'center'}
                             gap={1}
                         >
                             {UserList(
+                                loading,
                                 students,
                                 setSelectedStudent,
                                 setOpenStudent
@@ -557,6 +648,7 @@ export function AddChangeSubjectPage() {
                                 studentFile,
                                 handleStudentFileChange,
                                 setEmailStudent,
+                                emailStudent,
                                 handleAddStudent,
                                 t('upload_students')
                             )}
@@ -580,6 +672,7 @@ export function AddChangeSubjectPage() {
                             gap={1}
                         >
                             {UserList(
+                                loading,
                                 teachers,
                                 setSelectedTeacher,
                                 setOpenTeacher
@@ -588,6 +681,7 @@ export function AddChangeSubjectPage() {
                                 teacherFile,
                                 handleTeacherFileChange,
                                 setEmailTeacher,
+                                emailTeacher,
                                 handleAddTeacher,
                                 t('upload_teachers')
                             )}

@@ -9,25 +9,29 @@ interface CourseCardProps {
     pinCourse: (courseId: number) => void
 }
 
-export function ArchivedView({ isStudent, archivedCourses, pinnedCourses, pinCourse }: CourseCardProps) {
+export function ArchivedView({
+    isStudent,
+    archivedCourses,
+    pinnedCourses,
+    pinCourse,
+}: CourseCardProps) {
     return (
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '60svw', lg: '69svw' }}
+                minWidth={{ md: '62svw', lg: '73svw' }}
             >
                 <Stack
                     direction={'column'}
-                    spacing={1}
                     width={'100%'}
                     alignItems={'center'}
                 >
                     <Stack
                         flexDirection={'row'}
                         flexWrap={'wrap'}
-                        width={{ xs: '100%', md: '90%' }}
+                        width={'95%'}
                         sx={{
-                            gap: 2,
+                            gap: 1,
                             overflowY: { sm: 'auto' },
                             maxHeight: '78svh',
                         }}
@@ -39,7 +43,9 @@ export function ArchivedView({ isStudent, archivedCourses, pinnedCourses, pinCou
                                     courseId={course.vak_id.toString()}
                                     archived={true}
                                     isStudent={isStudent}
-                                    pinned={pinnedCourses.includes(course.vak_id)}
+                                    pinned={pinnedCourses.includes(
+                                        course.vak_id
+                                    )}
                                     pinEvent={() => pinCourse(course.vak_id)}
                                 />
                             )

@@ -1,5 +1,13 @@
 import { Header } from '../../components/Header'
-import { Box, Button, Stack, styled } from '@mui/material'
+import {
+    Box,
+    Button,
+    CircularProgress,
+    IconButton,
+    Skeleton,
+    Stack,
+    styled,
+} from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { StudentsView } from './StudentsView.tsx'
 import { t } from 'i18next'
@@ -31,10 +39,12 @@ export interface Project {
     vak: number
     max_score: number
     max_groep_grootte: number
+    student_groep?: boolean
     deadline: Date | null
     extra_deadline: Date | null
     zichtbaar: boolean
     gearchiveerd: boolean
+    filename?: string
 }
 
 interface Groep {
@@ -86,6 +96,9 @@ export function ProjectScoresPage() {
     const [groepen, setGroepen] = useState<ScoreGroep[]>([])
     const [fetchError, setFetchError] = useState(false)
 
+    // State for loading the page properly
+    const [loading, setLoading] = useState(true)
+
     const navigate = useNavigate()
 
     // Function to handle the 'Export Submissions' button
@@ -131,6 +144,7 @@ export function ProjectScoresPage() {
     useEffect(() => {
         async function fetchData() {
             try {
+                setLoading(true)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
@@ -138,6 +152,8 @@ export function ProjectScoresPage() {
             } catch (error) {
                 console.log('Error fetching data:', error)
                 setFetchError(true)
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -273,7 +289,7 @@ export function ProjectScoresPage() {
             >
                 <Header
                     variant={'default'}
-                    title={project?.titel + ': Scores'}
+                    title={loading ? '' : project?.titel + ': Scores'}
                 />
                 {/* Main content box */}
                 <Box
@@ -286,13 +302,25 @@ export function ProjectScoresPage() {
                     }}
                 >
                     {/* Render StudentsView component if project is defined */}
-                    {project !== undefined && (
-                        <StudentsView
-                            project={project}
-                            groepen={groepen}
-                            setGroepen={setGroepen}
-                            changeScore={changeScore}
-                        />
+                    {loading ? (
+                        <Box
+                            display={'flex'}
+                            justifyContent={'center'}
+                            flexGrow={1}
+                        >
+                            <CircularProgress color={'primary'} />
+                        </Box>
+                    ) : (
+                        <>
+                            {project && (
+                                <StudentsView
+                                    project={project}
+                                    groepen={groepen}
+                                    setGroepen={setGroepen}
+                                    changeScore={changeScore}
+                                />
+                            )}
+                        </>
                     )}
                 </Box>
                 {/* Footer section with action buttons */}
@@ -304,7 +332,7 @@ export function ProjectScoresPage() {
                     <Box
                         display="flex"
                         flexDirection="row"
-                        sx={{ width: '50%', height: 'auto' }}
+                        sx={{ width: '50%', height: 'auto', gap: 2 }}
                     >
                         <Button
                             onClick={exportSubmissions}
@@ -332,19 +360,40 @@ export function ProjectScoresPage() {
                     <Box
                         display="flex"
                         flexDirection="row-reverse"
-                        sx={{ width: '50%', height: 'auto' }}
+                        sx={{ width: '50%', height: 'auto', gap: 2 }}
                     >
-                        <Button
-                            onClick={() => setOpenSaveScoresPopup(true)}
-                            variant="contained"
-                            startIcon={<SaveIcon />}
-                        />
-                        <Button
+                        {loading ? (
+                            <Skeleton
+                                variant="rectangular"
+                                width={40}
+                                height={40}
+                            />
+                        ) : (
+                            <>
+                                <IconButton
+                                    onClick={() => setOpenSaveScoresPopup(true)}
+                                    sx={{
+                                        color: 'background.default',
+                                        '&:hover': {
+                                            color: 'text.primary',
+                                        },
+                                        backgroundColor: 'primary.main',
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    <SaveIcon />
+                                </IconButton>
+                            </>
+                        )}
+                        <IconButton
                             onClick={() => setOpenDeleteScoresPopup(true)}
-                            variant="contained"
-                            color="secondary"
-                            startIcon={<CloseIcon />}
-                        />
+                            sx={{
+                                backgroundColor: 'secondary.main',
+                                borderRadius: 2,
+                            }}
+                        >
+                            <CloseIcon />
+                        </IconButton>
                     </Box>
                 </Box>
                 {/* Popup for confirming saving scores */}

@@ -10,7 +10,6 @@ import { t } from 'i18next'
 import { IconButton } from '@mui/material'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 
-
 /**
  * Component for an "Add Restriction" button that opens a dialog for adding restrictions.
  * @returns {React.ReactElement} - The rendered component.
@@ -40,7 +39,6 @@ export default function AddRestrictionButton({
                     bgcolor: 'secondary.main',
                     marginRight: 1,
                 }}
-
                 onClick={() => {
                     setOpen(true)
                     setScroll('paper')

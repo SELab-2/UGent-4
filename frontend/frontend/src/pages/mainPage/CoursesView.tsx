@@ -12,32 +12,37 @@ interface CourseCardProps {
     pinCourse: (courseId: number) => void
 }
 
-export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCourse, pinCourse }: CourseCardProps) {
+export function CoursesView({
+    isStudent,
+    activecourses,
+    pinnedCourses,
+    archiveCourse,
+    pinCourse,
+}: CourseCardProps) {
     const navigate = useNavigate()
 
     return (
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '60svw', lg: '69svw' }}
+                minWidth={{ md: '62svw', lg: '73svw' }}
             >
                 <Stack
                     direction={'column'}
-                    spacing={1}
                     width={'100%'}
-                    alignItems={'center'}
+                    alignItems={'flex-start'}
                 >
                     <Stack
                         flexDirection={'row'}
                         flexWrap={'wrap'}
-                        width={'90%'}
+                        width={'95%'}
                         sx={{
-                            gap: 2,
-                            overflowY: { md: 'auto' },
+                            gap: 1,
+                            overflowY: 'auto',
                             maxHeight: '72svh',
                         }}
                     >
-                        {/* Map the list of the cirrent courses to CourseCards.
+                        {/* Map the list of the current courses to CourseCards.
                         A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
                         {activecourses.map((course: Course) => (
                             <CourseCard
@@ -45,7 +50,9 @@ export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCo
                                 courseId={course.vak_id.toString()}
                                 archived={false}
                                 isStudent={isStudent}
-                                archiveEvent={() => archiveCourse(course.vak_id)}
+                                archiveEvent={() =>
+                                    archiveCourse(course.vak_id)
+                                }
                                 pinned={pinnedCourses.includes(course.vak_id)}
                                 pinEvent={() => pinCourse(course.vak_id)}
                             />
