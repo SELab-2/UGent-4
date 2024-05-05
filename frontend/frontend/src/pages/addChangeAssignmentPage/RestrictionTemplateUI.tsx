@@ -1,6 +1,8 @@
 import * as React from 'react'
 import { t } from 'i18next'
-
+import { TextField, Checkbox, List, ListItem, ListItemText, IconButton, Button } from '@mui/material';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 /**
  * This UI will show different fields for parameters regarding the restrictions template.
@@ -15,53 +17,80 @@ export default function RestrictionTemplateUI(restrictionCode: string) {
 
     const params = parseParams(restrictionCode);
 
-    return (
-        <>
-            {params.map((param, index) => {
-                switch (param.type) {
-                    // for integer, we will use a number input
-                    case 'number':
-                        return (
-                            <div key={index} style={{ marginBottom: '25px' }}>
-                                <label>{param.description}</label>
-                                <input type='number' value={param.value as number} />
-                            </div>
-                        );
-                    // for string, we will use a text input
-                    case 'string':
-                        return (
-                            <div key={index} style={{ marginBottom: '25px' }}>
-                                <label>{param.description}</label>
-                                <input type='text' value={param.value as string} />
-                            </div>
-                        );
-                    // for boolean, we will use a checkbox
-                    case 'boolean':
-                        return (
-                            <div key={index} style={{ marginBottom: '25px' }}>
-                                <label>{param.description}</label>
-                                <input type='checkbox' checked={param.value as boolean} />
-                            </div>
-                        );
-                    // for lists, we will use a drop down menu
-                    case 'array':
-                        return (
-                            <div key={index} style={{ marginBottom: '25px' }}>
-                                <label>{param.description}</label>
-                                <select>
-                                    {Array.isArray(param.value) && param.value.map((item: string, idx: number) => (
-                                        <option key={idx} value={item}>{item}</option>
-                                    ))}
-                                </select>
-                            </div>
-                        );
-                    default:
-                        return null; // Handle unsupported types
-                }
-            })}
-</>
+    const initialArrayValues = params.filter(param => param.type === 'array').map(param => {
+        return param.value;
+    });
+    const [arrayValues, setArrayValues] = React.useState([...initialArrayValues.map(value => ({ value }))]);
 
-    )
+    const handleArrayChange = (index, event) => {
+        const newArrayValues = [...arrayValues];
+        newArrayValues[index].value = event.target.value;
+        setArrayValues(newArrayValues);
+    };
+
+    const handleDeleteRow = (index) => {
+        const newArrayValues = [...arrayValues];
+        newArrayValues.splice(index, 1);
+        setArrayValues(newArrayValues);
+    };
+
+    const handleAddRow = () => {
+        setArrayValues([...arrayValues, { value: '' }]);
+    };
+
+    return (
+        <div>
+            {params.map((param, index) => (
+                <div key={index} style={{ marginBottom: '20px' }}>
+                    {param.type === 'number' && (
+                        <TextField
+                            label={param.description}
+                            type='number'
+                            value={param.value}
+                            fullWidth
+                        />
+                    )}
+                    {param.type === 'string' && (
+                        <TextField
+                            label={param.description}
+                            type='text'
+                            value={param.value}
+                            fullWidth
+                        />
+                    )}
+                    {param.type === 'boolean' && (
+                        <Checkbox
+                            checked={param.value}
+                            color="primary"
+                            inputProps={{ 'aria-label': param.description }}
+                        />
+                    )}
+                    {param.type === 'array' && (
+                        <div>
+                            <List>
+                                {arrayValues.map((item, idx) => (
+                                    <ListItem key={idx}>
+                                        <ListItemText>
+                                            <TextField
+                                                label={param.description}
+                                                type='text'
+                                                value={item.value}
+                                                onChange={(event) => handleArrayChange(idx, event)}
+                                            />
+                                        </ListItemText>
+                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteRow(idx)}>
+                                            <DeleteOutlineIcon />
+                                        </IconButton>
+                                    </ListItem>
+                                ))}
+                            </List>
+                            <Button variant="outlined" onClick={handleAddRow} startIcon={<AddCircleOutlineIcon />}>Add Row</Button>
+                        </div>
+                    )}
+                </div>
+            ))}
+        </div>
+    );
 }
 
 function parseValue(value: string): string | number | boolean | any[] {
