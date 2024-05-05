@@ -74,36 +74,41 @@ export default function MainPage() {
                     console.error(e)
                 })
 
+            let courses: Course[] = []
             try {
                 const response =
                     await instance.get<Course[]>('/vakken/?in=true')
+                courses = response.data
                 setCourses(response.data)
             } catch (error) {
                 console.error('Error fetching courses:', error)
             }
 
-            await instance
-                .get('/projecten/')
-                .then((response: AxiosResponse) => {
-                    const deadlines: Dayjs[] = []
-                    const assignments: project[] = []
-                    response.data.forEach((project: project) => {
-                        if (project.zichtbaar && !project.gearchiveerd) {
-                            deadlines.push(
-                                dayjs(project.deadline, 'YYYY-MM-DD-HH:mm:ss')
-                            )
-                            assignments.push(
-                                project
-                            )
-                        }
+            const deadlines: Dayjs[] = []
+            const assignments: project[] = []
+            for(const course of courses){
+                await instance
+                    .get(`/projecten/?vak=${course.vak_id}`)
+                    .then((response: AxiosResponse) => {
+                        response.data.forEach((project: project) => {
+                            if (project.zichtbaar && !project.gearchiveerd) {
+                                deadlines.push(
+                                    dayjs(project.deadline, 'YYYY-MM-DD-HH:mm:ss')
+                                )
+                                assignments.push(
+                                    project
+                                )
+                            }
+                        })
                     })
-                    console.log(deadlines)
-                    setDeadlines(deadlines)
-                    setAssignments(assignments)
-                })
-                .catch((e: AxiosError) => {
-                    console.error(e)
-                })
+                    .catch((e: AxiosError) => {
+                        console.error(e)
+                    })
+            }
+            console.log(deadlines)
+            setDeadlines(deadlines)
+            setAssignments(assignments)
+
             setLoading(false)
         }
 
