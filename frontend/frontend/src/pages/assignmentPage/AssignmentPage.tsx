@@ -353,7 +353,7 @@ export function AssignmentPage() {
                             backgroundColor: 'background.default',
                         }}
                     >
-                        {/*deadline and groep button */}
+                        {/*Opgave and groep button */}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -361,14 +361,22 @@ export function AssignmentPage() {
                             }}
                         >
                             <Stack direction={'row'}>
-                                <Typography variant="h6" color="text.primary">
-                                    <strong>Deadline </strong>
-                                    {assignment
-                                        ? dayjs(assignment.deadline).format(
-                                              'DD/MM/YYYY HH:mm'
-                                          )
-                                        : 'no deadline'}
-                                </Typography>
+                                <Stack direction={'column'}>
+                                    <Typography
+                                        variant="h6"
+                                        color="text.primary"
+                                        sx={{
+                                            fontWeight: 'bold',
+                                        }}
+                                    >
+                                        {t('assignment')}
+                                    </Typography>
+                                    <Typography color="text.primary">
+                                        {assignment
+                                            ? assignment.beschrijving
+                                            : ''}
+                                    </Typography>
+                                </Stack>
                                 <div style={{ flexGrow: 1 }} />
                                 <Button onClick={goToGroups}>
                                     <Typography>{t('group')}</Typography>
@@ -376,87 +384,98 @@ export function AssignmentPage() {
                             </Stack>
                         </Box>
 
-                        {/*Opgave*/}
-                        <Card
+                        {/*Deadline*/}
+                        <Box
                             sx={{
-                                color: 'text.primary',
                                 padding: '20px',
                                 backgroundColor: 'background.default',
                             }}
                         >
-                            <Stack direction={'column'}>
-                                <Typography
-                                    sx={{
-                                        textDecoration: 'underline',
-                                        fontWeight: 'bold',
-                                    }}
-                                >
-                                    {t('assignment')}
-                                </Typography>
-                                <Typography>
-                                    {assignment ? assignment.beschrijving : ''}
-                                </Typography>
-                            </Stack>
-                        </Card>
-
+                            <Typography variant="h6" color="text.primary">
+                                <strong>Deadline </strong>
+                                {assignment
+                                    ? dayjs(assignment.deadline).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
+                                    : 'no deadline'}
+                            </Typography>
+                        </Box>
                         {/*Indieningen*/}
-                        <Card
-                            sx={{
-                                color: 'text.primary',
-                                backgroundColor: 'background.default',
-                                padding: '20px',
-                            }}
-                        >
-                            <Box
-                                display={'flex'}
-                                flexDirection={'row'}
-                                justifyContent={'space-between'}
-                                pl={3}
-                                pr={3}
+                        <Box paddingLeft={'17px'} paddingRight={'17px'}>
+                            <Card
+                                sx={{
+                                    color: 'text.primary',
+                                    backgroundColor: 'background.default',
+                                }}
                             >
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    {t('submission')}
-                                </Typography>
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    {t('time')}
-                                </Typography>
-                                <Typography sx={{ fontWeight: 'bold' }}>
-                                    Status
-                                </Typography>
-                            </Box>
-                            <Box style={{ maxHeight: 300, overflow: 'auto' }}>
-                                <Divider color={'text.main'}></Divider>
-                                <List disablePadding={true}>
-                                    {submissions.map((submission) => (
-                                        <Box key={submission.indiening_id}>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                            <Box
-                                                display={'flex'}
-                                                flexDirection={'row'}
-                                                justifyContent={'space-between'}
-                                                pl={3}
-                                                pr={3}
-                                            >
-                                                <SubmissionListItemStudentPage
-                                                    id={submission.indiening_id.toString()}
-                                                    timestamp={dayjs(
-                                                        submission.tijdstip
-                                                    ).format(
-                                                        'DD/MM/YYYY HH:mm'
-                                                    )}
-                                                    status={!submission.status}
-                                                    assignment_id={assignmentId}
-                                                    course_id={courseId}
-                                                />
+                                <Box
+                                    bgcolor={'primary.light'}
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    justifyContent={'space-between'}
+                                    pl={3}
+                                    pr={3}
+                                    padding={'40px'}
+                                >
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        {t('submission')}
+                                    </Typography>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        {t('time')}
+                                    </Typography>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Status
+                                    </Typography>
+                                </Box>
+                                <Box
+                                    style={{ maxHeight: 300, overflow: 'auto' }}
+                                >
+                                    <List disablePadding={true}>
+                                        {submissions.map((submission) => (
+                                            <Box key={submission.indiening_id}>
+                                                <Box
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    justifyContent={
+                                                        'space-between'
+                                                    }
+                                                    pl={7}
+                                                    pr={6}
+                                                >
+                                                    <SubmissionListItemStudentPage
+                                                        id={submission.indiening_id.toString()}
+                                                        timestamp={dayjs(
+                                                            submission.tijdstip
+                                                        ).format(
+                                                            'DD/MM/YYYY HH:mm'
+                                                        )}
+                                                        status={
+                                                            !submission.status
+                                                        }
+                                                        assignment_id={
+                                                            assignmentId
+                                                        }
+                                                        course_id={courseId}
+                                                    />
+                                                </Box>
+                                                <Divider
+                                                    color={'text.main'}
+                                                ></Divider>
                                             </Box>
-                                        </Box>
-                                    ))}
-                                </List>
-                            </Box>
-                        </Card>
-
+                                        ))}
+                                    </List>
+                                </Box>
+                            </Card>
+                        </Box>
                         {/*Upload knop*/}
                         <Box
                             sx={{

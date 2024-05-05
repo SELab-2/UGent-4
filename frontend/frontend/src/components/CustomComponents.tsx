@@ -12,6 +12,7 @@ export const Button = ({ children, ...props }: any) => {
             disableElevation
             size="large"
             sx={{
+                maxHeight: '35px',
                 bgcolor: 'primary.main',
                 textTransform: 'none',
                 color: 'primary.contrastText',

@@ -158,19 +158,19 @@ export function ProjectsView({
                     {!gebruiker.is_lesgever ? (
                         <>
                             {/* Show the UI from the perspective of a student. */}
-                            <Typography variant={'h4'}>Project</Typography>
-                            <Typography variant={'h4'}>Deadline</Typography>
-                            <Typography variant={'h4'}>
+                            <Typography variant={'h5'}>Project</Typography>
+                            <Typography variant={'h5'}>Deadline</Typography>
+                            <Typography variant={'h5'}>
                                 {t('submissions')}
                             </Typography>
-                            <Typography variant={'h4'}>Score</Typography>
+                            <Typography variant={'h5'}>Score</Typography>
                         </>
                     ) : (
                         <>
                             {/* Show the UI from the perspective of a teacher. */}
-                            <Typography variant={'h4'}>Project</Typography>
-                            <Typography variant={'h4'}>Deadline</Typography>
-                            <Typography variant={'h4'}>{t('edit')}</Typography>
+                            <Typography variant={'h5'}>Project</Typography>
+                            <Typography variant={'h5'}>Deadline</Typography>
+                            <Typography variant={'h5'}>{t('edit')}</Typography>
                         </>
                     )}
                 </Box>
