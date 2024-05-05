@@ -22,8 +22,6 @@ import Dialog from '@mui/material/Dialog'
 
 import instance from '../../axiosConfig.ts'
 
-//import ErrorPage from '../ErrorPage.tsx'
-
 import Papa, { ParseResult } from 'papaparse'
 
 export interface User {

@@ -62,7 +62,7 @@ export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCo
                             <IconButton
                                 color={'primary'}
                                 aria-label={'add-button'}
-                                onClick={() => navigate('/course/edit')}
+                                onClick={() => navigate('/course/new')}
                             >
                                 <AddIcon fontSize={'large'} />
                             </IconButton>
