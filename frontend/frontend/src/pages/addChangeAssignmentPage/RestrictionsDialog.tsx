@@ -240,12 +240,12 @@ export default function RestrictionsDialog({
                                 <CloseIcon />
                             </IconButton>
                             <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
-                                {t('new_script')}
+                                {'Template'}
                             </Typography>
                         </Toolbar>
                     </AppBar>
                     <Box aria-label={'Content'} padding={1}>
-                        {RestrictionsTemplateUI(code)}
+                        <RestrictionsTemplateUI restrictionCode={code} />
                     </Box>
                 </Box>
             </Dialog>

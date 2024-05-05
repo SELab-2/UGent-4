@@ -8,7 +8,7 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
  * This UI will show different fields for parameters regarding the restrictions template.
  * @returns {React.ReactElement} - The rendered component.
  */
-export default function RestrictionTemplateUI(restrictionCode: string) {
+export default function RestrictionTemplateUI({restrictionCode} : {restrictionCode: string}) {
     // There are four types of variables that can be used in a restriction template:
     // 1. Integer
     // 2. String
@@ -22,13 +22,13 @@ export default function RestrictionTemplateUI(restrictionCode: string) {
     });
     const [arrayValues, setArrayValues] = React.useState([...initialArrayValues.map(value => ({ value }))]);
 
-    const handleArrayChange = (index, event) => {
+    const handleArrayChange = (index: number, event) => {
         const newArrayValues = [...arrayValues];
         newArrayValues[index].value = event.target.value;
         setArrayValues(newArrayValues);
     };
 
-    const handleDeleteRow = (index) => {
+    const handleDeleteRow = (index: number) => {
         const newArrayValues = [...arrayValues];
         newArrayValues.splice(index, 1);
         setArrayValues(newArrayValues);
