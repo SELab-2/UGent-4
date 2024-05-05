@@ -19,6 +19,7 @@ import { t } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
+import RestrictionsTemplateUI from './RestrictionTemplateUI.tsx'
 
 interface RestrictionsDialogProps {
     restrictions: restriction[]
@@ -31,6 +32,21 @@ enum restrictionExtension {
     Python = '.py',
 }
 
+const code = `
+
+#@param
+# Schrijf in dit veld je voornaam.
+naam=""
+
+#@param
+# Schrijf in dit veld je leeftijd.
+leeftijd=0
+
+# de constante pi, nodig voor wanneer we de omtrek berekenen van het object dat de student indient.
+pi=3.14159
+
+#code...`
+
 /**
  * Dialog component for managing restrictions related to file uploads.
  * @param {Object} props - Props object.
@@ -42,8 +58,10 @@ export default function RestrictionsDialog({
     setRestrictions,
     closeParentDialog,
 }: RestrictionsDialogProps) {
-    const [open, setOpen] = useState(false)
+    const [openTextEditor, setOpenTextEditor] = useState(false)
+    const [openTemplateInterface, setOpenTemplateInterface] = useState(false)
     const [mustPass, setMustPass] = useState(false)
+    const [openTemplateInUI, setOpenTemplateInUI] = useState(false)
     const [textFieldContent, setTextFieldContent] = useState('')
     const [restrictionName, setRestrictionName] = useState('')
     const [restrictionType, setRestrictionType] =
@@ -69,7 +87,7 @@ export default function RestrictionsDialog({
             }
         }
         setRestrictions([...restrictions, ...newRestrictions])
-        handleClose()
+        closeParentDialog()
     }
 
     //handle the submission of the form
@@ -89,11 +107,15 @@ export default function RestrictionsDialog({
             moet_slagen: mustPass,
         }
         setRestrictions([...restrictions, newRestriction])
-        handleClose()
+        handleCloseTextEditor()
     }
 
-    const handleClickOpen = () => {
-        setOpen(true)
+    const handleClickOpenTextEditor = () => {
+        setOpenTextEditor(true)
+    }
+
+    const handleClickOpenTemplateInterface = () => {
+        setOpenTemplateInterface(true)
     }
 
     // Buttons array for the vertical button group
@@ -105,15 +127,22 @@ export default function RestrictionsDialog({
         <Button
             key="New_Script"
             onClick={() => {
-                handleClickOpen()
+                handleClickOpenTextEditor()
             }}
         >
             {t('new_script')}
         </Button>,
+    ]
+
+    const templates = [
         <Button
             key="FileExtensionCheck"
             onClick={() => {
-                handleClickOpen()
+                if (openTemplateInUI) {
+                    handleClickOpenTemplateInterface()
+                } else {
+                    handleClickOpenTextEditor()
+                }
             }}
         >
             File Extension Check
@@ -121,15 +150,24 @@ export default function RestrictionsDialog({
         <Button
             key="FilesPresentCheck"
             onClick={() => {
-                handleClickOpen()
+                if (openTemplateInUI) {
+                    handleClickOpenTemplateInterface()
+                } else {
+                    handleClickOpenTextEditor()
+                }
             }}
         >
             Files Present Check
         </Button>,
     ]
 
-    const handleClose = () => {
-        setOpen(false)
+    const handleCloseTextEditor = () => {
+        setOpenTextEditor(false)
+        closeParentDialog()
+    }
+
+    const handleCloseTemplateInterface = () => {
+        setOpenTemplateInterface(false)
         closeParentDialog()
     }
 
@@ -154,6 +192,24 @@ export default function RestrictionsDialog({
                 {buttons}
             </ButtonGroup>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                {/* This box will contain the templates */}
+                <Typography variant={'body2'}>
+                    {t('open_with_ui') + ':'}
+                </Typography>
+                <Switch
+                    value={openTemplateInUI}
+                    onChange={() => setOpenTemplateInUI(!openTemplateInUI)}
+                />
+                <ButtonGroup
+                    orientation="vertical"
+                    aria-label="Vertical button group"
+                    variant={'outlined'}
+                    color={'primary'}
+                >
+                    {templates}
+                </ButtonGroup>
+            </Box>
+            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
                 <Typography variant={'body2'}>
                     {t('must_pass') + ':'}
                 </Typography>
@@ -162,8 +218,31 @@ export default function RestrictionsDialog({
                     onChange={() => setMustPass(!mustPass)}
                 />
             </Box>
+            {/* This is the template interface. */}
+            <Dialog fullScreen open={openTemplateInterface} onClose={handleCloseTemplateInterface}>
+                <Box>
+                    <AppBar sx={{ position: 'relative' }}>
+                        <Toolbar>
+                            <IconButton
+                                edge="start"
+                                color="inherit"
+                                onClick={handleCloseTemplateInterface}
+                                aria-label="close"
+                            >
+                                <CloseIcon />
+                            </IconButton>
+                            <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
+                                {t('new_script')}
+                            </Typography>
+                        </Toolbar>
+                    </AppBar>
+                    <Box aria-label={'Content'} padding={1}>
+                        {RestrictionsTemplateUI(code)}
+                    </Box>
+                </Box>
+            </Dialog>
             {/* This is the code editor. */}
-            <Dialog fullScreen open={open} onClose={handleClose}>
+            <Dialog fullScreen open={openTextEditor} onClose={handleCloseTextEditor}>
                 <Box>
                     <AppBar sx={{ position: 'relative' }}>
                         <Toolbar>
@@ -183,7 +262,7 @@ export default function RestrictionsDialog({
                                     <IconButton
                                         edge="start"
                                         color="inherit"
-                                        onClick={handleClose}
+                                        onClick={handleCloseTextEditor}
                                         aria-label="close"
                                     >
                                         <CloseIcon />
