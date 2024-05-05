@@ -1,9 +1,9 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Skeleton, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { t } from 'i18next'
 import { AssignmentListItemSubjectsPage } from './AssignmentListItemSubjectsPage.tsx'
 import instance from '../../axiosConfig'
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Project } from '../scoresPage/ProjectScoresPage.tsx'
 import { Group } from '../groupsPage/GroupsPage.tsx'
 import { Submission } from '../submissionPage/SubmissionPage.tsx'
@@ -44,6 +44,9 @@ export function ProjectsView({
     courseId,
 }: ProjectsViewProps) {
     const [projects, setProjects] = useState<ProjectStudent[]>([])
+
+    // state to keep track of the loading state
+    const [loading, setLoading] = useState(true)
 
     // useEffect hook to periodically fetch all data
     useEffect(() => {
@@ -113,9 +116,10 @@ export function ProjectsView({
                 return projectstudent
             }
         }
-
         async function fetchData() {
             try {
+                //TODO fix correct waiting for all data to be fetched
+                setLoading(true)
                 const groupPromises = assignments.map((assignment) =>
                     fetchGroup(assignment)
                 )
@@ -134,6 +138,8 @@ export function ProjectsView({
                 setProjects(scoreArray)
             } catch (e) {
                 console.error('Error fetching all data:', e)
+            } finally {
+                setLoading(false)
             }
         }
         fetchData().catch((err) => console.error(err))
@@ -188,63 +194,89 @@ export function ProjectsView({
                     <Box sx={{ width: '100%', height: 320, overflow: 'auto' }}>
                         {/* The list below will display the projects with their information */}
                         <List disablePadding={true}>
-                            {projects
-                                .map((project, index) => ({
-                                    ...project,
-                                    index,
-                                }))
-                                .filter(
-                                    (project) =>
-                                        project.assignment.gearchiveerd ==
-                                        archived
-                                )
-                                .filter(
-                                    (project) =>
-                                        project.assignment.zichtbaar ||
-                                        gebruiker.is_lesgever
-                                )
-                                .map((project) => (
-                                    <AssignmentListItemSubjectsPage
-                                        key={project.assignment.project_id}
-                                        projectName={project.assignment.titel}
-                                        dueDate={dayjs(
-                                            project.assignment.deadline
-                                        )}
-                                        submissions={
-                                            project.submissions
-                                                ? project.submissions
-                                                : 0
-                                        }
-                                        score={
-                                            project.score
-                                                ? project.score
-                                                : {
-                                                      score_id: 0,
-                                                      score: 0,
-                                                      indiening: 0,
-                                                  }
-                                        }
-                                        maxScore={Number(
-                                            project.assignment.max_score
-                                        )}
-                                        isStudent={!gebruiker.is_lesgever}
-                                        archived={archived}
-                                        visible={project.assignment.zichtbaar}
-                                        deleteEvent={() =>
-                                            deleteAssignment(project.index)
-                                        }
-                                        archiveEvent={() =>
-                                            archiveAssignment(project.index)
-                                        }
-                                        visibilityEvent={() =>
-                                            changeVisibilityAssignment(
-                                                project.index
-                                            )
-                                        }
-                                        courseId={courseId}
-                                        assignmentId={project.assignment.project_id.toString()}
+                            {loading ? (
+                                [...Array(3).keys()].map((index) => (
+                                    <Skeleton
+                                        width={'100%'}
+                                        height={50}
+                                        key={index}
+                                        variant={'text'}
                                     />
-                                ))}
+                                ))
+                            ) : (
+                                <>
+                                    {projects
+                                        .map((project, index) => ({
+                                            ...project,
+                                            index,
+                                        }))
+                                        .filter(
+                                            (project) =>
+                                                project.assignment
+                                                    .gearchiveerd == archived
+                                        )
+                                        .filter(
+                                            (project) =>
+                                                project.assignment.zichtbaar ||
+                                                gebruiker.is_lesgever
+                                        )
+                                        .map((project) => (
+                                            <AssignmentListItemSubjectsPage
+                                                key={
+                                                    project.assignment
+                                                        .project_id
+                                                }
+                                                projectName={
+                                                    project.assignment.titel
+                                                }
+                                                dueDate={dayjs(
+                                                    project.assignment.deadline
+                                                )}
+                                                submissions={
+                                                    project.submissions
+                                                        ? project.submissions
+                                                        : 0
+                                                }
+                                                score={
+                                                    project.score
+                                                        ? project.score
+                                                        : {
+                                                              score_id: 0,
+                                                              score: 0,
+                                                              indiening: 0,
+                                                          }
+                                                }
+                                                maxScore={Number(
+                                                    project.assignment.max_score
+                                                )}
+                                                isStudent={
+                                                    !gebruiker.is_lesgever
+                                                }
+                                                archived={archived}
+                                                visible={
+                                                    project.assignment.zichtbaar
+                                                }
+                                                deleteEvent={() =>
+                                                    deleteAssignment(
+                                                        project.index
+                                                    )
+                                                }
+                                                archiveEvent={() =>
+                                                    archiveAssignment(
+                                                        project.index
+                                                    )
+                                                }
+                                                visibilityEvent={() =>
+                                                    changeVisibilityAssignment(
+                                                        project.index
+                                                    )
+                                                }
+                                                courseId={courseId}
+                                                assignmentId={project.assignment.project_id.toString()}
+                                            />
+                                        ))}
+                                </>
+                            )}
                         </List>
                     </Box>
                 </Box>

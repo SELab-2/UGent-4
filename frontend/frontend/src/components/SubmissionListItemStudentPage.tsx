@@ -1,8 +1,8 @@
 import {
     ListItem,
+    ListItemButton,
     ListItemIcon,
     ListItemText,
-    ListItemButton,
 } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -75,11 +75,7 @@ export function SubmissionListItemStudentPage({
                     {/* Display submission timestamp */}
                     <ListItemText
                         sx={{ maxWidth: 150 }}
-                        primary={
-                            timestamp
-                                ? timestamp
-                                : t('time')
-                        }
+                        primary={timestamp ? timestamp : t('time')}
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>

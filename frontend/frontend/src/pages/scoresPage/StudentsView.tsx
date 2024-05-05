@@ -1,8 +1,8 @@
-import { Box, Divider, Typography } from '@mui/material'
+import { Box, Divider, Skeleton, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { StudentScoreListItem } from './StudentScoreListItem.tsx'
 import { t } from 'i18next'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import instance from '../../axiosConfig.ts'
 import { Project, ScoreGroep } from './ProjectScoresPage.tsx'
 
@@ -19,6 +19,9 @@ export function StudentsView({
     setGroepen,
     changeScore,
 }: StudentsViewProps) {
+    //state for loading the page
+    const [loading, setLoading] = useState(true)
+
     // useEffect hook to periodically fetch all data
     useEffect(() => {
         async function fetchGroups(assignment: Project): Promise<ScoreGroep[]> {
@@ -82,6 +85,7 @@ export function StudentsView({
 
         async function fetchData() {
             try {
+                setLoading(true)
                 const groupArray = await fetchGroups(project)
 
                 const submissionPromises = groupArray.map((scoregroep) =>
@@ -97,6 +101,8 @@ export function StudentsView({
                 setGroepen(scoreArray)
             } catch (error) {
                 console.error('Error fetching all data:', error)
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -143,19 +149,38 @@ export function StudentsView({
                     <Box sx={{ width: '100%', height: 430, overflow: 'auto' }}>
                         <List disablePadding={true}>
                             {/* Mapping through groups to render StudentScoreListItem */}
-                            {groepen.map((groep, index) => (
-                                <StudentScoreListItem
-                                    key={groep.group.groep_id}
-                                    groupNumber={groep.group_number}
-                                    studenten={groep.group.studenten}
-                                    lastSubmission={groep.lastSubmission}
-                                    score={groep.score?.score}
-                                    maxScore={project.max_score}
-                                    changeScore={(score: number) =>
-                                        changeScore(index, score)
-                                    }
-                                />
-                            ))}
+                            {loading ? (
+                                [...Array(3)].map((_, index) => (
+                                    <Skeleton
+                                        key={index}
+                                        variant="rectangular"
+                                        height={40}
+                                        width={'97%'}
+                                        sx={{
+                                            margin: 1,
+                                            borderRadius: 1,
+                                        }}
+                                    />
+                                ))
+                            ) : (
+                                <>
+                                    {groepen.map((groep, index) => (
+                                        <StudentScoreListItem
+                                            key={groep.group.groep_id}
+                                            groupNumber={groep.group_number}
+                                            studenten={groep.group.studenten}
+                                            lastSubmission={
+                                                groep.lastSubmission
+                                            }
+                                            score={groep.score?.score}
+                                            maxScore={project.max_score}
+                                            changeScore={(score: number) =>
+                                                changeScore(index, score)
+                                            }
+                                        />
+                                    ))}
+                                </>
+                            )}
                         </List>
                     </Box>
                 </Box>

@@ -40,7 +40,7 @@ export function GroupAccessComponent({
                 width={'20vw'}
                 marginBottom={2}
             >
-                 {/* Button to navigate to groups page */}
+                {/* Button to navigate to groups page */}
                 {allowGroups ? (
                     <Button
                         variant={'contained'}

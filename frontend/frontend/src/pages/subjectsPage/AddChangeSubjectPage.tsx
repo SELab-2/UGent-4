@@ -2,8 +2,10 @@ import {
     Box,
     Divider,
     IconButton,
+    ListItem,
     ListItemButton,
     ListItemText,
+    Skeleton,
     Stack,
     TextField,
     Typography,
@@ -37,6 +39,7 @@ export interface User {
 // This function takes a list of users and will render it.
 // It can be used for both the teachers and the students.
 function UserList(
+    loading: boolean,
     users: User[],
     setSelected: React.Dispatch<React.SetStateAction<number>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -48,67 +51,101 @@ function UserList(
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '75vw',
+                        width: '65vw',
                     },
+                    minHeight: '20vh',
+                    maxHeight: '30vh',
+                    overflowY: 'auto',
                 }}
             >
-                {users.map((user) => {
-                    const handleClickOpen = () => {
-                        setSelected(user.user)
-                        setOpen(true)
-                    }
-                    {
-                        /* The list of users is mapped onto buttons
+                {loading ? (
+                    [...Array(5)].map((_, index) => (
+                        <ListItem key={index} sx={{ padding: 0, margin: 0 }}>
+                            <Skeleton
+                                variant={'text'}
+                                width={'100%'}
+                                height={60}
+                            />
+                        </ListItem>
+                    ))
+                ) : (
+                    <>
+                        {users.map((user) => {
+                            const handleClickOpen = () => {
+                                setSelected(user.user)
+                                setOpen(true)
+                            }
+                            {
+                                /* The list of users is mapped onto buttons
                     This makes it possible to click through on a person. */
-                    }
-                    return (
-                        <>
-                            <ListItemButton
-                                sx={{
-                                    width: '100%',
-                                    height: 30,
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    paddingX: 1,
-                                    paddingY: 3,
-                                    borderRadius: 2,
-                                }}
-                            >
-                                <ListItemText
-                                    sx={{ maxWidth: 100 }}
-                                    primary={user.first_name}
-                                />
-                                <ListItemText
-                                    sx={{ maxWidth: 100 }}
-                                    primary={user.last_name}
-                                />
-                                <ListItemText
-                                    sx={{ maxWidth: 100 }}
-                                    primary={user.email}
-                                />
-                                <IconButton
-                                    disabled={
-                                        users.length == 1 &&
-                                        users[0].is_lesgever
-                                    }
-                                    aria-label={'delete_file'}
-                                    size={'small'}
-                                    onClick={handleClickOpen}
-                                    sx={{
-                                        '&:disabled': {
-                                            color: 'text.primary',
-                                        },
-                                        color: 'error.main',
-                                    }}
-                                >
-                                    <ClearIcon />
-                                </IconButton>
-                            </ListItemButton>
-                            <Divider color={'text.main'}></Divider>
-                        </>
-                    )
-                })}
+                            }
+                            return (
+                                <>
+                                    <ListItemButton
+                                        sx={{
+                                            width: '100%',
+                                            height: 30,
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            paddingX: 1,
+                                            paddingY: 2,
+                                            borderRadius: 2,
+                                        }}
+                                    >
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={1}
+                                            alignItems={'center'}
+                                        >
+                                            <ListItemText
+                                                sx={{ maxWidth: 100 }}
+                                                primary={user.first_name}
+                                            />
+                                            <ListItemText
+                                                sx={{ maxWidth: 100 }}
+                                                primary={user.last_name}
+                                            />
+                                        </Box>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={1}
+                                            alignItems={'center'}
+                                        >
+                                            <ListItemText
+                                                sx={{
+                                                    maxWidth: 300,
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                                primary={user.email}
+                                            />
+                                            <IconButton
+                                                disabled={
+                                                    users.length == 1 &&
+                                                    users[0].is_lesgever
+                                                }
+                                                aria-label={'delete_file'}
+                                                size={'small'}
+                                                onClick={handleClickOpen}
+                                                sx={{
+                                                    '&:disabled': {
+                                                        color: 'text.primary',
+                                                    },
+                                                    color: 'error.main',
+                                                }}
+                                            >
+                                                <ClearIcon />
+                                            </IconButton>
+                                        </Box>
+                                    </ListItemButton>
+                                    <Divider color={'text.main'}></Divider>
+                                </>
+                            )
+                        })}
+                    </>
+                )}
             </List>
         </>
     )
@@ -134,7 +171,12 @@ function UploadPart(
                     onFileChange={handleFileChange}
                     path={file != null ? file : undefined}
                 />
-                <Box display={'flex'} flexDirection={'row'}>
+                <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    alignItems={'center'}
+                    gap={1}
+                >
                     {/* This box allows you to add extra people by their email. */}
                     <TextField
                         value={email}
@@ -225,6 +267,9 @@ export function AddChangeSubjectPage() {
     })
     const [userLoaded, setUserLoaded] = useState<boolean>(false)
     const vakID = params.courseId
+
+    // state for spinners
+    const [loading, setLoading] = useState(false)
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
@@ -320,9 +365,6 @@ export function AddChangeSubjectPage() {
     // This function will remove a teacher from the list.
     // It does so by looping through the list and removing the teacher with the correct ID.
     const handleRemoveTeacher = () => {
-        if (teachers.length == 1) {
-            return
-        }
         setTeachers((oldteacher) => {
             for (let i = 0; i < oldteacher.length; i++) {
                 if (oldteacher[i].user == selectedTeacher) {
@@ -446,71 +488,78 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
-        instance
-            .get('/gebruikers/me/')
-            .then((res) => {
-                setUser(res.data)
-                setUserLoaded(true)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        instance
-            .get('vakken/' + vakID)
-            .then((res) => {
-                setTitle(res.data.naam)
-                for (const id of res.data.studenten) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setStudents((oldstudents) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
+        async function fetchData() {
+            setLoading(true)
+            await instance
+                .get('/gebruikers/me/')
+                .then((res) => {
+                    setUser(res.data)
+                    setUserLoaded(true)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            await instance
+                .get('vakken/' + vakID)
+                .then(async (res) => {
+                    setTitle(res.data.naam)
+                    for (const id of res.data.studenten) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setStudents((oldstudents) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const student of oldstudents) {
+                                        if (student.user == id) {
+                                            found = true
+                                        }
                                     }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, res.data]
-                                }
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-                for (const id of res.data.lesgevers) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setTeachers((oldteachers) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
+                                    if (found) {
+                                        return oldstudents
+                                    } else {
+                                        return [...oldstudents, res.data]
                                     }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, res.data]
-                                }
+                                })
                             })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                    for (const id of res.data.lesgevers) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setTeachers((oldteachers) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const teacher of oldteachers) {
+                                        if (teacher.user == id) {
+                                            found = true
+                                        }
+                                    }
+                                    if (found) {
+                                        return oldteachers
+                                    } else {
+                                        return [...oldteachers, res.data]
+                                    }
+                                })
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            setLoading(false)
+        }
+        fetchData().catch((err) => {
+            console.log(err)
+        })
     }, [vakID])
 
     if (!userLoaded) {
@@ -524,14 +573,14 @@ export function AddChangeSubjectPage() {
     return (
         <>
             <Stack direction={'column'}>
-                <Header variant={'default'} title={title} />
+                <Header variant={'default'} title={loading ? '' : title} />
                 <Stack
                     direction={'column'}
                     spacing={1}
                     marginTop={11}
                     sx={{
                         width: '100%',
-                        height: '70 %',
+                        height: '70%',
                         backgroundColor: 'background.default',
                     }}
                 >
@@ -539,7 +588,6 @@ export function AddChangeSubjectPage() {
                         /* This is the large save button on the top of the page */
                         variant={'contained'}
                         color={'secondary'}
-                        size={'small'}
                         disableElevation
                         onClick={handleSave}
                     >
@@ -562,23 +610,35 @@ export function AddChangeSubjectPage() {
                         >
                             {t('subject_name') + ':'}
                         </Typography>
-                        <TextField
-                            type="text"
-                            placeholder={t('title')}
-                            onChange={(event) => setTitle(event.target.value)}
-                        />
+                        {loading ? (
+                            <Skeleton
+                                variant={'text'}
+                                width={200}
+                                height={60}
+                            />
+                        ) : (
+                            <TextField
+                                type="text"
+                                placeholder={t('title')}
+                                onChange={(event) =>
+                                    setTitle(event.target.value)
+                                }
+                                sx={{ height: 60 }}
+                            />
+                        )}
                     </Box>
 
                     <Box display={'flex'} flexDirection={'column'} padding={2}>
                         <Typography>{t('students') + ':'}</Typography>
                         <Box
-                            padding={2}
+                            padding={1}
                             display={'flex'}
                             flexDirection={'row'}
                             alignItems={'center'}
                             gap={1}
                         >
                             {UserList(
+                                loading,
                                 students,
                                 setSelectedStudent,
                                 setOpenStudent
@@ -611,6 +671,7 @@ export function AddChangeSubjectPage() {
                             gap={1}
                         >
                             {UserList(
+                                loading,
                                 teachers,
                                 setSelectedTeacher,
                                 setOpenTeacher

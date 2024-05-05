@@ -11,7 +11,7 @@ const english = {
     submissions: 'Submissions',
     no_submission: 'no submission',
     error: 'Something went wrong.',
-    assignment: 'Assignment:',
+    assignment: 'Assignment',
     filename: 'Submitted file:',
     restrictions: 'Restrictions:',
     current_projects: 'Current projects',
@@ -90,6 +90,8 @@ const english = {
     failed: 'Failed',
     result: 'Result',
     must_pass: 'Must pass',
+    loading: 'Loading',
+    file: 'File',
     archive_course_warning: 'Archive Course?',
     will_archive_projects: 'This will archive all projects.',
     copied: 'Copied!',
@@ -97,6 +99,7 @@ const english = {
     join_course: 'Join course?',
     join: 'Join',
     acces: 'This gives you access to the course.',
+    deadlines_on: 'Deadlines on'
 }
 
 export default english

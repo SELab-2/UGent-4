@@ -1,9 +1,15 @@
 import { Header } from '../../components/Header'
-import { Box, CircularProgress, IconButton, Stack, Card } from '@mui/material'
+import {
+    Box,
+    Card,
+    CircularProgress,
+    Grid,
+    IconButton,
+    Stack,
+} from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
-import AddCircleIcon from '@mui/icons-material/AddCircle'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
@@ -11,8 +17,9 @@ import { useEffect, useState } from 'react'
 import ErrorPage from '../ErrorPage.tsx'
 import { Course } from '../mainPage/MainPage.tsx'
 import { CopyToClipboard } from '../../components/CopyToClipboard.tsx'
-import { User } from "./AddChangeSubjectPage"
+import { User } from './AddChangeSubjectPage'
 import StudentPopUp from './StudentPopUp.tsx'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
 
 interface Project {
     project_id: number
@@ -51,7 +58,6 @@ export function SubjectsPage() {
     })
     const [students, setStudents] = useState<User[]>([])
     const [fetchError, setFetchError] = useState(false)
-    const [userLoading, setUserLoading] = useState(true)
 
     //variable for invitation link popup close
     const [inviteOpen, setInviteOpen] = useState(false)
@@ -61,6 +67,10 @@ export function SubjectsPage() {
         setInviteOpen(false)
         navigate(`/course/${courseID}`)
     }
+
+    // State for loading the page
+    const [loading, setLoading] = useState(true)
+    const [userLoading, setUserLoading] = useState(true)
 
     useEffect(() => {
         // Get the data for this course.
@@ -78,6 +88,12 @@ export function SubjectsPage() {
         }
         async function fetchData() {
             try {
+                setLoading(true)
+                setUserLoading(true)
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
+                setUserLoading(false)
+
                 const courseResponse = await instance.get(
                     `/vakken/${courseID}/`
                 )
@@ -89,21 +105,24 @@ export function SubjectsPage() {
             } catch (error) {
                 console.error('Error fetching data:', error)
                 setFetchError(true)
+            } finally {
+                setUserLoading(false)
+                setLoading(false)
             }
         }
         async function fetchStudents() {
-            let temp_students = [];
-            for (let s of course?.studenten ?? []) {
+            const temp_students = []
+            for (const s of course?.studenten ?? []) {
                 try {
-                    const userResponse = await instance.get(`/gebruikers/${s}/`);
-                    temp_students.push(userResponse.data);
+                    const userResponse = await instance.get(`/gebruikers/${s}/`)
+                    temp_students.push(userResponse.data)
                 } catch (error) {
-                    console.error('Error fetching data:', error);
-                    setFetchError(true);
+                    console.error('Error fetching data:', error)
+                    setFetchError(true)
                 }
             }
             // Update the state with the fetched data
-            setStudents(temp_students);
+            setStudents(temp_students)
         }
         // Fetch user first
         fetchUser().catch((error) =>
@@ -198,14 +217,16 @@ export function SubjectsPage() {
     return (
         <>
             {userLoading ? (
-                <Box
+                <Grid
+                    container
                     display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
                     justifyContent={'center'}
-                    alignItems={'center'}
-                    sx={{ height: '100vh', width: '100vw' }}
+                    sx={{ width: '100vw', height: '100vh' }}
                 >
-                    <CircularProgress color="primary" size={80} />
-                </Box>
+                    <CircularProgress color={'primary'} />
+                </Grid>
             ) : (
                 <>
                     {user.is_lesgever ? (
@@ -221,8 +242,8 @@ export function SubjectsPage() {
                                 }}
                             >
                                 <Header
-                                    variant={'editable'}
-                                    title={course.naam}
+                                    variant={loading ? 'default' : 'editable'}
+                                    title={loading ? '' : course.naam}
                                 />
                                 <Box
                                     sx={{
@@ -283,7 +304,6 @@ export function SubjectsPage() {
                                             '/accept_invitation'
                                         }
                                     />
-
                                     <IconButton
                                         onClick={addProject}
                                         color="primary"
@@ -318,18 +338,6 @@ export function SubjectsPage() {
                                     }
                                     doAction={doArchive}
                                 />
-                                <Card
-                                    sx={{
-                                        padding: 0,
-                                        backgroundColor: 'background.default',
-                                        width: 'fit-content',
-                                        height: 'fit-content',
-                                    }}
-                                >
-                                    <StudentPopUp
-                                        students={students}
-                                    ></StudentPopUp>
-                                </Card>
                             </Stack>
                         </>
                     ) : (
