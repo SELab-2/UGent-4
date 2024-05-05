@@ -35,7 +35,7 @@ export const Card = ({ children, ...props }: any) => {
             style={{
                 border: `3px solid ${theme.palette.primary.dark}`,
                 borderRadius: 12,
-                backgroundColor: `${theme.palette.background.paper}`,
+                backgroundColor: `${theme.palette.background.default}`,
             }}
             {...props}
         >

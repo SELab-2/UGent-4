@@ -47,7 +47,11 @@ export function SubmissionListItemStudentPage({
 
     return (
         <>
-            <ListItem key={id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem
+                key={id}
+                sx={{ margin: 0, bgcolor: 'background.default' }}
+                disablePadding={true}
+            >
                 <ListItemButton
                     sx={{
                         width: '100%',
@@ -55,7 +59,7 @@ export function SubmissionListItemStudentPage({
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        paddingX: 1,
+                        paddingX: 5,
                         paddingY: 3,
                         borderRadius: 2,
                     }}
@@ -75,11 +79,7 @@ export function SubmissionListItemStudentPage({
                     {/* Display submission timestamp */}
                     <ListItemText
                         sx={{ maxWidth: 150 }}
-                        primary={
-                            timestamp
-                                ? timestamp
-                                : t('time')
-                        }
+                        primary={timestamp ? timestamp : t('time')}
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>

@@ -415,7 +415,7 @@ export function AssignmentPage() {
                                     justifyContent={'space-between'}
                                     pl={3}
                                     pr={3}
-                                    padding={'40px'}
+                                    padding={'30px'}
                                 >
                                     <Typography
                                         variant="h5"
@@ -442,31 +442,17 @@ export function AssignmentPage() {
                                     <List disablePadding={true}>
                                         {submissions.map((submission) => (
                                             <Box key={submission.indiening_id}>
-                                                <Box
-                                                    display={'flex'}
-                                                    flexDirection={'row'}
-                                                    justifyContent={
-                                                        'space-between'
-                                                    }
-                                                    pl={7}
-                                                    pr={6}
-                                                >
-                                                    <SubmissionListItemStudentPage
-                                                        id={submission.indiening_id.toString()}
-                                                        timestamp={dayjs(
-                                                            submission.tijdstip
-                                                        ).format(
-                                                            'DD/MM/YYYY HH:mm'
-                                                        )}
-                                                        status={
-                                                            !submission.status
-                                                        }
-                                                        assignment_id={
-                                                            assignmentId
-                                                        }
-                                                        course_id={courseId}
-                                                    />
-                                                </Box>
+                                                <SubmissionListItemStudentPage
+                                                    id={submission.indiening_id.toString()}
+                                                    timestamp={dayjs(
+                                                        submission.tijdstip
+                                                    ).format(
+                                                        'DD/MM/YYYY HH:mm'
+                                                    )}
+                                                    status={!submission.status}
+                                                    assignment_id={assignmentId}
+                                                    course_id={courseId}
+                                                />
                                                 <Divider
                                                     color={'text.main'}
                                                 ></Divider>
