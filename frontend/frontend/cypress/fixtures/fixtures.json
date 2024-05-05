@@ -13,6 +13,76 @@
     ],
   "maxScore": "100",
   "warning": "This Is A Test Warning",
-  "button": "Test Button"
+  "button": "Test Button",
+  "fullProject": {
+    "project_id": "1",
+    "titel": "Test Project",
+    "beschrijving": "Test Description",
+    "opgave_bestand": "path/to/file",
+    "vak": "1",
+    "deadline": "2025-12-12T00:00:00Z",
+    "extra_deadline": "2025-12-13T00:00:00Z",
+    "max_score": "20",
+    "max_groep_grootte": "1",
+    "student_groep": "false",
+    "zichtbaar": "true",
+    "gearchiveerd": "false"
+    },
+    "scoreGroups": [
+      {
+          "group": {
+              "groep_id": 1,
+              "studenten": ["1", "2"],
+              "project": "1"
+          },
+          "group_number": 1,
+          "lastSubmission": "1",
+          "score": "10"
+      },
+      {
+          "group": {
+              "groep_id": 2,
+              "studenten": ["3"],
+              "project": "1"
+          },
+          "group_number": 2,
+          "lastSubmission": "2",
+          "score": "15"
+      }
+  ],
+  "projects": [
+    {
+        "project_id": 1,
+        "titel": "Project 1",
+        "beschrijving": "Description for Project 1",
+        "opgave_bestand": "path/to/file1",
+        "vak": 1,
+        "max_score": 20,
+        "max_groep_grootte": 1,
+        "deadline": "2022-12-31T00:00:00Z",
+        "extra_deadline": null,
+        "zichtbaar": true,
+        "gearchiveerd": false
+    },
+    {
+        "project_id": 2,
+        "titel": "Project 2",
+        "beschrijving": "Description for Project 2",
+        "opgave_bestand": "path/to/file2",
+        "vak": 2,
+        "max_score": 30,
+        "max_groep_grootte": 2,
+        "deadline": "2023-01-31T00:00:00Z",
+        "extra_deadline": "2023-02-28T00:00:00Z",
+        "zichtbaar": true,
+        "gearchiveerd": false
+    }],
+  "gebruiker": {
+    "user": 1,
+    "is_lesgever": false,
+    "first_name": "Test",
+    "last_name": "User",
+    "email": "test.user@example.com"
+  }
 
 }

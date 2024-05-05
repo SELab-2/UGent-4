@@ -211,7 +211,7 @@ export function SubmissionPage() {
                         <Typography variant={'h6'} fontWeight={'bold'}>
                             Deadline:
                         </Typography>
-                        <Typography variant={'body1'}>
+                        <Typography id='deadline' variant={'body1'}>
                             {project?.deadline
                                 ? dayjs(project.deadline).format(
                                       'DD/MM/YYYY HH:mm'
@@ -239,7 +239,7 @@ export function SubmissionPage() {
                             maxHeight={'25vh'}
                             sx={{ padding: 3, overflowY: 'auto' }}
                         >
-                            <Typography>{project?.beschrijving}</Typography>
+                            <Typography id='description'>{project?.beschrijving}</Typography>
                         </Box>
                     </Card>
                     <Box
@@ -263,6 +263,7 @@ export function SubmissionPage() {
                             {t('filename')}
                         </Typography>
                         <Button
+                            id='downloadButton'
                             startIcon={<DownloadIcon />}
                             onClick={downloadSubmission}
                         >

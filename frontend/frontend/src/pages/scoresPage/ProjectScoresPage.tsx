@@ -307,6 +307,7 @@ export function ProjectScoresPage() {
                         sx={{ width: '50%', height: 'auto' }}
                     >
                         <Button
+                            id='exportSubmissionsButton'
                             onClick={exportSubmissions}
                             variant="contained"
                             color="secondary"
@@ -315,6 +316,7 @@ export function ProjectScoresPage() {
                         </Button>
 
                         <Button
+                            id='uploadScoresButton'
                             variant={'contained'}
                             color={'secondary'}
                             component="label"
@@ -335,11 +337,13 @@ export function ProjectScoresPage() {
                         sx={{ width: '50%', height: 'auto' }}
                     >
                         <Button
+                            id='saveScoresButton'
                             onClick={() => setOpenSaveScoresPopup(true)}
                             variant="contained"
                             startIcon={<SaveIcon />}
                         />
                         <Button
+                            id='deleteScoresButton'
                             onClick={() => setOpenDeleteScoresPopup(true)}
                             variant="contained"
                             color="secondary"
