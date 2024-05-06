@@ -15,8 +15,6 @@ import zipfile
 from django.http import HttpResponse
 from django.http import FileResponse
 
-from utils import is_lesgever
-
 
 @api_view(["GET", "POST"])
 def indiening_list(request, format=None):
