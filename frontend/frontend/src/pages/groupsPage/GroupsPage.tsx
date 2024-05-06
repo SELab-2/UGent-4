@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header.tsx'
-import { Button } from '../../components/CustomComponents.tsx'
+import { Button, Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
     Grid,
@@ -337,7 +337,7 @@ export function GroupsPage() {
                             }}
                         >
                             <Typography
-                                variant="h6"
+                                variant="h5"
                                 sx={{ fontWeight: 'bold' }}
                                 color="text.primary"
                             >
@@ -417,132 +417,161 @@ export function GroupsPage() {
                                 aria-label={'group_assigner'}
                                 display={'flex'}
                                 flexDirection={'row'}
-                                maxWidth={600}
+                                maxWidth={500}
                                 justifyContent={'space-between'}
-                                gap={6}
-                                pl={3}
-                                pr={3}
                                 alignItems={'flex-start'}
                             >
-                                <Table
-                                    aria-label={'studentTable'}
-                                    stickyHeader
-                                    sx={{ maxHeight: '50svh' }}
-                                >
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>
-                                                <Typography fontWeight={'bold'}>
-                                                    {t('studenten')}
-                                                </Typography>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {availableStudents.map((student) => (
-                                            <TableRow key={student}>
-                                                <TableCell>
-                                                    {studentNames.get(
-                                                        student
-                                                    ) === ''
-                                                        ? student
-                                                        : studentNames.get(
-                                                              student
-                                                          )}
-                                                    <IconButton
-                                                        disabled={
-                                                            newGroups[
-                                                                parseInt(
-                                                                    currentGroup
-                                                                )
-                                                            ]
-                                                                ? newGroups[
-                                                                      parseInt(
-                                                                          currentGroup
-                                                                      )
-                                                                  ].studenten
-                                                                      .length >=
-                                                                  newGroupSize
-                                                                : true
-                                                        }
-                                                        onClick={() => {
-                                                            assignStudent(
-                                                                student,
-                                                                parseInt(
-                                                                    currentGroup
-                                                                )
-                                                            )
+                                <Card>
+                                    <Box
+                                        bgcolor={'primary.light'}
+                                        padding={'30px'}
+                                    >
+                                        <Typography
+                                            variant="h5"
+                                            sx={{ fontWeight: 'bold' }}
+                                        >
+                                            {t('studenten')}
+                                        </Typography>
+                                    </Box>
+                                    <Table
+                                        aria-label={'studentTable'}
+                                        stickyHeader
+                                        sx={{ maxHeight: '50svh' }}
+                                    >
+                                        <TableBody>
+                                            {availableStudents.map(
+                                                (student) => (
+                                                    <TableRow key={student}>
+                                                        <TableCell>
+                                                            {studentNames.get(
+                                                                student
+                                                            ) === ''
+                                                                ? student
+                                                                : studentNames.get(
+                                                                      student
+                                                                  )}
+                                                            <IconButton
+                                                                disabled={
+                                                                    newGroups[
+                                                                        parseInt(
+                                                                            currentGroup
+                                                                        )
+                                                                    ]
+                                                                        ? newGroups[
+                                                                              parseInt(
+                                                                                  currentGroup
+                                                                              )
+                                                                          ]
+                                                                              .studenten
+                                                                              .length >=
+                                                                          newGroupSize
+                                                                        : true
+                                                                }
+                                                                onClick={() => {
+                                                                    assignStudent(
+                                                                        student,
+                                                                        parseInt(
+                                                                            currentGroup
+                                                                        )
+                                                                    )
+                                                                }}
+                                                            >
+                                                                <Add />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )
+                                            )}
+                                        </TableBody>
+                                    </Table>
+                                </Card>
+                                <Card>
+                                    <Box
+                                        bgcolor={'primary.light'}
+                                        padding={'17px'}
+                                    >
+                                        <Stack direction={'row'}>
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                alignItems="center"
+                                            >
+                                                <Grid item>
+                                                    <Typography
+                                                        variant="h5"
+                                                        sx={{
+                                                            fontWeight: 'bold',
                                                         }}
                                                     >
-                                                        <Add />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                                <Table
-                                    aria-label={'groupTable'}
-                                    stickyHeader
-                                    sx={{ maxHeight: '5    0svh' }}
-                                >
-                                    <TableHead>
-                                        <TableRow>
-                                            <TableCell>
-                                                <Typography fontWeight={'bold'}>
-                                                    {t('group')}
-                                                </Typography>
-                                                <Select
-                                                    aria-label={'groupSelect'}
-                                                    value={currentGroup}
-                                                    sx={{ width: 200 }}
-                                                    onChange={
-                                                        handleCurrentGroupChange
-                                                    }
-                                                    label={t('group')}
-                                                >
-                                                    {newGroups.map(
-                                                        (_, index) => (
-                                                            <MenuItem
-                                                                key={index.toString()}
-                                                                value={index.toString()}
-                                                            >
-                                                                {t('group') +
-                                                                    (index + 1)}
-                                                            </MenuItem>
-                                                        )
-                                                    )}
-                                                </Select>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableHead>
-                                    <TableBody>
-                                        {newGroups[parseInt(currentGroup)] &&
-                                            newGroups[
-                                                parseInt(currentGroup)
-                                            ].studenten.map((student) => (
-                                                <TableRow key={student}>
-                                                    <TableCell>
-                                                        {studentNames.get(
-                                                            student
+                                                        {t('group')}
+                                                    </Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <Select
+                                                        aria-label={
+                                                            'groupSelect'
+                                                        }
+                                                        value={currentGroup}
+                                                        sx={{ width: 120 }}
+                                                        onChange={
+                                                            handleCurrentGroupChange
+                                                        }
+                                                        label={t('group')}
+                                                    >
+                                                        {newGroups.map(
+                                                            (_, index) => (
+                                                                <MenuItem
+                                                                    key={index.toString()}
+                                                                    value={index.toString()}
+                                                                >
+                                                                    {t(
+                                                                        'group'
+                                                                    ) +
+                                                                        (index +
+                                                                            1)}
+                                                                </MenuItem>
+                                                            )
                                                         )}
-                                                        <IconButton
-                                                            onClick={() => {
-                                                                removeStudent(
-                                                                    student,
-                                                                    parseInt(
-                                                                        currentGroup
+                                                    </Select>
+                                                </Grid>
+                                            </Grid>
+                                        </Stack>
+                                    </Box>
+                                    <Table
+                                        aria-label={'groupTable'}
+                                        stickyHeader
+                                        sx={{ maxHeight: '5    0svh' }}
+                                    >
+                                        <TableBody>
+                                            {newGroups[
+                                                parseInt(currentGroup)
+                                            ] &&
+                                                newGroups[
+                                                    parseInt(currentGroup)
+                                                ].studenten.map((student) => (
+                                                    <TableRow key={student}>
+                                                        <TableCell>
+                                                            {studentNames.get(
+                                                                student
+                                                            )}
+                                                            <IconButton
+                                                                onClick={() => {
+                                                                    removeStudent(
+                                                                        student,
+                                                                        parseInt(
+                                                                            currentGroup
+                                                                        )
                                                                     )
-                                                                )
-                                                            }}
-                                                        >
-                                                            <CancelIcon />
-                                                        </IconButton>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))}
-                                    </TableBody>
-                                </Table>
+                                                                }}
+                                                            >
+                                                                <CancelIcon />
+                                                            </IconButton>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+                                        </TableBody>
+                                    </Table>
+                                </Card>
                             </Box>
                         </Box>
                     </DialogContent>
