@@ -19,12 +19,18 @@ import instance from '../../axiosConfig.ts'
 import { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import JSZip from 'jszip'
-import { Group } from '../groupsPage/GroupsPage.tsx'
 import { Submission } from '../submissionPage/SubmissionPage.tsx'
 import { Project } from '../scoresPage/ProjectScoresPage.tsx'
 import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
 import dayjs from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
+
+// group interface
+export interface Group {
+    groep_id: number
+    studenten: number[]
+    project: number
+}
 
 export function AssignmentPage() {
     const navigate = useNavigate()
@@ -446,11 +452,19 @@ export function AssignmentPage() {
                                                             pr={3}
                                                         >
                                                             <SubmissionListItemTeacherPage
-                                                                group_id={
-                                                                    group.groep_id
-                                                                        ? group.groep_id.toString()
-                                                                        : ''
-                                                                }
+                                                                relative_group_id={(
+                                                                    group.groep_id -
+                                                                    Math.min(
+                                                                        ...groups.map(
+                                                                            (
+                                                                                group
+                                                                            ) =>
+                                                                                group.groep_id
+                                                                        )
+                                                                    ) +
+                                                                    1
+                                                                ).toString()}
+                                                                group_id={group.groep_id.toString()}
                                                                 assignment_id={
                                                                     assignmentId
                                                                         ? assignmentId
@@ -799,7 +813,8 @@ export function AssignmentPage() {
                                                                             }
                                                                         >
                                                                             <SubmissionListItemStudentPage
-                                                                                id={(
+                                                                                realId={submission.indiening_id.toString()}
+                                                                                visualId={(
                                                                                     submission.indiening_id -
                                                                                     Math.min(
                                                                                         ...submissions.map(

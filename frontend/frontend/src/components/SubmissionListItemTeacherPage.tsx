@@ -1,8 +1,8 @@
 import {
     ListItem,
-    ListItemText,
-    ListItemIcon,
     ListItemButton,
+    ListItemIcon,
+    ListItemText,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -14,6 +14,7 @@ import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
 import dayjs from 'dayjs'
 
 interface SubmissionListItemTeacherPageProps {
+    relative_group_id: string
     group_id: string
     assignment_id: string
     course_id: string
@@ -30,6 +31,7 @@ export interface Score {
  * @param {SubmissionListItemTeacherPageProps} props - Props for SubmissionListItemTeacherPage component
  */
 export function SubmissionListItemTeacherPage({
+    relative_group_id,
     group_id,
     assignment_id,
     course_id,
@@ -145,7 +147,7 @@ export function SubmissionListItemTeacherPage({
                                 color: 'primary.light',
                             },
                         }}
-                        primary={group_id}
+                        primary={relative_group_id}
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
@@ -165,7 +167,7 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
-                        {submitted?.status ? (
+                        {!submitted?.status ? (
                             <HighlightOffIcon sx={{ color: 'error.main' }} />
                         ) : (
                             submitted !== undefined && (
