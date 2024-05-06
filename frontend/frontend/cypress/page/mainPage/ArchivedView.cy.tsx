@@ -6,6 +6,8 @@ describe('ArchivedView', () => {
     const mockProps = {
         isStudent: false,
         archivedCourses: [],
+        pinnedCourses: [1],
+        pinCourse: () => {},
       };
 
     it('renders no archived courses', () => {
