@@ -57,7 +57,7 @@ export function SubmissionListItemStudentPage({
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        paddingX: 1,
+                        paddingX: 5,
                         paddingY: 3,
                         borderRadius: 2,
                     }}

@@ -1,5 +1,6 @@
 import { Header } from '../../components/Header.tsx'
-import { Box, Button, Stack } from '@mui/material'
+import { Button } from '../../components/CustomComponents.tsx'
+import { Box, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ArchivedView } from './ArchivedView.tsx'
 import { CoursesView } from './CoursesView.tsx'
@@ -345,8 +346,6 @@ export default function MainPage() {
                         }}
                     >
                         <Button
-                            variant={'contained'}
-                            color={'secondary'}
                             on-click={() => navigator('/addTeacher')}
                             aria-label={'admin-button'}
                             sx={{ margin: 5 }}

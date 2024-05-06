@@ -1,6 +1,6 @@
+import { Divider, Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Divider,
     IconButton,
     ListItem,
     ListItemButton,
@@ -10,8 +10,8 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import Button from '@mui/material/Button'
 import { Header } from '../../components/Header.tsx'
+import { Button } from '../../components/CustomComponents.tsx'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import List from '@mui/material/List'
@@ -43,13 +43,13 @@ function UserList(
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
 ) {
     return (
-        <>
+        <Box marginTop={3}>
             <List
                 disablePadding={true}
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '65vw',
+                        width: '99vw'
                     },
                     minHeight: '20vh',
                     maxHeight: '30vh',
@@ -99,11 +99,7 @@ function UserList(
                                         >
                                             <ListItemText
                                                 sx={{ maxWidth: 100 }}
-                                                primary={user.first_name}
-                                            />
-                                            <ListItemText
-                                                sx={{ maxWidth: 100 }}
-                                                primary={user.last_name}
+                                                primary={user.first_name + ' '  + user.last_name}
                                             />
                                         </Box>
                                         <Box
@@ -145,7 +141,7 @@ function UserList(
                     </>
                 )}
             </List>
-        </>
+        </Box>
     )
 }
 
@@ -161,42 +157,33 @@ function UploadPart(
 ) {
     return (
         <>
-            <Box display={'flex'} flexDirection={'column'}>
-                <FileUploadButton
-                    name={str}
-                    fileTypes={['.csv']}
-                    tooltip={t('uploadToolTip')}
-                    onFileChange={handleFileChange}
-                    path={file != null ? file : undefined}
-                />
-                <Box
-                    display={'flex'}
-                    flexDirection={'row'}
-                    alignItems={'center'}
-                    gap={1}
-                >
-                    {/* This box allows you to add extra people by their email. */}
-                    <TextField
-                        value={email}
-                        type="text"
-                        placeholder={t('studentnumber')}
-                        onChange={(event) => {
-                            setEmail(event.target.value)
-                        }}
+            <Box display={'flex'} flexDirection={'column'} padding={'10px'}>
+                <Stack direction={'column'} spacing={2}>
+                    <Stack direction={'row'} spacing={2} alignItems="center">
+                        <Box>
+                            {/* This box allows you to add extra people by their email. */}
+                            <TextField
+                                type="text"
+                                placeholder={t('studentnumber')}
+                                onChange={(event) =>
+                                    setEmail(event.target.value)
+                                }
+                            />
+                        </Box>
+                        <Box>
+                            <Button size={'small'} onClick={handleAdd}>
+                                {t('add')}
+                            </Button>
+                        </Box>
+                    </Stack>
+                    <FileUploadButton
+                        name={str}
+                        fileTypes={['.csv']}
+                        tooltip={t('uploadToolTip')}
+                        onFileChange={handleFileChange}
+                        path={file != null ? file : undefined}
                     />
-                    <Button
-                        variant={'contained'}
-                        color={'secondary'}
-                        size={'small'}
-                        disableElevation
-                        onClick={() => {
-                            handleAdd()
-                            setEmail('')
-                        }}
-                    >
-                        {t('add')}
-                    </Button>
-                </Box>
+                </Stack>
             </Box>
         </>
     )
@@ -217,22 +204,10 @@ function DialogWindow(
                 <Box padding={2} alignItems={'center'} gap={1}>
                     <Typography> {str + '?'} </Typography>
                     <Box display={'flex'} flexDirection={'row'}>
-                        <Button
-                            variant={'contained'}
-                            color={'secondary'}
-                            size={'small'}
-                            disableElevation
-                            onClick={handleClose}
-                        >
+                        <Button size={'small'} onClick={handleClose}>
                             {t('cancel')}
                         </Button>
-                        <Button
-                            variant={'contained'}
-                            color={'secondary'}
-                            size={'small'}
-                            disableElevation
-                            onClick={handleRemove}
-                        >
+                        <Button size={'small'} onClick={handleRemove}>
                             {t('delete')}
                         </Button>
                     </Box>
@@ -577,7 +552,7 @@ export function AddChangeSubjectPage() {
                 <Header variant={'default'} title={loading ? '' : title} />
                 <Stack
                     direction={'column'}
-                    spacing={1}
+                    spacing={5}
                     marginTop={11}
                     sx={{
                         width: '100%',
@@ -585,16 +560,15 @@ export function AddChangeSubjectPage() {
                         backgroundColor: 'background.default',
                     }}
                 >
-                    <Button
-                        /* This is the large save button on the top of the page */
-                        variant={'contained'}
-                        color={'secondary'}
-                        disableElevation
-                        onClick={handleSave}
+                    <Box
+                        sx={{
+                            backgroundColor: 'background.default',
+                            display: 'flex',
+                            flexDirection: 'row',
+                            justifyContent: 'space-between',
+                            width: '100%',
+                        }}
                     >
-                        {t('save')}
-                    </Button>
-
                     <Box
                         // This box contains the title of the subject.
                         // This title can be changed if necessary.
@@ -605,7 +579,7 @@ export function AddChangeSubjectPage() {
                         alignItems={'center'}
                     >
                         <Typography
-                            variant={'h6'}
+                            variant={'h5'}
                             color={'text.primary'}
                             fontWeight={'bold'}
                         >
@@ -627,16 +601,31 @@ export function AddChangeSubjectPage() {
                                 sx={{ height: 60 }}
                             />
                         )}
+                        </Box>
+                        <Box padding={'20px'}>
+                            <Button
+                                /* This is the large save button on the top of the page */
+                                onClick={handleSave}
+                            >
+                                {t('save')}
+                            </Button>
+                        </Box>
                     </Box>
-
-                    <Box display={'flex'} flexDirection={'column'} padding={2}>
-                        <Typography>{t('students') + ':'}</Typography>
+                    <Card>
+                        <Box bgcolor={'primary.light'} padding={'20px'}>
+                            <Typography
+                                variant="h5"
+                                sx={{ fontWeight: 'bold' }}
+                            >
+                                {t('students')}
+                            </Typography>
+                        </Box>
                         <Box
-                            padding={1}
                             display={'flex'}
                             flexDirection={'row'}
                             alignItems={'center'}
                             gap={1}
+                            style={{ maxHeight: 300, overflow: 'auto' }}
                         >
                             {UserList(
                                 loading,
@@ -644,15 +633,16 @@ export function AddChangeSubjectPage() {
                                 setSelectedStudent,
                                 setOpenStudent
                             )}
-                            {UploadPart(
-                                studentFile,
-                                handleStudentFileChange,
-                                setEmailStudent,
-                                emailStudent,
-                                handleAddStudent,
-                                t('upload_students')
-                            )}
                         </Box>
+                    </Card>
+                    <Box marginTop={-30}>
+                        {UploadPart(
+                            studentFile,
+                            handleStudentFileChange,
+                            setEmailStudent,
+                            handleAddStudent,
+                            t('upload_students')
+                        )}
                     </Box>
 
                     {DialogWindow(
@@ -662,14 +652,20 @@ export function AddChangeSubjectPage() {
                         t('delete_student')
                     )}
 
-                    <Box display={'flex'} flexDirection={'column'} padding={2}>
-                        <Typography>{t('teachers') + ':'}</Typography>
+                    <Card>
+                        <Box bgcolor={'primary.light'} padding={'20px'}>
+                            <Typography
+                                variant="h5"
+                                sx={{ fontWeight: 'bold' }}
+                            >
+                                {t('teachers')}
+                            </Typography>
+                        </Box>
                         <Box
-                            padding={2}
                             display={'flex'}
                             flexDirection={'row'}
                             alignItems={'center'}
-                            gap={1}
+                            style={{ maxHeight: 300, overflow: 'auto' }}
                         >
                             {UserList(
                                 loading,
@@ -677,15 +673,16 @@ export function AddChangeSubjectPage() {
                                 setSelectedTeacher,
                                 setOpenTeacher
                             )}
-                            {UploadPart(
-                                teacherFile,
-                                handleTeacherFileChange,
-                                setEmailTeacher,
-                                emailTeacher,
-                                handleAddTeacher,
-                                t('upload_teachers')
-                            )}
                         </Box>
+                    </Card>
+                    <Box marginTop={1}>
+                        {UploadPart(
+                            teacherFile,
+                            handleTeacherFileChange,
+                            setEmailTeacher,
+                            handleAddTeacher,
+                            t('upload_teachers')
+                        )}
                     </Box>
 
                     {DialogWindow(

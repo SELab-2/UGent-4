@@ -1,9 +1,8 @@
+import { Card, Divider } from './CustomComponents.tsx'
 import {
     Box,
-    Card,
     CardActionArea,
     CardContent,
-    Divider,
     IconButton,
     Typography,
 } from '@mui/material'
@@ -124,13 +123,10 @@ export function CourseCard({
             ) : (
                 // If course is available, show course details inside a card component
                 <Card
-                    elevation={1}
                     sx={{
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
                         maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
                         padding: 0,
                         margin: 1,
                     }}
@@ -235,7 +231,6 @@ export function CourseCard({
                         <Box
                             aria-label={'assignmentList'}
                             sx={{
-                                backgroundColor: 'background.default',
                                 height: 150,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -295,7 +290,7 @@ export function CourseCard({
                                     )}
                                 </>
                             )}
-                            <Divider color={'text.main'}></Divider>
+                            <Divider></Divider>
                             <Box display={'flex'} flexDirection={'row'}>
                                 {isStudent ? (
                                     // Render assignment list for students

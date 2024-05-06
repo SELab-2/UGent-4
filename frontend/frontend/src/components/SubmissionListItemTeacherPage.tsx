@@ -11,6 +11,7 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import { useEffect, useState } from 'react'
 import instance from '../axiosConfig'
 import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
+import { t } from 'i18next'
 import dayjs from 'dayjs'
 
 interface SubmissionListItemTeacherPageProps {
@@ -128,11 +129,8 @@ export function SubmissionListItemTeacherPage({
                 <ListItemButton
                     sx={{
                         width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 1,
+                        height: 40,
+                        paddingX: 4,
                         paddingY: 3,
                         borderRadius: 2,
                     }}
@@ -141,7 +139,7 @@ export function SubmissionListItemTeacherPage({
                     {/* Display group id */}
                     <ListItemText
                         sx={{
-                            maxWidth: 10,
+                            maxWidth: '24%',
                             color: 'primary.main',
                             '&:hover': {
                                 color: 'primary.light',
@@ -151,7 +149,7 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
-                        sx={{ maxWidth: 150 }}
+                        sx={{ minWidth: '24%' }}
                         primary={
                             submitted
                                 ? dayjs(submitted.tijdstip).format(
@@ -162,8 +160,12 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display score */}
                     <ListItemText
-                        sx={{ maxWidth: 50 }}
-                        primary={score ? `${Number(score.score)}` + '/20' : '-'}
+                        sx={{ minWidth: '24%' }}
+                        primary={
+                            score
+                                ? `${Number(score.score)}` + '/20'
+                                : t('no_score_yet')
+                        }
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
@@ -188,10 +190,33 @@ export function SubmissionListItemTeacherPage({
                                     }}
                                 />
                             ) : (
-                                <DownloadIcon sx={{ color: 'gray' }} />
+                                submitted !== undefined && (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: 'success.main' }}
+                                    />
+                                )
                             )}
-                        </div>
-                    </ListItemIcon>
+                        </ListItemIcon>
+                    </ListItemText>
+                    {/* Display download icon */}
+                    <ListItemText sx={{ maxWidth: '4%' }}>
+                        <ListItemIcon>
+                            <div onClick={handleDownloadClick}>
+                                {submitted ? (
+                                    <DownloadIcon
+                                        sx={{
+                                            color: 'primary.main',
+                                            '&:hover': {
+                                                color: 'primary.light',
+                                            },
+                                        }}
+                                    />
+                                ) : (
+                                    <DownloadIcon sx={{ color: 'gray' }} />
+                                )}
+                            </div>
+                        </ListItemIcon>
+                    </ListItemText>
                 </ListItemButton>
             </ListItem>
         </>

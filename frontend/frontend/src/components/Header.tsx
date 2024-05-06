@@ -81,6 +81,7 @@ export const Header = ({ variant, title }: Props) => {
     return (
         <>
             <AppBar
+                elevation={0}
                 position="absolute"
                 sx={{
                     margin: 'auto',

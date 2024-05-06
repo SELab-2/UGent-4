@@ -1,6 +1,6 @@
+import { Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Card,
     CircularProgress,
     IconButton,
     ListItem,
@@ -481,7 +481,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* Here the user gets to specify the assignment name */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -562,7 +562,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* This section renders the normal deadline. */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -618,7 +618,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* This section renders the extra deadline. */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -667,18 +667,14 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                     {/* Description section */}
-                    <Card
-                        aria-label={'description'}
-                        elevation={1}
-                        sx={{ backgroundColor: 'background.default' }}
-                    >
+                    <Card aria-label={'description'}>
                         <Box
                             padding={2}
                             maxHeight={'20svh'}
                             minHeight={'20svh'}
                         >
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -733,7 +729,7 @@ export function AddChangeAssignmentPage() {
                                 height: '28svh',
                             }}
                         >
-                            <Typography variant={'h6'} fontWeight={'bold'}>
+                            <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('restrictions')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>

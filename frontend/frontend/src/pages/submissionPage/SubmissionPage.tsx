@@ -2,16 +2,15 @@ import { Header } from '../../components/Header.tsx'
 import { useParams } from 'react-router-dom'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
+import { Button, Card, Divider } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Button,
-    Card,
     CircularProgress,
-    Divider,
     ListItem,
     Paper,
     Skeleton,
     Typography,
+    Stack,
 } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -210,75 +209,50 @@ export function SubmissionPage() {
                         padding: 2,
                     }}
                 >
-                    <Paper
-                        // Shows the deadline of the submission's project
-                        aria-label={'deadline'}
-                        elevation={1}
-                        sx={{
-                            backgroundColor: 'background.default',
-                            padding: 1,
-                            minWidth: 100,
-                            maxWidth: 250,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 2,
-                        }}
-                    >
-                        <Typography variant={'h6'} fontWeight={'bold'}>
-                            Deadline:
-                        </Typography>
-                        {loading ? (
-                            <Skeleton variant={'text'} width={120} />
-                        ) : (
-                            <Typography variant={'body1'}>
-                                {project?.deadline
-                                    ? dayjs(project.deadline).format(
-                                          'DD/MM/YYYY HH:mm'
-                                      )
-                                    : 'error'}
-                            </Typography>
-                        )}
-                    </Paper>
-                    <Card
-                        // This card shows the assignment description.
+                    <Box
                         aria-label={'assignment-box'}
                         sx={{
-                            width: '98%',
-                            backgroundColor: 'background.default',
-                            padding: 1,
-                            paddingBottom: 3,
+                            padding: '20px',
                         }}
                     >
-                        <Typography
-                            variant={'h6'}
-                            fontWeight={'bold'}
-                            aria-label={'title'}
-                        >
-                            {t('assignment')}
+                        <Stack direction={'column'}>
+                            <Typography
+                                variant={'h5'}
+                                color={'text.primary'}
+                                aria-label={'title'}
+                                sx={{
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                {t('assignment')}
+                            </Typography>
+                            <Typography color={'text.primary'}>
+                                {project?.beschrijving}
+                            </Typography>
+                        </Stack>
+                    </Box>
+                    <Box
+                        aria-label={'deadline'}
+                        sx={{
+                            padding: '20px',
+                        }}
+                    >
+                        <Typography variant={'h5'} color="text.primary">
+                            <strong>Deadline </strong>
+                            {project?.deadline
+                                ? dayjs(project.deadline).format(
+                                      'DD/MM/YYYY HH:mm'
+                                  )
+                                : 'error'}
                         </Typography>
-                        <Box
-                            maxHeight={'25vh'}
-                            sx={{ padding: 3, overflowY: 'auto' }}
-                        >
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={'100%'}
-                                    height={60}
-                                />
-                            ) : (
-                                <Typography>{project?.beschrijving}</Typography>
-                            )}
-                        </Box>
-                    </Card>
+                    </Box>
                     <Box
                         // This box shows the filename of the submission and
                         // allows the user to download the submission.
                         aria-label={'file-box'}
                         color={'text.primary'}
                         sx={{
-                            padding: 1,
+                            padding: '20px',
                             display: 'flex',
                             flexDirection: 'row',
                             alignItems: 'center',
@@ -287,7 +261,7 @@ export function SubmissionPage() {
                         }}
                     >
                         <Typography
-                            variant={'h6'}
+                            variant={'h5'}
                             fontWeight={'bold'}
                             aria-label={'title'}
                             margin={0}
@@ -320,13 +294,12 @@ export function SubmissionPage() {
                         // This card shows the restrictions for the submission.
                         aria-label={'restrictions'}
                         sx={{
-                            padding: 1,
-                            backgroundColor: 'background.default',
+                            padding: '20px',
                             maxWidth: '60%',
                             height: '20vh',
                         }}
                     >
-                        <Typography variant={'h6'} fontWeight={'bold'}>
+                        <Typography variant={'h5'} fontWeight={'bold'}>
                             {t('restrictions')}
                         </Typography>
                         <Box sx={{ padding: 1 }}>
@@ -423,7 +396,6 @@ export function SubmissionPage() {
                         // This box shows the status and result of the submission.
                         aria-label={'result-box'}
                         sx={{
-                            padding: 1,
                             display: 'flex',
                             flexDirection: 'column',
                             backgroundColor: 'background.default',
@@ -435,7 +407,7 @@ export function SubmissionPage() {
                             // This box shows the status of the submission.
                             aria-label={'status-box'}
                             sx={{
-                                padding: 1,
+                                padding: '20px',
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
@@ -444,7 +416,7 @@ export function SubmissionPage() {
                                 gap: 2,
                             }}
                         >
-                            <Typography variant={'h6'} fontWeight={'bold'}>
+                            <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('status') + ':'}
                             </Typography>
                             {loading ? (
@@ -469,14 +441,13 @@ export function SubmissionPage() {
                             // This card shows the result of the submission.
                             aria-label={'result-box'}
                             sx={{
-                                padding: 1,
-                                backgroundColor: 'background.default',
+                                padding: '20px',
                                 color: 'text.primary',
                                 gap: 2,
                                 maxHeight: '15vh',
                             }}
                         >
-                            <Typography variant={'h6'} fontWeight={'bold'}>
+                            <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('result')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>

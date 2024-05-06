@@ -2,12 +2,10 @@ import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
+import { Button, Card, Divider } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Button,
-    Card,
     CircularProgress,
-    Divider,
     List,
     Skeleton,
     Stack,
@@ -344,7 +342,6 @@ export function AssignmentPage() {
                                         />
                                     )}
                                 </Box>
-
                                 {/* Assignment description */}
                                 <Card
                                     elevation={1}
@@ -379,7 +376,178 @@ export function AssignmentPage() {
                                         )}
                                     </Stack>
                                 </Card>
+                        {/*Export- en Aanpasknop*/}
+                        <Box
+                            sx={{
+                                padding: '20px',
+                                backgroundColor: 'background.default',
+                            }}
+                        >
+                            <Stack direction={'row'}>
+                                {submissions.length > 0 && (
+                                    <Button onClick={downloadAllSubmissions}>
+                                        <Typography>
+                                            {t('export')} {t('submissions')}
+                                        </Typography>
+                                    </Button>
+                                )}
+                                <div style={{ flexGrow: 1 }} />
+                                <Button onClick={adjustScores}>
+                                    <Typography>
+                                        {t('adjust_scores')}
+                                    </Typography>
+                                </Button>
+                            </Stack>
+                        </Box>
+                    </Stack>
+                </>
+            ) : (
+                <>
+                    <Header
+                        variant={'not_main'}
+                        title={assignment ? assignment.titel : ''}
+                    ></Header>
+                    <Stack
+                        marginTop={15}
+                        direction={'column'}
+                        spacing={4}
+                        sx={{
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'background.default',
+                        }}
+                    >
+                        {/*Opgave and groep button */}
+                        <Box
+                            sx={{
+                                padding: '20px',
+                                backgroundColor: 'background.default',
+                            }}
+                        >
+                            <Stack direction={'row'}>
+                                <Stack direction={'column'}>
+                                    <Typography
+                                        variant="h6"
+                                        color="text.primary"
+                                        sx={{
+                                            fontWeight: 'bold',
+                                        }}
+                                    >
+                                        {t('assignment')}
+                                    </Typography>
+                                    <Typography color="text.primary">
+                                        {assignment
+                                            ? assignment.beschrijving
+                                            : ''}
+                                    </Typography>
+                                </Stack>
+                                <div style={{ flexGrow: 1 }} />
+                                <Button onClick={goToGroups}>
+                                    <Typography>{t('group')}</Typography>
+                                </Button>
+                            </Stack>
+                        </Box>
 
+                        {/*Deadline*/}
+                        <Box
+                            sx={{
+                                padding: '20px',
+                            }}
+                        >
+                            <Typography variant="h6" color="text.primary">
+                                <strong>Deadline </strong>
+                                {assignment
+                                    ? dayjs(assignment.deadline).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
+                                    : 'no deadline'}
+                            </Typography>
+                        </Box>
+                        {/*Indieningen*/}
+                        <Box paddingLeft={'17px'} paddingRight={'17px'}>
+                            <Card
+                                sx={{
+                                    color: 'text.primary',
+                                    backgroundColor: 'background.default',
+                                }}
+                            >
+                                <Box
+                                    bgcolor={'primary.light'}
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    justifyContent={'space-between'}
+                                    pl={3}
+                                    pr={3}
+                                    padding={'30px'}
+                                >
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        {t('submission')}
+                                    </Typography>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        {t('time')}
+                                    </Typography>
+                                    <Typography
+                                        variant="h5"
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Status
+                                    </Typography>
+                                </Box>
+                                <Box
+                                    style={{ maxHeight: 300, overflow: 'auto' }}
+                                >
+                                    <List disablePadding={true}>
+                                        {submissions.map((submission) => (
+                                            <Box key={submission.indiening_id}>
+                                                <SubmissionListItemStudentPage
+                                                    id={submission.indiening_id.toString()}
+                                                    timestamp={dayjs(
+                                                        submission.tijdstip
+                                                    ).format(
+                                                        'DD/MM/YYYY HH:mm'
+                                                    )}
+                                                    status={!submission.status}
+                                                    assignment_id={assignmentId}
+                                                    course_id={courseId}
+                                                />
+                                                <Divider
+                                                    color={'text.main'}
+                                                ></Divider>
+                                            </Box>
+                                        ))}
+                                    </List>
+                                </Box>
+                            </Card>
+                        </Box>
+                        {/*Upload knop*/}
+                        <Box
+                            sx={{
+                                padding: '20px',
+                                backgroundColor: 'background.default',
+                            }}
+                        >
+                            <Stack direction={'row'}>
+                                {
+                                    <FileUploadButton
+                                        name={t('upload')}
+                                        path={submissionFile}
+                                        onFileChange={handleFileChange}
+                                        fileTypes={['.zip', '.pdf', '.txt']}
+                                        tooltip={t('uploadToolTip')}
+                                    />
+                                }
+                                <Box sx={{ paddingY: '8px' }}>
+                                    <Button onClick={uploadIndiening}>
+                                        <Typography>Confirm Upload</Typography>
+                                    </Button>
+                                </Box>
+                                <div style={{ flexGrow: 1 }} />
                                 {/* This renders a list of submissions.
                         It shows metadata about the submissions and allows the teacher to download them.
                         The metadata includes group number, submission time, score, and status.

@@ -1,7 +1,7 @@
 import { Header } from '../../components/Header.tsx'
+import { Button, Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Button,
     Grid,
     IconButton,
     MenuItem,
@@ -424,7 +424,7 @@ export function GroupsPage() {
                             }}
                         >
                             <Typography
-                                variant="h6"
+                                variant="h5"
                                 sx={{ fontWeight: 'bold' }}
                                 color="text.primary"
                             >
@@ -555,11 +555,8 @@ export function GroupsPage() {
                                 aria-label={'group_assigner'}
                                 display={'flex'}
                                 flexDirection={'row'}
-                                maxWidth={600}
+                                maxWidth={500}
                                 justifyContent={'space-between'}
-                                gap={6}
-                                pl={3}
-                                pr={3}
                                 alignItems={'flex-start'}
                             >
                                 <TableContainer sx={{ maxHeight: '55vh' }}>

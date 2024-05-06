@@ -1,3 +1,4 @@
+import { Card, Divider } from '../../components/CustomComponents.tsx'
 import { Box, Skeleton, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { t } from 'i18next'
@@ -162,19 +163,19 @@ export function ProjectsView({
                 {!gebruiker.is_lesgever ? (
                     <>
                         {/* Show the UI from the perspective of a student. */}
-                        <Typography variant={'h4'}>Project</Typography>
-                        <Typography variant={'h4'}>Deadline</Typography>
-                        <Typography variant={'h4'}>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Project</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Deadline</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
                             {t('submissions')}
                         </Typography>
-                        <Typography variant={'h4'}>Score</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Score</Typography>
                     </>
                 ) : (
                     <>
                         {/* Show the UI from the perspective of a teacher. */}
-                        <Typography variant={'h4'}>Project</Typography>
-                        <Typography variant={'h4'}>Deadline</Typography>
-                        <Typography variant={'h4'}>{t('edit')}</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Project</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Deadline</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>{t('edit')}</Typography>
                     </>
                 )}
             </Box>
@@ -274,13 +275,16 @@ export function ProjectsView({
                                                 courseId={courseId}
                                                 assignmentId={project.assignment.project_id.toString()}
                                             />
-                                        ))}
-                                </>
-                            )}
-                        </List>
+                                            <Divider
+                                                color={'text.main'}
+                                            ></Divider>
+                                        </>
+                                    ))}
+                            </List>
+                        </Box>
                     </Box>
                 </Box>
-            </Box>
+            </Card>
         </>
     )
 }
