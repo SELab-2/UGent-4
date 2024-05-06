@@ -41,6 +41,11 @@ jobs:
         cd api
         flake8 .
         cd ..
+    - name: Install Dependencies Frontend
+      run: |
+        cd frontend/frontend
+        npm i
+        cd ../..
     - name: Linting Frontend
       run: |
         cd frontend/frontend
