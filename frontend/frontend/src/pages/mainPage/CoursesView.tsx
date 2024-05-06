@@ -12,7 +12,13 @@ interface CourseCardProps {
     pinCourse: (courseId: number) => void
 }
 
-export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCourse, pinCourse }: CourseCardProps) {
+export function CoursesView({
+    isStudent,
+    activecourses,
+    pinnedCourses,
+    archiveCourse,
+    pinCourse,
+}: CourseCardProps) {
     const navigate = useNavigate()
 
     return (
@@ -45,7 +51,9 @@ export function CoursesView({ isStudent, activecourses, pinnedCourses, archiveCo
                                 courseId={course.vak_id.toString()}
                                 archived={false}
                                 isStudent={isStudent}
-                                archiveEvent={() => archiveCourse(course.vak_id)}
+                                archiveEvent={() =>
+                                    archiveCourse(course.vak_id)
+                                }
                                 pinned={pinnedCourses.includes(course.vak_id)}
                                 pinEvent={() => pinCourse(course.vak_id)}
                             />

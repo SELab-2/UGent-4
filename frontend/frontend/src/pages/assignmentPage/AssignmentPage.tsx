@@ -159,8 +159,10 @@ export function AssignmentPage() {
                 `/groepen/?student=${user.user}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data.find((group: Group) => String(group.project) === assignmentId);
-                if (group){
+                const group = groupResponse.data.find(
+                    (group: Group) => String(group.project) === assignmentId
+                )
+                if (group) {
                     const formData = new FormData()
                     formData.append('groep', group.groep_id)
                     formData.append('indiening_bestanden', submissionFile)
@@ -172,7 +174,10 @@ export function AssignmentPage() {
                         })
                     setSubmissionFile(undefined)
                 } else {
-                    console.error('Group not found for assingmentId: ', assignmentId)
+                    console.error(
+                        'Group not found for assingmentId: ',
+                        assignmentId
+                    )
                 }
             }
         }
@@ -380,9 +385,9 @@ export function AssignmentPage() {
                                     <strong>Deadline </strong>
                                     {assignment
                                         ? dayjs(assignment.deadline).format(
-                                            'DD/MM/YYYY HH:mm'
-                                        )
-                                      : 'no deadline'}
+                                              'DD/MM/YYYY HH:mm'
+                                          )
+                                        : 'no deadline'}
                                 </Typography>
                                 <div style={{ flexGrow: 1 }} />
                                 <Button

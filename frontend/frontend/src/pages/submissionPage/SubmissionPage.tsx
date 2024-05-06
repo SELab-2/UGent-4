@@ -245,7 +245,7 @@ export function SubmissionPage() {
                         </Box>
                     </Card>
                     <Box
-                        // This box shows the filename of the submission and 
+                        // This box shows the filename of the submission and
                         // allows the user to download the submission.
                         aria-label={'file-box'}
                         color={'text.primary'}

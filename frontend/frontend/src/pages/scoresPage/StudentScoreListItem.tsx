@@ -115,7 +115,7 @@ export function StudentScoreListItem({
                                     ? t('last_submission') +
                                       ' ' +
                                       dayjs(lastSubmission.tijdstip).format(
-                                        'DD/MM/YYYY HH:mm'
+                                          'DD/MM/YYYY HH:mm'
                                       )
                                     : t('no_submissions')
                             }

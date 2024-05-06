@@ -75,11 +75,7 @@ export function SubmissionListItemStudentPage({
                     {/* Display submission timestamp */}
                     <ListItemText
                         sx={{ maxWidth: 150 }}
-                        primary={
-                            timestamp
-                                ? timestamp
-                                : t('time')
-                        }
+                        primary={timestamp ? timestamp : t('time')}
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>

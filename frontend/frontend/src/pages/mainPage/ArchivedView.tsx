@@ -9,7 +9,12 @@ interface CourseCardProps {
     pinCourse: (courseId: number) => void
 }
 
-export function ArchivedView({ isStudent, archivedCourses, pinnedCourses, pinCourse }: CourseCardProps) {
+export function ArchivedView({
+    isStudent,
+    archivedCourses,
+    pinnedCourses,
+    pinCourse,
+}: CourseCardProps) {
     return (
         <>
             <Stack
@@ -39,7 +44,9 @@ export function ArchivedView({ isStudent, archivedCourses, pinnedCourses, pinCou
                                     courseId={course.vak_id.toString()}
                                     archived={true}
                                     isStudent={isStudent}
-                                    pinned={pinnedCourses.includes(course.vak_id)}
+                                    pinned={pinnedCourses.includes(
+                                        course.vak_id
+                                    )}
                                     pinEvent={() => pinCourse(course.vak_id)}
                                 />
                             )

@@ -41,6 +41,11 @@ jobs:
         cd api
         flake8 .
         cd ..
+    - name: Linting Frontend
+      run: |
+        cd frontend/frontend
+        eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
+        cd ../..
     - name: Run Tests
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -54,6 +59,7 @@ jobs:
         DB_HOST: ${{ secrets.DB_HOST }}
         DB_PORT: ${{ secrets.DB_PORT }}
         DB_ENGINE: ${{secrets.DB_ENGINE}}
+    
     
       run: |
         python manage.py makemigrations api

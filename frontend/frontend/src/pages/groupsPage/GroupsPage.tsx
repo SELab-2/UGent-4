@@ -442,7 +442,7 @@ export function GroupsPage() {
                                 alignItems={'flex-start'}
                             >
                                 <Table
-                                    // The teacher can see the available students 
+                                    // The teacher can see the available students
                                     // on the left side of the screen.
                                     // They are displayed in a table with a sticky header.
                                     aria-label={'studentTable'}

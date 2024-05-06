@@ -15,8 +15,8 @@ import instance from '../axiosConfig.ts'
 import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
-import PushPinIcon from '@mui/icons-material/PushPin';
-import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
+import PushPinIcon from '@mui/icons-material/PushPin'
+import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
 
@@ -38,7 +38,14 @@ interface CourseCardProps {
     pinEvent: () => void
 }
 
-export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned, pinEvent }: CourseCardProps) {
+export function CourseCard({
+    courseId,
+    archived,
+    isStudent,
+    archiveEvent,
+    pinned,
+    pinEvent,
+}: CourseCardProps) {
     // State variables
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
@@ -99,7 +106,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
 
     const pinCourse = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation()
-        console.log("Course pinned/unpinned")
+        console.log('Course pinned/unpinned')
         pinEvent()
     }
 
@@ -219,11 +226,11 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                 alignSelf: 'flex-end',
                                             }}
                                         >
-                                            {pinned?
+                                            {pinned ? (
                                                 <PushPinIcon />
-                                            :
+                                            ) : (
                                                 <PushPinOutlinedIcon />
-                                            }
+                                            )}
                                         </IconButton>
                                     </Box>
                                 </Box>
@@ -321,7 +328,9 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            dayjs(assignment.deadline).format(
+                                                            dayjs(
+                                                                assignment.deadline
+                                                            ).format(
                                                                 'DD/MM/YYYY HH:mm'
                                                             ) || undefined
                                                         }
@@ -345,8 +354,8 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                 }}
                                             >
                                                 <List disablePadding={true}>
-                                                    {assignments
-                                                        .map((assignment) => (
+                                                    {assignments.map(
+                                                        (assignment) => (
                                                             <AssignmentListItem
                                                                 key={
                                                                     assignment.project_id
@@ -359,9 +368,12 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    dayjs(assignment.deadline).format(
+                                                                    dayjs(
+                                                                        assignment.deadline
+                                                                    ).format(
                                                                         'DD/MM/YYYY HH:mm'
-                                                                    ) || undefined
+                                                                    ) ||
+                                                                    undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
@@ -372,7 +384,8 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                                     isStudent
                                                                 }
                                                             />
-                                                        ))}
+                                                        )
+                                                    )}
                                                 </List>
                                             </Box>
                                         ) : (
@@ -401,9 +414,12 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    dayjs(assignment.deadline).format(
+                                                                    dayjs(
+                                                                        assignment.deadline
+                                                                    ).format(
                                                                         'DD/MM/YYYY HH:mm'
-                                                                    ) || undefined
+                                                                    ) ||
+                                                                    undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===

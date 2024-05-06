@@ -57,8 +57,10 @@ function UserList(
                         setSelected(user.user)
                         setOpen(true)
                     }
-                    {/* The list of users is mapped onto buttons
-                    This makes it possible to click through on a person. */}
+                    {
+                        /* The list of users is mapped onto buttons
+                    This makes it possible to click through on a person. */
+                    }
                     return (
                         <>
                             <ListItemButton

@@ -665,7 +665,7 @@ export function AddChangeAssignmentPage() {
                             </Typography>
                             <Box sx={{ padding: 1 }}>
                                 <List
-                                // This list will render the restrictions that are added to the assignment.
+                                    // This list will render the restrictions that are added to the assignment.
                                     sx={{
                                         maxHeight: '18vh',
                                         overflowY: 'auto',
@@ -731,7 +731,7 @@ export function AddChangeAssignmentPage() {
                             >
                                 {visible ? (
                                     <IconButton
-                                        // Allows the teacher to select whether 
+                                        // Allows the teacher to select whether
                                         // the assignment is visible to students or not.
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
@@ -760,7 +760,7 @@ export function AddChangeAssignmentPage() {
                                 </Tooltip>
                             </Box>
                             <Box
-                                // This section allows the teacher to set the 
+                                // This section allows the teacher to set the
                                 // maximum score for the assignment.
                                 aria-label={'maxScore'}
                                 display={'flex'}
