@@ -1,4 +1,4 @@
-import { Divider } from '../../components/CustomComponents.tsx'
+import { Divider, Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
     IconButton,
@@ -48,7 +48,7 @@ function UserList(
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '75vw',
+                        width: '80vw',
                     },
                 }}
             >
@@ -116,25 +116,29 @@ function UploadPart(
 ) {
     return (
         <>
-            <Box display={'flex'} flexDirection={'column'}>
-                <FileUploadButton
-                    name={str}
-                    fileTypes={['.csv']}
-                    tooltip={t('uploadToolTip')}
-                    onFileChange={handleFileChange}
-                    path={file != null ? file : undefined}
-                />
-                <Box display={'flex'} flexDirection={'row'}>
-                    {/* This box allows you to add extra people by their email. */}
-                    <TextField
-                        type="text"
-                        placeholder={t('studentnumber')}
-                        onChange={(event) => setEmail(event.target.value)}
+            <Box display={'flex'} flexDirection={'column'} padding={'20px'}>
+                <Stack direction={'column'} spacing={2}>
+                    <FileUploadButton
+                        name={str}
+                        fileTypes={['.csv']}
+                        tooltip={t('uploadToolTip')}
+                        onFileChange={handleFileChange}
+                        path={file != null ? file : undefined}
                     />
-                    <Button size={'small'} onClick={handleAdd}>
-                        {t('add')}
-                    </Button>
-                </Box>
+                    <Box display={'flex'} flexDirection={'row'}>
+                        {/* This box allows you to add extra people by their email. */}
+                        <TextField
+                            type="text"
+                            placeholder={t('studentnumber')}
+                            onChange={(event) => setEmail(event.target.value)}
+                        />
+                    </Box>
+                    <Box>
+                        <Button size={'small'} onClick={handleAdd}>
+                            {t('add')}
+                        </Button>
+                    </Box>
+                </Stack>
             </Box>
         </>
     )
@@ -490,7 +494,7 @@ export function AddChangeSubjectPage() {
                 <Header variant={'default'} title={title} />
                 <Stack
                     direction={'column'}
-                    spacing={1}
+                    spacing={5}
                     marginTop={11}
                     sx={{
                         width: '100%',
@@ -498,17 +502,6 @@ export function AddChangeSubjectPage() {
                         backgroundColor: 'background.default',
                     }}
                 >
-                    <Button
-                        /* This is the large save button on the top of the page */
-                        variant={'contained'}
-                        color={'secondary'}
-                        size={'small'}
-                        disableElevation
-                        onClick={handleSave}
-                    >
-                        {t('save')}
-                    </Button>
-
                     <Box
                         // This box contains the title of the subject.
                         // This title can be changed if necessary.
@@ -516,6 +509,7 @@ export function AddChangeSubjectPage() {
                         display={'flex'}
                         flexDirection={'row'}
                         gap={2}
+                        padding={'20px'}
                         alignItems={'center'}
                     >
                         <Typography
@@ -531,11 +525,16 @@ export function AddChangeSubjectPage() {
                             onChange={(event) => setTitle(event.target.value)}
                         />
                     </Box>
-
-                    <Box display={'flex'} flexDirection={'column'} padding={2}>
-                        <Typography>{t('students') + ':'}</Typography>
+                    <Card>
+                        <Box bgcolor={'primary.light'} padding={'20px'}>
+                            <Typography
+                                variant="h5"
+                                sx={{ fontWeight: 'bold' }}
+                            >
+                                {t('students')}
+                            </Typography>
+                        </Box>
                         <Box
-                            padding={2}
                             display={'flex'}
                             flexDirection={'row'}
                             alignItems={'center'}
@@ -554,7 +553,7 @@ export function AddChangeSubjectPage() {
                                 t('upload_students')
                             )}
                         </Box>
-                    </Box>
+                    </Card>
 
                     {DialogWindow(
                         handleCloseStudent,
@@ -563,10 +562,16 @@ export function AddChangeSubjectPage() {
                         t('delete_student')
                     )}
 
-                    <Box display={'flex'} flexDirection={'column'} padding={2}>
-                        <Typography>{t('teachers') + ':'}</Typography>
+                    <Card>
+                        <Box bgcolor={'primary.light'} padding={'20px'}>
+                            <Typography
+                                variant="h5"
+                                sx={{ fontWeight: 'bold' }}
+                            >
+                                {t('teachers')}
+                            </Typography>
+                        </Box>
                         <Box
-                            padding={2}
                             display={'flex'}
                             flexDirection={'row'}
                             alignItems={'center'}
@@ -585,7 +590,7 @@ export function AddChangeSubjectPage() {
                                 t('upload_teachers')
                             )}
                         </Box>
-                    </Box>
+                    </Card>
 
                     {DialogWindow(
                         handleCloseTeacher,
@@ -594,6 +599,15 @@ export function AddChangeSubjectPage() {
                         t('delete_teacher')
                     )}
                 </Stack>
+                <Box padding={'20px'}>
+                    <Button
+                        /* This is the large save button on the top of the page */
+                        onClick={handleSave}
+                        style={{ maxWidth: 'auto' }}
+                    >
+                        {t('save')}
+                    </Button>
+                </Box>
             </Stack>
         </>
     )

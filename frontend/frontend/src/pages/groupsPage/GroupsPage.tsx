@@ -11,7 +11,6 @@ import {
     Table,
     TableBody,
     TableCell,
-    TableHead,
     TableRow,
     TextField,
     Tooltip,
