@@ -33,7 +33,7 @@ export const Card = ({ children, ...props }: any) => {
         <BaseCard
             elevation={0}
             style={{
-                border: `3px solid ${theme.palette.primary.dark}`,
+                border: `1px solid ${theme.palette.primary.dark}`,
                 borderRadius: 12,
                 backgroundColor: `${theme.palette.background.default}`,
             }}
@@ -48,7 +48,6 @@ export const Divider = ({ children, ...props }: any) => {
     return (
         <BaseDivider
             sx={{
-                border: '1px solid',
                 borderColor: 'text.primary',
                 borderRadius: 5,
             }}
