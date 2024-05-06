@@ -184,16 +184,13 @@ export function AddChangeAssignmentPage() {
                     setVisible(assignment.zichtbaar)
                     if (assignment.deadline !== null) {
                         setDueDate(
-                            dayjs(assignment.deadline, 'YYYY-MM-DDTHH:mm:ss')
+                            dayjs(assignment.deadline)
                         )
                         console.log('deadline' + assignment.deadline)
                     }
                     if (assignment.extra_deadline !== null) {
                         setExtraDueDate(
-                            dayjs(
-                                assignment.extra_deadline,
-                                'YYYY-MM-DDTHH:mm:ss'
-                            )
+                            dayjs(assignment.extra_deadline)
                         )
                         console.log(
                             'extra deadline' + assignment.extra_deadline
