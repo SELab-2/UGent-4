@@ -1,4 +1,3 @@
-import { Divider } from '../../components/CustomComponents.tsx'
 import {
     IconButton,
     ListItem,
