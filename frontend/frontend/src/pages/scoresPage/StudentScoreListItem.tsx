@@ -1,5 +1,11 @@
 import { Divider } from '../../components/CustomComponents.tsx'
-import { IconButton, ListItem, ListItemText, TextField } from '@mui/material'
+import {
+    IconButton,
+    ListItem,
+    ListItemText,
+    TextField,
+    Box,
+} from '@mui/material'
 import DownloadIcon from '@mui/icons-material/Download'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
@@ -102,9 +108,9 @@ export function StudentScoreListItem({
                 >
                     {/* Content section */}
                     <>
-                        <ListItemText sx={{ maxWidth: 200 }} primary={name} />
+                        <ListItemText sx={{ maxWidth: '25%' }} primary={name} />
                         <ListItemText
-                            sx={{ maxWidth: 300 }}
+                            sx={{ maxWidth: '30%' }}
                             primary={
                                 lastSubmission
                                     ? t('last_submission') +
@@ -116,34 +122,30 @@ export function StudentScoreListItem({
                             }
                         />
                         {/* Score section */}
-                        <ListItem sx={{ maxWidth: 100 }}>
+                        <ListItem sx={{ maxWidth: '30%' }}>
                             {lastSubmission ? (
                                 <>
-                                    <TextField
-                                        hiddenLabel
-                                        defaultValue={score}
-                                        onChange={(event) =>
-                                            changeScore(
-                                                parseInt(event.target.value)
-                                            )
-                                        }
-                                        variant="filled"
-                                        size="small"
-                                    />
-                                    <ListItemText
-                                        sx={{ maxWidth: 100 }}
-                                        primary={'/' + maxScore}
-                                    />
+                                    <Box width={'50px'}>
+                                        <TextField
+                                            hiddenLabel
+                                            defaultValue={score}
+                                            onChange={(event) =>
+                                                changeScore(
+                                                    parseInt(event.target.value)
+                                                )
+                                            }
+                                            variant="outlined"
+                                            size="small"
+                                        />
+                                    </Box>
+                                    <ListItemText primary={'/' + maxScore} />
                                 </>
                             ) : (
-                                <ListItemText
-                                    sx={{ maxWidth: 100 }}
-                                    primary={'0/' + maxScore}
-                                />
+                                <ListItemText primary={'0/' + maxScore} />
                             )}
                         </ListItem>
                         {/* Button to download submission */}
-                        <ListItem sx={{ maxWidth: 100 }}>
+                        <ListItem sx={{ maxWidth: '4%' }}>
                             <IconButton
                                 onClick={downloadSubmission}
                                 edge="end"

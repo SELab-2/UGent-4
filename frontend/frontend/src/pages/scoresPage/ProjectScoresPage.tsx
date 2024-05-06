@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header'
-import { Button } from '../../components/CustomComponents.tsx'
+import { Button, Card } from '../../components/CustomComponents.tsx'
 import { Box, Stack, styled } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { StudentsView } from './StudentsView.tsx'
@@ -277,13 +277,10 @@ export function ProjectScoresPage() {
                     title={project?.titel + ': Scores'}
                 />
                 {/* Main content box */}
-                <Box
+
+                <Card
                     sx={{
-                        width: '100%',
-                        height: '70%',
-                        marginTop: 10,
-                        boxShadow: 3,
-                        borderRadius: 3,
+                        marginTop: 12,
                     }}
                 >
                     {/* Render StudentsView component if project is defined */}
@@ -295,22 +292,25 @@ export function ProjectScoresPage() {
                             changeScore={changeScore}
                         />
                     )}
-                </Box>
+                </Card>
                 {/* Footer section with action buttons */}
                 <Box
                     display="flex"
                     flexDirection="row"
-                    sx={{ width: '100%', height: '30%', marginTop: 5 }}
+                    sx={{
+                        marginTop: -4,
+                    }}
                 >
                     <Box
                         display="flex"
                         flexDirection="row"
+                        padding={'3px'}
                         sx={{ width: '50%', height: 'auto' }}
                     >
                         <Stack
                             direction="row"
                             alignItems="center"
-                            spacing={5}
+                            spacing={2}
                             marginY={6}
                         >
                             <Button onClick={exportSubmissions}>
@@ -332,12 +332,13 @@ export function ProjectScoresPage() {
                     <Box
                         display="flex"
                         flexDirection="row-reverse"
+                        padding={'3px'}
                         sx={{ width: '50%', height: 'auto' }}
                     >
                         <Stack
                             direction="row"
                             alignItems="center"
-                            spacing={5}
+                            spacing={2}
                             marginY={6}
                         >
                             <Button

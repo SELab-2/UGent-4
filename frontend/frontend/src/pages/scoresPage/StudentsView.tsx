@@ -110,20 +110,28 @@ export function StudentsView({
             <Box
                 aria-label={'scoresHeader'}
                 sx={{
-                    backgroundColor: 'background.default',
+                    backgroundColor: 'primary.light',
                     margin: 0,
                     height: 20,
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    padding: 3,
+                    padding: '30px',
                 }}
             >
                 <>
-                    <Typography maxWidth={100}>{t('group')}</Typography>
-                    <Typography maxWidth={100}>{t('time')}</Typography>
-                    <Typography maxWidth={100}>Score</Typography>
-                    <Typography maxWidth={100}>Download</Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        {t('group')}
+                    </Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        {t('time')}
+                    </Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        Score
+                    </Typography>
+                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        Download
+                    </Typography>
                 </>
             </Box>
             <Divider color={'text.main'}></Divider>
