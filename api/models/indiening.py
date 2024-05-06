@@ -4,7 +4,6 @@ from django.dispatch import receiver
 from api.docker.python_entrypoint import run_tests_on
 from threading import Thread
 from django.db import transaction
-
 from api.models.restrictie import Restrictie
 
 
