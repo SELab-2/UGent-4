@@ -43,12 +43,13 @@ export default function WarningPopup({
         <>
             {/* Warning popup dialog */}
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle sx={{ textAlign: 'center' }}>{title}</DialogTitle>
+                <DialogTitle id='popUpTitle' sx={{ textAlign: 'center' }}>{title}</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>{content}</DialogContentText>
+                    <DialogContentText id='popUpText'>{content}</DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: 'center' }}>
-                    <Button
+                    <Button 
+                        id='cancelButton'
                         variant="contained"
                         color="secondary"
                         onClick={handleClose}
@@ -57,6 +58,7 @@ export default function WarningPopup({
                     </Button>
                     {/* Action button */}
                     <Button
+                        id='actionButton'
                         variant="contained"
                         color="primary"
                         onClick={hanldeAction}

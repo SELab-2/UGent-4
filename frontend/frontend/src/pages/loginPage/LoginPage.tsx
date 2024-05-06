@@ -79,6 +79,7 @@ export function LoginPage() {
                         alignSelf={'center'}
                     >
                         <Box
+                            id='logo'
                             component="img"
                             src={t('logo_blue')}
                             alt="logo"
@@ -109,6 +110,7 @@ export function LoginPage() {
                         alignSelf={'stretch'}
                     >
                         <Button
+                            id="loginButton"
                             onClick={handleLogin}
                             variant="contained"
                             sx={{

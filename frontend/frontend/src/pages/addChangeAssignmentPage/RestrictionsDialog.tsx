@@ -98,11 +98,12 @@ export default function RestrictionsDialog({
 
     // Buttons array for the vertical button group
     const buttons = [
-        <Button key="Upload" component={'label'}>
+        <Button id='upload' key="Upload" component={'label'}>
             Upload
             <input hidden type="file" multiple onChange={handleUploadedFiles} />
         </Button>,
         <Button
+            id='newScript'
             key="New_Script"
             onClick={() => {
                 handleClickOpen()
@@ -111,6 +112,7 @@ export default function RestrictionsDialog({
             {t('new_script')}
         </Button>,
         <Button
+            id='fileExtensionCheck'
             key="FileExtensionCheck"
             onClick={() => {
                 handleClickOpen()
@@ -119,6 +121,7 @@ export default function RestrictionsDialog({
             File Extension Check
         </Button>,
         <Button
+            id='filesPresentCheck'
             key="FilesPresentCheck"
             onClick={() => {
                 handleClickOpen()
@@ -158,6 +161,7 @@ export default function RestrictionsDialog({
                     {t('must_pass') + ':'}
                 </Typography>
                 <Switch
+                    id='mustPassSwitch'
                     value={mustPass}
                     onChange={() => setMustPass(!mustPass)}
                 />

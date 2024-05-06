@@ -73,6 +73,7 @@ export function AssignmentListItemSubjectsPage({
     return (
         <>
             <ListItem
+                id={projectName.replace(/\s/g, '')}
                 key={projectName}
                 sx={{ margin: 0 }}
                 disablePadding={true}
@@ -93,10 +94,12 @@ export function AssignmentListItemSubjectsPage({
                     {isStudent ? (
                         <>
                             <ListItemText
+                                id="projectName"
                                 sx={{ maxWidth: 100 }}
                                 primary={projectName}
                             />
                             <ListItemText
+                                id='deadline'
                                 sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
@@ -107,6 +110,7 @@ export function AssignmentListItemSubjectsPage({
                                 }
                             />
                             <ListItemText
+                                id='submissions'
                                 sx={{ maxWidth: 150 }}
                                 primary={
                                     submissions > 0
@@ -122,6 +126,7 @@ export function AssignmentListItemSubjectsPage({
                             />
                             {submissions > 0 ? (
                                 <ListItemText
+                                    id='score'
                                     sx={{ maxWidth: 100 }}
                                     primary={
                                         score
@@ -131,6 +136,7 @@ export function AssignmentListItemSubjectsPage({
                                 />
                             ) : (
                                 <ListItemText
+                                    id='noSubmissions'
                                     sx={{ maxWidth: 100 }}
                                     primary={`0/${maxScore} (0%)`}
                                 />
@@ -140,10 +146,12 @@ export function AssignmentListItemSubjectsPage({
                         <>
                             {/* In case of the user being the teacher: */}
                             <ListItemText
+                                id="projectName"
                                 sx={{ maxWidth: 100 }}
                                 primary={projectName}
                             />
                             <ListItemText
+                                id='deadline'
                                 sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
@@ -212,6 +220,7 @@ function ButtonActions({
         <ListItem sx={{ maxWidth: 110 }}>
             {visible ? (
                 <IconButton
+                    id='visible'
                     onClick={(e) => handleIconClick(e, 'visible')}
                     edge="end"
                     aria-label="visible"
@@ -220,6 +229,7 @@ function ButtonActions({
                 </IconButton>
             ) : (
                 <IconButton
+                    id='notVisible'
                     onClick={(e) => handleIconClick(e, 'visible')}
                     edge="end"
                     aria-label="not-visible"
@@ -229,6 +239,7 @@ function ButtonActions({
             )}
             {!archived && (
                 <IconButton
+                    id='archive'
                     onClick={(e) => handleIconClick(e, 'archive')}
                     edge="end"
                     aria-label="archive"
@@ -237,6 +248,7 @@ function ButtonActions({
                 </IconButton>
             )}
             <IconButton
+                id='delete'
                 onClick={(e) => handleIconClick(e, 'delete')}
                 edge="end"
                 aria-label="delete"
