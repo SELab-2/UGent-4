@@ -214,8 +214,8 @@ export function AssignmentPage() {
                                 width: '100%',
                             }}
                         >
-                            <Typography variant="h6" color="text.primary">
-                                <strong>Deadline </strong>
+                            <Typography  variant="h6" color="text.primary">
+                                <strong>Deadline: </strong>
                                 {assignment
                                     ? dayjs(assignment.deadline).format(
                                           'DD/MM/YYYY HH:mm'
@@ -382,7 +382,7 @@ export function AssignmentPage() {
                         >
                             <Stack direction={'row'}>
                                 <Typography variant="h6" color="text.primary">
-                                    <strong>Deadline </strong>
+                                    <strong>Deadline: </strong>
                                     {assignment
                                         ? dayjs(assignment.deadline).format(
                                               'DD/MM/YYYY HH:mm'

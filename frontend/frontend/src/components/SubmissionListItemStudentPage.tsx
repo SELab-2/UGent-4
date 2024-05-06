@@ -47,7 +47,7 @@ export function SubmissionListItemStudentPage({
 
     return (
         <>
-            <ListItem key={id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={`submission${id}`} key={id} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: '100%',
@@ -63,6 +63,7 @@ export function SubmissionListItemStudentPage({
                 >
                     {/* Display submission id */}
                     <ListItemText
+                        id='submissionId'
                         sx={{
                             maxWidth: 110,
                             color: 'primary.main',
@@ -74,17 +75,18 @@ export function SubmissionListItemStudentPage({
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
+                        id='submissionTimestamp'
                         sx={{ maxWidth: 150 }}
                         primary={timestamp ? timestamp : t('time')}
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
                         {status ? (
-                            <CheckCircleOutlineIcon
+                            <CheckCircleOutlineIcon id='check'
                                 sx={{ color: 'success.main' }}
                             />
                         ) : (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
+                            <HighlightOffIcon id='cross' sx={{ color: 'error.main' }} />
                         )}
                     </ListItemIcon>
                 </ListItemButton>

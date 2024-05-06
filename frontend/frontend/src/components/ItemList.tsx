@@ -30,9 +30,10 @@ export const ItemList: FC<ItemListProps> = ({ itemList }) => {
     return (
         <TableContainer component={Paper} variant="outlined">
             <Table>
-                <TableHead>
+                <TableHead id='head'>
                     <TableRow>
                         <TableCell
+                            id='opdracht'
                             style={{
                                 backgroundColor: theme.palette.secondary.main,
                                 color: theme.palette.secondary.contrastText,
@@ -41,6 +42,7 @@ export const ItemList: FC<ItemListProps> = ({ itemList }) => {
                             Opdracht
                         </TableCell>
                         <TableCell
+                            id='deadline'
                             style={{
                                 backgroundColor: theme.palette.secondary.main,
                                 color: theme.palette.secondary.contrastText,
@@ -49,6 +51,7 @@ export const ItemList: FC<ItemListProps> = ({ itemList }) => {
                             Deadline
                         </TableCell>
                         <TableCell
+                            id='status'
                             style={{
                                 backgroundColor: theme.palette.secondary.main,
                                 color: theme.palette.secondary.contrastText,
@@ -57,6 +60,7 @@ export const ItemList: FC<ItemListProps> = ({ itemList }) => {
                             Status
                         </TableCell>
                         <TableCell
+                            id='score'
                             style={{
                                 backgroundColor: theme.palette.secondary.main,
                                 color: theme.palette.secondary.contrastText,
@@ -66,14 +70,14 @@ export const ItemList: FC<ItemListProps> = ({ itemList }) => {
                         </TableCell>
                     </TableRow>
                 </TableHead>
-                <TableBody>
+                <TableBody id='body'>
                     {/* Map through itemList and render a TableRow for each item */}
                     {itemList.map((item, index) => (
-                        <TableRow key={index}>
-                            <TableCell>{item.opdracht}</TableCell>
-                            <TableCell>{item.deadline}</TableCell>
-                            <TableCell>{item.status}</TableCell>
-                            <TableCell>{item.score}</TableCell>
+                        <TableRow id={index.toString()} key={index}>
+                            <TableCell id='opdracht'>{item.opdracht}</TableCell>
+                            <TableCell id='deadline'>{item.deadline}</TableCell>
+                            <TableCell id='status'>{item.status}</TableCell>
+                            <TableCell id='score'>{item.score}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

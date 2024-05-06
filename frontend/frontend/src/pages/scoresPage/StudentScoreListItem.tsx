@@ -91,7 +91,7 @@ export function StudentScoreListItem({
 
     return (
         <>
-            <ListItem key={key} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={`group${groupNumber}`} key={key} sx={{ margin: 0 }} disablePadding={true}>
                 {/* Inner list item for displaying submission details */}
                 <ListItem
                     sx={{
@@ -109,6 +109,7 @@ export function StudentScoreListItem({
                     <>
                         <ListItemText sx={{ maxWidth: 200 }} primary={name} />
                         <ListItemText
+                            id="time"
                             sx={{ maxWidth: 300 }}
                             primary={
                                 lastSubmission
@@ -125,6 +126,7 @@ export function StudentScoreListItem({
                             {lastSubmission ? (
                                 <>
                                     <TextField
+                                        id="score"
                                         hiddenLabel
                                         defaultValue={score}
                                         onChange={(event) =>
@@ -142,6 +144,7 @@ export function StudentScoreListItem({
                                 </>
                             ) : (
                                 <ListItemText
+                                    id="noScore"
                                     sx={{ maxWidth: 100 }}
                                     primary={'0/' + maxScore}
                                 />
@@ -150,6 +153,7 @@ export function StudentScoreListItem({
                         {/* Button to download submission */}
                         <ListItem sx={{ maxWidth: 100 }}>
                             <IconButton
+                                id='downloadSubmissionButton'
                                 onClick={downloadSubmission}
                                 edge="end"
                                 aria-label="download"

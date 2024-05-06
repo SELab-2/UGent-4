@@ -122,7 +122,7 @@ export function SubmissionListItemTeacherPage({
 
     return (
         <>
-            <ListItem id={group_id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={`submission${group_id}`} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: '100%',
@@ -138,6 +138,7 @@ export function SubmissionListItemTeacherPage({
                 >
                     {/* Display group id */}
                     <ListItemText
+                        id='submissionId'
                         sx={{
                             maxWidth: 10,
                             color: 'primary.main',
@@ -149,6 +150,7 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
+                        id='submissionTimestamp'
                         sx={{ maxWidth: 150 }}
                         primary={
                             submitted
@@ -160,16 +162,18 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display score */}
                     <ListItemText
+                        id='submissionScore'
                         sx={{ maxWidth: 50 }}
                         primary={score ? `${Number(score.score)}` + '/20' : '-'}
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
                         {submitted?.status ? (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
+                            <HighlightOffIcon id='cross' sx={{ color: 'error.main' }} />
                         ) : (
                             submitted !== undefined && (
                                 <CheckCircleOutlineIcon
+                                    id='check'
                                     sx={{ color: 'success.main' }}
                                 />
                             )
@@ -180,13 +184,14 @@ export function SubmissionListItemTeacherPage({
                         <div onClick={handleDownloadClick}>
                             {submitted ? (
                                 <DownloadIcon
+                                    id='downloadIconColor'
                                     sx={{
                                         color: 'primary.main',
                                         '&:hover': { color: 'primary.light' },
                                     }}
                                 />
                             ) : (
-                                <DownloadIcon sx={{ color: 'gray' }} />
+                                <DownloadIcon id='downloadIconGray' sx={{ color: 'gray' }} />
                             )}
                         </div>
                     </ListItemIcon>
