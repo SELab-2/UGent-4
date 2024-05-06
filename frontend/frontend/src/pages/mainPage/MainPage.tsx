@@ -93,7 +93,7 @@ export default function MainPage() {
                         response.data.forEach((project: project) => {
                             if (project.zichtbaar && !project.gearchiveerd) {
                                 deadlines.push(
-                                    dayjs(project.deadline, 'YYYY-MM-DD-HH:mm:ss')
+                                    dayjs(project.deadline)
                                 )
                                 assignments.push(
                                     project
