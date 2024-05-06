@@ -24,8 +24,6 @@ import Dialog from '@mui/material/Dialog'
 
 import instance from '../../axiosConfig.ts'
 
-import ErrorPage from '../ErrorPage.tsx'
-
 import Papa, { ParseResult } from 'papaparse'
 
 export interface User {
@@ -258,15 +256,8 @@ export function AddChangeSubjectPage() {
     const [openTeacher, setOpenTeacher] = useState<boolean>(false)
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
-    const [user, setUser] = useState<User>({
-        user: 0,
-        is_lesgever: false,
-        first_name: '',
-        last_name: '',
-        email: '',
-    })
-    const [userLoaded, setUserLoaded] = useState<boolean>(false)
-    const vakID = params.courseId
+
+    const [vakID,setVakID]= useState(params.courseId)
 
     // state for spinners
     const [loading, setLoading] = useState(false)
@@ -476,20 +467,36 @@ export function AddChangeSubjectPage() {
     const handleSave = (): void => {
         const studentIDs = students.map((student) => student.user)
         const teacherIDs = teachers.map((teacher) => teacher.user)
-        instance
-            .put('vakken/' + vakID + '/', {
-                naam: title,
-                studenten: studentIDs,
-                lesgevers: teacherIDs,
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        if(vakID==undefined){
+            instance
+                .post('vakken/'  , {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                }).then((res) => {
+                    setVakID(res.data.vak_id)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }else{
+            instance
+                .put('vakken/' + vakID + '/', {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
     }
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
+            setUserLoaded(false)
             await instance
                 .get('/gebruikers/me/')
                 .then((res) => {
@@ -557,18 +564,12 @@ export function AddChangeSubjectPage() {
                 })
             setLoading(false)
         }
-        fetchData().catch((err) => {
-            console.log(err)
-        })
+        if(vakID!=undefined){
+          fetchData().catch((err) => {
+              console.log(err)
+          })
+         }
     }, [vakID])
-
-    if (!userLoaded) {
-        return <>Loading...</>
-    }
-
-    if (!user.is_lesgever) {
-        return ErrorPage()
-    }
 
     return (
         <>
