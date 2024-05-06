@@ -217,7 +217,7 @@ export function AssignmentPage() {
                                 >
                                     {t('assignment')}
                                 </Typography>
-                                <Typography>
+                                <Typography color={'text.primary'}>
                                     {assignment ? assignment.beschrijving : ''}
                                 </Typography>
                             </Stack>

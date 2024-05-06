@@ -3,7 +3,6 @@ import {
     ListItemText,
     ListItemIcon,
     ListItemButton,
-    Box,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
