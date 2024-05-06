@@ -75,6 +75,10 @@ class GebruikerDetailViewTest(APITestCase):
 
     def test_gebruiker_detail_get_unauthorized(self):
         student = GebruikerFactory.create(is_lesgever=False)
+        self.gebruiker.user.is_superuser = False
+        self.gebruiker.user.save()
+        self.gebruiker.is_lesgever = False
+        self.gebruiker.save()
         self.client.force_login(student.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
