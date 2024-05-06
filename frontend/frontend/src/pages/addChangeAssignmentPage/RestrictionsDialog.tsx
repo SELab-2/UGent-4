@@ -166,7 +166,7 @@ export default function RestrictionsDialog({
                     onChange={() => setMustPass(!mustPass)}
                 />
             </Box>
-            {/* Dialog component */}
+            {/* This is the code editor. */}
             <Dialog fullScreen open={open} onClose={handleClose}>
                 <Box>
                     <AppBar sx={{ position: 'relative' }}>
@@ -201,6 +201,7 @@ export default function RestrictionsDialog({
                                         gap={1}
                                     >
                                         <TextField
+                                            // Specify the name of the test script.
                                             label={t('name')}
                                             value={restrictionName}
                                             required
@@ -230,6 +231,8 @@ export default function RestrictionsDialog({
                                             size="small"
                                         >
                                             <Select
+                                                // Select the file extension of the test script.
+                                                // This can be for instance .py or .sh.
                                                 label={t('restrictionType')}
                                                 labelId={t('restrictionType')}
                                                 value={restrictionType}

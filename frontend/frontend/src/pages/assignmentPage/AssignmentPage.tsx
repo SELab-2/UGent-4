@@ -198,7 +198,7 @@ export function AssignmentPage() {
                             backgroundColor: 'background.default',
                         }}
                     >
-                        {/*deadline and groep button */}
+                        {/*deadline and group button */}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -223,7 +223,7 @@ export function AssignmentPage() {
                             />
                         </Box>
 
-                        {/*Opgave*/}
+                        {/* Assignment description */}
                         <Card
                             elevation={1}
                             sx={{
@@ -248,7 +248,10 @@ export function AssignmentPage() {
                             </Stack>
                         </Card>
 
-                        {/*Indieningen*/}
+                        {/* This renders a list of submissions.
+                        It shows metadata about the submissions and allows the teacher to download them.
+                        The metadata includes group number, submission time, score, and status.
+                        */}
                         <Card
                             elevation={1}
                             sx={{
@@ -312,13 +315,7 @@ export function AssignmentPage() {
                             </Box>
                         </Card>
 
-                        {/*<AddRestrictionButton></AddRestrictionButton>*/}
-
-                        {/* <Button sx={{bgcolor: 'secondary.main'}}>
-                            <AddIcon sx={{color: "secondary.contrastText"}}></AddIcon>
-                        </Button> */}
-
-                        {/*Export- en Aanpasknop*/}
+                        {/*Export- and edit-button*/}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -402,7 +399,7 @@ export function AssignmentPage() {
                             </Stack>
                         </Box>
 
-                        {/*Opgave*/}
+                        {/* Assignment */}
                         <Card
                             elevation={1}
                             sx={{
@@ -427,7 +424,7 @@ export function AssignmentPage() {
                             </Stack>
                         </Card>
 
-                        {/*Indieningen*/}
+                        {/* Submissions */}
                         <Card
                             elevation={1}
                             sx={{
@@ -487,7 +484,7 @@ export function AssignmentPage() {
                             </Box>
                         </Card>
 
-                        {/*Upload knop*/}
+                        {/*Upload button, this is what the student will see. */}
                         <Box
                             sx={{
                                 padding: '20px',
@@ -500,7 +497,7 @@ export function AssignmentPage() {
                                         name={t('upload')}
                                         path={submissionFile}
                                         onFileChange={handleFileChange}
-                                        fileTypes={['.zip']}
+                                        fileTypes={['.zip', '.pdf', '.txt']}
                                         tooltip={t('uploadToolTip')}
                                     />
                                 }

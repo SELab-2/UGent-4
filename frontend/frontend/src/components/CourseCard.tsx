@@ -15,8 +15,11 @@ import instance from '../axiosConfig.ts'
 import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
+import PushPinIcon from '@mui/icons-material/PushPin';
+import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
+
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -30,10 +33,12 @@ interface CourseCardProps {
     courseId: string
     archived: boolean
     isStudent: boolean
-    archiveEvent: () => void
+    archiveEvent?: () => void
+    pinned: boolean
+    pinEvent: () => void
 }
 
-export function CourseCard({ courseId, archived, isStudent, archiveEvent }: CourseCardProps) {
+export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned, pinEvent }: CourseCardProps) {
     // State variables
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
@@ -90,6 +95,12 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
     const handleCardClick = () => {
         console.log('Card clicked')
         navigate(`/course/${courseId}`)
+    }
+
+    const pinCourse = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation()
+        console.log("Course pinned/unpinned")
+        pinEvent()
     }
 
     return (
@@ -193,6 +204,31 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent }: Cour
                                         {t('students') + ': '}
                                         {course.studenten.length || 0}
                                     </Typography>
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'column'}
+                                        sx={{
+                                            flexGrow: 1,
+                                            alignItems: 'flex-end',
+                                            alignSelf: 'flex-end',
+                                        }}
+                                    >
+                                        <IconButton
+                                            onClick={pinCourse}
+                                            sx={{
+                                                backgroundColor:
+                                                    'secondary.main',
+                                                borderRadius: 2,
+                                                alignSelf: 'flex-end',
+                                            }}
+                                        >
+                                            {pinned?
+                                                <PushPinIcon />
+                                            :
+                                                <PushPinOutlinedIcon />
+                                            }
+                                        </IconButton>
+                                    </Box>
                                 </Box>
                             </Box>
                         </CardActionArea>

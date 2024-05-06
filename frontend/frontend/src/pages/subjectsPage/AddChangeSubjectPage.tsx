@@ -34,6 +34,8 @@ export interface User {
     email: string
 }
 
+// This function takes a list of users and will render it.
+// It can be used for both the teachers and the students.
 function UserList(
     users: User[],
     setSelected: React.Dispatch<React.SetStateAction<number>>,
@@ -55,7 +57,8 @@ function UserList(
                         setSelected(user.user)
                         setOpen(true)
                     }
-
+                    {/* The list of users is mapped onto buttons
+                    This makes it possible to click through on a person. */}
                     return (
                         <>
                             <ListItemButton
@@ -100,6 +103,8 @@ function UserList(
     )
 }
 
+// This function will render the UI for adding extra students or teachers.
+// It can either be done by uploading a file or by typing in the email.
 function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
@@ -118,6 +123,7 @@ function UploadPart(
                     path={file != null ? file : undefined}
                 />
                 <Box display={'flex'} flexDirection={'row'}>
+                    {/* This box allows you to add extra people by their email. */}
                     <TextField
                         type="text"
                         placeholder={t('studentnumber')}
@@ -138,6 +144,9 @@ function UploadPart(
     )
 }
 
+// When you try to delete someone from the list, a pop-up will appear.
+// This pop-up will ask you if you are sure you want to delete the person.
+// This function will render the pop-up.
 function DialogWindow(
     handleClose: () => void,
     open: boolean,
@@ -261,7 +270,7 @@ export function AddChangeSubjectPage() {
             const csv: ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
-
+            // This will loop through the csv file and add the students to the list.
             for (let i = 0; i < csv.data.length; i++) {
                 if (csv.data[i].email != '') {
                     instance
@@ -290,6 +299,8 @@ export function AddChangeSubjectPage() {
         setOpenTeacher(false)
     }
 
+    // This function will remove a teacher from the list.
+    // It does so by looping through the list and removing the teacher with the correct ID.
     const handleRemoveTeacher = () => {
         setTeachers((oldteacher) => {
             for (let i = 0; i < oldteacher.length; i++) {
@@ -337,6 +348,7 @@ export function AddChangeSubjectPage() {
         }
     }
 
+    // This function will upload a file with teachers.
     const handleUploadTeacher = (): void => {
         const reader = new FileReader()
 
@@ -351,6 +363,7 @@ export function AddChangeSubjectPage() {
                 header: true,
             })
             for (let i = 0; i < csv.data.length; i++) {
+                // This will loop through the csv file and add the teachers to the list.
                 if (csv.data[i].email != '') {
                     instance
                         .get('gebruikers/?email=' + csv.data[i].email)
@@ -502,6 +515,7 @@ export function AddChangeSubjectPage() {
                     }}
                 >
                     <Button
+                        /* This is the large save button on the top of the page */
                         variant={'contained'}
                         color={'secondary'}
                         size={'small'}
@@ -512,6 +526,8 @@ export function AddChangeSubjectPage() {
                     </Button>
 
                     <Box
+                        // This box contains the title of the subject.
+                        // This title can be changed if necessary.
                         aria-label={'title'}
                         display={'flex'}
                         flexDirection={'row'}

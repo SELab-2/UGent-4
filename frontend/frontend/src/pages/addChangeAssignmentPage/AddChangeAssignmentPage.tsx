@@ -452,6 +452,7 @@ export function AddChangeAssignmentPage() {
                             gap={2}
                             alignItems={'center'}
                         >
+                            {/* Here the user gets to specify the assignment name */}
                             <Typography
                                 variant={'h6'}
                                 color={'text.primary'}
@@ -465,6 +466,7 @@ export function AddChangeAssignmentPage() {
                                 placeholder={'Title'}
                                 error={assignmentErrors.title}
                                 value={title}
+                                // Show an error message if the assignment name is not filled in.
                                 helperText={
                                     assignmentErrors.title
                                         ? t('name') + ' ' + t('is_required')
@@ -493,7 +495,9 @@ export function AddChangeAssignmentPage() {
                             />
                         </Box>
                     </Box>
-                    {/* Deadline section */}
+                    {/* Deadline section.
+                    There is both the normal deadline, 
+                    and an extra deadline in case people need more time. */}
                     <Box
                         data-test-id="deadline-id"
                         aria-label={'deadline'}
@@ -513,6 +517,7 @@ export function AddChangeAssignmentPage() {
                             gap={2}
                             alignItems={'center'}
                         >
+                            {/* This section renders the normal deadline. */}
                             <Typography
                                 id='deadline'
                                 variant={'h6'}
@@ -564,6 +569,7 @@ export function AddChangeAssignmentPage() {
                             gap={2}
                             alignItems={'center'}
                         >
+                            {/* This section renders the extra deadline. */}
                             <Typography
                                 id='extraDeadline'
                                 variant={'h6'}
@@ -639,6 +645,7 @@ export function AddChangeAssignmentPage() {
                                 }
                                 fullWidth
                                 error={assignmentErrors.description}
+                                // Show an error message if the description is not filled in.
                                 helperText={
                                     assignmentErrors.description
                                         ? t('descriptionName') +
@@ -670,6 +677,7 @@ export function AddChangeAssignmentPage() {
                             </Typography>
                             <Box sx={{ padding: 1 }}>
                                 <List
+                                // This list will render the restrictions that are added to the assignment.
                                     sx={{
                                         maxHeight: '18vh',
                                         overflowY: 'auto',
@@ -696,16 +704,16 @@ export function AddChangeAssignmentPage() {
                                 justifyContent={'flex-end'}
                             >
                                 <Tooltip title={t('add_restriction')}>
-                                    {/*<IconButton color={"primary"}
-                                                disabled={allowedTypes.length === 0}
-                                onClick={handleAddRestriction}><AddIcon/></IconButton>*/}
                                     <AddRestrictionButton
+                                        // When this button is clicked, a pop up will show.
+                                        // This popup will allow you to choose to make a restriction yourself,
+                                        // create one starting from a template,
+                                        // or choose a file from the system.
                                         restrictions={restrictions}
                                         setRestrictions={(newRestrictions) =>
                                             setRestrictions(newRestrictions)
                                         }
                                     ></AddRestrictionButton>
-                                    {/*<Button>Show restrictions</Button>*/}
                                 </Tooltip>
                             </Box>
                         </Card>
@@ -735,6 +743,8 @@ export function AddChangeAssignmentPage() {
                             >
                                 {visible ? (
                                     <IconButton
+                                        // Allows the teacher to select whether 
+                                        // the assignment is visible to students or not.
                                         id='visibilityOn'
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
@@ -765,6 +775,8 @@ export function AddChangeAssignmentPage() {
                                 </Tooltip>
                             </Box>
                             <Box
+                                // This section allows the teacher to set the 
+                                // maximum score for the assignment.
                                 aria-label={'maxScore'}
                                 display={'flex'}
                                 flexDirection={'row'}
