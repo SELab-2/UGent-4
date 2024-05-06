@@ -1,8 +1,8 @@
 import {
     ListItem,
+    ListItemButton,
     ListItemIcon,
     ListItemText,
-    ListItemButton,
 } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
 
 interface SubmissionListItemStudentPageProps {
-    id: string
+    realId: string
+    visualId: string
     timestamp?: string
     status: boolean
     assignment_id: string
@@ -27,7 +28,8 @@ interface SubmissionListItemStudentPageProps {
  */
 
 export function SubmissionListItemStudentPage({
-    id,
+    realId,
+    visualId,
     timestamp,
     status,
     assignment_id,
@@ -38,20 +40,16 @@ export function SubmissionListItemStudentPage({
     // Function to handle submission click event
     const handleSubmissionClick = () => {
         console.log('Submission clicked')
-        if (id) {
+        if (realId) {
             navigate(
-                `/course/${course_id}/assignment/${assignment_id}/submission/${id}`
+                `/course/${course_id}/assignment/${assignment_id}/submission/${realId}`
             )
         }
     }
 
     return (
         <>
-            <ListItem
-                key={id}
-                sx={{ margin: 0, bgcolor: 'background.default' }}
-                disablePadding={true}
-            >
+            <ListItem key={realId} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: '100%',
@@ -74,7 +72,7 @@ export function SubmissionListItemStudentPage({
                                 color: 'primary.light',
                             },
                         }}
-                        primary={id}
+                        primary={visualId}
                     />
                     {/* Display submission timestamp */}
                     <ListItemText

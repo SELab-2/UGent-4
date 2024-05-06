@@ -4,7 +4,6 @@ import {
     CardActionArea,
     CardContent,
     IconButton,
-    Skeleton,
     Typography,
 } from '@mui/material'
 import { t } from 'i18next'
@@ -19,6 +18,7 @@ import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
 
+import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -57,11 +57,15 @@ export function CourseCard({
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
+    const [loading, setLoading] = useState<boolean>(true)
+
     const navigate = useNavigate()
 
     // Get all necessary data from backend
     useEffect(() => {
         async function fetchData() {
+            // Set loading to true every time the data is requested
+            setLoading(true)
             try {
                 const courseResponse = await instance.get<Course>(
                     `/vakken/${courseId}/`
@@ -90,6 +94,8 @@ export function CourseCard({
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
+            // Set loading to false after data is fetched
+            setLoading(false)
         }
 
         fetchData().catch((error) =>
@@ -111,20 +117,9 @@ export function CourseCard({
 
     return (
         <>
-            {!course ? (
+            {loading ? (
                 // If course is not available, show a skeleton loading component
-                <Skeleton
-                    variant={'rectangular'}
-                    sx={{
-                        width: { xs: '100%', md: '60%' },
-                        minWidth: 350,
-                        maxWidth: 420,
-                        backgroundColor: 'background.paper',
-                        borderRadius: 5,
-                        padding: 0,
-                        margin: 1,
-                    }}
-                />
+                <CourseCardSkeleton />
             ) : (
                 // If course is available, show course details inside a card component
                 <Card

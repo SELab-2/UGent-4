@@ -1,8 +1,10 @@
 import { Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
+    CircularProgress,
     IconButton,
     ListItem,
+    Skeleton,
     Stack,
     TextField,
     Tooltip,
@@ -33,7 +35,6 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 import AddRestrictionButton from './AddRestrictionButton.tsx'
 import { RestrictionCard } from '../../components/RestrictionCard.tsx'
 
-//TODO: add restriction functionality
 /**
  * This page is used to add or change an assignment.
  * The page should only be accessible to teachers of the course.
@@ -84,6 +85,9 @@ interface errorChecks {
 export function AddChangeAssignmentPage() {
     const navigate = useNavigate()
 
+    //State for loading the data or showing skeletons
+    const [loading, setLoading] = useState(false)
+
     // State for the different fields of the assignment
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
@@ -108,9 +112,14 @@ export function AddChangeAssignmentPage() {
     //confirmation dialogs
     const [deleteConfirmation, setDeleteConfirmation] = useState(false)
     const [saveConfirmation, setSaveConfirmation] = useState(false)
+    const [cancelConfirmation, setCancelConfirmation] = useState(false)
 
     const closeSaveConfirmation = () => {
         setSaveConfirmation(false)
+    }
+
+    const closeCancel = () => {
+        setCancelConfirmation(false)
     }
 
     //open the delete confirmation dialog
@@ -148,8 +157,13 @@ export function AddChangeAssignmentPage() {
 
     //set the initial values of the assignment if it is an edit
     useEffect(() => {
-        if (assignmentId !== undefined) {
-            instance
+        //get the data
+        const fetchData = async () => {
+            //begin loading -> set loading to true
+            setLoading(true)
+
+            //get the assignment
+            await instance
                 .get<getAssignment>(`/projecten/${assignmentId}`)
                 .then((response) => {
                     const assignment = response.data
@@ -170,16 +184,13 @@ export function AddChangeAssignmentPage() {
                     setVisible(assignment.zichtbaar)
                     if (assignment.deadline !== null) {
                         setDueDate(
-                            dayjs(assignment.deadline, 'YYYY-MM-DDTHH:mm:ss')
+                            dayjs(assignment.deadline)
                         )
                         console.log('deadline' + assignment.deadline)
                     }
                     if (assignment.extra_deadline !== null) {
                         setExtraDueDate(
-                            dayjs(
-                                assignment.extra_deadline,
-                                'YYYY-MM-DDTHH:mm:ss'
-                            )
+                            dayjs(assignment.extra_deadline)
                         )
                         console.log(
                             'extra deadline' + assignment.extra_deadline
@@ -191,7 +202,7 @@ export function AddChangeAssignmentPage() {
                 })
 
             //get the restrictions
-            instance
+            await instance
                 .get(`/restricties/?project=${assignmentId}`)
                 .then(async (response) => {
                     const restrictions = response.data
@@ -200,7 +211,9 @@ export function AddChangeAssignmentPage() {
                         await instance
                             .get(
                                 `/restricties/${restr.restrictie_id}/script/`,
-                                { responseType: 'blob' }
+                                {
+                                    responseType: 'blob',
+                                }
                             )
                             .then((response) => {
                                 const blob = new Blob([response.data], {
@@ -221,7 +234,7 @@ export function AddChangeAssignmentPage() {
                 })
 
             //get the assignment file
-            instance
+            await instance
                 .get(`/projecten/${assignmentId}/opgave_bestand/`, {
                     responseType: 'blob',
                 })
@@ -238,6 +251,16 @@ export function AddChangeAssignmentPage() {
                 .catch((error) => {
                     console.error(error)
                 })
+
+            //end loading -> set loading to false
+            setLoading(false)
+        }
+
+        //if there is an assignmentId, get the data else use the default values
+        if (assignmentId !== undefined) {
+            fetchData().catch((error) => {
+                console.error(error)
+            })
         }
     }, [assignmentId, filename])
 
@@ -426,8 +449,12 @@ export function AddChangeAssignmentPage() {
         <>
             {/* Stack container for layout */}
             <Stack direction={'column'} paddingX={2}>
-                <Header variant={'default'} title={title} />
-
+                {/*very ugly but it works functionally*/}
+                {loading ? (
+                    <Header variant={'default'} title={''} />
+                ) : (
+                    <Header variant={'default'} title={title} />
+                )}
                 {/* Form for submitting assignment */}
                 <Stack
                     direction={'column'}
@@ -460,21 +487,28 @@ export function AddChangeAssignmentPage() {
                             >
                                 {t('assignmentName')}
                             </Typography>
-                            <TextField
-                                type="text"
-                                placeholder={'Title'}
-                                error={assignmentErrors.title}
-                                value={title}
-                                // Show an error message if the assignment name is not filled in.
-                                helperText={
-                                    assignmentErrors.title
-                                        ? t('name') + ' ' + t('is_required')
-                                        : ''
-                                }
-                                onChange={(event) =>
-                                    setTitle(event.target.value)
-                                }
-                            />
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
+                                />
+                            ) : (
+                                <TextField
+                                    type="text"
+                                    placeholder={'Title'}
+                                    error={assignmentErrors.title}
+                                    value={title}
+                                    helperText={
+                                        assignmentErrors.title
+                                            ? t('name') + ' ' + t('is_required')
+                                            : ''
+                                    }
+                                    onChange={(event) =>
+                                        setTitle(event.target.value)
+                                    }
+                                />
+                            )}
                         </Box>
                         {/* File Upload button */}
                         <Box
@@ -484,13 +518,25 @@ export function AddChangeAssignmentPage() {
                             flexDirection={'column'}
                             alignItems={'flex-start'}
                         >
-                            <FileUploadButton
-                                name={t('upload_assignment')}
-                                path={assignmentFile}
-                                onFileChange={handleFileChange}
-                                fileTypes={['.pdf', '.zip']}
-                                tooltip={t('uploadToolTip')}
-                            />
+                            {loading ? (
+                                <FileUploadButton
+                                    name={t('upload_assignment')}
+                                    tooltip={t('uploadToolTip')}
+                                    onFileChange={() => {
+                                        console.log('loading')
+                                    }}
+                                    fileTypes={['.pdf', '.zip']}
+                                    path={new File([], 'loading...')}
+                                />
+                            ) : (
+                                <FileUploadButton
+                                    name={t('upload_assignment')}
+                                    path={assignmentFile}
+                                    onFileChange={handleFileChange}
+                                    fileTypes={['.pdf', '.zip']}
+                                    tooltip={t('uploadToolTip')}
+                                />
+                            )}
                         </Box>
                     </Box>
                     {/* Deadline section.
@@ -522,38 +568,46 @@ export function AddChangeAssignmentPage() {
                             >
                                 Deadline:
                             </Typography>
-                            <LocalizationProvider
-                                dateAdapter={AdapterDayjs}
-                                adapterLocale="nl"
-                            >
-                                <DateTimePicker
-                                    format="DD/MM/YYYY HH:mm"
-                                    value={dueDate}
-                                    disablePast
-                                    label={t('optional')}
-                                    sx={{ width: 250 }}
-                                    viewRenderers={{
-                                        hours: renderTimeViewClock,
-                                        minutes: renderTimeViewClock,
-                                        seconds: renderTimeViewClock,
-                                    }}
-                                    onError={(newError) =>
-                                        SetDeadlineError(newError)
-                                    }
-                                    slotProps={{
-                                        field: {
-                                            clearable: true,
-                                            onClear: () => setCleared(true),
-                                        },
-                                        textField: {
-                                            helperText: errorMessage,
-                                        },
-                                    }}
-                                    onChange={(newValue) =>
-                                        setDueDate(newValue)
-                                    }
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
                                 />
-                            </LocalizationProvider>
+                            ) : (
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="nl"
+                                >
+                                    <DateTimePicker
+                                        format="DD/MM/YYYY HH:mm"
+                                        value={dueDate}
+                                        disablePast
+                                        label={t('optional')}
+                                        sx={{ width: 250 }}
+                                        viewRenderers={{
+                                            hours: renderTimeViewClock,
+                                            minutes: renderTimeViewClock,
+                                            seconds: renderTimeViewClock,
+                                        }}
+                                        onError={(newError) =>
+                                            SetDeadlineError(newError)
+                                        }
+                                        slotProps={{
+                                            field: {
+                                                clearable: true,
+                                                onClear: () => setCleared(true),
+                                            },
+                                            textField: {
+                                                helperText: errorMessage,
+                                            },
+                                        }}
+                                        onChange={(newValue) =>
+                                            setDueDate(newValue)
+                                        }
+                                    />
+                                </LocalizationProvider>
+                            )}
                         </Box>
                         <Box
                             aria-label={'secondary_deadline'}
@@ -570,38 +624,46 @@ export function AddChangeAssignmentPage() {
                             >
                                 Extra Deadline:
                             </Typography>
-                            <LocalizationProvider
-                                dateAdapter={AdapterDayjs}
-                                adapterLocale="nl"
-                            >
-                                <DateTimePicker
-                                    format="DD/MM/YYYY HH:mm"
-                                    value={extraDueDate}
-                                    disablePast
-                                    label={t('optional')}
-                                    sx={{ width: 250 }}
-                                    viewRenderers={{
-                                        hours: renderTimeViewClock,
-                                        minutes: renderTimeViewClock,
-                                        seconds: renderTimeViewClock,
-                                    }}
-                                    slotProps={{
-                                        field: {
-                                            clearable: true,
-                                            onClear: () => setCleared(true),
-                                        },
-                                        textField: {
-                                            error: deadlineCheckError,
-                                            helperText: deadlineCheckError
-                                                ? t('deadlineCheck')
-                                                : '',
-                                        },
-                                    }}
-                                    onChange={(newValue) =>
-                                        setExtraDueDate(newValue)
-                                    }
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
                                 />
-                            </LocalizationProvider>
+                            ) : (
+                                <LocalizationProvider
+                                    dateAdapter={AdapterDayjs}
+                                    adapterLocale="nl"
+                                >
+                                    <DateTimePicker
+                                        format="DD/MM/YYYY HH:mm"
+                                        value={extraDueDate}
+                                        disablePast
+                                        label={t('optional')}
+                                        sx={{ width: 250 }}
+                                        viewRenderers={{
+                                            hours: renderTimeViewClock,
+                                            minutes: renderTimeViewClock,
+                                            seconds: renderTimeViewClock,
+                                        }}
+                                        slotProps={{
+                                            field: {
+                                                clearable: true,
+                                                onClear: () => setCleared(true),
+                                            },
+                                            textField: {
+                                                error: deadlineCheckError,
+                                                helperText: deadlineCheckError
+                                                    ? t('deadlineCheck')
+                                                    : '',
+                                            },
+                                        }}
+                                        onChange={(newValue) =>
+                                            setExtraDueDate(newValue)
+                                        }
+                                    />
+                                </LocalizationProvider>
+                            )}
                         </Box>
                     </Box>
                     {/* Description section */}
@@ -618,27 +680,38 @@ export function AddChangeAssignmentPage() {
                             >
                                 {t('description')}
                             </Typography>
-                            <TextField
-                                type="text"
-                                placeholder={'Description'}
-                                variant={'standard'}
-                                multiline
-                                value={description}
-                                onChange={(event) =>
-                                    setDescription(event.target.value)
-                                }
-                                fullWidth
-                                error={assignmentErrors.description}
-                                // Show an error message if the description is not filled in.
-                                helperText={
-                                    assignmentErrors.description
-                                        ? t('descriptionName') +
-                                          ' ' +
-                                          t('is_required')
-                                        : ''
-                                }
-                                sx={{ overflowY: 'auto', maxHeight: '25svh' }}
-                            />
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={'100%'}
+                                    height={60}
+                                />
+                            ) : (
+                                <TextField
+                                    type="text"
+                                    placeholder={'Description'}
+                                    variant={'standard'}
+                                    multiline
+                                    value={description}
+                                    onChange={(event) =>
+                                        setDescription(event.target.value)
+                                    }
+                                    fullWidth
+                                    error={assignmentErrors.description}
+                                    // Show an error message if the description is not filled in.
+                                    helperText={
+                                        assignmentErrors.description
+                                            ? t('descriptionName') +
+                                              ' ' +
+                                              t('is_required')
+                                            : ''
+                                    }
+                                    sx={{
+                                        overflowY: 'auto',
+                                        maxHeight: '25svh',
+                                    }}
+                                />
+                            )}
                         </Box>
                     </Card>
                     {/* Restrictions section */}
@@ -660,26 +733,38 @@ export function AddChangeAssignmentPage() {
                                 {t('restrictions')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>
+                                {/*This list will render the restrictions that are added to the assignment.*/}
                                 <List
-                                    // This list will render the restrictions that are added to the assignment.
                                     sx={{
                                         maxHeight: '18vh',
                                         overflowY: 'auto',
                                     }}
                                 >
-                                    {restrictions.map((restriction, index) => {
-                                        return (
-                                            <ListItem key={index}>
-                                                <RestrictionCard
-                                                    restriction={restriction}
-                                                    restrictions={restrictions}
-                                                    setRestrictions={
-                                                        setRestrictions
-                                                    }
-                                                />
-                                            </ListItem>
-                                        )
-                                    })}
+                                    {loading ? (
+                                        <CircularProgress color={'primary'} />
+                                    ) : (
+                                        <>
+                                            {restrictions.map(
+                                                (restriction, index) => {
+                                                    return (
+                                                        <ListItem key={index}>
+                                                            <RestrictionCard
+                                                                restriction={
+                                                                    restriction
+                                                                }
+                                                                restrictions={
+                                                                    restrictions
+                                                                }
+                                                                setRestrictions={
+                                                                    setRestrictions
+                                                                }
+                                                            />
+                                                        </ListItem>
+                                                    )
+                                                }
+                                            )}
+                                        </>
+                                    )}
                                 </List>
                             </Box>
                             <Box
@@ -755,13 +840,13 @@ export function AddChangeAssignmentPage() {
                                     </IconButton>
                                 </Tooltip>
                             </Box>
+                            {/* This section allows the teacher to set the maximum score for the assignment.*/}
                             <Box
-                                // This section allows the teacher to set the
-                                // maximum score for the assignment.
                                 aria-label={'maxScore'}
                                 display={'flex'}
                                 flexDirection={'row'}
                                 gap={1}
+                                height={40}
                                 alignItems={'center'}
                             >
                                 <Typography
@@ -770,32 +855,42 @@ export function AddChangeAssignmentPage() {
                                 >
                                     Max Score
                                 </Typography>
-                                <TextField
-                                    sx={{ width: 80 }}
-                                    required
-                                    label={'Max Score'}
-                                    type={'number'}
-                                    value={maxScore}
-                                    onChange={(event) => {
-                                        if (event.target.value !== '') {
-                                            const newScore = Math.max(
-                                                parseInt(event.target.value),
-                                                0
-                                            )
-                                            SetMaxScore
-                                                ? SetMaxScore(newScore)
-                                                : undefined
-                                        } else {
-                                            SetMaxScore
-                                                ? SetMaxScore(
-                                                      parseInt(
-                                                          event.target.value
+                                {loading ? (
+                                    <Skeleton
+                                        variant={'text'}
+                                        width={60}
+                                        height={60}
+                                    />
+                                ) : (
+                                    <TextField
+                                        sx={{ width: 80 }}
+                                        required
+                                        label={'Max Score'}
+                                        type={'number'}
+                                        value={maxScore}
+                                        onChange={(event) => {
+                                            if (event.target.value !== '') {
+                                                const newScore = Math.max(
+                                                    parseInt(
+                                                        event.target.value
+                                                    ),
+                                                    0
+                                                )
+                                                SetMaxScore
+                                                    ? SetMaxScore(newScore)
+                                                    : undefined
+                                            } else {
+                                                SetMaxScore
+                                                    ? SetMaxScore(
+                                                          parseInt(
+                                                              event.target.value
+                                                          )
                                                       )
-                                                  )
-                                                : undefined
-                                        }
-                                    }}
-                                />
+                                                    : undefined
+                                            }
+                                        }}
+                                    />
+                                )}
                             </Box>
                         </Box>
                         {/* Submit and Cancel buttons */}
@@ -808,7 +903,7 @@ export function AddChangeAssignmentPage() {
                         >
                             <Tooltip title={t('cancel')}>
                                 <IconButton
-                                    onClick={handleCancel}
+                                    onClick={() => setCancelConfirmation(true)}
                                     sx={{
                                         backgroundColor: 'secondary.main',
                                         borderRadius: 2,
@@ -858,6 +953,15 @@ export function AddChangeAssignmentPage() {
                     open={saveConfirmation}
                     handleClose={closeSaveConfirmation}
                     doAction={uploadAssignment}
+                />
+                {/* Confirmation popup for canceling changes*/}
+                <WarningPopup
+                    title={t('undo_changes_warning')}
+                    content={t('cant_be_undone')}
+                    buttonName={t('confirm')}
+                    open={cancelConfirmation}
+                    handleClose={closeCancel}
+                    doAction={handleCancel}
                 />
             </Stack>
         </>

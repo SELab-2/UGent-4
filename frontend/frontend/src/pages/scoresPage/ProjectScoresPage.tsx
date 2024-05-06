@@ -1,6 +1,13 @@
 import { Header } from '../../components/Header'
 import { Button, Card } from '../../components/CustomComponents.tsx'
-import { Box, Stack, styled } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    IconButton,
+    Skeleton,
+    Stack,
+    styled,
+} from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { StudentsView } from './StudentsView.tsx'
 import { t } from 'i18next'
@@ -32,10 +39,12 @@ export interface Project {
     vak: number
     max_score: number
     max_groep_grootte: number
+    student_groep?: boolean
     deadline: Date | null
     extra_deadline: Date | null
     zichtbaar: boolean
     gearchiveerd: boolean
+    filename?: string
 }
 
 interface Groep {
@@ -87,6 +96,9 @@ export function ProjectScoresPage() {
     const [groepen, setGroepen] = useState<ScoreGroep[]>([])
     const [fetchError, setFetchError] = useState(false)
 
+    // State for loading the page properly
+    const [loading, setLoading] = useState(true)
+
     const navigate = useNavigate()
 
     // Function to handle the 'Export Submissions' button
@@ -132,6 +144,7 @@ export function ProjectScoresPage() {
     useEffect(() => {
         async function fetchData() {
             try {
+                setLoading(true)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
@@ -139,6 +152,8 @@ export function ProjectScoresPage() {
             } catch (error) {
                 console.log('Error fetching data:', error)
                 setFetchError(true)
+            } finally {
+                setLoading(false)
             }
         }
 
@@ -274,7 +289,7 @@ export function ProjectScoresPage() {
             >
                 <Header
                     variant={'default'}
-                    title={project?.titel + ': Scores'}
+                    title={loading ? '' : project?.titel + ': Scores'}
                 />
                 {/* Main content box */}
 
@@ -284,13 +299,25 @@ export function ProjectScoresPage() {
                     }}
                 >
                     {/* Render StudentsView component if project is defined */}
-                    {project !== undefined && (
-                        <StudentsView
-                            project={project}
-                            groepen={groepen}
-                            setGroepen={setGroepen}
-                            changeScore={changeScore}
-                        />
+                    {loading ? (
+                        <Box
+                            display={'flex'}
+                            justifyContent={'center'}
+                            flexGrow={1}
+                        >
+                            <CircularProgress color={'primary'} />
+                        </Box>
+                    ) : (
+                        <>
+                            {project && (
+                                <StudentsView
+                                    project={project}
+                                    groepen={groepen}
+                                    setGroepen={setGroepen}
+                                    changeScore={changeScore}
+                                />
+                            )}
+                        </>
                     )}
                 </Card>
                 {/* Footer section with action buttons */}
@@ -335,21 +362,38 @@ export function ProjectScoresPage() {
                         padding={'3px'}
                         sx={{ width: '50%', height: 'auto' }}
                     >
-                        <Stack
-                            direction="row"
-                            alignItems="center"
-                            spacing={2}
-                            marginY={6}
+                        {loading ? (
+                            <Skeleton
+                                variant="rectangular"
+                                width={40}
+                                height={40}
+                            />
+                        ) : (
+                            <>
+                                <IconButton
+                                    onClick={() => setOpenSaveScoresPopup(true)}
+                                    sx={{
+                                        color: 'background.default',
+                                        '&:hover': {
+                                            color: 'text.primary',
+                                        },
+                                        backgroundColor: 'primary.main',
+                                        borderRadius: 2,
+                                    }}
+                                >
+                                    <SaveIcon />
+                                </IconButton>
+                            </>
+                        )}
+                        <IconButton
+                            onClick={() => setOpenDeleteScoresPopup(true)}
+                            sx={{
+                                backgroundColor: 'secondary.main',
+                                borderRadius: 2,
+                            }}
                         >
-                            <Button
-                                onClick={() => setOpenSaveScoresPopup(true)}
-                                startIcon={<SaveIcon />}
-                            />
-                            <Button
-                                onClick={() => setOpenDeleteScoresPopup(true)}
-                                startIcon={<CloseIcon />}
-                            />
-                        </Stack>
+                            <CloseIcon />
+                        </IconButton>
                     </Box>
                 </Box>
                 {/* Popup for confirming saving scores */}

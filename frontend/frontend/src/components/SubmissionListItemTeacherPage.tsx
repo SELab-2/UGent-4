@@ -1,8 +1,8 @@
 import {
     ListItem,
-    ListItemText,
-    ListItemIcon,
     ListItemButton,
+    ListItemIcon,
+    ListItemText,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -15,6 +15,7 @@ import { t } from 'i18next'
 import dayjs from 'dayjs'
 
 interface SubmissionListItemTeacherPageProps {
+    relative_group_id: string
     group_id: string
     assignment_id: string
     course_id: string
@@ -31,6 +32,7 @@ export interface Score {
  * @param {SubmissionListItemTeacherPageProps} props - Props for SubmissionListItemTeacherPage component
  */
 export function SubmissionListItemTeacherPage({
+    relative_group_id,
     group_id,
     assignment_id,
     course_id,
@@ -143,7 +145,7 @@ export function SubmissionListItemTeacherPage({
                                 color: 'primary.light',
                             },
                         }}
-                        primary={group_id}
+                        primary={relative_group_id}
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
@@ -166,11 +168,26 @@ export function SubmissionListItemTeacherPage({
                         }
                     />
                     {/* Display submission status icon */}
-                    <ListItemText sx={{ minWidth: '24%' }}>
-                        <ListItemIcon>
-                            {submitted?.status ? (
-                                <HighlightOffIcon
-                                    sx={{ color: 'error.main' }}
+                    <ListItemIcon sx={{ minWidth: 35 }}>
+                        {!submitted?.status ? (
+                            <HighlightOffIcon sx={{ color: 'error.main' }} />
+                        ) : (
+                            submitted !== undefined && (
+                                <CheckCircleOutlineIcon
+                                    sx={{ color: 'success.main' }}
+                                />
+                            )
+                        )}
+                    </ListItemIcon>
+                    {/* Display download icon */}
+                    <ListItemIcon sx={{ minWidth: 35 }}>
+                        <div onClick={handleDownloadClick}>
+                            {submitted ? (
+                                <DownloadIcon
+                                    sx={{
+                                        color: 'primary.main',
+                                        '&:hover': { color: 'primary.light' },
+                                    }}
                                 />
                             ) : (
                                 submitted !== undefined && (

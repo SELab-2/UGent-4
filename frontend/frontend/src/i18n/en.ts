@@ -90,8 +90,16 @@ const english = {
     failed: 'Failed',
     result: 'Result',
     must_pass: 'Must pass',
+    loading: 'Loading',
+    file: 'File',
     archive_course_warning: 'Archive Course?',
     will_archive_projects: 'This will archive all projects.',
+    copied: 'Copied!',
+    copy: 'Copy to clipboard',
+    join_course: 'Join course?',
+    join: 'Join',
+    acces: 'This gives you access to the course.',
+    deadlines_on: 'Deadlines on'
 }
 
 export default english

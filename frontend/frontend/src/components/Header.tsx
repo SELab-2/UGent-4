@@ -2,8 +2,6 @@ import {
     AppBar,
     Box,
     IconButton,
-    Menu,
-    MenuItem,
     Toolbar,
     Tooltip,
     Typography,
@@ -11,12 +9,11 @@ import {
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import EditIcon from '@mui/icons-material/Edit'
-import React from 'react'
-import { AccountCircle } from '@mui/icons-material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from './LanguageSwitcher.tsx'
 import { useMsal } from '@azure/msal-react'
 import axios from 'axios'
+import Button from '@mui/material/Button'
 
 /**
  * Header component
@@ -41,15 +38,7 @@ interface Props {
  */
 export const Header = ({ variant, title }: Props) => {
     const { t } = useTranslation()
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const { instance } = useMsal()
-    /**
-     * Function to handle menu opening
-     * @param {React.MouseEvent<HTMLElement>} event - The event object
-     */
-    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget)
-    }
 
     /**
      * Function to handle edit action
@@ -69,13 +58,6 @@ export const Header = ({ variant, title }: Props) => {
         path = path.slice(0, path.lastIndexOf('/'))
         //navigate to the new path or main page if there is no path
         navigate(path || '/')
-    }
-
-    /**
-     * Function to handle menu closing
-     */
-    const handleClose = () => {
-        setAnchorEl(null)
     }
 
     const navigate = useNavigate()
@@ -152,7 +134,11 @@ export const Header = ({ variant, title }: Props) => {
                         variant="h5"
                         component="div"
                         overflow={'auto'}
-                        sx={{ margin: 'auto', textAlign: 'center' }}
+                        sx={{
+                            margin: 'auto',
+                            textAlign: 'center',
+                            pl: 10,
+                        }}
                     >
                         {title}
                         {variant === 'editable' && (
@@ -169,36 +155,25 @@ export const Header = ({ variant, title }: Props) => {
                         )}
                     </Typography>
                     {/* User Menu */}
-                    <div>
-                        <IconButton
-                            size="medium"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="secondary"
-                        >
-                            <AccountCircle fontSize={'large'} />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                        }}
+                    >
+                        <LanguageSwitcher />
+                        <Button
+                            variant={'text'}
+                            onClick={logout}
+                            sx={{
+                                color: 'background.default',
+                                paddingTop: 1,
                             }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
                         >
-                            <LanguageSwitcher />
-                            <MenuItem onClick={logout}>Logout</MenuItem>
-                        </Menu>
-                    </div>
+                            Logout
+                        </Button>
+                    </Box>
                 </Toolbar>
             </AppBar>
         </>

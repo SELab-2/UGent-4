@@ -2,8 +2,10 @@ import { Divider, Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
     IconButton,
+    ListItem,
     ListItemButton,
     ListItemText,
+    Skeleton,
     Stack,
     TextField,
     Typography,
@@ -22,8 +24,6 @@ import Dialog from '@mui/material/Dialog'
 
 import instance from '../../axiosConfig.ts'
 
-import ErrorPage from '../ErrorPage.tsx'
-
 import Papa, { ParseResult } from 'papaparse'
 
 export interface User {
@@ -37,6 +37,7 @@ export interface User {
 // This function takes a list of users and will render it.
 // It can be used for both the teachers and the students.
 function UserList(
+    loading: boolean,
     users: User[],
     setSelected: React.Dispatch<React.SetStateAction<number>>,
     setOpen: React.Dispatch<React.SetStateAction<boolean>>
@@ -48,52 +49,97 @@ function UserList(
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '99vw',
+                        width: '99vw'
                     },
+                    minHeight: '20vh',
+                    maxHeight: '30vh',
+                    overflowY: 'auto',
                 }}
             >
-                {users.map((user) => {
-                    const handleClickOpen = () => {
-                        setSelected(user.user)
-                        setOpen(true)
-                    }
-                    {
-                        /* The list of users is mapped onto buttons
+                {loading ? (
+                    [...Array(5)].map((_, index) => (
+                        <ListItem key={index} sx={{ padding: 0, margin: 0 }}>
+                            <Skeleton
+                                variant={'text'}
+                                width={'100%'}
+                                height={60}
+                            />
+                        </ListItem>
+                    ))
+                ) : (
+                    <>
+                        {users.map((user) => {
+                            const handleClickOpen = () => {
+                                setSelected(user.user)
+                                setOpen(true)
+                            }
+                            {
+                                /* The list of users is mapped onto buttons
                     This makes it possible to click through on a person. */
-                    }
-                    return (
-                        <>
-                            <ListItemButton
-                                sx={{
-                                    width: '100%',
-                                    height: 30,
-                                    display: 'flex',
-                                    flexDirection: 'row',
-                                    justifyContent: 'space-between',
-                                    paddingX: 1,
-                                    paddingY: 3,
-                                    borderRadius: 2,
-                                }}
-                            >
-                                <ListItemText
-                                    primary={
-                                        user.first_name + ' ' + user.last_name
-                                    }
-                                />
-                                <ListItemText primary={user.email} />
-                                <IconButton
-                                    aria-label={'delete_file'}
-                                    size={'small'}
-                                    onClick={handleClickOpen}
-                                    sx={{ marginBottom: 1 }}
-                                >
-                                    <ClearIcon color={'error'} />
-                                </IconButton>
-                            </ListItemButton>
-                            <Divider></Divider>
-                        </>
-                    )
-                })}
+                            }
+                            return (
+                                <>
+                                    <ListItemButton
+                                        sx={{
+                                            width: '100%',
+                                            height: 30,
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            paddingX: 1,
+                                            paddingY: 2,
+                                            borderRadius: 2,
+                                        }}
+                                    >
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={1}
+                                            alignItems={'center'}
+                                        >
+                                            <ListItemText
+                                                sx={{ maxWidth: 100 }}
+                                                primary={user.first_name + ' '  + user.last_name}
+                                            />
+                                        </Box>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={1}
+                                            alignItems={'center'}
+                                        >
+                                            <ListItemText
+                                                sx={{
+                                                    maxWidth: 300,
+                                                    textOverflow: 'ellipsis',
+                                                }}
+                                                primary={user.email}
+                                            />
+                                            <IconButton
+                                                disabled={
+                                                    users.length == 1 &&
+                                                    users[0].is_lesgever
+                                                }
+                                                aria-label={'delete_file'}
+                                                size={'small'}
+                                                onClick={handleClickOpen}
+                                                sx={{
+                                                    '&:disabled': {
+                                                        color: 'text.primary',
+                                                    },
+                                                    color: 'error.main',
+                                                }}
+                                            >
+                                                <ClearIcon />
+                                            </IconButton>
+                                        </Box>
+                                    </ListItemButton>
+                                    <Divider color={'text.main'}></Divider>
+                                </>
+                            )
+                        })}
+                    </>
+                )}
             </List>
         </Box>
     )
@@ -105,6 +151,7 @@ function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
+    email: string,
     handleAdd: () => void,
     str: string
 ) {
@@ -184,15 +231,11 @@ export function AddChangeSubjectPage() {
     const [openTeacher, setOpenTeacher] = useState<boolean>(false)
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
-    const [user, setUser] = useState<User>({
-        user: 0,
-        is_lesgever: false,
-        first_name: '',
-        last_name: '',
-        email: '',
-    })
-    const [userLoaded, setUserLoaded] = useState<boolean>(false)
-    const vakID = params.courseId
+
+    const [vakID,setVakID]= useState(params.courseId)
+
+    // state for spinners
+    const [loading, setLoading] = useState(false)
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
@@ -399,104 +442,121 @@ export function AddChangeSubjectPage() {
     const handleSave = (): void => {
         const studentIDs = students.map((student) => student.user)
         const teacherIDs = teachers.map((teacher) => teacher.user)
-        instance
-            .put('vakken/' + vakID + '/', {
-                naam: title,
-                studenten: studentIDs,
-                lesgevers: teacherIDs,
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        if(vakID==undefined){
+            instance
+                .post('vakken/'  , {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                }).then((res) => {
+                    setVakID(res.data.vak_id)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }else{
+            instance
+                .put('vakken/' + vakID + '/', {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        }
+
     }
 
     useEffect(() => {
-        instance
-            .get('/gebruikers/me/')
-            .then((res) => {
-                setUser(res.data)
-                setUserLoaded(true)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        instance
-            .get('vakken/' + vakID)
-            .then((res) => {
-                setTitle(res.data.naam)
-                for (const id of res.data.studenten) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setStudents((oldstudents) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
+        async function fetchData() {
+            setLoading(true)
+            setUserLoaded(false)
+            await instance
+                .get('/gebruikers/me/')
+                .then((res) => {
+                    setUser(res.data)
+                    setUserLoaded(true)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            await instance
+                .get('vakken/' + vakID)
+                .then(async (res) => {
+                    setTitle(res.data.naam)
+                    for (const id of res.data.studenten) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setStudents((oldstudents) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const student of oldstudents) {
+                                        if (student.user == id) {
+                                            found = true
+                                        }
                                     }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, res.data]
-                                }
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-                for (const id of res.data.lesgevers) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setTeachers((oldteachers) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
+                                    if (found) {
+                                        return oldstudents
+                                    } else {
+                                        return [...oldstudents, res.data]
                                     }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, res.data]
-                                }
+                                })
                             })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                    for (const id of res.data.lesgevers) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setTeachers((oldteachers) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const teacher of oldteachers) {
+                                        if (teacher.user == id) {
+                                            found = true
+                                        }
+                                    }
+                                    if (found) {
+                                        return oldteachers
+                                    } else {
+                                        return [...oldteachers, res.data]
+                                    }
+                                })
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            setLoading(false)
+        }
+        if(vakID!=undefined){
+          fetchData().catch((err) => {
+              console.log(err)
+          })
+         }
     }, [vakID])
-
-    if (!userLoaded) {
-        return <>Loading...</>
-    }
-
-    if (!user.is_lesgever) {
-        return ErrorPage()
-    }
 
     return (
         <>
             <Stack direction={'column'}>
-                <Header variant={'default'} title={title} />
+                <Header variant={'default'} title={loading ? '' : title} />
                 <Stack
                     direction={'column'}
                     spacing={5}
                     marginTop={11}
                     sx={{
                         width: '100%',
-                        height: '70 %',
+                        height: '70%',
                         backgroundColor: 'background.default',
                     }}
                 >
@@ -509,30 +569,38 @@ export function AddChangeSubjectPage() {
                             width: '100%',
                         }}
                     >
-                        <Box
-                            // This box contains the title of the subject.
-                            // This title can be changed if necessary.
-                            aria-label={'title'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={2}
-                            padding={'20px'}
-                            alignItems={'center'}
+                    <Box
+                        // This box contains the title of the subject.
+                        // This title can be changed if necessary.
+                        aria-label={'title'}
+                        display={'flex'}
+                        flexDirection={'row'}
+                        gap={2}
+                        alignItems={'center'}
+                    >
+                        <Typography
+                            variant={'h5'}
+                            color={'text.primary'}
+                            fontWeight={'bold'}
                         >
-                            <Typography
-                                variant={'h6'}
-                                color={'text.primary'}
-                                fontWeight={'bold'}
-                            >
-                                {t('subject_name') + ':'}
-                            </Typography>
+                            {t('subject_name') + ':'}
+                        </Typography>
+                        {loading ? (
+                            <Skeleton
+                                variant={'text'}
+                                width={200}
+                                height={60}
+                            />
+                        ) : (
                             <TextField
                                 type="text"
                                 placeholder={t('title')}
                                 onChange={(event) =>
                                     setTitle(event.target.value)
                                 }
+                                sx={{ height: 60 }}
                             />
+                        )}
                         </Box>
                         <Box padding={'20px'}>
                             <Button
@@ -560,6 +628,7 @@ export function AddChangeSubjectPage() {
                             style={{ maxHeight: 300, overflow: 'auto' }}
                         >
                             {UserList(
+                                loading,
                                 students,
                                 setSelectedStudent,
                                 setOpenStudent
@@ -599,6 +668,7 @@ export function AddChangeSubjectPage() {
                             style={{ maxHeight: 300, overflow: 'auto' }}
                         >
                             {UserList(
+                                loading,
                                 teachers,
                                 setSelectedTeacher,
                                 setOpenTeacher
