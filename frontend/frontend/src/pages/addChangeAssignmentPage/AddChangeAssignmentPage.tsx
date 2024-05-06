@@ -1,6 +1,6 @@
+import { Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Card,
     IconButton,
     ListItem,
     Stack,
@@ -454,7 +454,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* Here the user gets to specify the assignment name */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -516,7 +516,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* This section renders the normal deadline. */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -564,7 +564,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* This section renders the extra deadline. */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -605,18 +605,14 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                     {/* Description section */}
-                    <Card
-                        aria-label={'description'}
-                        elevation={1}
-                        sx={{ backgroundColor: 'background.default' }}
-                    >
+                    <Card aria-label={'description'}>
                         <Box
                             padding={2}
                             maxHeight={'20svh'}
                             minHeight={'20svh'}
                         >
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -660,12 +656,12 @@ export function AddChangeAssignmentPage() {
                                 height: '28svh',
                             }}
                         >
-                            <Typography variant={'h6'} fontWeight={'bold'}>
+                            <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('restrictions')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>
                                 <List
-                                // This list will render the restrictions that are added to the assignment.
+                                    // This list will render the restrictions that are added to the assignment.
                                     sx={{
                                         maxHeight: '18vh',
                                         overflowY: 'auto',
@@ -731,7 +727,7 @@ export function AddChangeAssignmentPage() {
                             >
                                 {visible ? (
                                     <IconButton
-                                        // Allows the teacher to select whether 
+                                        // Allows the teacher to select whether
                                         // the assignment is visible to students or not.
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
@@ -760,7 +756,7 @@ export function AddChangeAssignmentPage() {
                                 </Tooltip>
                             </Box>
                             <Box
-                                // This section allows the teacher to set the 
+                                // This section allows the teacher to set the
                                 // maximum score for the assignment.
                                 aria-label={'maxScore'}
                                 display={'flex'}
