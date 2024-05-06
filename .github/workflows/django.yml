@@ -55,7 +55,7 @@ jobs:
         cd frontend/frontend
         eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
         cd ../..
-    - name: Run Tests
+    - name: Run Backend Tests
       env:
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
         CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
@@ -74,3 +74,8 @@ jobs:
         python manage.py makemigrations api
         python manage.py migrate api
         python manage.py test
+    - name: Run Frontend Tests
+      run: |
+        cd frontend/frontend
+        npm run cypress-component
+        cd ../..
