@@ -17,6 +17,7 @@ import React, { ChangeEvent, useEffect, useState } from 'react'
 import {Header} from "../../components/Header.tsx";
 import { t } from 'i18next'
 import AddCircle from '@mui/icons-material/AddCircle'
+import ClearIcon from '@mui/icons-material/Clear'
 import { useParams } from 'react-router-dom'
 import instance from "../../axiosConfig.ts";
 
@@ -34,6 +35,47 @@ export interface User {
     email: string
 }
 
+export interface Assignment {
+    project_id: number
+    titel: string
+    beschrijving: string
+    opgave_bestand: string
+    vak: number
+    max_score: number
+    max_groep_grootte: number
+    deadline: string | null
+    extra_deadline: string | null
+    zichtbaar: boolean
+    gearchiveerd: boolean
+    file?: File
+}
+
+function joinLeaveButton(isin,handleJoin,handleLeave){
+    if(isin){
+        return (
+            <>
+                <IconButton
+                    size={'small'}
+                    sx={{ marginBottom: 1 }}
+                    onClick={handleLeave}
+                >
+                    <ClearIcon />
+                </IconButton>
+            </>
+        )
+    }
+    return (
+        <>
+            <IconButton
+                size={'small'}
+                sx={{ marginBottom: 1 }}
+                onClick={handleJoin}
+            >
+                <AddCircle />
+            </IconButton>
+        </>
+    )
+}
 
 export function ChooseGroup() {
 
@@ -47,7 +89,7 @@ export function ChooseGroup() {
     const [user, setUser] = useState<User>()
 
     //const assignmentId = params.assignmentId
-    const assignmentId = 14
+    const assignmentId = 1
 
     const handleClose = () => {
         setOpen(false);
@@ -172,24 +214,47 @@ export function ChooseGroup() {
                             //const group=getGroup(id)
 
                             const handleJoin = () =>{
-                                //console.log(groups)
                                 setGroups((oldGroups)=>{
-                                    console.log("setGroups")
                                     for (let i = 0; i < oldGroups.length; i++) {
                                         if(oldGroups[i].groep_id==group.groep_id){
-                                            console.log(oldGroups[i])
                                             const newgroup={
                                                 groep_id: group.groep_id,
                                                 project: group.project,
                                                 studenten: [...group.studenten,user.user],
                                             }
                                             oldGroups[i]=newgroup
-                                            console.log(oldGroups[i])
+                                            instance.patch("groepen/"+group.groep_id+"/",{studenten: [...group.studenten,user.user]})
+                                                .catch((err) =>{
+                                                    console.log(err)
+                                                })
+
+                                            return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1)]
                                         }
                                     }
                                     return oldGroups
                                 })
-                                //console.log(groups)
+                            }
+
+                            const handleLeave = () =>{
+                                setGroups((oldGroups)=>{
+                                    for (let i = 0; i < oldGroups.length; i++) {
+                                        if(oldGroups[i].groep_id==group.groep_id){
+                                            const newgroup={
+                                                groep_id: group.groep_id,
+                                                project: group.project,
+                                                studenten: group.studenten.filter(student => student != user.user),
+                                            }
+                                            oldGroups[i]=newgroup
+                                            instance.patch("groepen/"+group.groep_id+"/",{studenten: [...group.studenten,user.user]})
+                                                .catch((err) =>{
+                                                    console.log(err)
+                                                })
+
+                                            return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1)]
+                                        }
+                                    }
+                                    return oldGroups
+                                })
                             }
 
                             return (
@@ -226,18 +291,21 @@ export function ChooseGroup() {
                                                             </Typography>
                                                         </>
                                                         )
+                                                }else{
+                                                    return (
+                                                        <>
+                                                            <Typography>
+                                                                {"undefined"}
+                                                            </Typography>
+                                                        </>
+                                                    )
                                                 }
                                             })}
 
                                         </Box>
 
-                                        <IconButton
-                                            size={'small'}
-                                            sx={{ marginBottom: 1 }}
-                                            onClick={handleJoin}
-                                        >
-                                            <AddCircle />
-                                        </IconButton>
+                                        {joinLeaveButton(group.studenten.includes(user.user),handleJoin,handleLeave)}
+
                                     </ListItem>
                                     <Divider color={'text.main'}></Divider>
                                 </>
