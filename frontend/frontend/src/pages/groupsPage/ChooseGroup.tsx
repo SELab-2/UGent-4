@@ -214,7 +214,36 @@ export function ChooseGroup() {
                             //const group=getGroup(id)
 
                             const handleJoin = () =>{
-                                setGroups((oldGroups)=>{
+                                setGroups((oldGroups) :Group[] =>{
+                                    if (user==undefined){
+                                        return oldGroups
+                                    }
+
+                                    //var found=false
+
+                                    var j=0
+
+                                    var edittedgroup=undefined
+
+                                    for (let i = 0; i < oldGroups.length; i++) {
+                                        if(oldGroups[i].studenten.includes(user.user)){
+                                            const newgroup1={
+                                                groep_id: oldGroups[i].groep_id,
+                                                project: oldGroups[i].project,
+                                                studenten: oldGroups[i].studenten.filter(student => student != user.user),
+                                            }
+
+                                            instance.patch("groepen/"+oldGroups[i].groep_id+"/",{studenten: oldGroups[i].studenten.filter(student => student != user.user)})
+                                                .catch((err) =>{
+                                                    console.log(err)
+                                                })
+
+                                            //found=true
+                                            j=i
+                                            edittedgroup=newgroup1
+                                        }
+                                    }
+
                                     for (let i = 0; i < oldGroups.length; i++) {
                                         if(oldGroups[i].groep_id==group.groep_id){
                                             const newgroup={
@@ -222,11 +251,17 @@ export function ChooseGroup() {
                                                 project: group.project,
                                                 studenten: [...group.studenten,user.user],
                                             }
-                                            oldGroups[i]=newgroup
                                             instance.patch("groepen/"+group.groep_id+"/",{studenten: [...group.studenten,user.user]})
                                                 .catch((err) =>{
                                                     console.log(err)
                                                 })
+
+                                            if (edittedgroup!=undefined){
+                                                if(i<j){
+                                                    return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1,j),edittedgroup,...oldGroups.slice(j+1)]
+                                                }
+                                                return [...oldGroups.slice(0,j),edittedgroup,...oldGroups.slice(j+1,i),newgroup,...oldGroups.slice(i+1)]
+                                            }
 
                                             return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1)]
                                         }
@@ -237,6 +272,9 @@ export function ChooseGroup() {
 
                             const handleLeave = () =>{
                                 setGroups((oldGroups)=>{
+                                    if (user==undefined){
+                                        return oldGroups
+                                    }
                                     for (let i = 0; i < oldGroups.length; i++) {
                                         if(oldGroups[i].groep_id==group.groep_id){
                                             const newgroup={
@@ -244,8 +282,7 @@ export function ChooseGroup() {
                                                 project: group.project,
                                                 studenten: group.studenten.filter(student => student != user.user),
                                             }
-                                            oldGroups[i]=newgroup
-                                            instance.patch("groepen/"+group.groep_id+"/",{studenten: [...group.studenten,user.user]})
+                                            instance.patch("groepen/"+group.groep_id+"/",{studenten: group.studenten.filter(student => student != user.user)})
                                                 .catch((err) =>{
                                                     console.log(err)
                                                 })
@@ -304,7 +341,7 @@ export function ChooseGroup() {
 
                                         </Box>
 
-                                        {joinLeaveButton(group.studenten.includes(user.user),handleJoin,handleLeave)}
+                                        {joinLeaveButton(user!=undefined ? group.studenten.includes(user.user):false,handleJoin,handleLeave)}
 
                                     </ListItem>
                                     <Divider color={'text.main'}></Divider>
