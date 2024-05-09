@@ -1,5 +1,4 @@
 import {
-    Divider,
     IconButton,
     ListItem,
     ListItemButton,
@@ -85,7 +84,7 @@ export function AssignmentListItemSubjectsPage({
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        paddingX: 1,
+                        paddingX: 3,
                         paddingY: 3,
                         borderRadius: 2,
                     }}
@@ -93,7 +92,7 @@ export function AssignmentListItemSubjectsPage({
                     {isStudent ? (
                         <>
                             <ListItemText
-                                sx={{ maxWidth: 100 }}
+                                sx={{ maxWidth: 120 }}
                                 primary={projectName}
                             />
                             <ListItemText
@@ -101,13 +100,13 @@ export function AssignmentListItemSubjectsPage({
                                 primary={
                                     dueDate
                                         ? dayjs(dueDate).format(
-                                            'DD/MM/YYYY HH:mm'
-                                        )
+                                              'DD/MM/YYYY HH:mm'
+                                          )
                                         : t('no_deadline')
                                 }
                             />
                             <ListItemText
-                                sx={{ maxWidth: 150 }}
+                                sx={{ maxWidth: 170 }}
                                 primary={
                                     submissions > 0
                                         ? submissions > 1
@@ -122,7 +121,7 @@ export function AssignmentListItemSubjectsPage({
                             />
                             {submissions > 0 ? (
                                 <ListItemText
-                                    sx={{ maxWidth: 100 }}
+                                    sx={{ maxWidth: 80 }}
                                     primary={
                                         score
                                             ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
@@ -131,7 +130,7 @@ export function AssignmentListItemSubjectsPage({
                                 />
                             ) : (
                                 <ListItemText
-                                    sx={{ maxWidth: 100 }}
+                                    sx={{ maxWidth: 80 }}
                                     primary={`0/${maxScore} (0%)`}
                                 />
                             )}
@@ -148,8 +147,8 @@ export function AssignmentListItemSubjectsPage({
                                 primary={
                                     dueDate
                                         ? dayjs(dueDate).format(
-                                            'DD/MM/YYYY HH:mm'
-                                        )
+                                              'DD/MM/YYYY HH:mm'
+                                          )
                                         : t('no_deadline')
                                 }
                             />
@@ -164,7 +163,6 @@ export function AssignmentListItemSubjectsPage({
                     )}
                 </ListItemButton>
             </ListItem>
-            <Divider color={'text.main'}></Divider>
         </>
     )
 }

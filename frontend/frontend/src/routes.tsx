@@ -18,7 +18,7 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
-        path: '/course/:courseId',
+        path: '/course/:courseId/:accept_invite?',
         element: <SubjectsPage />,
         errorElement: <ErrorPage />,
     },
@@ -55,6 +55,11 @@ const router = createBrowserRouter([
     {
         path: '/groups/:assignmentId/choose',
         element: <ChooseGroup />,
+        errorElement: <ErrorPage />,
+    },
+    {
+        path: '/course/new',
+        element: <AddChangeSubjectPage />,
         errorElement: <ErrorPage />,
     },
     {
