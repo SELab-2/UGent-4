@@ -317,11 +317,6 @@ export function ChooseGroup() {
                                             primary={group.groep_id}
                                         />
 
-                                        <ListItemText
-                                            sx={{ maxWidth: 100 }}
-                                            primary={group.studenten}
-                                        />
-
                                         <Box display={'flex'} flexDirection={'column'}>
                                             {group.studenten.map((studentid)=>{
                                                 if(studenten[studentid]!=undefined){
