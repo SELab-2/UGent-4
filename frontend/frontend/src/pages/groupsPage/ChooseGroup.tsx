@@ -19,7 +19,7 @@ import { useParams } from 'react-router-dom'
 import instance from "../../axiosConfig.ts";
 
 export interface Group {
-    groep_id?: number
+    groep_id: number
     studenten: number[]
     project: number
 }
@@ -152,7 +152,9 @@ export function ChooseGroup() {
                         if (found) {
                             return oldGroups
                         } else {
-                            return [...oldGroups,res.data[i]]
+                            return [...oldGroups,res.data[i]].sort((a,b) =>{
+                                return a.groep_id-b.groep_id
+                            })
                         }
                     })
                 }
@@ -262,12 +264,18 @@ export function ChooseGroup() {
 
                                             if (edittedgroup!=undefined){
                                                 if(i<j){
-                                                    return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1,j),edittedgroup,...oldGroups.slice(j+1)]
+                                                    return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1,j),edittedgroup,...oldGroups.slice(j+1)].sort((a,b) =>{
+                                                        return a.groep_id-b.groep_id
+                                                    })
                                                 }
-                                                return [...oldGroups.slice(0,j),edittedgroup,...oldGroups.slice(j+1,i),newgroup,...oldGroups.slice(i+1)]
+                                                return [...oldGroups.slice(0,j),edittedgroup,...oldGroups.slice(j+1,i),newgroup,...oldGroups.slice(i+1)].sort((a,b) =>{
+                                                    return a.groep_id-b.groep_id
+                                                })
                                             }
 
-                                            return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1)]
+                                            return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1)].sort((a,b) =>{
+                                                return a.groep_id-b.groep_id
+                                            })
                                         }
                                     }
                                     return oldGroups
@@ -291,7 +299,9 @@ export function ChooseGroup() {
                                                     console.log(err)
                                                 })
 
-                                            return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1)]
+                                            return [...oldGroups.slice(0,i),newgroup,...oldGroups.slice(i+1)].sort((a,b) =>{
+                                                return a.groep_id-b.groep_id
+                                            })
                                         }
                                     }
                                     return oldGroups
@@ -312,9 +322,10 @@ export function ChooseGroup() {
                                             borderRadius: 2,
                                         }}
                                     >
+
                                         <ListItemText
                                             sx={{ maxWidth: 100 }}
-                                            primary={group.groep_id}
+                                            primary={groups.indexOf(group)+1}
                                         />
 
                                         <Box display={'flex'} flexDirection={'column'}>
@@ -327,14 +338,6 @@ export function ChooseGroup() {
                                                             </Typography>
                                                         </>
                                                         )
-                                                }else{
-                                                    return (
-                                                        <>
-                                                            <Typography>
-                                                                {"undefined"}
-                                                            </Typography>
-                                                        </>
-                                                    )
                                                 }
                                             })}
 
