@@ -368,11 +368,3 @@ export function ChooseGroup() {
         </>
     )
 }
-
-// function getGroup(id: number): Group {
-//     return {
-//         groep_id: id,
-//         studenten: [17,18],
-//         project: 5
-//     }
-// }
