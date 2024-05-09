@@ -1,6 +1,5 @@
 
 import {
-    Link,
     Box,
     Card,
     Divider,
@@ -8,12 +7,11 @@ import {
     ListItem,
     ListItemText,
     Stack,
-    TextField,
     Typography,
     Dialog,
 } from '@mui/material'
 import List from '@mui/material/List'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import {Header} from "../../components/Header.tsx";
 import { t } from 'i18next'
 import AddCircle from '@mui/icons-material/AddCircle'
@@ -50,7 +48,7 @@ export interface Assignment {
     file?: File
 }
 
-function joinLeaveButton(isin,handleJoin,handleLeave){
+function joinLeaveButton(isin:boolean,handleJoin: ()=> void,handleLeave: ()=> void){
     if(isin){
         return (
             <>
@@ -88,8 +86,7 @@ export function ChooseGroup() {
 
     const [user, setUser] = useState<User>()
 
-    //const assignmentId = params.assignmentId
-    const assignmentId = 1
+    const assignmentId = params.assignmentId
 
     const handleClose = () => {
         setOpen(false);
@@ -221,9 +218,9 @@ export function ChooseGroup() {
 
                                     //var found=false
 
-                                    var j=0
+                                    let j=0
 
-                                    var edittedgroup=undefined
+                                    let edittedgroup=undefined
 
                                     for (let i = 0; i < oldGroups.length; i++) {
                                         if(oldGroups[i].studenten.includes(user.user)){
@@ -237,8 +234,6 @@ export function ChooseGroup() {
                                                 .catch((err) =>{
                                                     console.log(err)
                                                 })
-
-                                            //found=true
                                             j=i
                                             edittedgroup=newgroup1
                                         }
