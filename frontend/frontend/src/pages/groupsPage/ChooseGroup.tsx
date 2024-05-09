@@ -1,4 +1,3 @@
-
 import {
     Box,
     Card,
@@ -86,6 +85,8 @@ export function ChooseGroup() {
 
     const [user, setUser] = useState<User>()
 
+    const [assignment,setAssignment]= useState<Assignment>()
+
     const assignmentId = params.assignmentId
 
     const handleClose = () => {
@@ -101,6 +102,14 @@ export function ChooseGroup() {
             .catch((err) => {
                 console.log(err)
             })
+        instance
+            .get('/projecten/'+assignmentId+'/')
+            .then((res) => {
+                setAssignment(res.data)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
         instance.get('projecten/'+assignmentId)
             .then((res) =>{
                 instance.get('vakken/'+res.data.vak)
@@ -111,10 +120,6 @@ export function ChooseGroup() {
                             instance.get('gebruikers/'+studentid)
                                 .then((res) => {
                                     setStudenten((oldstudenten) => {
-                                        console.log("insetStudenten")
-                                        console.log(res.data)
-                                        console.log(oldstudenten)
-                                        //return oldstudenten
                                         return {...oldstudenten,[res.data.user]: res.data}
                                     })
                                 })
@@ -215,8 +220,9 @@ export function ChooseGroup() {
                                     if (user==undefined){
                                         return oldGroups
                                     }
-
-                                    //var found=false
+                                    if (assignment==undefined){
+                                        return oldGroups
+                                    }
 
                                     let j=0
 
@@ -241,6 +247,9 @@ export function ChooseGroup() {
 
                                     for (let i = 0; i < oldGroups.length; i++) {
                                         if(oldGroups[i].groep_id==group.groep_id){
+                                            if (group.studenten.length >= assignment.max_groep_grootte){
+                                                return oldGroups
+                                            }
                                             const newgroup={
                                                 groep_id: group.groep_id,
                                                 project: group.project,
