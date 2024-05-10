@@ -36,6 +36,17 @@ export default function RestrictionTemplateUI({ restrictionCode }: { restriction
         }));
     };
 
+    // This function is specifically for handling the array type of parameters.
+    // It will change the row at the given index to the new value.
+    const handleChangeRow = (variable: string, newValue: any, index: number) => {
+        const newArrayValues = [...paramsState[variable]];
+        newArrayValues[index] = newValue;
+        setParamsState(prevState => ({
+            ...prevState,
+            [variable]: newArrayValues
+        }));
+    }
+
     const handleDeleteRow = (variable: string, index: number) => {
         const newArrayValues = [...paramsState[variable]];
         newArrayValues.splice(index, 1);
@@ -48,7 +59,7 @@ export default function RestrictionTemplateUI({ restrictionCode }: { restriction
     const handleAddRow = (variable: string) => {
         setParamsState(prevState => ({
             ...prevState,
-            [variable]: [...(prevState[variable] || []), '']
+            [variable]: [...(prevState[variable] || []), 'yo'] // Initialize with an empty string
         }));
     };
 
@@ -115,7 +126,7 @@ export default function RestrictionTemplateUI({ restrictionCode }: { restriction
                                             <TextField
                                                 type='text'
                                                 value={item}
-                                                onChange={(e) => handleArrayChange(param.variable, e.target.value)}
+                                                onChange={(e) => handleChangeRow(param.variable, e.target.value, idx)}
                                             />
                                         </ListItemText>
                                         <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteRow(param.variable, idx)}>
