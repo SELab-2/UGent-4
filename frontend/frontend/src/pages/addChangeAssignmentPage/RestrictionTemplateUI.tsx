@@ -59,7 +59,7 @@ export default function RestrictionTemplateUI({ restrictionCode }: { restriction
     const handleAddRow = (variable: string) => {
         setParamsState(prevState => ({
             ...prevState,
-            [variable]: [...(prevState[variable] || []), 'yo'] // Initialize with an empty string
+            [variable]: [...(prevState[variable] || []), ''] // Initialize with an empty string
         }));
     };
 
