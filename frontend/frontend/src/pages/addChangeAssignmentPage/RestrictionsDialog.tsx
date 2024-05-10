@@ -230,28 +230,7 @@ export default function RestrictionsDialog({
             </Box>
             {/* This is the template interface. */}
             <Dialog fullScreen open={openTemplateInterface} onClose={handleCloseTemplateInterface}>
-                <RestrictionsTemplateUI restrictionCode={code} handleCloseTemplateInterface={handleCloseTemplateInterface} />
-                {/*<Box>
-                    <AppBar sx={{ position: 'relative' }}>
-                        <Toolbar>
-                            <IconButton
-                                edge="start"
-                                color="inherit"
-                                onClick={handleCloseTemplateInterface}
-                                aria-label="close"
-                            >
-                                <CloseIcon />
-                            </IconButton>
-                            <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
-                                {'Template'}
-                            </Typography>
-                        </Toolbar>
-                    </AppBar>
-                    <Box aria-label={'Content'} padding={1}>
-                    
-                        <RestrictionsTemplateUI restrictionCode={code} />
-                    </Box>
-            </Box>*/}
+                <RestrictionsTemplateUI restrictionCode={code} handleCloseTemplateInterface={handleCloseTemplateInterface} templateFileName='template_example.sh'/>
             </Dialog>
             {/* This is the code editor. */}
             <Dialog fullScreen open={openTextEditor} onClose={handleCloseTextEditor}>
@@ -361,6 +340,13 @@ export default function RestrictionsDialog({
                                         </FormControl>
                                     </Box>
                                 </Box>
+                                <Button
+                                    autoFocus
+                                    color="inherit"
+                                    onClick={() => setPopupOpen(true)}
+                                >
+                                    save template
+                                </Button>
                                 <Button
                                     autoFocus
                                     color="inherit"

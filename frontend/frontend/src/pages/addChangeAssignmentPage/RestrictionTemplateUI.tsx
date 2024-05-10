@@ -7,7 +7,8 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
 
-const saveBashRestrictionTemplate = (restrictionCode: string, params: { [key: string]: any }) => {
+
+const saveRestrictionTemplate = (restrictionCode: string, params: { [key: string]: any }, extension: string) => {
     // This function will save the restriction template with the given parameters.
     // It finds the #@param tags in the restriction code and replaces the values with the given parameters.
     // It does this with javascript regexp
@@ -23,11 +24,19 @@ const saveBashRestrictionTemplate = (restrictionCode: string, params: { [key: st
         // If the value is an array, we need to convert it to a string
 
         if (Array.isArray(valueString)) {
-            valueString = '(' + valueString.join(' ') + ')';
+            if (extension === 'sh') {
+                valueString = '(' + valueString.join(' ') + ')';
+            } else if (extension === 'py') {
+                valueString = '[' + valueString.join(', ') + ']';
+            }
         } else if (typeof valueString === 'string') {
             valueString = '"' + valueString + '"';
         } else if (typeof valueString === 'boolean') {
-            valueString = valueString ? 'true' : 'false';
+            if (extension === 'sh') {
+                valueString = valueString ? 'true' : 'false';
+            } else if (extension === 'py') {
+                valueString = valueString ? 'True' : 'False';
+            }
         } else if (typeof valueString === 'number') {
             // This case already works without intervention.
         }
@@ -43,28 +52,20 @@ const saveBashRestrictionTemplate = (restrictionCode: string, params: { [key: st
     return newRestrictionCode;
 }
 
-const savePythonRestrictionTemplate = (restrictionCode: string, params: { [key: string]: any }) => {
-    return restrictionCode;
-}
-
-const saveRestrictionTemplate = (restrictionCode: string, params: { [key: string]: any }, extension: string) => {
-    // This function will save the restriction template with the given parameters.
-    // It chooses the correct function based on the extension of the file.
-    switch (extension) {
-        case 'py':
-            return savePythonRestrictionTemplate(restrictionCode, params);
-        case 'sh':
-            return saveBashRestrictionTemplate(restrictionCode, params);
-        default:
-            return restrictionCode;
-    }
-}
-
 /**
  * This UI will show different fields for parameters regarding the restrictions template.
  * @returns {React.ReactElement} - The rendered component.
  */
-export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemplateInterface }: { restrictionCode: string, handleCloseTemplateInterface: () => void }) {
+export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemplateInterface, templateFileName }: { restrictionCode: string, handleCloseTemplateInterface: () => void, templateFileName: string }) {
+    
+    // De onderste twee rijen code zouden bijvoorbeeld het volgende doen
+    // voor de templateFileName 'template.sh':
+    // templateExtension = 'sh'
+    // templateName = 'template'
+    const templateExtension = templateFileName.split('.').pop();
+    const templateName =  templateFileName.split('.').shift();
+    
+    
     // There are four types of variables that can be used in a restriction template:
     // 1. Integer
     // 2. String
@@ -132,12 +133,12 @@ export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemp
                     <CloseIcon />
                     </IconButton>
                     <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
-                        {'Template'}
+                        {templateName}
                     </Typography>
                     <Button
                         autoFocus
                         color="inherit"
-                        onClick={() => saveRestrictionTemplate(restrictionCode, paramsState, 'sh')}
+                        onClick={() => saveRestrictionTemplate(restrictionCode, paramsState, templateExtension)}
                     >
                         save
                     </Button>
