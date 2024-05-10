@@ -1,15 +1,14 @@
-import * as React from 'react'
-import { t } from 'i18next'
+import React, { useState } from 'react';
 import { TextField, Checkbox, List, ListItem, ListItemText, IconButton, Button } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import Typography from '@mui/material/Typography'
+import Typography from '@mui/material/Typography';
 
 /**
  * This UI will show different fields for parameters regarding the restrictions template.
  * @returns {React.ReactElement} - The rendered component.
  */
-export default function RestrictionTemplateUI({restrictionCode} : {restrictionCode: string}) {
+export default function RestrictionTemplateUI({ restrictionCode }: { restrictionCode: string }) {
     // There are four types of variables that can be used in a restriction template:
     // 1. Integer
     // 2. String
@@ -18,31 +17,39 @@ export default function RestrictionTemplateUI({restrictionCode} : {restrictionCo
 
     const params = parseParams(restrictionCode);
 
-    // TODO: als er meerdere parameters van het type array zijn, 
-    // dan worden die allemaal samengezet, wat natuurlijk niet de bedoeling is.
-    // Waarschijnlijk zullen de values pas uit de parameter gehaald moeten worden in de code.
-    // Het probleem wordt dan wel weer hoe de onderste functies aangepast moeten worden.
-    // Want elke array moet een eigen state hebben, en die moet dan ook weer aangepast worden.
-    const initialArrayValues = params.filter(param => param.type === 'array').map(param => {
-        return param.value;
+    const [paramsState, setParamsState] = useState<{ [key: string]: any }>({});
+
+    // Initialize paramsState with default values
+    useState(() => {
+        const initialState: { [key: string]: any } = {};
+        params.forEach(param => {
+            initialState[param.variable] = param.value;
+        });
+        setParamsState(initialState);
     });
-    const [arrayValues, setArrayValues] = React.useState([...initialArrayValues.map(value => ({ value }))]);
 
     // All functions beneath are for handling the array type of parameters.
-    const handleArrayChange = (index: number, event) => {
-        const newArrayValues = [...arrayValues];
-        newArrayValues[index].value = event.target.value;
-        setArrayValues(newArrayValues);
+    const handleArrayChange = (variable: string, newValue: string) => {
+        setParamsState(prevState => ({
+            ...prevState,
+            [variable]: newValue
+        }));
     };
 
-    const handleDeleteRow = (index: number) => {
-        const newArrayValues = [...arrayValues];
+    const handleDeleteRow = (variable: string, index: number) => {
+        const newArrayValues = [...paramsState[variable]];
         newArrayValues.splice(index, 1);
-        setArrayValues(newArrayValues);
+        setParamsState(prevState => ({
+            ...prevState,
+            [variable]: newArrayValues
+        }));
     };
 
-    const handleAddRow = () => {
-        setArrayValues([...arrayValues, { value: '' }]);
+    const handleAddRow = (variable: string) => {
+        setParamsState(prevState => ({
+            ...prevState,
+            [variable]: [...(prevState[variable] || []), '']
+        }));
     };
 
     return (
@@ -58,11 +65,11 @@ export default function RestrictionTemplateUI({restrictionCode} : {restrictionCo
                             </Typography>
                             <TextField
                                 type='number'
-                                value={param.value}
+                                value={paramsState[param.variable]}
                                 fullWidth
+                                onChange={(e) => handleArrayChange(param.variable, e.target.value)}
                             />
                         </>
-                        
                     )}
                     {param.type === 'string' && (
                         // In this case we have a string
@@ -72,13 +79,12 @@ export default function RestrictionTemplateUI({restrictionCode} : {restrictionCo
                                 {param.description}
                             </Typography>
                             <TextField
-                                //label={param.description}
                                 type='text'
-                                value={param.value}
+                                value={paramsState[param.variable]}
                                 fullWidth
+                                onChange={(e) => handleArrayChange(param.variable, e.target.value)}
                             />
                         </>
-                        
                     )}
                     {param.type === 'boolean' && (
                         // In this case we have a boolean
@@ -88,13 +94,11 @@ export default function RestrictionTemplateUI({restrictionCode} : {restrictionCo
                                 {param.description}
                             </Typography>
                             <Checkbox
-                                checked={param.value}
+                                checked={paramsState[param.variable]}
                                 color="primary"
-                                inputProps={{ 'aria-label': param.description }}
+                                onChange={(e) => handleArrayChange(param.variable, e.target.checked)}
                             />
                         </>
-
-                        
                     )}
                     {param.type === 'array' && (
                         // In this case we have a list
@@ -105,23 +109,22 @@ export default function RestrictionTemplateUI({restrictionCode} : {restrictionCo
                                 {param.description}
                             </Typography>
                             <List>
-                                {arrayValues.map((item, idx) => (
+                                {(paramsState[param.variable] || []).map((item, idx) => (
                                     <ListItem key={idx}>
                                         <ListItemText>
                                             <TextField
-                                                //label={param.description}
                                                 type='text'
-                                                value={item.value}
-                                                onChange={(event) => handleArrayChange(idx, event)}
+                                                value={item}
+                                                onChange={(e) => handleArrayChange(param.variable, e.target.value)}
                                             />
                                         </ListItemText>
-                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteRow(idx)}>
+                                        <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteRow(param.variable, idx)}>
                                             <DeleteOutlineIcon />
                                         </IconButton>
                                     </ListItem>
                                 ))}
                             </List>
-                            <Button variant="outlined" onClick={handleAddRow} startIcon={<AddCircleOutlineIcon />}>Add Row</Button>
+                            <Button variant="outlined" onClick={() => handleAddRow(param.variable)} startIcon={<AddCircleOutlineIcon />}>Add Row</Button>
                         </div>
                     )}
                 </div>
@@ -156,7 +159,7 @@ function parseParams(code: string) {
     const params = [];
     const lines = code.split('\n');
     let description = '';
-    
+
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
 
@@ -168,10 +171,9 @@ function parseParams(code: string) {
 
             let parsedValue = parseValue(value);
 
-            params.push({type: Array.isArray(parsedValue) ? 'array' : typeof(parsedValue), description, variable, value: parsedValue});
+            params.push({ type: Array.isArray(parsedValue) ? 'array' : typeof (parsedValue), description, variable, value: parsedValue });
         }
     }
 
     return params;
 }
-
