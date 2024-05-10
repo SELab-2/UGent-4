@@ -230,7 +230,8 @@ export default function RestrictionsDialog({
             </Box>
             {/* This is the template interface. */}
             <Dialog fullScreen open={openTemplateInterface} onClose={handleCloseTemplateInterface}>
-                <Box>
+                <RestrictionsTemplateUI restrictionCode={code} handleCloseTemplateInterface={handleCloseTemplateInterface} />
+                {/*<Box>
                     <AppBar sx={{ position: 'relative' }}>
                         <Toolbar>
                             <IconButton
@@ -247,9 +248,10 @@ export default function RestrictionsDialog({
                         </Toolbar>
                     </AppBar>
                     <Box aria-label={'Content'} padding={1}>
+                    
                         <RestrictionsTemplateUI restrictionCode={code} />
                     </Box>
-                </Box>
+            </Box>*/}
             </Dialog>
             {/* This is the code editor. */}
             <Dialog fullScreen open={openTextEditor} onClose={handleCloseTextEditor}>
