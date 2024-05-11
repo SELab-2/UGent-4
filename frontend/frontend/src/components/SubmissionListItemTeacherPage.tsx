@@ -180,8 +180,9 @@ export function SubmissionListItemTeacherPage({
                         )}
                     </ListItemIcon>
                     {/* Display download icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        <div onClick={handleDownloadClick}>
+                    <ListItemText>
+                        <ListItemIcon sx={{ minWidth: 35 }}>
+                            <div onClick={handleDownloadClick} />
                             {submitted ? (
                                 <DownloadIcon
                                     sx={{

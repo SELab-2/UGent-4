@@ -163,19 +163,31 @@ export function ProjectsView({
                 {!gebruiker.is_lesgever ? (
                     <>
                         {/* Show the UI from the perspective of a student. */}
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Project</Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Deadline</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                            Project
+                        </Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                            Deadline
+                        </Typography>
                         <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
                             {t('submissions')}
                         </Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Score</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                            Score
+                        </Typography>
                     </>
                 ) : (
                     <>
                         {/* Show the UI from the perspective of a teacher. */}
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Project</Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>Deadline</Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>{t('edit')}</Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                            Project
+                        </Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                            Deadline
+                        </Typography>
+                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
+                            {t('edit')}
+                        </Typography>
                     </>
                 )}
             </Box>
@@ -222,69 +234,74 @@ export function ProjectsView({
                                                 gebruiker.is_lesgever
                                         )
                                         .map((project) => (
-                                            <AssignmentListItemSubjectsPage
-                                                key={
-                                                    project.assignment
-                                                        .project_id
-                                                }
-                                                projectName={
-                                                    project.assignment.titel
-                                                }
-                                                dueDate={dayjs(
-                                                    project.assignment.deadline
-                                                )}
-                                                submissions={
-                                                    project.submissions
-                                                        ? project.submissions
-                                                        : 0
-                                                }
-                                                score={
-                                                    project.score
-                                                        ? project.score
-                                                        : {
-                                                              score_id: 0,
-                                                              score: 0,
-                                                              indiening: 0,
-                                                          }
-                                                }
-                                                maxScore={Number(
-                                                    project.assignment.max_score
-                                                )}
-                                                isStudent={
-                                                    !gebruiker.is_lesgever
-                                                }
-                                                archived={archived}
-                                                visible={
-                                                    project.assignment.zichtbaar
-                                                }
-                                                deleteEvent={() =>
-                                                    deleteAssignment(
-                                                        project.index
-                                                    )
-                                                }
-                                                archiveEvent={() =>
-                                                    archiveAssignment(
-                                                        project.index
-                                                    )
-                                                }
-                                                visibilityEvent={() =>
-                                                    changeVisibilityAssignment(
-                                                        project.index
-                                                    )
-                                                }
-                                                courseId={courseId}
-                                                assignmentId={project.assignment.project_id.toString()}
-                                            />
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                        </>
-                                    ))}
-                            </List>
-                        </Box>
+                                            <>
+                                                <AssignmentListItemSubjectsPage
+                                                    key={
+                                                        project.assignment
+                                                            .project_id
+                                                    }
+                                                    projectName={
+                                                        project.assignment.titel
+                                                    }
+                                                    dueDate={dayjs(
+                                                        project.assignment
+                                                            .deadline
+                                                    )}
+                                                    submissions={
+                                                        project.submissions
+                                                            ? project.submissions
+                                                            : 0
+                                                    }
+                                                    score={
+                                                        project.score
+                                                            ? project.score
+                                                            : {
+                                                                  score_id: 0,
+                                                                  score: 0,
+                                                                  indiening: 0,
+                                                              }
+                                                    }
+                                                    maxScore={Number(
+                                                        project.assignment
+                                                            .max_score
+                                                    )}
+                                                    isStudent={
+                                                        !gebruiker.is_lesgever
+                                                    }
+                                                    archived={archived}
+                                                    visible={
+                                                        project.assignment
+                                                            .zichtbaar
+                                                    }
+                                                    deleteEvent={() =>
+                                                        deleteAssignment(
+                                                            project.index
+                                                        )
+                                                    }
+                                                    archiveEvent={() =>
+                                                        archiveAssignment(
+                                                            project.index
+                                                        )
+                                                    }
+                                                    visibilityEvent={() =>
+                                                        changeVisibilityAssignment(
+                                                            project.index
+                                                        )
+                                                    }
+                                                    courseId={courseId}
+                                                    assignmentId={project.assignment.project_id.toString()}
+                                                />
+                                                <Divider
+                                                    color={'text.main'}
+                                                ></Divider>
+                                            </>
+                                        ))}
+                                </>
+                            )}
+                        </List>
                     </Box>
                 </Box>
-            </Card>
+            </Box>
         </>
     )
 }

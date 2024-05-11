@@ -49,7 +49,7 @@ function UserList(
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '99vw'
+                        width: '99vw',
                     },
                     minHeight: '20vh',
                     maxHeight: '30vh',
@@ -99,7 +99,11 @@ function UserList(
                                         >
                                             <ListItemText
                                                 sx={{ maxWidth: 100 }}
-                                                primary={user.first_name + ' '  + user.last_name}
+                                                primary={
+                                                    user.first_name +
+                                                    ' ' +
+                                                    user.last_name
+                                                }
                                             />
                                         </Box>
                                         <Box
@@ -232,7 +236,7 @@ export function AddChangeSubjectPage() {
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
 
-    const [vakID,setVakID]= useState(params.courseId)
+    const [vakID, setVakID] = useState(params.courseId)
 
     // state for spinners
     const [loading, setLoading] = useState(false)
@@ -442,19 +446,20 @@ export function AddChangeSubjectPage() {
     const handleSave = (): void => {
         const studentIDs = students.map((student) => student.user)
         const teacherIDs = teachers.map((teacher) => teacher.user)
-        if(vakID==undefined){
+        if (vakID == undefined) {
             instance
-                .post('vakken/'  , {
+                .post('vakken/', {
                     naam: title,
                     studenten: studentIDs,
                     lesgevers: teacherIDs,
-                }).then((res) => {
+                })
+                .then((res) => {
                     setVakID(res.data.vak_id)
                 })
                 .catch((err) => {
                     console.log(err)
                 })
-        }else{
+        } else {
             instance
                 .put('vakken/' + vakID + '/', {
                     naam: title,
@@ -465,7 +470,6 @@ export function AddChangeSubjectPage() {
                     console.log(err)
                 })
         }
-
     }
 
     useEffect(() => {
@@ -539,11 +543,11 @@ export function AddChangeSubjectPage() {
                 })
             setLoading(false)
         }
-        if(vakID!=undefined){
-          fetchData().catch((err) => {
-              console.log(err)
-          })
-         }
+        if (vakID != undefined) {
+            fetchData().catch((err) => {
+                console.log(err)
+            })
+        }
     }, [vakID])
 
     return (
@@ -569,38 +573,38 @@ export function AddChangeSubjectPage() {
                             width: '100%',
                         }}
                     >
-                    <Box
-                        // This box contains the title of the subject.
-                        // This title can be changed if necessary.
-                        aria-label={'title'}
-                        display={'flex'}
-                        flexDirection={'row'}
-                        gap={2}
-                        alignItems={'center'}
-                    >
-                        <Typography
-                            variant={'h5'}
-                            color={'text.primary'}
-                            fontWeight={'bold'}
+                        <Box
+                            // This box contains the title of the subject.
+                            // This title can be changed if necessary.
+                            aria-label={'title'}
+                            display={'flex'}
+                            flexDirection={'row'}
+                            gap={2}
+                            alignItems={'center'}
                         >
-                            {t('subject_name') + ':'}
-                        </Typography>
-                        {loading ? (
-                            <Skeleton
-                                variant={'text'}
-                                width={200}
-                                height={60}
-                            />
-                        ) : (
-                            <TextField
-                                type="text"
-                                placeholder={t('title')}
-                                onChange={(event) =>
-                                    setTitle(event.target.value)
-                                }
-                                sx={{ height: 60 }}
-                            />
-                        )}
+                            <Typography
+                                variant={'h5'}
+                                color={'text.primary'}
+                                fontWeight={'bold'}
+                            >
+                                {t('subject_name') + ':'}
+                            </Typography>
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
+                                />
+                            ) : (
+                                <TextField
+                                    type="text"
+                                    placeholder={t('title')}
+                                    onChange={(event) =>
+                                        setTitle(event.target.value)
+                                    }
+                                    sx={{ height: 60 }}
+                                />
+                            )}
                         </Box>
                         <Box padding={'20px'}>
                             <Button
@@ -640,6 +644,7 @@ export function AddChangeSubjectPage() {
                             studentFile,
                             handleStudentFileChange,
                             setEmailStudent,
+                            emailStudent,
                             handleAddStudent,
                             t('upload_students')
                         )}
@@ -680,6 +685,7 @@ export function AddChangeSubjectPage() {
                             teacherFile,
                             handleTeacherFileChange,
                             setEmailTeacher,
+                            emailTeacher,
                             handleAddTeacher,
                             t('upload_teachers')
                         )}
