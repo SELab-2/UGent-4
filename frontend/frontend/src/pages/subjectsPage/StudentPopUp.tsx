@@ -1,6 +1,7 @@
 import { User } from './AddChangeSubjectPage'
 import * as React from 'react'
-import { Button, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material'
+import { IconButton, List, ListItem, ListItemText, Typography } from '@mui/material'
+import { Button } from '../../components/CustomComponents'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import CloseIcon from '@mui/icons-material/Close'
@@ -9,9 +10,10 @@ import { t } from 'i18next'
 
 interface StudentPopUpProps {
     students: User[]
+    text: string
 }
 
-export default function StudentPopUp({ students }: StudentPopUpProps) {
+export default function StudentPopUp({ students, text }: StudentPopUpProps) {
     const [open, setOpen] = React.useState(false)
 
     const handleClose = () => {
@@ -28,7 +30,7 @@ export default function StudentPopUp({ students }: StudentPopUpProps) {
                     setOpen(true)
                 }}
             >
-                {t('students')}
+                {t(text)}
             </Button>
             {/* Students Dialog */}
             <Dialog
@@ -38,7 +40,7 @@ export default function StudentPopUp({ students }: StudentPopUpProps) {
                 aria-describedby="scroll-dialog-description"
             >
                 <DialogTitle id="scroll-dialog-title">
-                    {t('students')}
+                    {t(text)}
                     {/* Close Button */}
                     <IconButton
                         aria-label="close"

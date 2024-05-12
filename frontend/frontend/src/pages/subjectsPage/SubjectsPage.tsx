@@ -429,6 +429,7 @@ export function SubjectsPage() {
                                 >
                                     <StudentPopUp
                                         students={studentsLoading ? []: students}
+                                        text='students'
                                     ></StudentPopUp>
                                 </Card>
                             </Stack>
