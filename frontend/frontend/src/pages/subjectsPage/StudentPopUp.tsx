@@ -1,6 +1,6 @@
 import { User } from './AddChangeSubjectPage'
 import * as React from 'react'
-import { Button, IconButton, List, ListItem, ListItemText } from '@mui/material'
+import { Button, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import CloseIcon from '@mui/icons-material/Close'
@@ -54,6 +54,7 @@ export default function StudentPopUp({ students }: StudentPopUpProps) {
                 </DialogTitle>
                 <DialogContent dividers>
                     {/* List of Students */}
+                    {students.length > 0 ? (
                     <List>
                         {students.map((student) => (
                             <ListItem key={student.user}>
@@ -63,6 +64,9 @@ export default function StudentPopUp({ students }: StudentPopUpProps) {
                             </ListItem>
                         ))}
                     </List>
+                    ) : (
+                        <Typography variant="body1">{t('loading') + ' ' + t('students') + '...'}</Typography>
+                    )}
                 </DialogContent>
             </Dialog>
         </>

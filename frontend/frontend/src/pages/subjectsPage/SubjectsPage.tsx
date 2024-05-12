@@ -71,6 +71,7 @@ export function SubjectsPage() {
     // State for loading the page
     const [loading, setLoading] = useState(true)
     const [userLoading, setUserLoading] = useState(true)
+    const [studentsLoading, setStudentsLoading] = useState(true);
 
     useEffect(() => {
         // Get the data for this course.
@@ -110,20 +111,6 @@ export function SubjectsPage() {
                 setLoading(false)
             }
         }
-        async function fetchStudents() {
-            const temp_students = []
-            for (const s of course?.studenten ?? []) {
-                try {
-                    const userResponse = await instance.get(`/gebruikers/${s}/`)
-                    temp_students.push(userResponse.data)
-                } catch (error) {
-                    console.error('Error fetching data:', error)
-                    setFetchError(true)
-                }
-            }
-            // Update the state with the fetched data
-            setStudents(temp_students)
-        }
         // Fetch user first
         fetchUser().catch((error) =>
             console.error('Error fetching data:', error)
@@ -145,10 +132,31 @@ export function SubjectsPage() {
         fetchData().catch((error) =>
             console.error('Error fetching data:', error)
         )
-        fetchStudents().catch((error) =>
-            console.error('Error fetching data:', error)
-        )
     }, [accept_invite, courseID, navigate, user.is_lesgever])
+
+    useEffect(() => {
+        async function fetchStudents() {
+            setStudentsLoading(true);
+            const temp_students = [];
+            for (const s of course?.studenten || []) {
+                try {
+                    const userResponse = await instance.get(`/gebruikers/${s}/`);
+                    temp_students.push(userResponse.data);
+                } catch (error) {
+                    console.error('Error fetching student data:', error);
+                    setFetchError(true);
+                }
+            }
+            // Update the state with the fetched data
+            setStudents(temp_students);
+            setStudentsLoading(false);
+        }
+    
+        // Fetch students
+        fetchStudents().catch((error) =>
+            console.error('Error fetching students data:', error)
+        );
+    }, [course]);
 
     const addProject = () => {
         console.log('add project')
@@ -420,7 +428,7 @@ export function SubjectsPage() {
                                     }}
                                 >
                                     <StudentPopUp
-                                        students={students}
+                                        students={studentsLoading ? []: students}
                                     ></StudentPopUp>
                                 </Card>
                             </Stack>
