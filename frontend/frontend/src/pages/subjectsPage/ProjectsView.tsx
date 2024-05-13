@@ -22,6 +22,7 @@ interface ProjectStudent {
 
 interface ProjectsViewProps {
     gebruiker: User
+    showAllAssignments: boolean
     archived: boolean
     assignments: Project[]
     deleteAssignment: (index: number) => void
@@ -37,6 +38,7 @@ interface ProjectsViewProps {
  */
 export function ProjectsView({
     gebruiker,
+    showAllAssignments,
     archived,
     assignments,
     deleteAssignment,
@@ -226,7 +228,8 @@ export function ProjectsView({
                                         .filter(
                                             (project) =>
                                                 project.assignment
-                                                    .gearchiveerd == archived
+                                                    .gearchiveerd == archived ||
+                                                showAllAssignments
                                         )
                                         .filter(
                                             (project) =>

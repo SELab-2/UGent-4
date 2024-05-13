@@ -261,44 +261,65 @@ export function SubjectsPage() {
                                     }}
                                 >
                                     {/* Give the student the option to select current or archived projects. */}
-                                    <TabSwitcher
-                                        titles={[
-                                            'current_projects',
-                                            'archived',
-                                        ]}
-                                        nodes={[
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={false}
-                                                assignments={assignments}
-                                                deleteAssignment={
-                                                    deleteAssignment
-                                                }
-                                                archiveAssignment={
-                                                    archiveAssignment
-                                                }
-                                                changeVisibilityAssignment={
-                                                    changeVisibilityAssignment
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={true}
-                                                assignments={assignments}
-                                                deleteAssignment={
-                                                    deleteAssignment
-                                                }
-                                                archiveAssignment={
-                                                    archiveAssignment
-                                                }
-                                                changeVisibilityAssignment={
-                                                    changeVisibilityAssignment
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                        ]}
-                                    />
+                                    {course.gearchiveerd?
+                                        <ProjectsView
+                                            gebruiker={user}
+                                            showAllAssignments={true}
+                                            archived={true}
+                                            assignments={assignments}
+                                            deleteAssignment={
+                                                deleteAssignment
+                                            }
+                                            archiveAssignment={
+                                                archiveAssignment
+                                            }
+                                            changeVisibilityAssignment={
+                                                changeVisibilityAssignment
+                                            }
+                                            courseId={courseID}
+                                        />
+                                    :
+                                        <TabSwitcher
+                                            titles={[
+                                                'current_projects',
+                                                'archived',
+                                            ]}
+                                            nodes={[
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={false}
+                                                    assignments={assignments}
+                                                    deleteAssignment={
+                                                        deleteAssignment
+                                                    }
+                                                    archiveAssignment={
+                                                        archiveAssignment
+                                                    }
+                                                    changeVisibilityAssignment={
+                                                        changeVisibilityAssignment
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={true}
+                                                    assignments={assignments}
+                                                    deleteAssignment={
+                                                        deleteAssignment
+                                                    }
+                                                    archiveAssignment={
+                                                        archiveAssignment
+                                                    }
+                                                    changeVisibilityAssignment={
+                                                        changeVisibilityAssignment
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                            ]}
+                                        />
+                                    }
                                 </Box>
                                 <Box
                                     display="flex"
@@ -372,44 +393,65 @@ export function SubjectsPage() {
                                         marginTop: 10,
                                     }}
                                 >
-                                    <TabSwitcher
-                                        titles={[
-                                            'current_projects',
-                                            'archived',
-                                        ]}
-                                        nodes={[
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={false}
-                                                assignments={assignments}
-                                                deleteAssignment={() =>
-                                                    undefined
-                                                }
-                                                archiveAssignment={() =>
-                                                    undefined
-                                                }
-                                                changeVisibilityAssignment={() =>
-                                                    undefined
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={true}
-                                                assignments={assignments}
-                                                deleteAssignment={() =>
-                                                    undefined
-                                                }
-                                                archiveAssignment={() =>
-                                                    undefined
-                                                }
-                                                changeVisibilityAssignment={() =>
-                                                    undefined
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                        ]}
-                                    />
+                                    {course.gearchiveerd?
+                                        <ProjectsView
+                                            gebruiker={user}
+                                            showAllAssignments={true}
+                                            archived={true}
+                                            assignments={assignments}
+                                            deleteAssignment={() =>
+                                                undefined
+                                            }
+                                            archiveAssignment={() =>
+                                                undefined
+                                            }
+                                            changeVisibilityAssignment={() =>
+                                                undefined
+                                            }
+                                            courseId={courseID}
+                                        />
+                                    :
+                                        <TabSwitcher
+                                            titles={[
+                                                'current_projects',
+                                                'archived',
+                                            ]}
+                                            nodes={[
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={false}
+                                                    assignments={assignments}
+                                                    deleteAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    archiveAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    changeVisibilityAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={true}
+                                                    assignments={assignments}
+                                                    deleteAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    archiveAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    changeVisibilityAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                            ]}
+                                        />
+                                    }
                                     <WarningPopup
                                         title={t('join_course')}
                                         content={t('acces')}
