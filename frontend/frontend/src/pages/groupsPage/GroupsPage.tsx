@@ -13,7 +13,6 @@ import {
     TableBody,
     TableCell,
     TableContainer,
-    TableHead,
     TableRow,
     TextField,
     Tooltip,
@@ -497,19 +496,9 @@ export function GroupsPage() {
                                     <Button
                                         // If a teacher doesn't want to create groups manually,
                                         // they can randomize the groups with a single click.variant={'contained'}
-                                        disableElevation
-                                        sx={{
-                                            backgroundColor: 'secondary.main',
-                                            padding: 1,
-                                        }}
                                         onClick={randomGroups}
                                     >
-                                        <Typography
-                                            color="text.primary"
-                                            fontWeight={'bold'}
-                                        >
-                                            {t('random')} {t('groups')}
-                                        </Typography>
+                                        {t('random')} {t('groups')}
                                     </Button>
                                 )}
                                 <Box
@@ -555,237 +544,265 @@ export function GroupsPage() {
                                 aria-label={'group_assigner'}
                                 display={'flex'}
                                 flexDirection={'row'}
-                                maxWidth={500}
-                                justifyContent={'space-between'}
+                                justifyContent={'flex-start'} // Change to flex-start
                                 alignItems={'flex-start'}
+                                sx={{
+                                    '& > *:not(:last-child)': {
+                                        marginRight: '40px', // Add right margin of 20 pixels
+                                    },
+                                }}
                             >
-                                <TableContainer sx={{ maxHeight: '55vh' }}>
-                                    <Table
-                                        // The teacher can see the available students
-                                        // on the left side of the screen.
-                                        // They are displayed in a table with a sticky header.aria-label={'studentTable'}
-                                        stickyHeader
+                                <Card>
+                                    <Box
+                                        bgcolor={'primary.light'}
+                                        padding={'17px'}
                                     >
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>
+                                        <Stack direction={'row'}>
+                                            <Grid
+                                                container
+                                                spacing={1}
+                                                alignItems="center"
+                                            >
+                                                <Grid item>
                                                     <Typography
-                                                        fontWeight={'bold'}
-                                                    >
-                                                        {t('students')}
-                                                    </Typography>
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {loading ? (
-                                                [...Array(3)].map(
-                                                    (_, index) => (
-                                                        <Skeleton
-                                                            key={index}
-                                                            variant="text"
-                                                            width={'100%'}
-                                                            height={50}
-                                                            sx={{ margin: 0 }}
-                                                        />
-                                                    )
-                                                )
-                                            ) : (
-                                                <>
-                                                    {availableStudents.map(
-                                                        (student) => (
-                                                            <TableRow
-                                                                key={student}
-                                                            >
-                                                                <TableCell
-                                                                    sx={{
-                                                                        height: 20,
-                                                                        display:
-                                                                            'flex',
-                                                                        flexDirection:
-                                                                            'row',
-                                                                        justifyContent:
-                                                                            'space-between',
-                                                                        alignItems:
-                                                                            'center',
-                                                                    }}
-                                                                >
-                                                                    {studentNames.get(
-                                                                        student
-                                                                    ) === ''
-                                                                        ? student
-                                                                        : studentNames.get(
-                                                                              student
-                                                                          )}
-                                                                    <IconButton // people can be added to groups by clicking on the plus icon
-                                                                        disabled={
-                                                                            newGroups[
-                                                                                parseInt(
-                                                                                    currentGroup
-                                                                                )
-                                                                            ]
-                                                                                ? newGroups[
-                                                                                      parseInt(
-                                                                                          currentGroup
-                                                                                      )
-                                                                                  ]
-                                                                                      .studenten
-                                                                                      .length >=
-                                                                                  newGroupSize
-                                                                                : true
-                                                                        }
-                                                                        onClick={() => {
-                                                                            assignStudent(
-                                                                                student,
-                                                                                parseInt(
-                                                                                    currentGroup
-                                                                                )
-                                                                            )
-                                                                        }}
-                                                                    >
-                                                                        <Add />
-                                                                    </IconButton>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        )
-                                                    )}
-                                                </>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
-                                <TableContainer sx={{ maxHeight: '55vh' }}>
-                                    <Table
-                                        // The teacher can see the students in the specified group
-                                        // on the right side of the screen.
-                                        aria-label={'groupTable'}
-                                        stickyHeader
-                                        sx={{ maxHeight: '5    0svh' }}
-                                    >
-                                        <TableHead>
-                                            <TableRow>
-                                                <TableCell>
-                                                    <Typography
-                                                        fontWeight={'bold'}
+                                                        variant="h5"
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                        }}
                                                     >
                                                         {t('group')}
                                                     </Typography>
-                                                    {loading ? (
-                                                        <Skeleton
-                                                            variant="text"
-                                                            width={'80%'}
-                                                            height={70}
-                                                            sx={{ margin: 0 }}
-                                                        />
-                                                    ) : (
-                                                        <>
-                                                            <Select
-                                                                // The teacher can select a group from the dropdown menu
-                                                                aria-label={
-                                                                    'groupSelect'
-                                                                }
-                                                                value={
-                                                                    currentGroup
-                                                                }
+                                                </Grid>
+                                                <Grid item>
+                                                    <Select
+                                                        aria-label={
+                                                            'groupSelect'
+                                                        }
+                                                        value={currentGroup}
+                                                        sx={{ width: 120 }}
+                                                        onChange={
+                                                            handleCurrentGroupChange
+                                                        }
+                                                        label={t('group')}
+                                                    >
+                                                        {newGroups.map(
+                                                            (_, index) => (
+                                                                <MenuItem
+                                                                    key={index.toString()}
+                                                                    value={index.toString()}
+                                                                >
+                                                                    {t(
+                                                                        'group'
+                                                                    ) +
+                                                                        (index +
+                                                                            1)}
+                                                                </MenuItem>
+                                                            )
+                                                        )}
+                                                    </Select>
+                                                </Grid>
+                                            </Grid>
+                                        </Stack>
+                                    </Box>
+                                    <TableContainer sx={{ maxHeight: '55vh' }}>
+                                        <Table
+                                            // The teacher can see the students in the specified group
+                                            // on the right side of the screen.
+                                            aria-label={'groupTable'}
+                                            stickyHeader
+                                            sx={{ maxHeight: '5    0svh' }}
+                                        >
+                                            <TableBody>
+                                                {loading ? (
+                                                    [...Array(3)].map(
+                                                        (_, index) => (
+                                                            <Skeleton
+                                                                key={index}
+                                                                variant="text"
+                                                                width={'100%'}
+                                                                height={50}
                                                                 sx={{
-                                                                    width: 200,
+                                                                    margin: 0,
                                                                 }}
-                                                                onChange={
-                                                                    handleCurrentGroupChange
-                                                                }
-                                                                label={t(
-                                                                    'group'
-                                                                )}
-                                                            >
-                                                                {newGroups.map(
-                                                                    (
-                                                                        _,
-                                                                        index
-                                                                    ) => (
-                                                                        <MenuItem
-                                                                            key={index.toString()}
-                                                                            value={index.toString()}
-                                                                        >
-                                                                            {t(
-                                                                                'group'
-                                                                            ) +
-                                                                                (index +
-                                                                                    1)}
-                                                                        </MenuItem>
-                                                                    )
-                                                                )}
-                                                            </Select>
-                                                        </>
-                                                    )}
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableHead>
-                                        <TableBody>
-                                            {loading ? (
-                                                [...Array(3)].map(
-                                                    (_, index) => (
-                                                        <Skeleton
-                                                            key={index}
-                                                            variant="text"
-                                                            width={'100%'}
-                                                            height={50}
-                                                            sx={{ margin: 0 }}
-                                                        />
+                                                            />
+                                                        )
                                                     )
-                                                )
-                                            ) : (
-                                                <>
-                                                    {newGroups[
-                                                        parseInt(currentGroup)
-                                                    ] &&
-                                                        newGroups[
+                                                ) : (
+                                                    <>
+                                                        {newGroups[
                                                             parseInt(
                                                                 currentGroup
                                                             )
-                                                        ].studenten.map(
-                                                            (student) => (
-                                                                <TableRow
-                                                                    key={
-                                                                        student
-                                                                    }
-                                                                >
-                                                                    <TableCell
-                                                                        sx={{
-                                                                            height: 20,
-                                                                            display:
-                                                                                'flex',
-                                                                            flexDirection:
-                                                                                'row',
-                                                                            justifyContent:
-                                                                                'space-between',
-                                                                            alignItems:
-                                                                                'center',
-                                                                        }}
-                                                                    >
-                                                                        {studentNames.get(
+                                                        ] &&
+                                                            newGroups[
+                                                                parseInt(
+                                                                    currentGroup
+                                                                )
+                                                            ].studenten.map(
+                                                                (student) => (
+                                                                    <TableRow
+                                                                        key={
                                                                             student
-                                                                        )}
-                                                                        <IconButton // The teacher can remove students from the group by clicking on the cross icon
-                                                                            onClick={() => {
-                                                                                removeStudent(
-                                                                                    student,
-                                                                                    parseInt(
-                                                                                        currentGroup
-                                                                                    )
-                                                                                )
+                                                                        }
+                                                                    >
+                                                                        <TableCell
+                                                                            sx={{
+                                                                                height: 20,
+                                                                                display:
+                                                                                    'flex',
+                                                                                flexDirection:
+                                                                                    'row',
+                                                                                justifyContent:
+                                                                                    'space-between',
+                                                                                alignItems:
+                                                                                    'center',
                                                                             }}
                                                                         >
-                                                                            <CancelIcon />
-                                                                        </IconButton>
-                                                                    </TableCell>
-                                                                </TableRow>
-                                                            )
-                                                        )}
-                                                </>
-                                            )}
-                                        </TableBody>
-                                    </Table>
-                                </TableContainer>
+                                                                            {studentNames.get(
+                                                                                student
+                                                                            )}
+                                                                            <IconButton // The teacher can remove students from the group by clicking on the cross icon
+                                                                                onClick={() => {
+                                                                                    removeStudent(
+                                                                                        student,
+                                                                                        parseInt(
+                                                                                            currentGroup
+                                                                                        )
+                                                                                    )
+                                                                                }}
+                                                                            >
+                                                                                <CancelIcon />
+                                                                            </IconButton>
+                                                                        </TableCell>
+                                                                    </TableRow>
+                                                                )
+                                                            )}
+                                                    </>
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Card>
+                                <Card>
+                                    <Box
+                                        bgcolor={'primary.light'}
+                                        padding={'30px'}
+                                    >
+                                        <Typography
+                                            variant="h5"
+                                            sx={{ fontWeight: 'bold' }}
+                                        >
+                                            {t('studenten')}
+                                        </Typography>
+                                    </Box>
+                                    <TableContainer sx={{ maxHeight: '55vh' }}>
+                                        <Table
+                                        // The teacher can see the available students
+                                        // on the left side of the screen.
+                                        // They are displayed in a table with a sticky header.aria-label={'studentTable'}
+                                        >
+                                            <TableBody>
+                                                {loading ? (
+                                                    [...Array(3)].map(
+                                                        (_, index) => (
+                                                            <Skeleton
+                                                                key={index}
+                                                                variant="text"
+                                                                width={'100%'}
+                                                                height={50}
+                                                                sx={{
+                                                                    margin: 0,
+                                                                }}
+                                                            />
+                                                        )
+                                                    )
+                                                ) : (
+                                                    <>
+                                                        <Stack
+                                                            direction={'row'}
+                                                        >
+                                                            {chunkArray(
+                                                                availableStudents,
+                                                                Math.floor(
+                                                                    Math.sqrt(
+                                                                        availableStudents.length
+                                                                    )
+                                                                ) + 1
+                                                            ).map(
+                                                                (students) => (
+                                                                    <Box>
+                                                                        {students.map(
+                                                                            (
+                                                                                student
+                                                                            ) => (
+                                                                                <TableRow
+                                                                                    key={
+                                                                                        student
+                                                                                    }
+                                                                                >
+                                                                                    <TableCell
+                                                                                        sx={{
+                                                                                            height: 20,
+                                                                                            display:
+                                                                                                'flex',
+                                                                                            flexDirection:
+                                                                                                'row',
+                                                                                            justifyContent:
+                                                                                                'space-between',
+                                                                                            alignItems:
+                                                                                                'center',
+                                                                                        }}
+                                                                                    >
+                                                                                        {studentNames.get(
+                                                                                            student
+                                                                                        ) ===
+                                                                                        ''
+                                                                                            ? student
+                                                                                            : studentNames.get(
+                                                                                                  student
+                                                                                              )}
+                                                                                        <IconButton // people can be added to groups by clicking on the plus icon
+                                                                                            disabled={
+                                                                                                newGroups[
+                                                                                                    parseInt(
+                                                                                                        currentGroup
+                                                                                                    )
+                                                                                                ]
+                                                                                                    ? newGroups[
+                                                                                                          parseInt(
+                                                                                                              currentGroup
+                                                                                                          )
+                                                                                                      ]
+                                                                                                          .studenten
+                                                                                                          .length >=
+                                                                                                      newGroupSize
+                                                                                                    : true
+                                                                                            }
+                                                                                            onClick={() => {
+                                                                                                assignStudent(
+                                                                                                    student,
+                                                                                                    parseInt(
+                                                                                                        currentGroup
+                                                                                                    )
+                                                                                                )
+                                                                                            }}
+                                                                                        >
+                                                                                            <Add />
+                                                                                        </IconButton>
+                                                                                    </TableCell>
+                                                                                </TableRow>
+                                                                            )
+                                                                        )}
+                                                                    </Box>
+                                                                )
+                                                            )}
+                                                        </Stack>
+                                                    </>
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </Card>
                             </Box>
                         </Box>
                     </Box>
@@ -862,4 +879,13 @@ export function GroupsPage() {
             />
         </>
     )
+}
+
+function chunkArray<T>(arr: T[], chunkSize: number): T[][] {
+    let result: T[][] = []
+    for (let i = 0; i < arr.length; i += chunkSize) {
+        let chunk: T[] = arr.slice(i, i + chunkSize)
+        result.push(chunk)
+    }
+    return result
 }

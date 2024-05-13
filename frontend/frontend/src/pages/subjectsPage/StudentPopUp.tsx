@@ -1,6 +1,7 @@
+import { Button } from '../../components/CustomComponents'
 import { User } from './AddChangeSubjectPage'
 import * as React from 'react'
-import { Button, IconButton, List, ListItem, ListItemText } from '@mui/material'
+import { IconButton, List, ListItem, ListItemText } from '@mui/material'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import CloseIcon from '@mui/icons-material/Close'

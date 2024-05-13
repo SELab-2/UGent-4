@@ -1,12 +1,6 @@
+import { Card } from '../../components/CustomComponents.tsx'
 import { Header } from '../../components/Header'
-import {
-    Box,
-    Card,
-    CircularProgress,
-    Grid,
-    IconButton,
-    Stack,
-} from '@mui/material'
+import { Box, CircularProgress, Grid, IconButton, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'

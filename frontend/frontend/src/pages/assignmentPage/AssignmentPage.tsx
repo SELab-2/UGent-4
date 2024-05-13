@@ -1,11 +1,10 @@
+import { Button, Card } from '../../components/CustomComponents.tsx'
 import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
 import {
     Box,
-    Button,
-    Card,
     CircularProgress,
     Divider,
     List,
@@ -494,13 +493,9 @@ export function AssignmentPage() {
                                     <Stack direction={'row'}>
                                         {submissions.length > 0 && (
                                             <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
                                                 onClick={downloadAllSubmissions}
                                             >
-                                                <Typography color="secondary.contrastText">
+                                                <Typography>
                                                     {t('export')}{' '}
                                                     {t('submissions')}
                                                 </Typography>
@@ -520,14 +515,8 @@ export function AssignmentPage() {
                                                 }}
                                             />
                                         ) : (
-                                            <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
-                                                onClick={adjustScores}
-                                            >
-                                                <Typography color="secondary.contrastText">
+                                            <Button onClick={adjustScores}>
+                                                <Typography>
                                                     {t('adjust_scores')}
                                                 </Typography>
                                             </Button>
