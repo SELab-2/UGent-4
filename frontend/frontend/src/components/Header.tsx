@@ -91,109 +91,113 @@ export const Header = ({ variant, title }: Props) => {
                 }}
             >
                 <Toolbar>
-                    {/* Logo and Home Button */}
-                    <Box>
-                        <Tooltip title={t('home')}>
-                            <IconButton
-                                onClick={() => navigate('/')}
-                                sx={{ padding: 0, borderRadius: 5 }}
-                            >
-                                <Box
-                                    component="img"
-                                    src={t('logo')}
-                                    alt="logo"
-                                    sx={{
-                                        height: 80,
-                                        width: 80,
-                                        display: 'block',
-                                        padding: 0,
-                                        margin: 0,
-                                    }}
-                                />
-                            </IconButton>
-                        </Tooltip>
-                        {/* Back Button (if variant is not default) */}
-                        {variant !== 'default' && (
-                            <Tooltip title={t('back')}>
-                                <IconButton
-                                    onClick={handleBack}
-                                    size="large"
-                                    edge="start"
-                                    color="inherit"
-                                    aria-label="back"
-                                    sx={{ mr: 2 }}
-                                >
-                                    <ArrowBackIcon />
-                                </IconButton>
-                            </Tooltip>
-                        )}
-                    </Box>
-                    {/* Title */}
                     <Box
                         flexGrow={1}
                         display={'flex'}
                         flexDirection={'row'}
-                        alignItems={'center'}
+                        alignItems={'space-between'}
                         justifyContent={'center'}
-                        gap={0}
                     >
-                        {variant === 'main' && (
-                            <Box
-                                component="img"
-                                src={'assets/logo_duif_top_wit.png'}
-                                alt="logo_app"
-                                sx={{
-                                    padding: 0,
-                                    height: 50,
-                                    width: 50,
-                                }}
-                            />
-                        )}
-                        <Typography
-                            minWidth={'20%'}
-                            maxWidth={'88%'}
-                            variant="h5"
-                            component="div"
-                            overflow={'auto'}
+                        {/* Logo and Home Button */}
+                        <Box>
+                            <Tooltip title={t('home')}>
+                                <IconButton
+                                    onClick={() => navigate('/')}
+                                    sx={{ padding: 0, borderRadius: 5 }}
+                                >
+                                    <Box
+                                        component="img"
+                                        src={t('logo')}
+                                        alt="logo"
+                                        sx={{
+                                            height: 80,
+                                            width: 80,
+                                            display: 'block',
+                                            padding: 0,
+                                            margin: 0,
+                                        }}
+                                    />
+                                </IconButton>
+                            </Tooltip>
+                            {/* Back Button (if variant is not default) */}
+                            {variant !== 'default' && (
+                                <Tooltip title={t('back')}>
+                                    <IconButton
+                                        onClick={handleBack}
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="back"
+                                        sx={{ mr: 2 }}
+                                    >
+                                        <ArrowBackIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </Box>
+                        {/* Title */}
+                        <Box
+                            flexGrow={1}
+                            display={'flex'}
+                            flexDirection={'row'}
+                            alignItems={'center'}
+                            justifyContent={'center'}
+                            gap={1}
+                        >
+                            {variant === 'main' && (
+                                <Box
+                                    component="img"
+                                    src={'assets/logo_duif_top_wit.png'}
+                                    alt="logo_app"
+                                    sx={{
+                                        height: 50,
+                                        width: 50,
+                                    }}
+                                />
+                            )}
+                            <Typography
+                                minWidth={'50'}
+                                maxWidth={'88%'}
+                                variant="h5"
+                                component="div"
+                                overflow={'auto'}
+                            >
+                                {title}
+                            </Typography>
+                            {variant === 'editable' && (
+                                <IconButton
+                                    onClick={handleEdit}
+                                    disableRipple={true}
+                                    sx={{
+                                        marginBottom: 1,
+                                        color: 'text.secondary',
+                                    }}
+                                >
+                                    <EditIcon />
+                                </IconButton>
+                            )}
+                        </Box>
+
+                        {/* User Menu */}
+                        <Box
                             sx={{
-                                textAlign: 'center',
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
                             }}
                         >
-                            {title}
-                        </Typography>
-                        {variant === 'editable' && (
-                            <IconButton
-                                onClick={handleEdit}
-                                disableRipple={true}
+                            <LanguageSwitcher />
+                            <Button
+                                variant={'text'}
+                                onClick={logout}
                                 sx={{
-                                    marginBottom: 1,
-                                    color: 'text.secondary',
+                                    color: 'background.default',
+                                    paddingTop: 1,
                                 }}
                             >
-                                <EditIcon />
-                            </IconButton>
-                        )}
-                    </Box>
-
-                    {/* User Menu */}
-                    <Box
-                        sx={{
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                        }}
-                    >
-                        <LanguageSwitcher />
-                        <Button
-                            variant={'text'}
-                            onClick={logout}
-                            sx={{
-                                color: 'background.default',
-                                paddingTop: 1,
-                            }}
-                        >
-                            Logout
-                        </Button>
+                                Logout
+                            </Button>
+                        </Box>
                     </Box>
                 </Toolbar>
             </AppBar>
