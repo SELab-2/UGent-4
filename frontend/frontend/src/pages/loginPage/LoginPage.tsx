@@ -1,5 +1,5 @@
 import { Button } from '../../components/CustomComponents.tsx'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { t } from 'i18next'
 import { useMsal } from '@azure/msal-react'
 import { loginRequest } from '../../authConfig/authConfig.ts'
@@ -77,6 +77,7 @@ export function LoginPage() {
                         flexDirection="row"
                         alignItems="center"
                         justifyContent={'center'}
+                        gap={0}
                         alignSelf={'center'}
                     >
                         <Box
@@ -84,20 +85,22 @@ export function LoginPage() {
                             src={t('logo_blue')}
                             alt="logo"
                             sx={{
+                                padding: 0,
                                 maxHeight: '20%',
                                 maxWidth: '20%',
                             }}
                         />
-                        <Typography
-                            variant="h3"
+                        <Box
+                            component="img"
+                            src={'assets/logo_duif.png'}
+                            alt="logo_app"
                             sx={{
-                                color: 'text.primary',
-                                maxWidth: '20%',
-                                maxHeight: '20%',
+                                padding: 0,
+                                ml: -2,
+                                maxHeight: '10%',
+                                maxWidth: '10%',
                             }}
-                        >
-                            Pigeonhole
-                        </Typography>
+                        />
                     </Box>
                     {/* Lower container with login button */}
                     <Box
@@ -108,6 +111,7 @@ export function LoginPage() {
                         alignItems="center"
                         justifyContent={'center'}
                         alignSelf={'stretch'}
+                        ml={4}
                     >
                         <Button onClick={handleLogin}>{t('login')}</Button>
                     </Box>

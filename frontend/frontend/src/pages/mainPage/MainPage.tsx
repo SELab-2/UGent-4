@@ -87,18 +87,14 @@ export default function MainPage() {
 
             const deadlines: Dayjs[] = []
             const assignments: project[] = []
-            for(const course of courses){
+            for (const course of courses) {
                 await instance
                     .get(`/projecten/?vak=${course.vak_id}`)
                     .then((response: AxiosResponse) => {
                         response.data.forEach((project: project) => {
                             if (project.zichtbaar && !project.gearchiveerd) {
-                                deadlines.push(
-                                    dayjs(project.deadline)
-                                )
-                                assignments.push(
-                                    project
-                                )
+                                deadlines.push(dayjs(project.deadline))
+                                assignments.push(project)
                             }
                         })
                     })
@@ -152,7 +148,7 @@ export default function MainPage() {
     }
 
     const pinCourse = async (courseId: number) => {
-        let newPinnedCourses = []
+        let newPinnedCourses: number[]
         if (pinnedCourses.includes(courseId)) {
             newPinnedCourses = pinnedCourses.filter(
                 (pinnedId) => pinnedId !== courseId
@@ -182,7 +178,7 @@ export default function MainPage() {
                     paddingTop: 5,
                 }}
             >
-                <Header variant={'default'} title={'Pigeonhole'} />
+                <Header variant={'main'} title={'Pigeonhole'} />
                 <Box
                     sx={{
                         width: '100%',
@@ -332,7 +328,10 @@ export default function MainPage() {
                         alignContent={'center'}
                         height={'50%'}
                     >
-                        <DeadlineCalendar deadlines={deadlines} assignments={assignments} />
+                        <DeadlineCalendar
+                            deadlines={deadlines}
+                            assignments={assignments}
+                        />
                     </Box>
                 </Box>
                 {role === 'admin' && (

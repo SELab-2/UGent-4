@@ -28,7 +28,7 @@ import Button from '@mui/material/Button'
  * Interface for Header props
  */
 interface Props {
-    variant: 'not_main' | 'editable' | 'default'
+    variant: 'not_main' | 'editable' | 'default' | 'main'
     title: string
 }
 
@@ -129,18 +129,38 @@ export const Header = ({ variant, title }: Props) => {
                         )}
                     </Box>
                     {/* Title */}
-                    <Typography
-                        maxWidth={'88%'}
-                        variant="h5"
-                        component="div"
-                        overflow={'auto'}
-                        sx={{
-                            margin: 'auto',
-                            textAlign: 'center',
-                            pl: 10,
-                        }}
+                    <Box
+                        flexGrow={1}
+                        display={'flex'}
+                        flexDirection={'row'}
+                        alignItems={'center'}
+                        justifyContent={'center'}
+                        gap={0}
                     >
-                        {title}
+                        {variant === 'main' && (
+                            <Box
+                                component="img"
+                                src={'assets/logo_duif_top_wit.png'}
+                                alt="logo_app"
+                                sx={{
+                                    padding: 0,
+                                    height: 50,
+                                    width: 50,
+                                }}
+                            />
+                        )}
+                        <Typography
+                            minWidth={'20%'}
+                            maxWidth={'88%'}
+                            variant="h5"
+                            component="div"
+                            overflow={'auto'}
+                            sx={{
+                                textAlign: 'center',
+                            }}
+                        >
+                            {title}
+                        </Typography>
                         {variant === 'editable' && (
                             <IconButton
                                 onClick={handleEdit}
@@ -153,7 +173,8 @@ export const Header = ({ variant, title }: Props) => {
                                 <EditIcon />
                             </IconButton>
                         )}
-                    </Typography>
+                    </Box>
+
                     {/* User Menu */}
                     <Box
                         sx={{
