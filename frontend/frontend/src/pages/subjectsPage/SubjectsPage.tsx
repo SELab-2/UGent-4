@@ -1,9 +1,15 @@
 import { Header } from '../../components/Header'
-import { Box, CircularProgress, IconButton, Stack } from '@mui/material'
+import {
+    Box,
+    Card,
+    CircularProgress,
+    Grid,
+    IconButton,
+    Stack,
+} from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
-import AddCircleIcon from '@mui/icons-material/AddCircle'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
@@ -11,6 +17,9 @@ import { useEffect, useState } from 'react'
 import ErrorPage from '../ErrorPage.tsx'
 import { Course } from '../mainPage/MainPage.tsx'
 import { CopyToClipboard } from '../../components/CopyToClipboard.tsx'
+import { User } from './AddChangeSubjectPage'
+import StudentPopUp from './StudentPopUp.tsx'
+import AddCircleIcon from '@mui/icons-material/AddCircle'
 
 interface Project {
     project_id: number
@@ -47,8 +56,8 @@ export function SubjectsPage() {
         last_name: '',
         email: '',
     })
+    const [students, setStudents] = useState<User[]>([])
     const [fetchError, setFetchError] = useState(false)
-    const [userLoading, setUserLoading] = useState(true)
 
     //variable for invitation link popup close
     const [inviteOpen, setInviteOpen] = useState(false)
@@ -58,6 +67,11 @@ export function SubjectsPage() {
         setInviteOpen(false)
         navigate(`/course/${courseID}`)
     }
+
+    // State for loading the page
+    const [loading, setLoading] = useState(true)
+    const [userLoading, setUserLoading] = useState(true)
+    const [studentsLoading, setStudentsLoading] = useState(true);
 
     useEffect(() => {
         // Get the data for this course.
@@ -75,6 +89,12 @@ export function SubjectsPage() {
         }
         async function fetchData() {
             try {
+                setLoading(true)
+                setUserLoading(true)
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
+                setUserLoading(false)
+
                 const courseResponse = await instance.get(
                     `/vakken/${courseID}/`
                 )
@@ -86,6 +106,9 @@ export function SubjectsPage() {
             } catch (error) {
                 console.error('Error fetching data:', error)
                 setFetchError(true)
+            } finally {
+                setUserLoading(false)
+                setLoading(false)
             }
         }
         // Fetch user first
@@ -110,6 +133,30 @@ export function SubjectsPage() {
             console.error('Error fetching data:', error)
         )
     }, [accept_invite, courseID, navigate, user.is_lesgever])
+
+    useEffect(() => {
+        async function fetchStudents() {
+            setStudentsLoading(true);
+            const temp_students = [];
+            for (const s of course?.studenten || []) {
+                try {
+                    const userResponse = await instance.get(`/gebruikers/${s}/`);
+                    temp_students.push(userResponse.data);
+                } catch (error) {
+                    console.error('Error fetching student data:', error);
+                    setFetchError(true);
+                }
+            }
+            // Update the state with the fetched data
+            setStudents(temp_students);
+            setStudentsLoading(false);
+        }
+    
+        // Fetch students
+        fetchStudents().catch((error) =>
+            console.error('Error fetching students data:', error)
+        );
+    }, [course]);
 
     const addProject = () => {
         console.log('add project')
@@ -178,14 +225,16 @@ export function SubjectsPage() {
     return (
         <>
             {userLoading ? (
-                <Box
+                <Grid
+                    container
                     display={'flex'}
+                    flexDirection={'row'}
+                    alignContent={'center'}
                     justifyContent={'center'}
-                    alignItems={'center'}
-                    sx={{ height: '100vh', width: '100vw' }}
+                    sx={{ width: '100vw', height: '100vh' }}
                 >
-                    <CircularProgress color="primary" size={80} />
-                </Box>
+                    <CircularProgress color={'primary'} />
+                </Grid>
             ) : (
                 <>
                     {user.is_lesgever ? (
@@ -201,8 +250,8 @@ export function SubjectsPage() {
                                 }}
                             >
                                 <Header
-                                    variant={'editable'}
-                                    title={course.naam}
+                                    variant={loading ? 'default' : 'editable'}
+                                    title={loading ? '' : course.naam}
                                 />
                                 <Box
                                     sx={{
@@ -212,44 +261,65 @@ export function SubjectsPage() {
                                     }}
                                 >
                                     {/* Give the student the option to select current or archived projects. */}
-                                    <TabSwitcher
-                                        titles={[
-                                            'current_projects',
-                                            'archived',
-                                        ]}
-                                        nodes={[
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={false}
-                                                assignments={assignments}
-                                                deleteAssignment={
-                                                    deleteAssignment
-                                                }
-                                                archiveAssignment={
-                                                    archiveAssignment
-                                                }
-                                                changeVisibilityAssignment={
-                                                    changeVisibilityAssignment
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={true}
-                                                assignments={assignments}
-                                                deleteAssignment={
-                                                    deleteAssignment
-                                                }
-                                                archiveAssignment={
-                                                    archiveAssignment
-                                                }
-                                                changeVisibilityAssignment={
-                                                    changeVisibilityAssignment
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                        ]}
-                                    />
+                                    {course.gearchiveerd?
+                                        <ProjectsView
+                                            gebruiker={user}
+                                            showAllAssignments={true}
+                                            archived={true}
+                                            assignments={assignments}
+                                            deleteAssignment={
+                                                deleteAssignment
+                                            }
+                                            archiveAssignment={
+                                                archiveAssignment
+                                            }
+                                            changeVisibilityAssignment={
+                                                changeVisibilityAssignment
+                                            }
+                                            courseId={courseID}
+                                        />
+                                    :
+                                        <TabSwitcher
+                                            titles={[
+                                                'current_projects',
+                                                'archived',
+                                            ]}
+                                            nodes={[
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={false}
+                                                    assignments={assignments}
+                                                    deleteAssignment={
+                                                        deleteAssignment
+                                                    }
+                                                    archiveAssignment={
+                                                        archiveAssignment
+                                                    }
+                                                    changeVisibilityAssignment={
+                                                        changeVisibilityAssignment
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={true}
+                                                    assignments={assignments}
+                                                    deleteAssignment={
+                                                        deleteAssignment
+                                                    }
+                                                    archiveAssignment={
+                                                        archiveAssignment
+                                                    }
+                                                    changeVisibilityAssignment={
+                                                        changeVisibilityAssignment
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                            ]}
+                                        />
+                                    }
                                 </Box>
                                 <Box
                                     display="flex"
@@ -263,7 +333,6 @@ export function SubjectsPage() {
                                             '/accept_invitation'
                                         }
                                     />
-
                                     <IconButton
                                         onClick={addProject}
                                         color="primary"
@@ -324,44 +393,65 @@ export function SubjectsPage() {
                                         marginTop: 10,
                                     }}
                                 >
-                                    <TabSwitcher
-                                        titles={[
-                                            'current_projects',
-                                            'archived',
-                                        ]}
-                                        nodes={[
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={false}
-                                                assignments={assignments}
-                                                deleteAssignment={() =>
-                                                    undefined
-                                                }
-                                                archiveAssignment={() =>
-                                                    undefined
-                                                }
-                                                changeVisibilityAssignment={() =>
-                                                    undefined
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                            <ProjectsView
-                                                gebruiker={user}
-                                                archived={true}
-                                                assignments={assignments}
-                                                deleteAssignment={() =>
-                                                    undefined
-                                                }
-                                                archiveAssignment={() =>
-                                                    undefined
-                                                }
-                                                changeVisibilityAssignment={() =>
-                                                    undefined
-                                                }
-                                                courseId={courseID}
-                                            />,
-                                        ]}
-                                    />
+                                    {course.gearchiveerd?
+                                        <ProjectsView
+                                            gebruiker={user}
+                                            showAllAssignments={true}
+                                            archived={true}
+                                            assignments={assignments}
+                                            deleteAssignment={() =>
+                                                undefined
+                                            }
+                                            archiveAssignment={() =>
+                                                undefined
+                                            }
+                                            changeVisibilityAssignment={() =>
+                                                undefined
+                                            }
+                                            courseId={courseID}
+                                        />
+                                    :
+                                        <TabSwitcher
+                                            titles={[
+                                                'current_projects',
+                                                'archived',
+                                            ]}
+                                            nodes={[
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={false}
+                                                    assignments={assignments}
+                                                    deleteAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    archiveAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    changeVisibilityAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                                <ProjectsView
+                                                    gebruiker={user}
+                                                    showAllAssignments={false}
+                                                    archived={true}
+                                                    assignments={assignments}
+                                                    deleteAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    archiveAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    changeVisibilityAssignment={() =>
+                                                        undefined
+                                                    }
+                                                    courseId={courseID}
+                                                />,
+                                            ]}
+                                        />
+                                    }
                                     <WarningPopup
                                         title={t('join_course')}
                                         content={t('acces')}
@@ -371,6 +461,19 @@ export function SubjectsPage() {
                                         doAction={confirmJoinCourse}
                                     />
                                 </Box>
+                                <Card
+                                    sx={{
+                                        padding: 0,
+                                        backgroundColor: 'background.default',
+                                        width: 'fit-content',
+                                        height: 'fit-content',
+                                    }}
+                                >
+                                    <StudentPopUp
+                                        students={studentsLoading ? []: students}
+                                        text='students'
+                                    ></StudentPopUp>
+                                </Card>
                             </Stack>
                         </>
                     )}
