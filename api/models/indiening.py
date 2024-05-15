@@ -7,6 +7,7 @@ from django.db import transaction
 import re
 
 from api.models.restrictie import Restrictie
+from api.utils import send_indiening_confirmation_mail
 
 
 STATUS_CHOICES = (
@@ -111,6 +112,8 @@ def run_tests_async(instance):
         instance.result = result
         instance.save()
 
+    send_indiening_confirmation_mail(instance)
+
 
 @receiver(post_save, sender=Indiening)
 def indiening_post_init(sender, instance, created, **kwargs):
@@ -131,6 +134,7 @@ def indiening_post_init(sender, instance, created, **kwargs):
                 instance.status = 1
                 instance.result = "No tests: OK"
                 instance.save()
+            send_indiening_confirmation_mail(instance)
         else:
             thread = Thread(target=run_tests_async, args=(instance,))
             thread.start()
