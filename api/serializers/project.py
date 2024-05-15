@@ -51,8 +51,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         Returns:
             Project: Het aangemaakte project.
         """
-        deadline = validated_data.pop("deadline")
-        extra_deadline = validated_data.pop("extra_deadline")
+        deadline = validated_data.pop("deadline", None)
+        extra_deadline = validated_data.pop("extra_deadline", None)
         validate_deadlines(deadline, extra_deadline)
 
         project = Project.objects.create(**validated_data)
