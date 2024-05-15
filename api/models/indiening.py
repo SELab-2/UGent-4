@@ -4,9 +4,7 @@ from django.dispatch import receiver
 from api.docker.python_entrypoint import run_tests_on
 from threading import Thread
 from django.db import transaction
-import re
-import zipfile
-import os
+
 
 from api.models.restrictie import Restrictie
 from api.utils import send_indiening_confirmation_mail
