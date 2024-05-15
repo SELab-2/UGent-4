@@ -180,6 +180,6 @@ def indiening_detail_download_artefacten(request, id, format=None):
     except Project.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if is_lesgever(request.user):
+    if has_permissions(request.user):
         return FileResponse(indiening.artefacten.open(), as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)

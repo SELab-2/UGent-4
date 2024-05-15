@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from api.models.vak import Vak
 
 
+
 class Gebruiker(models.Model):
     """
     Model voor een gebruiker, dat zich uitbreidt op het standaardgebruikermodel van Django.

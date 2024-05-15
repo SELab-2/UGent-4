@@ -31,6 +31,7 @@ from .views.indiening import (
 )
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
+from .views.template import template_list, template_detail
 from .views.restrictie import (
     restrictie_list,
     restrictie_detail,
@@ -76,6 +77,8 @@ urlpatterns = [
         restrictie_detail_download_script,
         name="restrictie_detail_download_script",
     ),
+    path("api/templates/", template_list, name="template_list"),
+    path("api/templates/<int:id>/", template_detail, name="template_detail")
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
