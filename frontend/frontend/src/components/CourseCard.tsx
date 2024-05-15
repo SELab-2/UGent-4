@@ -1,11 +1,9 @@
+import { Card, Divider } from './CustomComponents.tsx'
 import {
     Box,
-    Card,
     CardActionArea,
     CardContent,
-    Divider,
     IconButton,
-    Skeleton,
     Typography,
 } from '@mui/material'
 import { t } from 'i18next'
@@ -15,7 +13,12 @@ import instance from '../axiosConfig.ts'
 import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
+import PushPinIcon from '@mui/icons-material/PushPin'
+import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
+import dayjs from 'dayjs'
+
+import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -29,25 +32,40 @@ interface CourseCardProps {
     courseId: string
     archived: boolean
     isStudent: boolean
+    archiveEvent?: () => void
+    pinned: boolean
+    pinEvent: () => void
 }
 
-export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
+export function CourseCard({
+    courseId,
+    archived,
+    isStudent,
+    archiveEvent,
+    pinned,
+    pinEvent,
+}: CourseCardProps) {
     // State variables
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
         naam: '',
         studenten: [],
         lesgevers: [],
+        gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
+    const [loading, setLoading] = useState<boolean>(true)
+
     const navigate = useNavigate()
 
     // Get all necessary data from backend
     useEffect(() => {
         async function fetchData() {
+            // Set loading to true every time the data is requested
+            setLoading(true)
             try {
                 const courseResponse = await instance.get<Course>(
                     `/vakken/${courseId}/`
@@ -76,6 +94,8 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
+            // Set loading to false after data is fetched
+            setLoading(false)
         }
 
         fetchData().catch((error) =>
@@ -89,37 +109,24 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
         navigate(`/course/${courseId}`)
     }
 
-    const archive = () => {
-        console.log('Archive clicked')
-        //update db
+    const pinCourse = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+        e.stopPropagation()
+        console.log('Course pinned/unpinned')
+        pinEvent()
     }
 
     return (
         <>
-            {!course ? (
+            {loading ? (
                 // If course is not available, show a skeleton loading component
-                <Skeleton
-                    variant={'rectangular'}
-                    sx={{
-                        width: { xs: '100%', md: '60%' },
-                        minWidth: 350,
-                        maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
-                        padding: 0,
-                        margin: 1,
-                    }}
-                />
+                <CourseCardSkeleton />
             ) : (
                 // If course is available, show course details inside a card component
                 <Card
-                    elevation={1}
                     sx={{
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
                         maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
                         padding: 0,
                         margin: 1,
                     }}
@@ -171,8 +178,9 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                             gap={0.5}
                                             overflow={'auto'}
                                         >
-                                            {teachers.map((teacher) => (
+                                            {teachers.map((teacher, index) => (
                                                 <Typography
+                                                    key={index}
                                                     padding={0}
                                                     margin={0}
                                                     variant={'subtitle1'}
@@ -191,6 +199,31 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                         {t('students') + ': '}
                                         {course.studenten.length || 0}
                                     </Typography>
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'column'}
+                                        sx={{
+                                            flexGrow: 1,
+                                            alignItems: 'flex-end',
+                                            alignSelf: 'flex-end',
+                                        }}
+                                    >
+                                        <IconButton
+                                            onClick={pinCourse}
+                                            sx={{
+                                                backgroundColor:
+                                                    'secondary.main',
+                                                borderRadius: 2,
+                                                alignSelf: 'flex-end',
+                                            }}
+                                        >
+                                            {pinned ? (
+                                                <PushPinIcon />
+                                            ) : (
+                                                <PushPinOutlinedIcon />
+                                            )}
+                                        </IconButton>
+                                    </Box>
                                 </Box>
                             </Box>
                         </CardActionArea>
@@ -198,7 +231,6 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                         <Box
                             aria-label={'assignmentList'}
                             sx={{
-                                backgroundColor: 'background.default',
                                 height: 150,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -258,7 +290,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                     )}
                                 </>
                             )}
-                            <Divider color={'text.main'}></Divider>
+                            <Divider></Divider>
                             <Box display={'flex'} flexDirection={'row'}>
                                 {isStudent ? (
                                     // Render assignment list for students
@@ -286,9 +318,11 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            new Date(
+                                                            dayjs(
                                                                 assignment.deadline
-                                                            ) || null
+                                                            ).format(
+                                                                'DD/MM/YYYY HH:mm'
+                                                            ) || undefined
                                                         }
                                                         status={
                                                             assignment.project_id ===
@@ -310,12 +344,8 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                 }}
                                             >
                                                 <List disablePadding={true}>
-                                                    {assignments
-                                                        .filter(
-                                                            (assignment) =>
-                                                                assignment.zichtbaar
-                                                        )
-                                                        .map((assignment) => (
+                                                    {assignments.map(
+                                                        (assignment) => (
                                                             <AssignmentListItem
                                                                 key={
                                                                     assignment.project_id
@@ -328,9 +358,12 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    new Date(
+                                                                    dayjs(
                                                                         assignment.deadline
-                                                                    ) || null
+                                                                    ).format(
+                                                                        'DD/MM/YYYY HH:mm'
+                                                                    ) ||
+                                                                    undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
@@ -341,7 +374,8 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     isStudent
                                                                 }
                                                             />
-                                                        ))}
+                                                        )
+                                                    )}
                                                 </List>
                                             </Box>
                                         ) : (
@@ -370,9 +404,12 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    new Date(
+                                                                    dayjs(
                                                                         assignment.deadline
-                                                                    ) || null
+                                                                    ).format(
+                                                                        'DD/MM/YYYY HH:mm'
+                                                                    ) ||
+                                                                    undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
@@ -398,7 +435,7 @@ export function CourseCard({ courseId, archived, isStudent }: CourseCardProps) {
                                                 }}
                                             >
                                                 <IconButton
-                                                    onClick={archive}
+                                                    onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:
                                                             'secondary.main',

@@ -27,6 +27,7 @@ from .views.indiening import (
     indiening_list,
     indiening_detail,
     indiening_detail_download_bestanden,
+    indiening_detail_download_artefacten
 )
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
@@ -59,6 +60,10 @@ urlpatterns = [
         "api/indieningen/<int:id>/indiening_bestanden/",
         indiening_detail_download_bestanden,
         name="indiening_detail_download_bestanden",
+    ),
+    path("api/indieningen/<int:id>/artefacten",
+        indiening_detail_download_artefacten,
+        name = "indiening_detail_download_artefacten",
     ),
     path("api/scores/", score_list, name="score_list"),
     path("api/scores/<int:id>/", score_detail, name="score_detail"),

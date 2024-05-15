@@ -1,5 +1,4 @@
 import {
-    Divider,
     IconButton,
     ListItem,
     ListItemButton,
@@ -11,7 +10,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined'
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
-import { useState } from 'react'
+import React, { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
 
@@ -85,7 +84,7 @@ export function AssignmentListItemSubjectsPage({
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        paddingX: 1,
+                        paddingX: 3,
                         paddingY: 3,
                         borderRadius: 2,
                     }}
@@ -93,19 +92,21 @@ export function AssignmentListItemSubjectsPage({
                     {isStudent ? (
                         <>
                             <ListItemText
-                                sx={{ maxWidth: 100 }}
+                                sx={{ maxWidth: 120 }}
                                 primary={projectName}
                             />
                             <ListItemText
-                                sx={{ maxWidth: 110 }}
+                                sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
-                                        ? dayjs(dueDate).format('DD.MM.YYYY')
+                                        ? dayjs(dueDate).format(
+                                              'DD/MM/YYYY HH:mm'
+                                          )
                                         : t('no_deadline')
                                 }
                             />
                             <ListItemText
-                                sx={{ maxWidth: 150 }}
+                                sx={{ maxWidth: 170 }}
                                 primary={
                                     submissions > 0
                                         ? submissions > 1
@@ -120,7 +121,7 @@ export function AssignmentListItemSubjectsPage({
                             />
                             {submissions > 0 ? (
                                 <ListItemText
-                                    sx={{ maxWidth: 100 }}
+                                    sx={{ maxWidth: 80 }}
                                     primary={
                                         score
                                             ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
@@ -129,7 +130,7 @@ export function AssignmentListItemSubjectsPage({
                                 />
                             ) : (
                                 <ListItemText
-                                    sx={{ maxWidth: 100 }}
+                                    sx={{ maxWidth: 80 }}
                                     primary={`0/${maxScore} (0%)`}
                                 />
                             )}
@@ -142,10 +143,12 @@ export function AssignmentListItemSubjectsPage({
                                 primary={projectName}
                             />
                             <ListItemText
-                                sx={{ maxWidth: 110 }}
+                                sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
-                                        ? dayjs(dueDate).format('DD.MM.YYYY')
+                                        ? dayjs(dueDate).format(
+                                              'DD/MM/YYYY HH:mm'
+                                          )
                                         : t('no_deadline')
                                 }
                             />
@@ -160,7 +163,6 @@ export function AssignmentListItemSubjectsPage({
                     )}
                 </ListItemButton>
             </ListItem>
-            <Divider color={'text.main'}></Divider>
         </>
     )
 }
@@ -182,7 +184,10 @@ function ButtonActions({
 }: ButtonActionsProps) {
     const [visible, setVisible] = useState(startVisible)
 
-    const handleIconClick = (e, icon: string) => {
+    const handleIconClick = (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+        icon: string
+    ) => {
         e.stopPropagation()
         console.log(icon + ' clicked')
         switch (icon) {
