@@ -15,11 +15,11 @@ import {
 import dayjs, { Dayjs } from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import List from '@mui/material/List'
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
 import instance from '../../axiosConfig.ts'
 import { getAssignment } from '../addChangeAssignmentPage/AddChangeAssignmentPage.tsx'
 import ErrorPage from '../ErrorPage.tsx'
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
-import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
 
 /**
  * Page for viewing a specific submission

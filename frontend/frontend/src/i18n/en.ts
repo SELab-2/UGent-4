@@ -102,6 +102,8 @@ const english = {
     copy_invite: 'Copy invitation link',
     deadlines_on: 'Deadlines on',
     no_assignmentfile: 'No assignment file',
+    email: 'email',
+    copy_invite: 'Copy invitation link'
 }
 
 export default english
