@@ -101,6 +101,8 @@ const english = {
     acces: 'This gives you access to the course.',
     deadlines_on: 'Deadlines on',
     email: 'email'
+    copy_invite: 'Copy invitation link',
+    deadlines_on: 'Deadlines on'
 }
 
 export default english

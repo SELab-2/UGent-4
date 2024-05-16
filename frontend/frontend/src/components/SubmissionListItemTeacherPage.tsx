@@ -133,6 +133,8 @@ export function SubmissionListItemTeacherPage({
                         paddingX: 4,
                         paddingY: 3,
                         borderRadius: 2,
+                        display: 'flex',
+                        flexDirection: 'row',
                     }}
                     onClick={handleSubmissionClick}
                 >
@@ -168,7 +170,7 @@ export function SubmissionListItemTeacherPage({
                         }
                     />
                     {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
+                    <ListItemIcon sx={{ minWidth: '24%' }}>
                         {!submitted?.status ? (
                             <HighlightOffIcon sx={{ color: 'error.main' }} />
                         ) : (
@@ -180,27 +182,7 @@ export function SubmissionListItemTeacherPage({
                         )}
                     </ListItemIcon>
                     {/* Display download icon */}
-                    <ListItemText>
-                        <ListItemIcon sx={{ minWidth: 35 }}>
-                            <div onClick={handleDownloadClick} />
-                            {submitted ? (
-                                <DownloadIcon
-                                    sx={{
-                                        color: 'primary.main',
-                                        '&:hover': { color: 'primary.light' },
-                                    }}
-                                />
-                            ) : (
-                                submitted !== undefined && (
-                                    <CheckCircleOutlineIcon
-                                        sx={{ color: 'success.main' }}
-                                    />
-                                )
-                            )}
-                        </ListItemIcon>
-                    </ListItemText>
-                    {/* Display download icon */}
-                    <ListItemText sx={{ maxWidth: '4%' }}>
+                    <ListItemText sx={{ maxWidth: 35 }}>
                         <ListItemIcon>
                             <div onClick={handleDownloadClick}>
                                 {submitted ? (
