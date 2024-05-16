@@ -17,19 +17,12 @@ import AddCircle from '@mui/icons-material/AddCircle'
 import ClearIcon from '@mui/icons-material/Clear'
 import { useParams } from 'react-router-dom'
 import instance from "../../axiosConfig.ts";
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx';
 
 export interface Group {
     groep_id: number
     studenten: number[]
     project: number
-}
-
-export interface User {
-    user: number
-    is_lesgever: boolean
-    first_name: string
-    last_name: string
-    email: string
 }
 
 export interface Assignment {
