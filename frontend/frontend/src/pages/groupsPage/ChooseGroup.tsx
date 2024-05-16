@@ -13,8 +13,7 @@ import List from '@mui/material/List'
 import { useEffect, useState } from 'react'
 import {Header} from "../../components/Header.tsx";
 import { t } from 'i18next'
-import AddCircle from '@mui/icons-material/AddCircle'
-import ClearIcon from '@mui/icons-material/Clear'
+import { Button } from '../../components/CustomComponents.tsx';
 import { useParams } from 'react-router-dom'
 import instance from "../../axiosConfig.ts";
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx';
@@ -44,25 +43,25 @@ function joinLeaveButton(isin:boolean,handleJoin: ()=> void,handleLeave: ()=> vo
     if(isin){
         return (
             <>
-                <IconButton
+                <Button
                     size={'small'}
                     sx={{ marginBottom: 1 }}
                     onClick={handleLeave}
                 >
-                    <ClearIcon />
-                </IconButton>
+                    <Typography>{t('leave')}</Typography>
+                </Button>
             </>
         )
     }
     return (
         <>
-            <IconButton
+            <Button
                 size={'small'}
                 sx={{ marginBottom: 1 }}
                 onClick={handleJoin}
             >
-                <AddCircle />
-            </IconButton>
+                <Typography>{t('join_group')}</Typography>
+            </Button>
         </>
     )
 }
@@ -323,17 +322,17 @@ export function ChooseGroup() {
                                         />
 
                                         <Box display={'flex'} flexDirection={'column'}>
-                                            {group.studenten.map((studentid)=>{
-                                                if(studenten[studentid]!=undefined){
-                                                    return (
-                                                        <>
-                                                            <Typography>
-                                                                {studenten[studentid].first_name+" "+studenten[studentid].last_name}
-                                                            </Typography>
-                                                        </>
-                                                        )
-                                                }
-                                            })}
+                                            {group.studenten.length > 0 ? (
+                                                    group.studenten.map((studentid) => (
+                                                        <Typography>
+                                                            {studenten[studentid] !== undefined
+                                                                ? `${studenten[studentid].first_name} ${studenten[studentid].last_name}`
+                                                                : t('members')}
+                                                        </Typography>
+                                                    ))
+                                                ) : (
+                                                    <Typography>{t('no_members_yet')}</Typography>
+                                                )}
 
                                         </Box>
 
