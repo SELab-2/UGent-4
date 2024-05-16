@@ -3,22 +3,23 @@ import { useParams } from 'react-router-dom'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
 import { Button, Card, Divider } from '../../components/CustomComponents.tsx'
+import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
 import {
     Box,
     CircularProgress,
     ListItem,
-    Paper,
     Skeleton,
-    Typography,
     Stack,
+    Typography,
 } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import List from '@mui/material/List'
-import Grid2 from '@mui/material/Unstable_Grid2'
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
 import instance from '../../axiosConfig.ts'
 import { getAssignment } from '../addChangeAssignmentPage/AddChangeAssignmentPage.tsx'
 import ErrorPage from '../ErrorPage.tsx'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 /**
  * Page for viewing a specific submission
@@ -68,9 +69,18 @@ export function SubmissionPage() {
     const [project, setProject] = useState<getAssignment>()
     const [restrictions, setRestrictions] = useState<Restriction[]>([])
     const [fetchError, setFetchError] = useState(false)
+    const [students, setStudents] = useState<User[]>([])
+    const [user, setUser] = useState({
+        user: 0,
+        is_lesgever: false,
+        first_name: '',
+        last_name: '',
+        email: '',
+    })
 
     //state to manage proper loading
     const [loading, setLoading] = useState(true)
+    const [studentsLoading, setStudentsLoading] = useState(true)
 
     // Function to download an artifact
     const downloadArtifacts = () => {
@@ -147,6 +157,9 @@ export function SubmissionPage() {
                     '/indieningen/' + submissionId + '/'
                 )
                 setSubmission(submission.data)
+                // Get the current user
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
             } catch (err) {
                 console.error(err)
                 setFetchError(true)
@@ -183,6 +196,32 @@ export function SubmissionPage() {
         return () => clearInterval(intervalId)
     }, [submissionId])
 
+    useEffect(() => {
+        async function fetchStudents() {
+            setStudentsLoading(true)
+            const groupId = submission?.groep
+            const groupResponse = await instance.get(`groepen/${groupId}`)
+            const temp_students = []
+            for (const s of groupResponse.data.studenten || []) {
+                try {
+                    const userResponse = await instance.get(`/gebruikers/${s}/`)
+                    temp_students.push(userResponse.data)
+                } catch (error) {
+                    console.error('Error fetching student data:', error)
+                    setFetchError(true)
+                }
+            }
+            // Update the state with the fetched data
+            setStudents(temp_students)
+            setStudentsLoading(false)
+        }
+
+        // Fetch students
+        fetchStudents().catch((error) =>
+            console.error('Error fetching students data:', error)
+        )
+    }, [submission])
+
     if (fetchError) {
         return <ErrorPage />
     }
@@ -207,6 +246,7 @@ export function SubmissionPage() {
                         gap: 2,
                         overflowY: 'auto',
                         padding: 2,
+                        position: 'relative',
                     }}
                 >
                     <Box
@@ -230,6 +270,28 @@ export function SubmissionPage() {
                                 {project?.beschrijving}
                             </Typography>
                         </Stack>
+                    </Box>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 90,
+                            right: 50,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            zIndex: 1,
+                            marginTop: '-40px',
+                        }}
+                    >
+                        {project?.max_groep_grootte === 1 ? (
+                            <Typography variant="body1">
+                                {user.first_name + ' ' + user.last_name}
+                            </Typography>
+                        ) : (
+                            <StudentPopUp
+                                students={studentsLoading ? [] : students}
+                                text="group_members"
+                            />
+                        )}
                     </Box>
                     <Box
                         aria-label={'deadline'}

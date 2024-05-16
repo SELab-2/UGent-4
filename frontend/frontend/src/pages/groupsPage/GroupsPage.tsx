@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header.tsx'
-import { Button, Card } from '../../components/CustomComponents.tsx'
+import { Button } from '../../components/CustomComponents.tsx'
 import {
     Box,
     Grid,
@@ -831,6 +831,7 @@ export function GroupsPage() {
                                         <IconButton
                                             // The teacher can save the group changes by clicking on the save icon.type="submit"
                                             aria-label={'submit'}
+                                            type={'submit'}
                                             sx={{
                                                 backgroundColor: 'primary.main',
                                                 borderRadius: 2,

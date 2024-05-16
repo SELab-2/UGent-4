@@ -1,7 +1,6 @@
 import { Divider } from '../../components/CustomComponents.tsx'
 import {
     CircularProgress,
-    Divider,
     IconButton,
     ListItem,
     ListItemText,

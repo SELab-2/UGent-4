@@ -101,7 +101,9 @@ const dutch = {
     join_course: 'Voeg vak toe?',
     join: 'Voeg toe',
     acces: 'Dit geeft je toegang tot het vak.',
-    deadlines_on: 'Deadlines op'
+    deadlines_on: 'Deadlines op',
+    email: 'email',
+    copy_invite: 'Kopieer uitnodigingslink'
 }
 
 export default dutch

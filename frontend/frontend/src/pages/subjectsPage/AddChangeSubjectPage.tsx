@@ -49,7 +49,7 @@ function UserList(
                 sx={{
                     '& > :not(style)': {
                         marginBottom: '8px',
-                        width: '99vw'
+                        width: '99vw',
                     },
                     minHeight: '20vh',
                     maxHeight: '30vh',
@@ -99,7 +99,11 @@ function UserList(
                                         >
                                             <ListItemText
                                                 sx={{ maxWidth: 100 }}
-                                                primary={user.first_name + ' '  + user.last_name}
+                                                primary={
+                                                    user.first_name +
+                                                    ' ' +
+                                                    user.last_name
+                                                }
                                             />
                                         </Box>
                                         <Box
@@ -151,7 +155,6 @@ function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
-    email: string,
     handleAdd: () => void,
     str: string
 ) {
@@ -164,7 +167,7 @@ function UploadPart(
                             {/* This box allows you to add extra people by their email. */}
                             <TextField
                                 type="text"
-                                placeholder={t('studentnumber')}
+                                placeholder={t('email')}
                                 onChange={(event) =>
                                     setEmail(event.target.value)
                                 }
@@ -232,7 +235,7 @@ export function AddChangeSubjectPage() {
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
 
-    const [vakID,setVakID]= useState(params.courseId)
+    const [vakID, setVakID] = useState(params.courseId)
 
     // state for spinners
     const [loading, setLoading] = useState(false)
@@ -442,19 +445,20 @@ export function AddChangeSubjectPage() {
     const handleSave = (): void => {
         const studentIDs = students.map((student) => student.user)
         const teacherIDs = teachers.map((teacher) => teacher.user)
-        if(vakID==undefined){
+        if (vakID == undefined) {
             instance
-                .post('vakken/'  , {
+                .post('vakken/', {
                     naam: title,
                     studenten: studentIDs,
                     lesgevers: teacherIDs,
-                }).then((res) => {
+                })
+                .then((res) => {
                     setVakID(res.data.vak_id)
                 })
                 .catch((err) => {
                     console.log(err)
                 })
-        }else{
+        } else {
             instance
                 .put('vakken/' + vakID + '/', {
                     naam: title,
@@ -465,22 +469,11 @@ export function AddChangeSubjectPage() {
                     console.log(err)
                 })
         }
-
     }
 
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
-            setUserLoaded(false)
-            await instance
-                .get('/gebruikers/me/')
-                .then((res) => {
-                    setUser(res.data)
-                    setUserLoaded(true)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
             await instance
                 .get('vakken/' + vakID)
                 .then(async (res) => {
@@ -539,11 +532,11 @@ export function AddChangeSubjectPage() {
                 })
             setLoading(false)
         }
-        if(vakID!=undefined){
-          fetchData().catch((err) => {
-              console.log(err)
-          })
-         }
+        if (vakID != undefined) {
+            fetchData().catch((err) => {
+                console.log(err)
+            })
+        }
     }, [vakID])
 
     return (
@@ -569,38 +562,38 @@ export function AddChangeSubjectPage() {
                             width: '100%',
                         }}
                     >
-                    <Box
-                        // This box contains the title of the subject.
-                        // This title can be changed if necessary.
-                        aria-label={'title'}
-                        display={'flex'}
-                        flexDirection={'row'}
-                        gap={2}
-                        alignItems={'center'}
-                    >
-                        <Typography
-                            variant={'h5'}
-                            color={'text.primary'}
-                            fontWeight={'bold'}
+                        <Box
+                            // This box contains the title of the subject.
+                            // This title can be changed if necessary.
+                            aria-label={'title'}
+                            display={'flex'}
+                            flexDirection={'row'}
+                            gap={2}
+                            alignItems={'center'}
                         >
-                            {t('subject_name') + ':'}
-                        </Typography>
-                        {loading ? (
-                            <Skeleton
-                                variant={'text'}
-                                width={200}
-                                height={60}
-                            />
-                        ) : (
-                            <TextField
-                                type="text"
-                                placeholder={t('title')}
-                                onChange={(event) =>
-                                    setTitle(event.target.value)
-                                }
-                                sx={{ height: 60 }}
-                            />
-                        )}
+                            <Typography
+                                variant={'h5'}
+                                color={'text.primary'}
+                                fontWeight={'bold'}
+                            >
+                                {t('subject_name') + ':'}
+                            </Typography>
+                            {loading ? (
+                                <Skeleton
+                                    variant={'text'}
+                                    width={200}
+                                    height={60}
+                                />
+                            ) : (
+                                <TextField
+                                    type="text"
+                                    placeholder={t('title')}
+                                    onChange={(event) =>
+                                        setTitle(event.target.value)
+                                    }
+                                    sx={{ height: 60 }}
+                                />
+                            )}
                         </Box>
                         <Box padding={'20px'}>
                             <Button
