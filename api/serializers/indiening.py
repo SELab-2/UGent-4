@@ -1,20 +1,6 @@
 from rest_framework import serializers
-from api.models.indiening import Indiening, IndieningBestand
+from api.models.indiening import Indiening
 
-
-class IndieningBestandSerializer(serializers.ModelSerializer):
-    """
-    Serializer voor het serialiseren en deserialiseren van IndieningBestand objecten.
-
-    Fields:
-        Meta.model (IndieningBestand): Het model waarop de serializer is gebaseerd.
-        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier worden alle velden opgenomen.
-
-    """
-
-    class Meta:
-        model = IndieningBestand
-        fields = "__all__"
 
 
 class IndieningSerializer(serializers.ModelSerializer):
@@ -27,7 +13,6 @@ class IndieningSerializer(serializers.ModelSerializer):
 
     """
 
-    indiening_bestanden = IndieningBestandSerializer(many=True, read_only=True)
 
     class Meta:
         model = Indiening
@@ -35,8 +20,8 @@ class IndieningSerializer(serializers.ModelSerializer):
             "indiening_id",
             "groep",
             "tijdstip",
+            "bestand",
             "status",
             "result",
-            "indiening_bestanden",
             "artefacten",
         ]
