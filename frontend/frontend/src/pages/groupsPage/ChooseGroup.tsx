@@ -75,10 +75,10 @@ export function ChooseGroup() {
     const [studenten,setStudenten]=useState<Record<number, User>>({});
     const [groups,setGroups]=useState<Group[]>([]);
     const [open,setOpen] = useState<boolean>(false);
-
     const [user, setUser] = useState<User>()
-
     const [assignment,setAssignment]= useState<Assignment>()
+
+    const [loading, setLoading] = useState(true)
 
     const assignmentId = params.assignmentId
 
@@ -87,6 +87,7 @@ export function ChooseGroup() {
     }
 
     useEffect(()=>{
+        setLoading(true);
         instance
             .get('/gebruikers/me/')
             .then((res) => {
@@ -150,19 +151,19 @@ export function ChooseGroup() {
                             })
                         }
                     })
-                }
+                }   
             })
             .catch((err) => {
                 console.log(err)
             })
-
+            setLoading(false)
     },[])
 
 
     return (
         <>
             <Stack direction={'column'}>
-                <Header variant={'default'} title={"title"} />
+                <Header variant={'not_main'} title={loading ? '' : `${assignment?.titel}: ${t('groups')}`} />
                 <Stack
                     direction={'column'}
                     spacing={1}
