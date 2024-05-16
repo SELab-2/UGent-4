@@ -475,16 +475,6 @@ export function AddChangeSubjectPage() {
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
-            setUserLoaded(false)
-            await instance
-                .get('/gebruikers/me/')
-                .then((res) => {
-                    setUser(res.data)
-                    setUserLoaded(true)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
             await instance
                 .get('vakken/' + vakID)
                 .then(async (res) => {
