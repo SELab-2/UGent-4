@@ -23,6 +23,7 @@ class IndieningSerializerTest(TestCase):
                     "tijdstip",
                     "status",
                     "result",
+                    "artefacten",
                     "indiening_bestanden",
                 ]
             ),

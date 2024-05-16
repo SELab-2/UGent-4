@@ -125,7 +125,7 @@ export function SubmissionListItemTeacherPage({
 
     return (
         <>
-            <ListItem id={group_id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={`submission${group_id}`} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: '100%',
@@ -138,6 +138,7 @@ export function SubmissionListItemTeacherPage({
                 >
                     {/* Display group id */}
                     <ListItemText
+                        id='submissionId'
                         sx={{
                             maxWidth: '24%',
                             color: 'primary.main',
@@ -174,6 +175,7 @@ export function SubmissionListItemTeacherPage({
                         ) : (
                             submitted !== undefined && (
                                 <CheckCircleOutlineIcon
+                                    id='check'
                                     sx={{ color: 'success.main' }}
                                 />
                             )
@@ -185,6 +187,7 @@ export function SubmissionListItemTeacherPage({
                             <div onClick={handleDownloadClick} />
                             {submitted ? (
                                 <DownloadIcon
+                                    id='downloadIconColor'
                                     sx={{
                                         color: 'primary.main',
                                         '&:hover': { color: 'primary.light' },

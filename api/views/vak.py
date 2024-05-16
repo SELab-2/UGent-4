@@ -115,5 +115,5 @@ def vak_detail_accept_invite(request, id, format=None):
     else:
         vak.studenten.add(gebruiker)
     vak.save()
-    
-    return redirect('vak_detail', id=vak.vak_id)
+
+    return redirect("vak_detail", id=vak.vak_id)

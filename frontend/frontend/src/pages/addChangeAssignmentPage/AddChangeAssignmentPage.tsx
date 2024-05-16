@@ -512,6 +512,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                         {/* File Upload button */}
                         <Box
+                            id='uploadButton'
                             padding={0}
                             marginRight={3}
                             display={'flex'}
@@ -543,6 +544,7 @@ export function AddChangeAssignmentPage() {
                     There is both the normal deadline, 
                     and an extra deadline in case people need more time. */}
                     <Box
+                        data-test-id="deadline-id"
                         aria-label={'deadline'}
                         padding={2}
                         display={'flex'}
@@ -573,6 +575,39 @@ export function AddChangeAssignmentPage() {
                                     variant={'text'}
                                     width={200}
                                     height={60}
+                            <LocalizationProvider  
+                                dateAdapter={AdapterDayjs}
+                                adapterLocale="nl"
+                            >
+                                <DateTimePicker
+                                    format="DD/MM/YYYY HH:mm"
+                                    value={dueDate}
+                                    disablePast
+                                    label={t('optional')}
+                                    sx={{ width: 250 }}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
+                                    onError={(newError) =>
+                                        SetDeadlineError(newError)
+                                    }
+                                    slotProps={{
+                                        field: {
+                                            clearable: true,
+                                            onClear: () => setCleared(true),
+                                        },
+                                        textField: {
+                                            helperText: errorMessage,
+                                            inputProps: {
+                                                id: 'deadlineField',
+                                            },
+                                        },
+                                    }}
+                                    onChange={(newValue) =>
+                                        setDueDate(newValue)
+                                    }
                                 />
                             ) : (
                                 <LocalizationProvider
@@ -629,6 +664,39 @@ export function AddChangeAssignmentPage() {
                                     variant={'text'}
                                     width={200}
                                     height={60}
+                            <LocalizationProvider
+                                dateAdapter={AdapterDayjs}
+                                adapterLocale="nl"
+                            >
+                                <DateTimePicker
+                                    format="DD/MM/YYYY HH:mm"
+                                    value={extraDueDate}
+                                    disablePast
+                                    label={t('optional')}
+                                    sx={{ width: 250 }}
+                                    viewRenderers={{
+                                        hours: renderTimeViewClock,
+                                        minutes: renderTimeViewClock,
+                                        seconds: renderTimeViewClock,
+                                    }}
+                                    slotProps={{
+                                        field: {
+                                            clearable: true,
+                                            onClear: () => setCleared(true),
+                                        },
+                                        textField: {
+                                            error: deadlineCheckError,
+                                            helperText: deadlineCheckError
+                                                ? t('deadlineCheck')
+                                                : '',
+                                            inputProps: {
+                                                id: 'extraDeadlineField',
+                                            },
+                                        },
+                                    }}
+                                    onChange={(newValue) =>
+                                        setExtraDueDate(newValue)
+                                    }
                                 />
                             ) : (
                                 <LocalizationProvider
@@ -814,6 +882,7 @@ export function AddChangeAssignmentPage() {
                                     <IconButton
                                         // Allows the teacher to select whether
                                         // the assignment is visible to students or not.
+                                        id='visibilityOn'
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -821,6 +890,7 @@ export function AddChangeAssignmentPage() {
                                     </IconButton>
                                 ) : (
                                     <IconButton
+                                        id='visibilityOff'
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -831,6 +901,7 @@ export function AddChangeAssignmentPage() {
                                 )}
                                 <Tooltip title={t('remove')}>
                                     <IconButton
+                                        id='delete'
                                         color={'warning'}
                                         onClick={openDeleteConfirmation}
                                     >
@@ -850,10 +921,11 @@ export function AddChangeAssignmentPage() {
                                 alignItems={'center'}
                             >
                                 <Typography
+                                    id='maxScore'
                                     fontWeight={'bold'}
                                     color={'text.primary'}
                                 >
-                                    Max Score
+                                    Max Score:
                                 </Typography>
                                 {loading ? (
                                     <Skeleton
@@ -914,6 +986,7 @@ export function AddChangeAssignmentPage() {
                             </Tooltip>
                             <Tooltip title={t('submit')}>
                                 <IconButton
+                                    id='submit'
                                     type="submit"
                                     aria-label={'submit'}
                                     sx={{

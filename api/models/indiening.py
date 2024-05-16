@@ -4,8 +4,6 @@ from django.dispatch import receiver
 from api.docker.python_entrypoint import run_tests_on
 from threading import Thread
 from django.db import transaction
-
-
 from api.models.restrictie import Restrictie
 from api.utils import send_indiening_confirmation_mail
 
@@ -100,15 +98,14 @@ def run_tests_async(instance):
     project_id = instance.groep.project.project_id
     result = run_tests_on(indiening_id, project_id)
 
-
     with transaction.atomic():
         instance.status = -1 if "FAIL" in result else 1
         instance.result = result
-        instance.artefacten = f'data/indieningen/indiening_{indiening_id}/artefacten.zip'
+        instance.artefacten = (
+            f"data/indieningen/indiening_{indiening_id}/artefacten.zip"
+        )
         instance.save()
-
     send_indiening_confirmation_mail(instance)
-
 
 
 @receiver(post_save, sender=Indiening)

@@ -80,6 +80,7 @@ export function LoginPage() {
                         alignSelf={'center'}
                     >
                         <Box
+                            id='logo'
                             component="img"
                             src={t('logo_blue')}
                             alt="logo"

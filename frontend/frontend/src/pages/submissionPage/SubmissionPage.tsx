@@ -329,6 +329,7 @@ export function SubmissionPage() {
                             {t('filename')}
                         </Typography>
                         <Button
+                            id='downloadButton'
                             startIcon={<DownloadIcon />}
                             onClick={downloadSubmission}
                         >

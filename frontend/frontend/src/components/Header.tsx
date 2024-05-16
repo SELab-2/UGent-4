@@ -95,10 +95,12 @@ export const Header = ({ variant, title }: Props) => {
                     <Box>
                         <Tooltip title={t('home')}>
                             <IconButton
+                                id='homeButton'
                                 onClick={() => navigate('/')}
                                 sx={{ padding: 0, borderRadius: 5 }}
                             >
                                 <Box
+                                    id='logo'
                                     component="img"
                                     src={t('logo')}
                                     alt="logo"
@@ -116,6 +118,7 @@ export const Header = ({ variant, title }: Props) => {
                         {variant !== 'default' && (
                             <Tooltip title={t('back')}>
                                 <IconButton
+                                    id='backButton'
                                     onClick={handleBack}
                                     size="large"
                                     edge="start"
@@ -130,6 +133,7 @@ export const Header = ({ variant, title }: Props) => {
                     </Box>
                     {/* Title */}
                     <Typography
+                        id='title'
                         maxWidth={'88%'}
                         variant="h5"
                         component="div"
@@ -143,6 +147,7 @@ export const Header = ({ variant, title }: Props) => {
                         {title}
                         {variant === 'editable' && (
                             <IconButton
+                                id='editButton'
                                 onClick={handleEdit}
                                 disableRipple={true}
                                 sx={{
