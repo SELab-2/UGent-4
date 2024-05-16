@@ -168,7 +168,7 @@ function UploadPart(
                             {/* This box allows you to add extra people by their email. */}
                             <TextField
                                 type="text"
-                                placeholder={t('studentnumber')}
+                                placeholder={t('email')}
                                 onChange={(event) =>
                                     setEmail(event.target.value)
                                 }

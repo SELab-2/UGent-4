@@ -99,7 +99,8 @@ const english = {
     join_course: 'Join course?',
     join: 'Join',
     acces: 'This gives you access to the course.',
-    deadlines_on: 'Deadlines on'
+    deadlines_on: 'Deadlines on',
+    email: 'email'
 }
 
 export default english
