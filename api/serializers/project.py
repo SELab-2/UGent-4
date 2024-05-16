@@ -2,6 +2,7 @@ from rest_framework import serializers
 from api.models.project import Project
 from django.utils import timezone
 from api.serializers.restrictie import RestrictieSerializer
+from api.serializers.groep import GroepSerializer
 
 
 class ProjectSerializer(serializers.ModelSerializer):
@@ -59,6 +60,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         project.deadline = deadline
         project.extra_deadline = extra_deadline
         project.save()
+        add_studenten_to_groep(project)
         return project
 
     def update(self, instance, validated_data):
@@ -72,6 +74,8 @@ class ProjectSerializer(serializers.ModelSerializer):
         Returns:
             Project: Het bijgewerkte project.
         """
+        validated_data.pop("max_groep_grootte")
+        validated_data.pop("project_groep")
         deadline = validated_data.pop("deadline", instance.deadline)
         extra_deadline = validated_data.pop("extra_deadline", instance.extra_deadline)
         validate_deadlines(deadline, extra_deadline)
@@ -84,6 +88,21 @@ class ProjectSerializer(serializers.ModelSerializer):
         instance.extra_deadline = extra_deadline
         instance.save()
         return instance
+    
+
+def add_studenten_to_groep(instance):
+    if instance.max_groep_grootte == 1 or instance.student_groep:
+        for student in instance.vak.studenten.all():
+            try:
+                serializer = GroepSerializer(data={"studenten": [student], "project": instance.project_id})
+                print(serializer)
+                if serializer.is_valid():
+                    serializer.save()
+            except Exception:
+                pass
+
+
+
 
 
 def validate_deadlines(deadline, extra_deadline):
