@@ -99,6 +99,7 @@ const english = {
     join_course: 'Join course?',
     join: 'Join',
     acces: 'This gives you access to the course.',
+    copy_invite: 'Copy invitation link',
     deadlines_on: 'Deadlines on'
 }
 

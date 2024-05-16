@@ -89,7 +89,7 @@ export const CopyToClipboard = ({ invitationLink }: CopyToClipboardProps) => {
                                     textOverflow: 'ellipsis',
                                 }}
                             >
-                                {invitationLink}
+                                {t('copy_invite')}
                             </Typography>
                         </Button>
                     </Collapse>
