@@ -327,7 +327,7 @@ export function ChooseGroup() {
                                                         <Typography>
                                                             {studenten[studentid] !== undefined
                                                                 ? `${studenten[studentid].first_name} ${studenten[studentid].last_name}`
-                                                                : t('members')}
+                                                                : t('members_loading')}
                                                         </Typography>
                                                     ))
                                                 ) : (

@@ -27,6 +27,7 @@ const english = {
     students_choose: 'Students Can Choose',
     random: 'Random',
     members: 'Members',
+    members_loading: 'Members loading...',
     group_members: 'Members Of The Group',
     no_members_yet: 'No members yet',
     assignmentName: 'Name assignment',

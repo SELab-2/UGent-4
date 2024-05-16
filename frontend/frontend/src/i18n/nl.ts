@@ -29,6 +29,7 @@ const dutch = {
     members: 'Leden',
     group_members: 'Groepsleden',
     no_members_yet: 'Nog geen leden',
+    members_loading: 'Leden ophalen...',
     assignmentName: 'Naam opdracht',
     upload_assignment: 'Upload opgavebestand',
     description: 'Beschrijving opgave',
