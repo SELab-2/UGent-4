@@ -155,7 +155,6 @@ function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
-    email: string,
     handleAdd: () => void,
     str: string
 ) {
@@ -634,7 +633,6 @@ export function AddChangeSubjectPage() {
                             studentFile,
                             handleStudentFileChange,
                             setEmailStudent,
-                            emailStudent,
                             handleAddStudent,
                             t('upload_students')
                         )}
@@ -675,7 +673,6 @@ export function AddChangeSubjectPage() {
                             teacherFile,
                             handleTeacherFileChange,
                             setEmailTeacher,
-                            emailTeacher,
                             handleAddTeacher,
                             t('upload_teachers')
                         )}
