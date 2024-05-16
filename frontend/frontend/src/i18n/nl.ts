@@ -100,8 +100,8 @@ const dutch = {
     join: 'Voeg toe',
     acces: 'Dit geeft je toegang tot het vak.',
     copy_invite: 'Kopieer uitnodigingslink',
-
-    deadlines_on: 'Deadlines op'
+    deadlines_on: 'Deadlines op',
+    no_assignmentfile: 'Geen opdrachtbestand',
 }
 
 export default dutch

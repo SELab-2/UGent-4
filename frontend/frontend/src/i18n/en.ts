@@ -100,7 +100,8 @@ const english = {
     join: 'Join',
     acces: 'This gives you access to the course.',
     copy_invite: 'Copy invitation link',
-    deadlines_on: 'Deadlines on'
+    deadlines_on: 'Deadlines on',
+    no_assignmentfile: 'No assignment file',
 }
 
 export default english
