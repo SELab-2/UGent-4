@@ -9,17 +9,17 @@ import {
     CircularProgress,
     ListItem,
     Skeleton,
-    Typography,
     Stack,
+    Typography,
 } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import List from '@mui/material/List'
-import Grid2 from '@mui/material/Unstable_Grid2'
 import instance from '../../axiosConfig.ts'
 import { getAssignment } from '../addChangeAssignmentPage/AddChangeAssignmentPage.tsx'
 import ErrorPage from '../ErrorPage.tsx'
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
 
 /**
  * Page for viewing a specific submission
@@ -198,29 +198,29 @@ export function SubmissionPage() {
 
     useEffect(() => {
         async function fetchStudents() {
-            setStudentsLoading(true);
+            setStudentsLoading(true)
             const groupId = submission?.groep
             const groupResponse = await instance.get(`groepen/${groupId}`)
-            const temp_students = [];
+            const temp_students = []
             for (const s of groupResponse.data.studenten || []) {
                 try {
-                    const userResponse = await instance.get(`/gebruikers/${s}/`);
-                    temp_students.push(userResponse.data);
+                    const userResponse = await instance.get(`/gebruikers/${s}/`)
+                    temp_students.push(userResponse.data)
                 } catch (error) {
-                    console.error('Error fetching student data:', error);
-                    setFetchError(true);
+                    console.error('Error fetching student data:', error)
+                    setFetchError(true)
                 }
             }
             // Update the state with the fetched data
-            setStudents(temp_students);
-            setStudentsLoading(false);
+            setStudents(temp_students)
+            setStudentsLoading(false)
         }
-    
+
         // Fetch students
         fetchStudents().catch((error) =>
             console.error('Error fetching students data:', error)
-        );
-    }, [submission]);
+        )
+    }, [submission])
 
     if (fetchError) {
         return <ErrorPage />
@@ -246,7 +246,7 @@ export function SubmissionPage() {
                         gap: 2,
                         overflowY: 'auto',
                         padding: 2,
-                        position: 'relative'
+                        position: 'relative',
                     }}
                 >
                     <Box
@@ -283,7 +283,9 @@ export function SubmissionPage() {
                         }}
                     >
                         {project?.max_groep_grootte === 1 ? (
-                            <Typography variant="body1">{user.first_name + ' ' + user.last_name}</Typography>
+                            <Typography variant="body1">
+                                {user.first_name + ' ' + user.last_name}
+                            </Typography>
                         ) : (
                             <StudentPopUp
                                 students={studentsLoading ? [] : students}
