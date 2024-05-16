@@ -97,7 +97,7 @@ export function StudentScoreListItem({
 
     return (
         <>
-            <ListItem key={key} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={`group${groupNumber}`} key={key} sx={{ margin: 0 }} disablePadding={true}>
                 {/* Inner list item for displaying submission details */}
                 <ListItem
                     sx={{
@@ -159,6 +159,7 @@ export function StudentScoreListItem({
                         {/* Button to download submission */}
                         <ListItem sx={{ maxWidth: '4%' }}>
                             <IconButton
+                                id='downloadSubmissionButton'
                                 onClick={downloadSubmission}
                                 edge="end"
                                 aria-label="download"

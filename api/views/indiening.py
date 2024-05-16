@@ -7,7 +7,7 @@ from api.models.groep import Groep
 from api.models.vak import Vak
 from api.models.project import Project
 from api.serializers.indiening import IndieningSerializer
-from api.utils import has_permissions, contains
+from api.utils import has_permissions, contains, is_lesgever
 
 from django.http import FileResponse
 
@@ -151,9 +151,14 @@ def indiening_detail_download_artefacten(request, id, format=None):
     """
     try:
         indiening = Indiening.objects.get(pk=id)
-    except Project.DoesNotExist:
+    except Indiening.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if has_permissions(request.user):
         return FileResponse(indiening.artefacten.open(), as_attachment=True)
+    if is_lesgever(request.user):
+        try:
+            return FileResponse(indiening.artefacten.open(), as_attachment=True)
+        except (ValueError, FileNotFoundError):
+            return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(status=status.HTTP_403_FORBIDDEN)

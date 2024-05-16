@@ -44,6 +44,15 @@ export function GroupAccessComponent({
                 {/* Button to navigate to groups page */}
                 {allowGroups ? (
                     <Button onClick={handleClick}>{t('groups')}</Button>
+                    <Button
+                        id='groupButton'
+                        variant={'contained'}
+                        disableElevation
+                        onClick={handleClick}
+                        color={'secondary'}
+                    >
+                        {t('groups')}
+                    </Button>
                 ) : (
                     // Show text indicating groups are not allowed
                     <Typography color={'text.primary'} variant={'body1'}>
@@ -52,6 +61,7 @@ export function GroupAccessComponent({
                 )}
                 {/* Switch to toggle group access */}
                 <Switch
+                    id='groupSwitch'
                     checked={allowGroups}
                     onChange={() => setAllowGroups(!allowGroups)}
                     color={'primary'}
