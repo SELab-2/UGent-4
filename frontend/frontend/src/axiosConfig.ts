@@ -1,8 +1,8 @@
 import axios from 'axios'
 
 const instance = axios.create({
-    baseURL: 'https://sel2-4.ugent.be/api/',
-    //baseURL: 'http://localhost:8000/api/',
+    //baseURL: 'https://sel2-4.ugent.be/api/',
+    baseURL: 'http://localhost:8000/api/',
     headers: { 'Content-Type': 'application/json' },
 })
 

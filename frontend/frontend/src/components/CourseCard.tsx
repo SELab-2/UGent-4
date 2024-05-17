@@ -1,11 +1,9 @@
+import { Card, Divider } from './CustomComponents.tsx'
 import {
     Box,
-    Card,
     CardActionArea,
     CardContent,
-    Divider,
     IconButton,
-    Skeleton,
     Typography,
 } from '@mui/material'
 import { t } from 'i18next'
@@ -15,11 +13,12 @@ import instance from '../axiosConfig.ts'
 import { AssignmentListItem } from './AssignmentListItem.tsx'
 import List from '@mui/material/List'
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined'
-import PushPinIcon from '@mui/icons-material/PushPin';
-import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
+import PushPinIcon from '@mui/icons-material/PushPin'
+import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
 
+import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -38,7 +37,14 @@ interface CourseCardProps {
     pinEvent: () => void
 }
 
-export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned, pinEvent }: CourseCardProps) {
+export function CourseCard({
+    courseId,
+    archived,
+    isStudent,
+    archiveEvent,
+    pinned,
+    pinEvent,
+}: CourseCardProps) {
     // State variables
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
@@ -51,11 +57,15 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
+    const [loading, setLoading] = useState<boolean>(true)
+
     const navigate = useNavigate()
 
     // Get all necessary data from backend
     useEffect(() => {
         async function fetchData() {
+            // Set loading to true every time the data is requested
+            setLoading(true)
             try {
                 const courseResponse = await instance.get<Course>(
                     `/vakken/${courseId}/`
@@ -84,6 +94,8 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
+            // Set loading to false after data is fetched
+            setLoading(false)
         }
 
         fetchData().catch((error) =>
@@ -99,26 +111,15 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
 
     const pinCourse = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.stopPropagation()
-        console.log("Course pinned/unpinned")
+        console.log('Course pinned/unpinned')
         pinEvent()
     }
 
     return (
         <>
-            {!course ? (
+            {loading ? (
                 // If course is not available, show a skeleton loading component
-                <Skeleton
-                    variant={'rectangular'}
-                    sx={{
-                        width: { xs: '100%', md: '60%' },
-                        minWidth: 350,
-                        maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
-                        padding: 0,
-                        margin: 1,
-                    }}
-                />
+                <CourseCardSkeleton />
             ) : (
                 // If course is available, show course details inside a card component
                 <Card
@@ -128,8 +129,6 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
                         maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
                         padding: 0,
                         margin: 1,
                     }}
@@ -222,11 +221,11 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                 alignSelf: 'flex-end',
                                             }}
                                         >
-                                            {pinned?
+                                            {pinned ? (
                                                 <PushPinIcon />
-                                            :
+                                            ) : (
                                                 <PushPinOutlinedIcon />
-                                            }
+                                            )}
                                         </IconButton>
                                     </Box>
                                 </Box>
@@ -236,7 +235,6 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                         <Box
                             aria-label={'assignmentList'}
                             sx={{
-                                backgroundColor: 'background.default',
                                 height: 150,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -299,7 +297,7 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                     )}
                                 </>
                             )}
-                            <Divider color={'text.main'}></Divider>
+                            <Divider></Divider>
                             <Box display={'flex'} flexDirection={'row'}>
                                 {isStudent ? (
                                     // Render assignment list for students
@@ -327,7 +325,9 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            dayjs(assignment.deadline).format(
+                                                            dayjs(
+                                                                assignment.deadline
+                                                            ).format(
                                                                 'DD/MM/YYYY HH:mm'
                                                             ) || undefined
                                                         }
@@ -351,8 +351,8 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                 }}
                                             >
                                                 <List disablePadding={true}>
-                                                    {assignments
-                                                        .map((assignment) => (
+                                                    {assignments.map(
+                                                        (assignment) => (
                                                             <AssignmentListItem
                                                                 key={
                                                                     assignment.project_id
@@ -365,9 +365,12 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    dayjs(assignment.deadline).format(
+                                                                    dayjs(
+                                                                        assignment.deadline
+                                                                    ).format(
                                                                         'DD/MM/YYYY HH:mm'
-                                                                    ) || undefined
+                                                                    ) ||
+                                                                    undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===
@@ -378,7 +381,8 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                                     isStudent
                                                                 }
                                                             />
-                                                        ))}
+                                                        )
+                                                    )}
                                                 </List>
                                             </Box>
                                         ) : (
@@ -407,9 +411,12 @@ export function CourseCard({ courseId, archived, isStudent, archiveEvent, pinned
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    dayjs(assignment.deadline).format(
+                                                                    dayjs(
+                                                                        assignment.deadline
+                                                                    ).format(
                                                                         'DD/MM/YYYY HH:mm'
-                                                                    ) || undefined
+                                                                    ) ||
+                                                                    undefined
                                                                 }
                                                                 status={
                                                                     assignment.project_id ===

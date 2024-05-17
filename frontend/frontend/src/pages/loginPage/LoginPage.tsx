@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Button } from '../../components/CustomComponents.tsx'
+import { Box, Typography } from '@mui/material'
 import { t } from 'i18next'
 import { useMsal } from '@azure/msal-react'
 import { loginRequest } from '../../authConfig/authConfig.ts'
@@ -109,18 +110,7 @@ export function LoginPage() {
                         justifyContent={'center'}
                         alignSelf={'stretch'}
                     >
-                        <Button
-                            id="loginButton"
-                            onClick={handleLogin}
-                            variant="contained"
-                            sx={{
-                                width: 150,
-                                padding: 1,
-                                fontWeight: 600,
-                            }}
-                        >
-                            {t('login')}
-                        </Button>
+                        <Button onClick={handleLogin}>{t('login')}</Button>
                     </Box>
                 </Box>
             </Box>

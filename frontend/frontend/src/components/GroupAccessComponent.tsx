@@ -1,4 +1,5 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Button } from './CustomComponents'
+import { Box, Typography } from '@mui/material'
 import { t } from 'i18next'
 import Switch from '@mui/material/Switch'
 import { useEffect, useState } from 'react'
@@ -40,17 +41,9 @@ export function GroupAccessComponent({
                 width={'20vw'}
                 marginBottom={2}
             >
-                 {/* Button to navigate to groups page */}
+                {/* Button to navigate to groups page */}
                 {allowGroups ? (
-                    <Button
-                        id='groupButton'
-                        variant={'contained'}
-                        disableElevation
-                        onClick={handleClick}
-                        color={'secondary'}
-                    >
-                        {t('groups')}
-                    </Button>
+                    <Button onClick={handleClick}>{t('groups')}</Button>
                 ) : (
                     // Show text indicating groups are not allowed
                     <Typography color={'text.primary'} variant={'body1'}>
@@ -59,7 +52,6 @@ export function GroupAccessComponent({
                 )}
                 {/* Switch to toggle group access */}
                 <Switch
-                    id='groupSwitch'
                     checked={allowGroups}
                     onChange={() => setAllowGroups(!allowGroups)}
                     color={'primary'}

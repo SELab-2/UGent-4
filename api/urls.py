@@ -26,11 +26,12 @@ from .views.project import project_list, project_detail, project_detail_download
 from .views.indiening import (
     indiening_list,
     indiening_detail,
-    indiening_detail_download_bestanden,
+    indiening_detail_download_bestand,
     indiening_detail_download_artefacten,
 )
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
+from .views.template import template_list, template_detail
 from .views.restrictie import (
     restrictie_list,
     restrictie_detail,
@@ -61,8 +62,8 @@ urlpatterns = [
     path("api/indieningen/", indiening_list, name="indiening_list"),
     path("api/indieningen/<int:id>/", indiening_detail, name="indiening_detail"),
     path(
-        "api/indieningen/<int:id>/indiening_bestanden/",
-        indiening_detail_download_bestanden,
+        "api/indieningen/<int:id>/indiening_bestand/",
+        indiening_detail_download_bestand,
         name="indiening_detail_download_bestanden",
     ),
     path(
@@ -81,6 +82,8 @@ urlpatterns = [
         restrictie_detail_download_script,
         name="restrictie_detail_download_script",
     ),
+    path("api/templates/", template_list, name="template_list"),
+    path("api/templates/<int:id>/", template_detail, name="template_detail"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

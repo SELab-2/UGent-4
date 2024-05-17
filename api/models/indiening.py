@@ -4,7 +4,11 @@ from django.dispatch import receiver
 from api.docker.python_entrypoint import run_tests_on
 from threading import Thread
 from django.db import transaction
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
 from api.models.restrictie import Restrictie
+from api.utils import send_indiening_confirmation_mail
 
 
 STATUS_CHOICES = (
@@ -25,6 +29,9 @@ def upload_to(instance, filename):
     Returns:
         str: Het pad waar het bestand moet worden opgeslagen.
     """
+    # Use a placeholder for the initial save
+    if instance.indiening_id is None:
+        return f"data/indieningen/temp/{filename}"
     return f"data/indieningen/indiening_{instance.indiening_id}/{filename}"
 
 
@@ -51,6 +58,7 @@ class Indiening(models.Model):
     indiening_id = models.AutoField(primary_key=True)
     groep = models.ForeignKey("Groep", on_delete=models.CASCADE)
     tijdstip = models.DateTimeField(auto_now_add=True)
+    bestand = models.FileField(upload_to=upload_to)
     status = models.IntegerField(default=0, choices=STATUS_CHOICES)
     result = models.TextField(default="", blank=True)
     artefacten = models.FileField(blank=True)
@@ -58,32 +66,22 @@ class Indiening(models.Model):
     def __str__(self):
         return str(self.indiening_id)
 
+    def save(self, *args, **kwargs):
+        # First save to generate the indiening_id if it doesn't exist
+        if not self.indiening_id:
+            super(Indiening, self).save(*args, **kwargs)
 
-class IndieningBestand(models.Model):
-    """
-    Model voor een bestand dat aan een indiening is gekoppeld.
+        # Update the bestand path if it's still using the temporary path
+        if "temp" in self.bestand.name:
+            old_file = self.bestand
+            new_path = self.bestand.name.replace(
+                "temp", f"indiening_{self.indiening_id}"
+            )
+            default_storage.save(new_path, ContentFile(old_file.read()))
+            old_file.storage.delete(old_file.name)
+            self.bestand.name = new_path
 
-    Fields:
-        indiening_bestand_id (AutoField): Een automatisch gegenereerd veld dat fungeert als
-        de primaire sleutel voor het bestand.
-        indiening (ForeignKey): Een ForeignKey relatie met het 'Indiening' model,
-        waarmee wordt aangegeven tot welke indiening dit bestand behoort.
-        Als de bijbehorende indiening wordt verwijderd,
-        wordt ook het bijbehorende bestand verwijderd.
-        bestand (FileField): Een veld voor het uploaden van het bestand.
-
-    Methods:
-        __str__(): Geeft een representatie van het model als een string terug, die de bestandsnaam bevat.
-    """
-
-    indiening_bestand_id = models.AutoField(primary_key=True)
-    indiening = models.ForeignKey(
-        Indiening, related_name="indiening_bestanden", on_delete=models.CASCADE
-    )
-    bestand = models.FileField(upload_to=upload_to)
-
-    def __str__(self):
-        return str(self.bestand.name)
+        super(Indiening, self).save(*args, **kwargs)
 
 
 def run_tests_async(instance):
@@ -104,6 +102,7 @@ def run_tests_async(instance):
             f"data/indieningen/indiening_{indiening_id}/artefacten.zip"
         )
         instance.save()
+    send_indiening_confirmation_mail(instance)
 
 
 @receiver(post_save, sender=Indiening)
@@ -125,6 +124,7 @@ def indiening_post_init(sender, instance, created, **kwargs):
                 instance.status = 1
                 instance.result = "No tests: OK"
                 instance.save()
+            send_indiening_confirmation_mail(instance)
         else:
             thread = Thread(target=run_tests_async, args=(instance,))
             thread.start()

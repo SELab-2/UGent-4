@@ -74,11 +74,7 @@ export function AssignmentListItem({
                     <ListItemText
                         id='dueDate' 
                         sx={{ maxWidth: 150 }}
-                        primary={
-                            dueDate
-                                ? dueDate
-                                : t('no_deadline')
-                        }
+                        primary={dueDate ? dueDate : t('no_deadline')}
                     />
                     {/* Status Icon (for students only) */}
                     {isStudent && (
