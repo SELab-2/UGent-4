@@ -10,7 +10,7 @@ import {
     TextField,
     Typography,
 } from '@mui/material'
-import { Header } from '../../components/Header.tsx'
+import { Header } from '../../components/Header'
 import { Button } from '../../components/CustomComponents.tsx'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -542,7 +542,7 @@ export function AddChangeSubjectPage() {
     return (
         <>
             <Stack direction={'column'}>
-                <Header variant={'default'} title={loading ? '' : title} />
+                <Header variant={loading ? 'default' : 'not_main'} title={loading ? '' : title} />
                 <Stack
                     direction={'column'}
                     spacing={5}
