@@ -107,7 +107,10 @@ const english = {
     acces: 'This gives you access to the course.',
     deadlines_on: 'Deadlines on',
     email: 'email',
-    copy_invite: 'Copy invitation link'
+    copy_invite: 'Copy invitation link',
+    noGroup: "You don't seem to be in a group yet.",
+    contactTeacher: 'Please contact your teacher.',
+    chooseGroup: 'Join a group before submitting.',
 }
 
 export default english

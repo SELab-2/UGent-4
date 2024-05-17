@@ -24,6 +24,7 @@ import { Project } from '../scoresPage/ProjectScoresPage.tsx'
 import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
 import dayjs from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
+import WarningPopup from '../../components/WarningPopup.tsx'
 
 // group interface
 export interface Group {
@@ -64,6 +65,20 @@ export function AssignmentPage() {
     //state for loading the page
     const [loading, setLoading] = useState(true)
     const [userLoading, setUserLoading] = useState(true)
+
+    // state for the warning popup
+    const [openNoGroup, setOpenNoGroup] = useState(false)
+
+    // Function to handle the error when the user has no group
+    function handleNoGroupError() {
+        if (assignment?.student_groep) {
+            navigate(
+                `/course/${courseId}/assignment/${assignmentId}/groups/choose`
+            )
+        } else {
+            setOpenNoGroup(false)
+        }
+    }
 
     useEffect(() => {
         async function fetchData() {
@@ -115,6 +130,7 @@ export function AssignmentPage() {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error)
+                navigate('/error')
             } finally {
                 setLoading(false)
             }
@@ -205,6 +221,7 @@ export function AssignmentPage() {
     }
 
     // Function to upload submission file
+    // check for failures and open popup if no group
     const uploadIndiening = async () => {
         if (submissionFile) {
             const config = {
@@ -231,6 +248,7 @@ export function AssignmentPage() {
                         })
                     setSubmissionFile(undefined)
                 } else {
+                    setOpenNoGroup(true)
                     console.error(
                         'Group not found for assingmentId: ',
                         assignmentId
@@ -537,6 +555,7 @@ export function AssignmentPage() {
                             </Stack>
                         </>
                     ) : (
+                        // Rendering UI for student
                         <>
                             <Header
                                 variant={'not_main'}
@@ -940,6 +959,19 @@ export function AssignmentPage() {
                                     </Stack>
                                 </Box>
                             </Stack>
+                            <WarningPopup
+                                title={t('error')}
+                                content={
+                                    t('noGroup') +
+                                    (assignment?.student_groep
+                                        ? t('chooseGroup')
+                                        : t('contactTeacher'))
+                                }
+                                buttonName={'Ok'}
+                                open={openNoGroup}
+                                handleClose={() => setOpenNoGroup(false)}
+                                doAction={handleNoGroupError}
+                            />
                         </>
                     )}
                 </>
