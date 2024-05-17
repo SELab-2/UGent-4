@@ -15,11 +15,12 @@ import {
     Select,
     TextField,
 } from '@mui/material'
-import { t } from 'i18next'
+import { t, use } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import RestrictionsTemplateUI from './RestrictionTemplateUI.tsx'
+import instance from '../../axiosConfig.ts'
 
 interface RestrictionsDialogProps {
     restrictions: restriction[]
@@ -30,6 +31,12 @@ interface RestrictionsDialogProps {
 enum restrictionExtension {
     Shell = '.sh',
     Python = '.py',
+}
+
+export interface Template {
+    template_id: number
+    user: number
+    bestand: number
 }
 
 const code = `
@@ -126,6 +133,24 @@ export default function RestrictionsDialog({
         setOpenTemplateInterface(true)
     }
 
+    const handleSaveTemplate = async (filename: string, 
+                                        fileExtension: restrictionExtension, 
+                                        code: string, 
+                                        templateMetaData: Template) => {
+        var file = new File([code], 
+                            `${filename}.${fileExtension}`, 
+                            {type: "text/plain"});
+        try {
+            await instance.put(`/templates/${templateMetaData.template_id}/`, {
+                template_id: templateMetaData.template_id,
+                user: templateMetaData.user,
+                bestand: file,
+            })
+        } catch (error) {
+            console.error('Error updating data:', error)
+        }
+    }
+
     // Buttons array for the vertical button group
     const buttons = [
         <Button id='upload' key="Upload" component={'label'}>
@@ -143,7 +168,31 @@ export default function RestrictionsDialog({
         </Button>,
     ]
 
-    const templates = [
+    React.useEffect(() => {
+        let templates: Template[] = []
+        async function fetchData() {
+            
+            try {
+                const response =
+                    await instance.get<Template[]>('/vakken/?in=true')
+                templates = response.data
+                
+                
+            } catch (error) {
+                console.error('Error fetching data:', error)
+            }
+        }
+
+        fetchData().catch((e) => {
+            console.error(e)
+        })
+        console.log("templates:")
+        console.log(templates)
+        console.log("----------")
+        
+    }, [])
+
+    const templateButtons = [
         <Button
             id='fileExtensionCheck'
             key="FileExtensionCheck"
@@ -219,7 +268,7 @@ export default function RestrictionsDialog({
                     variant={'outlined'}
                     color={'primary'}
                 >
-                    {templates}
+                    {templateButtons}
                 </ButtonGroup>
             </Box>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
@@ -347,7 +396,7 @@ export default function RestrictionsDialog({
                                 <Button
                                     autoFocus
                                     color="inherit"
-                                    onClick={() => setPopupOpen(true)}
+                                    onClick={() => handleSaveTemplate(restrictionName, restrictionType, textFieldContent, {template_id: 1, user: 1, bestand: 0})} // bestand if maakt niet uit, wordt toch niet gebruikt
                                 >
                                     save template
                                 </Button>
