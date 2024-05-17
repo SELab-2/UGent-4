@@ -967,7 +967,11 @@ export function AssignmentPage() {
                                         ? t('chooseGroup')
                                         : t('contactTeacher'))
                                 }
-                                buttonName={'Ok'}
+                                buttonName={
+                                    assignment?.student_groep
+                                        ? t('join')
+                                        : t('ok')
+                                }
                                 open={openNoGroup}
                                 handleClose={() => setOpenNoGroup(false)}
                                 doAction={handleNoGroupError}
