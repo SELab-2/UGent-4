@@ -1,8 +1,6 @@
 import { Button } from './CustomComponents'
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { t } from 'i18next'
-import Switch from '@mui/material/Switch'
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 interface GroupAccessComponentProps {
@@ -20,16 +18,11 @@ export function GroupAccessComponent({
     courseid,
 }: GroupAccessComponentProps) {
     const navigate = useNavigate()
-    const [allowGroups, setAllowGroups] = useState(false)
 
     // Handle click event to navigate to the groups page
     const handleClick = () => {
         navigate(`/course/${courseid}/assignment/${assignmentid}/groups`)
     }
-
-    useEffect(() => {
-        //set max group size to 1 if groups are not allowed and register all students to a group of their own
-    }, [allowGroups])
 
     return (
         <>
@@ -42,20 +35,7 @@ export function GroupAccessComponent({
                 marginBottom={2}
             >
                 {/* Button to navigate to groups page */}
-                {allowGroups ? (
-                    <Button onClick={handleClick}>{t('groups')}</Button>
-                ) : (
-                    // Show text indicating groups are not allowed
-                    <Typography color={'text.primary'} variant={'body1'}>
-                        {t('groups')}
-                    </Typography>
-                )}
-                {/* Switch to toggle group access */}
-                <Switch
-                    checked={allowGroups}
-                    onChange={() => setAllowGroups(!allowGroups)}
-                    color={'primary'}
-                />
+                <Button onClick={handleClick}>{t('groups')}</Button>
             </Box>
         </>
     )
