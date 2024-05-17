@@ -27,8 +27,7 @@ from .views.indiening import (
     indiening_list,
     indiening_detail,
     indiening_detail_download_bestand,
-    indiening_detail_download_artefacten
-
+    indiening_detail_download_artefacten,
 )
 from .views.score import score_list, score_detail
 from .views.groep import groep_list, groep_detail
@@ -84,7 +83,7 @@ urlpatterns = [
         name="restrictie_detail_download_script",
     ),
     path("api/templates/", template_list, name="template_list"),
-    path("api/templates/<int:id>/", template_detail, name="template_detail")
+    path("api/templates/<int:id>/", template_detail, name="template_detail"),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

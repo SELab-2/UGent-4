@@ -4,12 +4,13 @@ import requests
 import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
-import ssl  
+import ssl
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
 
-smtp_server_address = 'smtp.gmail.com'
+smtp_server_address = "smtp.gmail.com"
 smtp_port = 465
 mail_username = os.environ.get("MAIL_USERNAME")
 mail_app_password = os.environ.get("MAIL_APP_PASSWORD")
@@ -17,7 +18,7 @@ mail_app_password = os.environ.get("MAIL_APP_PASSWORD")
 indiening_status = {
     -1: "heeft niet alle testen geslaagd.",
     0: "wordt nog getest...",
-    1: "heeft alle testen geslaagd!"
+    1: "heeft alle testen geslaagd!",
 }
 
 
@@ -119,8 +120,9 @@ def send_indiening_confirmation_mail(indiening):
     project = indiening.groep.project
 
     project_url = f"https://sel2-4.ugent.be/course/{project.vak.vak_id}/assignment/{project.project_id}"
-    indiening_url = f"https://sel2-4.ugent.be/course/{project.vak.vak_id}/assignment/{project.project_id}/submission/{indiening.indiening_id}"
-    
+    indiening_url = f"https://sel2-4.ugent.be/course/{project.vak.vak_id}/assignment/ \
+        {project.project_id}/submission/{indiening.indiening_id}"
+
     for student in indiening.groep.studenten.all():
         subject = "Indieningsontvangst"
 
@@ -131,7 +133,7 @@ def send_indiening_confirmation_mail(indiening):
 
         plain_text = f"""
         Beste {student.user.first_name} {student.user.last_name},
-        
+
         Dit is een bevestiging dat uw indiening voor het project {project.titel} is ontvangen.
         De indiening {indiening_status[indiening.status]}.
         """
@@ -140,7 +142,8 @@ def send_indiening_confirmation_mail(indiening):
         <html>
         <body>
         <p>Beste {student.user.first_name} {student.user.last_name}</p>
-        <p>Dit is een bevestiging dat uw indiening voor het project <a href="{project_url}">{project.titel}</a> is ontvangen.</p>
+        <p>Dit is een bevestiging dat uw indiening voor het project \
+            <a href="{project_url}">{project.titel}</a> is ontvangen.</p>
         <p>De <a href="{indiening_url}">indiening</a> {indiening_status[indiening.status]}</p>
         </body>
         </html>
@@ -150,6 +153,8 @@ def send_indiening_confirmation_mail(indiening):
         email.attach(MIMEText(html_text, "html"))
 
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL(smtp_server_address, smtp_port, context=context) as smtp_server:
+        with smtplib.SMTP_SSL(
+            smtp_server_address, smtp_port, context=context
+        ) as smtp_server:
             smtp_server.login(mail_username, mail_app_password)
             smtp_server.sendmail(mail_username, student.user.email, email.as_string())

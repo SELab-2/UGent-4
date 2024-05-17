@@ -17,6 +17,7 @@ STATUS_CHOICES = (
     (1, "OK"),
 )
 
+
 def upload_to(instance, filename):
     """
     Functie om het pad te genereren waar het bestand wordt opgeslagen.
@@ -70,17 +71,17 @@ class Indiening(models.Model):
         if not self.indiening_id:
             super(Indiening, self).save(*args, **kwargs)
 
-
         # Update the bestand path if it's still using the temporary path
-        if 'temp' in self.bestand.name:
+        if "temp" in self.bestand.name:
             old_file = self.bestand
-            new_path = self.bestand.name.replace("temp", f"indiening_{self.indiening_id}")
+            new_path = self.bestand.name.replace(
+                "temp", f"indiening_{self.indiening_id}"
+            )
             default_storage.save(new_path, ContentFile(old_file.read()))
             old_file.storage.delete(old_file.name)
             self.bestand.name = new_path
 
         super(Indiening, self).save(*args, **kwargs)
-
 
 
 def run_tests_async(instance):

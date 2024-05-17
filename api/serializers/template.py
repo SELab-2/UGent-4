@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models.template import Template
 
+
 class TemplateSerializer(serializers.ModelSerializer):
     """
     Serializer voor het serialiseren en deserialiseren van IndieningBestand objecten.

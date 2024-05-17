@@ -16,9 +16,7 @@ def upload_to(instance, filename):
     return f"data/templates/gebruiker_{instance.gebruiker.user.id}/{filename}"
 
 
-
 class Template(models.Model):
-
 
     template_id = models.AutoField(primary_key=True)
     user = models.ForeignKey(

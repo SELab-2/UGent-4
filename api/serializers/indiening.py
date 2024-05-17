@@ -2,7 +2,6 @@ from rest_framework import serializers
 from api.models.indiening import Indiening
 
 
-
 class IndieningSerializer(serializers.ModelSerializer):
     """
     Serializer voor het serialiseren en deserialiseren van Indiening objecten.
@@ -12,7 +11,6 @@ class IndieningSerializer(serializers.ModelSerializer):
         Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer. Hier worden alle velden opgenomen.
 
     """
-
 
     class Meta:
         model = Indiening

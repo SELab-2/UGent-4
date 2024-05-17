@@ -34,7 +34,7 @@ def template_list(request, format=None):
                     templates = templates.filter(user=user)
                 except NameError:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
-                
+
             serializer = TemplateSerializer(templates, many=True)
             return Response(serializer.data)
 
@@ -66,8 +66,6 @@ def template_detail(request, id, format=None):
     except Template.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-
-
     if has_permissions(request.user):
         if request.method == "GET":
             serializer = TemplateSerializer(template)
@@ -76,7 +74,9 @@ def template_detail(request, id, format=None):
             if request.method == "PUT":
                 serializer = TemplateSerializer(template, data=request.data)
             else:
-                serializer = TemplateSerializer(template, data=request.data, partial=True)
+                serializer = TemplateSerializer(
+                    template, data=request.data, partial=True
+                )
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data)
