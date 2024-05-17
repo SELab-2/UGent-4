@@ -155,7 +155,6 @@ function UploadPart(
     file: File | undefined,
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
-    email: string,
     handleAdd: () => void,
     str: string
 ) {
@@ -168,7 +167,7 @@ function UploadPart(
                             {/* This box allows you to add extra people by their email. */}
                             <TextField
                                 type="text"
-                                placeholder={t('studentnumber')}
+                                placeholder={t('email')}
                                 onChange={(event) =>
                                     setEmail(event.target.value)
                                 }
@@ -475,16 +474,6 @@ export function AddChangeSubjectPage() {
     useEffect(() => {
         async function fetchData() {
             setLoading(true)
-            setUserLoaded(false)
-            await instance
-                .get('/gebruikers/me/')
-                .then((res) => {
-                    setUser(res.data)
-                    setUserLoaded(true)
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
             await instance
                 .get('vakken/' + vakID)
                 .then(async (res) => {
@@ -644,7 +633,6 @@ export function AddChangeSubjectPage() {
                             studentFile,
                             handleStudentFileChange,
                             setEmailStudent,
-                            emailStudent,
                             handleAddStudent,
                             t('upload_students')
                         )}
@@ -685,7 +673,6 @@ export function AddChangeSubjectPage() {
                             teacherFile,
                             handleTeacherFileChange,
                             setEmailTeacher,
-                            emailTeacher,
                             handleAddTeacher,
                             t('upload_teachers')
                         )}

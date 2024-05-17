@@ -575,39 +575,6 @@ export function AddChangeAssignmentPage() {
                                     variant={'text'}
                                     width={200}
                                     height={60}
-                            <LocalizationProvider  
-                                dateAdapter={AdapterDayjs}
-                                adapterLocale="nl"
-                            >
-                                <DateTimePicker
-                                    format="DD/MM/YYYY HH:mm"
-                                    value={dueDate}
-                                    disablePast
-                                    label={t('optional')}
-                                    sx={{ width: 250 }}
-                                    viewRenderers={{
-                                        hours: renderTimeViewClock,
-                                        minutes: renderTimeViewClock,
-                                        seconds: renderTimeViewClock,
-                                    }}
-                                    onError={(newError) =>
-                                        SetDeadlineError(newError)
-                                    }
-                                    slotProps={{
-                                        field: {
-                                            clearable: true,
-                                            onClear: () => setCleared(true),
-                                        },
-                                        textField: {
-                                            helperText: errorMessage,
-                                            inputProps: {
-                                                id: 'deadlineField',
-                                            },
-                                        },
-                                    }}
-                                    onChange={(newValue) =>
-                                        setDueDate(newValue)
-                                    }
                                 />
                             ) : (
                                 <LocalizationProvider
@@ -664,39 +631,6 @@ export function AddChangeAssignmentPage() {
                                     variant={'text'}
                                     width={200}
                                     height={60}
-                            <LocalizationProvider
-                                dateAdapter={AdapterDayjs}
-                                adapterLocale="nl"
-                            >
-                                <DateTimePicker
-                                    format="DD/MM/YYYY HH:mm"
-                                    value={extraDueDate}
-                                    disablePast
-                                    label={t('optional')}
-                                    sx={{ width: 250 }}
-                                    viewRenderers={{
-                                        hours: renderTimeViewClock,
-                                        minutes: renderTimeViewClock,
-                                        seconds: renderTimeViewClock,
-                                    }}
-                                    slotProps={{
-                                        field: {
-                                            clearable: true,
-                                            onClear: () => setCleared(true),
-                                        },
-                                        textField: {
-                                            error: deadlineCheckError,
-                                            helperText: deadlineCheckError
-                                                ? t('deadlineCheck')
-                                                : '',
-                                            inputProps: {
-                                                id: 'extraDeadlineField',
-                                            },
-                                        },
-                                    }}
-                                    onChange={(newValue) =>
-                                        setExtraDueDate(newValue)
-                                    }
                                 />
                             ) : (
                                 <LocalizationProvider
@@ -925,7 +859,7 @@ export function AddChangeAssignmentPage() {
                                     fontWeight={'bold'}
                                     color={'text.primary'}
                                 >
-                                    Max Score:
+                                    Max Score
                                 </Typography>
                                 {loading ? (
                                     <Skeleton

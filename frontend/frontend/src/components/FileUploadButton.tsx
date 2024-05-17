@@ -68,7 +68,6 @@ export default function InputFileUpload({
                         variant={'contained'}
                         color={'secondary'}
                         size={'small'}
-                        startIcon={<UploadFileIcon color={'info'} />}
                         disableElevation
                         component="label"
                         role={undefined}

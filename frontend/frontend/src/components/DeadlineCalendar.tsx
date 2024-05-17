@@ -5,7 +5,7 @@ import {
     PickersDayProps,
 } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
-import { Badge, SxProps, Stack, Typography, Box, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
+import { Badge, SxProps, Stack, Typography, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useNavigate } from 'react-router-dom'
