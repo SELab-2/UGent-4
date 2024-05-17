@@ -141,7 +141,7 @@ export default function RestrictionsDialog({
                             `${filename}.${fileExtension}`, 
                             {type: "text/plain"});
         try {
-            await instance.put(`/templates/${templateMetaData.template_id}/`, {
+            await instance.post(`/templates/`, {
                 template_id: templateMetaData.template_id,
                 user: templateMetaData.user,
                 bestand: file,
