@@ -2,16 +2,15 @@ import { Header } from '../../components/Header.tsx'
 import { useParams } from 'react-router-dom'
 import { t } from 'i18next'
 import { useEffect, useState } from 'react'
+import { Button, Card, Divider } from '../../components/CustomComponents.tsx'
+import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
 import {
     Box,
-    Button,
-    Card,
     CircularProgress,
-    Divider,
     ListItem,
-    Paper,
     Skeleton,
     Typography,
+    Stack,
 } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -20,6 +19,7 @@ import Grid2 from '@mui/material/Unstable_Grid2'
 import instance from '../../axiosConfig.ts'
 import { getAssignment } from '../addChangeAssignmentPage/AddChangeAssignmentPage.tsx'
 import ErrorPage from '../ErrorPage.tsx'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 /**
  * Page for viewing a specific submission
@@ -69,9 +69,18 @@ export function SubmissionPage() {
     const [project, setProject] = useState<getAssignment>()
     const [restrictions, setRestrictions] = useState<Restriction[]>([])
     const [fetchError, setFetchError] = useState(false)
+    const [students, setStudents] = useState<User[]>([])
+    const [user, setUser] = useState({
+        user: 0,
+        is_lesgever: false,
+        first_name: '',
+        last_name: '',
+        email: '',
+    })
 
     //state to manage proper loading
     const [loading, setLoading] = useState(true)
+    const [studentsLoading, setStudentsLoading] = useState(true)
 
     // Function to download an artifact
     const downloadArtifacts = () => {
@@ -148,6 +157,9 @@ export function SubmissionPage() {
                     '/indieningen/' + submissionId + '/'
                 )
                 setSubmission(submission.data)
+                // Get the current user
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
             } catch (err) {
                 console.error(err)
                 setFetchError(true)
@@ -184,6 +196,32 @@ export function SubmissionPage() {
         return () => clearInterval(intervalId)
     }, [submissionId])
 
+    useEffect(() => {
+        async function fetchStudents() {
+            setStudentsLoading(true);
+            const groupId = submission?.groep
+            const groupResponse = await instance.get(`groepen/${groupId}`)
+            const temp_students = [];
+            for (const s of groupResponse.data.studenten || []) {
+                try {
+                    const userResponse = await instance.get(`/gebruikers/${s}/`);
+                    temp_students.push(userResponse.data);
+                } catch (error) {
+                    console.error('Error fetching student data:', error);
+                    setFetchError(true);
+                }
+            }
+            // Update the state with the fetched data
+            setStudents(temp_students);
+            setStudentsLoading(false);
+        }
+    
+        // Fetch students
+        fetchStudents().catch((error) =>
+            console.error('Error fetching students data:', error)
+        );
+    }, [submission]);
+
     if (fetchError) {
         return <ErrorPage />
     }
@@ -208,77 +246,73 @@ export function SubmissionPage() {
                         gap: 2,
                         overflowY: 'auto',
                         padding: 2,
+                        position: 'relative'
                     }}
                 >
-                    <Paper
-                        // Shows the deadline of the submission's project
-                        aria-label={'deadline'}
-                        elevation={1}
-                        sx={{
-                            backgroundColor: 'background.default',
-                            padding: 1,
-                            minWidth: 100,
-                            maxWidth: 250,
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            gap: 2,
-                        }}
-                    >
-                        <Typography variant={'h6'} fontWeight={'bold'}>
-                            Deadline:
-                        </Typography>
-                        {loading ? (
-                            <Skeleton variant={'text'} width={120} />
-                        ) : (
-                            <Typography variant={'body1'}>
-                                {project?.deadline
-                                    ? dayjs(project.deadline).format(
-                                          'DD/MM/YYYY HH:mm'
-                                      )
-                                    : 'error'}
-                            </Typography>
-                        )}
-                    </Paper>
-                    <Card
-                        // This card shows the assignment description.
+                    <Box
                         aria-label={'assignment-box'}
                         sx={{
-                            width: '98%',
-                            backgroundColor: 'background.default',
-                            padding: 1,
-                            paddingBottom: 3,
+                            padding: '20px',
                         }}
                     >
-                        <Typography
-                            variant={'h6'}
-                            fontWeight={'bold'}
-                            aria-label={'title'}
-                        >
-                            {t('assignment')}
+                        <Stack direction={'column'}>
+                            <Typography
+                                variant={'h5'}
+                                color={'text.primary'}
+                                aria-label={'title'}
+                                sx={{
+                                    fontWeight: 'bold',
+                                }}
+                            >
+                                {t('assignment')}
+                            </Typography>
+                            <Typography color={'text.primary'}>
+                                {project?.beschrijving}
+                            </Typography>
+                        </Stack>
+                    </Box>
+                    <Box
+                        sx={{
+                            position: 'absolute',
+                            top: 90,
+                            right: 50,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            zIndex: 1,
+                            marginTop: '-40px',
+                        }}
+                    >
+                        {project?.max_groep_grootte === 1 ? (
+                            <Typography variant="body1">{user.first_name + ' ' + user.last_name}</Typography>
+                        ) : (
+                            <StudentPopUp
+                                students={studentsLoading ? [] : students}
+                                text="group_members"
+                            />
+                        )}
+                    </Box>
+                    <Box
+                        aria-label={'deadline'}
+                        sx={{
+                            padding: '20px',
+                        }}
+                    >
+                        <Typography variant={'h5'} color="text.primary">
+                            <strong>Deadline </strong>
+                            {project?.deadline
+                                ? dayjs(project.deadline).format(
+                                      'DD/MM/YYYY HH:mm'
+                                  )
+                                : 'error'}
                         </Typography>
-                        <Box
-                            maxHeight={'25vh'}
-                            sx={{ padding: 3, overflowY: 'auto' }}
-                        >
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={'100%'}
-                                    height={60}
-                                />
-                            ) : (
-                                <Typography>{project?.beschrijving}</Typography>
-                            )}
-                        </Box>
-                    </Card>
+                    </Box>
                     <Box
                         // This box shows the filename of the submission and
                         // allows the user to download the submission.
                         aria-label={'file-box'}
                         color={'text.primary'}
                         sx={{
-                            padding: 1,
+                            padding: '20px',
                             display: 'flex',
                             flexDirection: 'row',
                             alignItems: 'center',
@@ -287,7 +321,7 @@ export function SubmissionPage() {
                         }}
                     >
                         <Typography
-                            variant={'h6'}
+                            variant={'h5'}
                             fontWeight={'bold'}
                             aria-label={'title'}
                             margin={0}
@@ -295,6 +329,7 @@ export function SubmissionPage() {
                             {t('filename')}
                         </Typography>
                         <Button
+                            id='downloadButton'
                             startIcon={<DownloadIcon />}
                             onClick={downloadSubmission}
                         >
@@ -320,13 +355,12 @@ export function SubmissionPage() {
                         // This card shows the restrictions for the submission.
                         aria-label={'restrictions'}
                         sx={{
-                            padding: 1,
-                            backgroundColor: 'background.default',
+                            padding: '20px',
                             maxWidth: '60%',
                             height: '20vh',
                         }}
                     >
-                        <Typography variant={'h6'} fontWeight={'bold'}>
+                        <Typography variant={'h5'} fontWeight={'bold'}>
                             {t('restrictions')}
                         </Typography>
                         <Box sx={{ padding: 1 }}>
@@ -423,7 +457,6 @@ export function SubmissionPage() {
                         // This box shows the status and result of the submission.
                         aria-label={'result-box'}
                         sx={{
-                            padding: 1,
                             display: 'flex',
                             flexDirection: 'column',
                             backgroundColor: 'background.default',
@@ -435,7 +468,7 @@ export function SubmissionPage() {
                             // This box shows the status of the submission.
                             aria-label={'status-box'}
                             sx={{
-                                padding: 1,
+                                padding: '20px',
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
@@ -444,7 +477,7 @@ export function SubmissionPage() {
                                 gap: 2,
                             }}
                         >
-                            <Typography variant={'h6'} fontWeight={'bold'}>
+                            <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('status') + ':'}
                             </Typography>
                             {loading ? (
@@ -469,14 +502,13 @@ export function SubmissionPage() {
                             // This card shows the result of the submission.
                             aria-label={'result-box'}
                             sx={{
-                                padding: 1,
-                                backgroundColor: 'background.default',
+                                padding: '20px',
                                 color: 'text.primary',
                                 gap: 2,
                                 maxHeight: '15vh',
                             }}
                         >
-                            <Typography variant={'h6'} fontWeight={'bold'}>
+                            <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('result')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>

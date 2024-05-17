@@ -1,7 +1,7 @@
 import { Header } from '../../components/Header'
+import { Button, Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Button,
     CircularProgress,
     IconButton,
     Skeleton,
@@ -292,13 +292,10 @@ export function ProjectScoresPage() {
                     title={loading ? '' : project?.titel + ': Scores'}
                 />
                 {/* Main content box */}
-                <Box
+
+                <Card
                     sx={{
-                        width: '100%',
-                        height: '70%',
-                        marginTop: 10,
-                        boxShadow: 3,
-                        borderRadius: 3,
+                        marginTop: 12,
                     }}
                 >
                     {/* Render StudentsView component if project is defined */}
@@ -322,45 +319,48 @@ export function ProjectScoresPage() {
                             )}
                         </>
                     )}
-                </Box>
+                </Card>
                 {/* Footer section with action buttons */}
                 <Box
                     display="flex"
                     flexDirection="row"
-                    sx={{ width: '100%', height: '30%', marginTop: 5 }}
+                    sx={{
+                        marginTop: -4,
+                    }}
                 >
                     <Box
                         display="flex"
                         flexDirection="row"
-                        sx={{ width: '50%', height: 'auto', gap: 2 }}
+                        padding={'3px'}
+                        sx={{ width: '50%', height: 'auto' }}
                     >
-                        <Button
-                            onClick={exportSubmissions}
-                            variant="contained"
-                            color="secondary"
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            spacing={2}
+                            marginY={6}
                         >
-                            {t('export_submissions')}
-                        </Button>
+                            <Button onClick={exportSubmissions}>
+                                {t('export_submissions')}
+                            </Button>
 
-                        <Button
-                            variant={'contained'}
-                            color={'secondary'}
-                            component="label"
-                        >
-                            {t('upload_scores')}
-                            <VisuallyHiddenInput
-                                type="file"
-                                value={undefined}
-                                accept={['.csv'].join(',')}
-                                multiple={false}
-                                onChange={uploadScores}
-                            />
-                        </Button>
+                            <Button variant={'contained'}>
+                                {t('upload_scores')}
+                                <VisuallyHiddenInput
+                                    type="file"
+                                    value={undefined}
+                                    accept={['.csv'].join(',')}
+                                    multiple={false}
+                                    onChange={uploadScores}
+                                />
+                            </Button>
+                        </Stack>
                     </Box>
                     <Box
                         display="flex"
                         flexDirection="row-reverse"
-                        sx={{ width: '50%', height: 'auto', gap: 2 }}
+                        padding={'3px'}
+                        sx={{ width: '50%', height: 'auto' }}
                     >
                         {loading ? (
                             <Skeleton

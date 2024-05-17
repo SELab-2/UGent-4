@@ -1,6 +1,6 @@
+import { Card } from '../../components/CustomComponents.tsx'
 import {
     Box,
-    Card,
     CircularProgress,
     IconButton,
     ListItem,
@@ -184,16 +184,13 @@ export function AddChangeAssignmentPage() {
                     setVisible(assignment.zichtbaar)
                     if (assignment.deadline !== null) {
                         setDueDate(
-                            dayjs(assignment.deadline, 'YYYY-MM-DDTHH:mm:ss')
+                            dayjs(assignment.deadline)
                         )
                         console.log('deadline' + assignment.deadline)
                     }
                     if (assignment.extra_deadline !== null) {
                         setExtraDueDate(
-                            dayjs(
-                                assignment.extra_deadline,
-                                'YYYY-MM-DDTHH:mm:ss'
-                            )
+                            dayjs(assignment.extra_deadline)
                         )
                         console.log(
                             'extra deadline' + assignment.extra_deadline
@@ -484,7 +481,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* Here the user gets to specify the assignment name */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -515,6 +512,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                         {/* File Upload button */}
                         <Box
+                            id='uploadButton'
                             padding={0}
                             marginRight={3}
                             display={'flex'}
@@ -546,6 +544,7 @@ export function AddChangeAssignmentPage() {
                     There is both the normal deadline, 
                     and an extra deadline in case people need more time. */}
                     <Box
+                        data-test-id="deadline-id"
                         aria-label={'deadline'}
                         padding={2}
                         display={'flex'}
@@ -565,7 +564,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* This section renders the normal deadline. */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -621,7 +620,7 @@ export function AddChangeAssignmentPage() {
                         >
                             {/* This section renders the extra deadline. */}
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -670,18 +669,14 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                     {/* Description section */}
-                    <Card
-                        aria-label={'description'}
-                        elevation={1}
-                        sx={{ backgroundColor: 'background.default' }}
-                    >
+                    <Card aria-label={'description'}>
                         <Box
                             padding={2}
                             maxHeight={'20svh'}
                             minHeight={'20svh'}
                         >
                             <Typography
-                                variant={'h6'}
+                                variant={'h5'}
                                 color={'text.primary'}
                                 fontWeight={'bold'}
                             >
@@ -736,7 +731,7 @@ export function AddChangeAssignmentPage() {
                                 height: '28svh',
                             }}
                         >
-                            <Typography variant={'h6'} fontWeight={'bold'}>
+                            <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('restrictions')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>
@@ -821,6 +816,7 @@ export function AddChangeAssignmentPage() {
                                     <IconButton
                                         // Allows the teacher to select whether
                                         // the assignment is visible to students or not.
+                                        id='visibilityOn'
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -828,6 +824,7 @@ export function AddChangeAssignmentPage() {
                                     </IconButton>
                                 ) : (
                                     <IconButton
+                                        id='visibilityOff'
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -838,6 +835,7 @@ export function AddChangeAssignmentPage() {
                                 )}
                                 <Tooltip title={t('remove')}>
                                     <IconButton
+                                        id='delete'
                                         color={'warning'}
                                         onClick={openDeleteConfirmation}
                                     >
@@ -857,6 +855,7 @@ export function AddChangeAssignmentPage() {
                                 alignItems={'center'}
                             >
                                 <Typography
+                                    id='maxScore'
                                     fontWeight={'bold'}
                                     color={'text.primary'}
                                 >
@@ -921,6 +920,7 @@ export function AddChangeAssignmentPage() {
                             </Tooltip>
                             <Tooltip title={t('submit')}>
                                 <IconButton
+                                    id='submit'
                                     type="submit"
                                     aria-label={'submit'}
                                     sx={{

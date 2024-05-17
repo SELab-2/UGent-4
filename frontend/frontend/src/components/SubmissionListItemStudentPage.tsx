@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
 
 interface SubmissionListItemStudentPageProps {
-    id: string
+    realId: string
+    visualId: string
     timestamp?: string
     status: boolean
     assignment_id: string
@@ -27,7 +28,8 @@ interface SubmissionListItemStudentPageProps {
  */
 
 export function SubmissionListItemStudentPage({
-    id,
+    realId,
+    visualId,
     timestamp,
     status,
     assignment_id,
@@ -38,16 +40,16 @@ export function SubmissionListItemStudentPage({
     // Function to handle submission click event
     const handleSubmissionClick = () => {
         console.log('Submission clicked')
-        if (id) {
+        if (realId) {
             navigate(
-                `/course/${course_id}/assignment/${assignment_id}/submission/${id}`
+                `/course/${course_id}/assignment/${assignment_id}/submission/${realId}`
             )
         }
     }
 
     return (
         <>
-            <ListItem key={id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem key={realId} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: '100%',
@@ -55,7 +57,7 @@ export function SubmissionListItemStudentPage({
                         display: 'flex',
                         flexDirection: 'row',
                         justifyContent: 'space-between',
-                        paddingX: 1,
+                        paddingX: 5,
                         paddingY: 3,
                         borderRadius: 2,
                     }}
@@ -63,6 +65,7 @@ export function SubmissionListItemStudentPage({
                 >
                     {/* Display submission id */}
                     <ListItemText
+                        id='submissionId'
                         sx={{
                             maxWidth: 110,
                             color: 'primary.main',
@@ -70,21 +73,22 @@ export function SubmissionListItemStudentPage({
                                 color: 'primary.light',
                             },
                         }}
-                        primary={id}
+                        primary={visualId}
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
+                        id='submissionTimestamp'
                         sx={{ maxWidth: 150 }}
                         primary={timestamp ? timestamp : t('time')}
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
                         {status ? (
-                            <CheckCircleOutlineIcon
+                            <CheckCircleOutlineIcon id='check'
                                 sx={{ color: 'success.main' }}
                             />
                         ) : (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
+                            <HighlightOffIcon id='cross' sx={{ color: 'error.main' }} />
                         )}
                     </ListItemIcon>
                 </ListItemButton>

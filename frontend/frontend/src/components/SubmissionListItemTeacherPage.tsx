@@ -1,8 +1,8 @@
 import {
     ListItem,
-    ListItemText,
-    ListItemIcon,
     ListItemButton,
+    ListItemIcon,
+    ListItemText,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -11,9 +11,11 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff'
 import { useEffect, useState } from 'react'
 import instance from '../axiosConfig'
 import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
+import { t } from 'i18next'
 import dayjs from 'dayjs'
 
 interface SubmissionListItemTeacherPageProps {
+    relative_group_id: string
     group_id: string
     assignment_id: string
     course_id: string
@@ -30,6 +32,7 @@ export interface Score {
  * @param {SubmissionListItemTeacherPageProps} props - Props for SubmissionListItemTeacherPage component
  */
 export function SubmissionListItemTeacherPage({
+    relative_group_id,
     group_id,
     assignment_id,
     course_id,
@@ -122,15 +125,12 @@ export function SubmissionListItemTeacherPage({
 
     return (
         <>
-            <ListItem id={group_id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={`submission${group_id}`} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
                     sx={{
                         width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 1,
+                        height: 40,
+                        paddingX: 4,
                         paddingY: 3,
                         borderRadius: 2,
                     }}
@@ -138,18 +138,19 @@ export function SubmissionListItemTeacherPage({
                 >
                     {/* Display group id */}
                     <ListItemText
+                        id='submissionId'
                         sx={{
-                            maxWidth: 10,
+                            maxWidth: '24%',
                             color: 'primary.main',
                             '&:hover': {
                                 color: 'primary.light',
                             },
                         }}
-                        primary={group_id}
+                        primary={relative_group_id}
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
-                        sx={{ maxWidth: 150 }}
+                        sx={{ minWidth: '24%' }}
                         primary={
                             submitted
                                 ? dayjs(submitted.tijdstip).format(
@@ -160,36 +161,66 @@ export function SubmissionListItemTeacherPage({
                     />
                     {/* Display score */}
                     <ListItemText
-                        sx={{ maxWidth: 50 }}
-                        primary={score ? `${Number(score.score)}` + '/20' : '-'}
+                        sx={{ minWidth: '24%' }}
+                        primary={
+                            score
+                                ? `${Number(score.score)}` + '/20'
+                                : t('no_score_yet')
+                        }
                     />
                     {/* Display submission status icon */}
                     <ListItemIcon sx={{ minWidth: 35 }}>
-                        {submitted?.status ? (
+                        {!submitted?.status ? (
                             <HighlightOffIcon sx={{ color: 'error.main' }} />
                         ) : (
                             submitted !== undefined && (
                                 <CheckCircleOutlineIcon
+                                    id='check'
                                     sx={{ color: 'success.main' }}
                                 />
                             )
                         )}
                     </ListItemIcon>
                     {/* Display download icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        <div onClick={handleDownloadClick}>
+                    <ListItemText>
+                        <ListItemIcon sx={{ minWidth: 35 }}>
+                            <div onClick={handleDownloadClick} />
                             {submitted ? (
                                 <DownloadIcon
+                                    id='downloadIconColor'
                                     sx={{
                                         color: 'primary.main',
                                         '&:hover': { color: 'primary.light' },
                                     }}
                                 />
                             ) : (
-                                <DownloadIcon sx={{ color: 'gray' }} />
+                                submitted !== undefined && (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: 'success.main' }}
+                                    />
+                                )
                             )}
-                        </div>
-                    </ListItemIcon>
+                        </ListItemIcon>
+                    </ListItemText>
+                    {/* Display download icon */}
+                    <ListItemText sx={{ maxWidth: '4%' }}>
+                        <ListItemIcon>
+                            <div onClick={handleDownloadClick}>
+                                {submitted ? (
+                                    <DownloadIcon
+                                        sx={{
+                                            color: 'primary.main',
+                                            '&:hover': {
+                                                color: 'primary.light',
+                                            },
+                                        }}
+                                    />
+                                ) : (
+                                    <DownloadIcon sx={{ color: 'gray' }} />
+                                )}
+                            </div>
+                        </ListItemIcon>
+                    </ListItemText>
                 </ListItemButton>
             </ListItem>
         </>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ChangeEvent, useState } from 'react'
-import Button from '@mui/material/Button'
+import { Button } from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -128,11 +128,12 @@ export default function RestrictionsDialog({
 
     // Buttons array for the vertical button group
     const buttons = [
-        <Button key="Upload" component={'label'}>
+        <Button id='upload' key="Upload" component={'label'}>
             Upload
             <input hidden type="file" multiple onChange={handleUploadedFiles} />
         </Button>,
         <Button
+            id='newScript'
             key="New_Script"
             onClick={() => {
                 handleClickOpenTextEditor()
@@ -144,6 +145,7 @@ export default function RestrictionsDialog({
 
     const templates = [
         <Button
+            id='fileExtensionCheck'
             key="FileExtensionCheck"
             onClick={() => {
                 setTextFieldContent(code)
@@ -157,6 +159,7 @@ export default function RestrictionsDialog({
             File Extension Check
         </Button>,
         <Button
+            id='filesPresentCheck'
             key="FilesPresentCheck"
             onClick={() => {
                 setTextFieldContent(code)
@@ -224,6 +227,7 @@ export default function RestrictionsDialog({
                     {t('must_pass') + ':'}
                 </Typography>
                 <Switch
+                    id='mustPassSwitch'
                     value={mustPass}
                     onChange={() => setMustPass(!mustPass)}
                 />

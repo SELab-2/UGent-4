@@ -26,10 +26,10 @@ export function RestrictionCard({
                 width={'100%'}
                 justifyContent={'space-between'}
             >
-                <Typography variant={'body2'}>
+                <Typography id='script' variant={'body2'}>
                     {restriction.script.replace(/^.*[\\/]/, '')}
                 </Typography>
-                <IconButton onClick={handleRemove}>
+                <IconButton id='closeButton' onClick={handleRemove}>
                     <CloseIcon />
                 </IconButton>
             </Box>

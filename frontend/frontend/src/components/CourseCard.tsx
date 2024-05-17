@@ -1,9 +1,8 @@
+import { Card, Divider } from './CustomComponents.tsx'
 import {
     Box,
-    Card,
     CardActionArea,
     CardContent,
-    Divider,
     IconButton,
     Typography,
 } from '@mui/material'
@@ -124,13 +123,12 @@ export function CourseCard({
             ) : (
                 // If course is available, show course details inside a card component
                 <Card
+                    id={`course${courseId}`}
                     elevation={1}
                     sx={{
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
                         maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
                         padding: 0,
                         margin: 1,
                     }}
@@ -139,6 +137,7 @@ export function CourseCard({
                         {/* Clickable area for the card */}
                         <CardActionArea onClick={handleCardClick}>
                             <Box
+                                id='courseInfo'
                                 aria-label={'courseHeader'}
                                 sx={{
                                     backgroundColor: 'secondary.main',
@@ -152,6 +151,7 @@ export function CourseCard({
                             >
                                 {/* Course name and teachers */}
                                 <Box
+                                
                                     width={'70%'}
                                     height={'100%'}
                                     display={'flex'}
@@ -235,7 +235,6 @@ export function CourseCard({
                         <Box
                             aria-label={'assignmentList'}
                             sx={{
-                                backgroundColor: 'background.default',
                                 height: 150,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -247,21 +246,23 @@ export function CourseCard({
                             {isStudent ? (
                                 // Display assignments for students
                                 <Box
+                                    id='student'
                                     display={'flex'}
                                     flexDirection={'row'}
                                     justifyContent={'space-between'}
                                     pl={3}
                                     pr={3}
                                 >
-                                    <Typography width={30}>Project</Typography>
-                                    <Typography width={30}>Deadline</Typography>
-                                    <Typography width={30}>Status</Typography>
+                                    <Typography id='project' width={30}>Project</Typography>
+                                    <Typography id='deadline' width={30}>Deadline</Typography>
+                                    <Typography id='status' width={30}>Status</Typography>
                                 </Box>
                             ) : (
                                 // Display assignments for teachers
                                 <>
                                     {archived ? (
                                         <Box
+                                            id='teacherArchived'
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -269,15 +270,16 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '81%', sm: '85%' }}
                                         >
-                                            <Typography maxWidth={100}>
+                                            <Typography id='project' maxWidth={100}>
                                                 Project
                                             </Typography>
-                                            <Typography minWidth={50}>
+                                            <Typography id='deadline' minWidth={50}>
                                                 Deadline
                                             </Typography>
                                         </Box>
                                     ) : (
                                         <Box
+                                            id='teacherNonArchived'
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -285,17 +287,17 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '71%', sm: '75%' }}
                                         >
-                                            <Typography maxWidth={100}>
+                                            <Typography id='project' maxWidth={100}>
                                                 Project
                                             </Typography>
-                                            <Typography minWidth={50}>
+                                            <Typography id='deadline' minWidth={50}>
                                                 Deadline
                                             </Typography>
                                         </Box>
                                     )}
                                 </>
                             )}
-                            <Divider color={'text.main'}></Divider>
+                            <Divider></Divider>
                             <Box display={'flex'} flexDirection={'row'}>
                                 {isStudent ? (
                                     // Render assignment list for students
@@ -317,7 +319,7 @@ export function CourseCard({
                                                         key={
                                                             assignment.project_id
                                                         }
-                                                        id={assignment.project_id.toString()}
+                                                        id={`project${assignment.project_id}`}
                                                         courseId={courseId}
                                                         projectName={
                                                             assignment.titel
@@ -355,7 +357,7 @@ export function CourseCard({
                                                                 key={
                                                                     assignment.project_id
                                                                 }
-                                                                id={assignment.project_id.toString()}
+                                                                id={`project${assignment.project_id}`}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -401,7 +403,7 @@ export function CourseCard({
                                                                 key={
                                                                     assignment.project_id
                                                                 }
-                                                                id={assignment.project_id.toString()}
+                                                                id={`project${assignment.project_id}`}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -440,6 +442,7 @@ export function CourseCard({
                                                 }}
                                             >
                                                 <IconButton
+                                                    id='archiveButton'
                                                     onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:

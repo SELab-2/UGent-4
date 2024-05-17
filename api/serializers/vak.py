@@ -65,6 +65,7 @@ class VakSerializer(serializers.ModelSerializer):
 
         return instance
 
+
 def add_students_to_group(instance):
     """
     Voeg studenten automatisch toe aan een projectgroep als het een individueel project is.
@@ -77,12 +78,13 @@ def add_students_to_group(instance):
         if project.student_groep or project.max_groep_grootte == 1:
             for student in instance.studenten.all():
                 try:
-                    serializer = GroepSerializer(data={"studenten": [student], "project": project.project_id})
+                    serializer = GroepSerializer(
+                        data={"studenten": [student], "project": project.project_id}
+                    )
                     if serializer.is_valid():
                         serializer.save()
                 except Exception:
                     pass
-
 
 
 def validate_students_teachers(students_data, teachers_data):
