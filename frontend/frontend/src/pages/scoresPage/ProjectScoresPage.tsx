@@ -56,16 +56,10 @@ interface Groep {
 export interface Indiening {
     indiening_id: number
     groep: number
+    bestand: File
     tijdstip: Date
     status: number
     result: string
-    indiening_bestanden: IndieningBestand[]
-}
-
-interface IndieningBestand {
-    indiening_bestand_id: number
-    indiening: number
-    bestand: string
 }
 
 interface Score {
@@ -166,36 +160,39 @@ export function ProjectScoresPage() {
         groepen
             .filter((groep) => groep.lastSubmission !== undefined)
             .map((groep) => groep.lastSubmission)
-            .forEach((submission, index) => {
+            .forEach(submission => {
                 downloadPromises.push(
-                    new Promise((resolve, reject) => {
-                        instance
-                            .get(
-                                `/indieningen/${submission?.indiening_id}/indiening_bestanden/`,
+                    new Promise(async (resolve, reject) => {
+                        try {
+                            // Get the submission details
+                            const submissionResponse = await instance.get(
+                                `/indieningen/${submission?.indiening_id}/`
+                            );
+                            const newSubmission = submissionResponse.data;
+                            // Get the submission file
+                            const fileResponse = await instance.get(
+                                `/indieningen/${submission?.indiening_id}/indiening_bestand/`,
                                 { responseType: 'blob' }
-                            )
-                            .then((res) => {
-                                let filename = 'lege_indiening_zip.zip'
-                                if (submission === undefined) return
-                                if (submission.indiening_bestanden.length > 0) {
-                                    filename =
-                                        submission?.indiening_bestanden[0].bestand.replace(
-                                            /^.*[\\/]/,
-                                            ''
-                                        )
-                                }
-                                if (filename !== 'lege_indiening_zip.zip') {
-                                    zip.file(filename, res.data)
-                                }
-                                resolve()
-                            })
-                            .catch((err) => {
-                                console.error(
-                                    `Error downloading submission ${index + 1}:`,
-                                    err
-                                )
-                                reject(err)
-                            })
+                            );
+                            let filename = 'indiening.zip';
+                            if (newSubmission.bestand) {
+                                filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                            }
+                            const blob = new Blob([fileResponse.data], {
+                                type: fileResponse.headers['content-type'],
+                            });
+                            const file = new File([blob], filename, {
+                                type: fileResponse.headers['content-type'],
+                            });
+                            newSubmission.bestand = file;
+                            newSubmission.filename = filename;
+                            // Add the file to the zip
+                            zip.file(filename, fileResponse.data);
+                            resolve(newSubmission);
+                        } catch (err) {
+                            console.error(`Error downloading submission:`, err);
+                            reject(err);
+                        }
                     })
                 )
             })
@@ -206,7 +203,7 @@ export function ProjectScoresPage() {
                         const url = window.URL.createObjectURL(blob)
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = 'all_submissions.zip'
+                        a.download = 'all_submissions_' + project?.titel +'_.zip'
                         document.body.appendChild(a)
                         a.click()
                         a.remove()

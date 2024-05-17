@@ -127,38 +127,41 @@ export function AssignmentPage() {
     const downloadAllSubmissions = () => {
         const zip = new JSZip()
         const downloadPromises: Promise<void>[] = []
-        submissions.forEach((submission, index) => {
-            // Iterating over submissions and creating promises for each download
+        submissions.forEach(submission => {
             downloadPromises.push(
-                new Promise((resolve, reject) => {
-                    instance
-                        .get(
-                            `/indieningen/${submission.indiening_id}/indiening_bestanden/`,
+                new Promise(async (resolve, reject) => {
+                    try {
+                        // Get the submission details
+                        const submissionResponse = await instance.get(
+                            `/indieningen/${submission.indiening_id}/`
+                        );
+                        const newSubmission = submissionResponse.data;
+                        // Get the submission file
+                        const fileResponse = await instance.get(
+                            `/indieningen/${submission.indiening_id}/indiening_bestand/`,
                             { responseType: 'blob' }
-                        )
-                        .then((res) => {
-                            let filename = 'lege_indiening_zip.zip'
-                            if (submission.indiening_bestanden.length > 0) {
-                                filename =
-                                    submission.indiening_bestanden[0].bestand.replace(
-                                        /^.*[\\/]/,
-                                        ''
-                                    )
-                            }
-                            if (filename !== 'lege_indiening_zip.zip') {
-                                zip.file(filename, res.data)
-                            }
-                            resolve()
-                        })
-                        .catch((err) => {
-                            console.error(
-                                `Error downloading submission ${index + 1}:`,
-                                err
-                            )
-                            reject(err)
-                        })
+                        );
+                        let filename = 'indiening.zip';
+                        if (newSubmission.bestand) {
+                            filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                        }
+                        const blob = new Blob([fileResponse.data], {
+                            type: fileResponse.headers['content-type'],
+                        });
+                        const file = new File([blob], filename, {
+                            type: fileResponse.headers['content-type'],
+                        });
+                        newSubmission.bestand = file;
+                        newSubmission.filename = filename;
+                        // Add the file to the zip
+                        zip.file(filename, fileResponse.data);
+                        resolve(newSubmission);
+                    } catch (err) {
+                        console.error(`Error downloading submission:`, err);
+                        reject(err);
+                    }
                 })
-            )
+            );
         })
         Promise.all(downloadPromises)
             .then(() => {
@@ -167,7 +170,7 @@ export function AssignmentPage() {
                         const url = window.URL.createObjectURL(blob)
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = 'all_submissions.zip'
+                        a.download = 'all_submissions_' + assignment?.titel + '_.zip'
                         document.body.appendChild(a)
                         a.click()
                         a.remove()
@@ -222,7 +225,7 @@ export function AssignmentPage() {
                 if (group) {
                     const formData = new FormData()
                     formData.append('groep', group.groep_id)
-                    formData.append('indiening_bestanden', submissionFile)
+                    formData.append('bestand', submissionFile)
 
                     await instance
                         .post('/indieningen/', formData, config)

@@ -61,7 +61,30 @@ export function SubmissionListItemTeacherPage({
                     submissionsResponse.data[
                         submissionsResponse.data.length - 1
                     ]
-                setSubmitted(lastSubmission)
+                const lastSubmissionResponse = await instance.get(`indieningen/${lastSubmission.indiening_id}/`)
+                //Get the submission file
+                const newSubmission: Submission = lastSubmissionResponse.data
+                newSubmission.filename = lastSubmissionResponse.data.bestand.replace(
+                    /^.*[\\/]/,
+                    ''
+                )
+                newSubmission.bestand = await instance
+                    .get(`/indieningen/${lastSubmission.indiening_id}/indiening_bestand`, {
+                        responseType: 'blob',
+                    }).then((res) => {
+                        let filename = 'indiening.zip'
+                        if (newSubmission.filename) {
+                            filename = newSubmission.filename
+                        }
+                        const blob = new Blob([res.data], {
+                            type: res.headers['content-type'],
+                        })
+                        const file: File = new File([blob], filename, {
+                            type: res.headers['content-type'],
+                        })
+                        return file
+                    })
+                setSubmitted(newSubmission)
                 if (lastSubmission) {
                     const scoreResponse = await instance.get(
                         `/scores/?indiening=${lastSubmission.indiening_id}`
@@ -78,38 +101,16 @@ export function SubmissionListItemTeacherPage({
 
     // Function to download the submission
     const downloadSubmission = () => {
-        if (submitted) {
-            instance
-                .get(
-                    `/indieningen/${submitted.indiening_id}/indiening_bestanden/`,
-                    { responseType: 'blob' }
-                )
-                .then((res) => {
-                    let filename = 'lege_indiening.zip'
-                    if (submitted.indiening_bestanden.length > 0) {
-                        filename =
-                            submitted.indiening_bestanden[0].bestand.replace(
-                                /^.*[\\/]/,
-                                ''
-                            )
-                    }
-                    const blob = new Blob([res.data], {
-                        type: res.headers['content-type'],
-                    })
-                    const file: File = new File([blob], filename, {
-                        type: res.headers['content-type'],
-                    })
-                    const url = window.URL.createObjectURL(file)
-                    const a = document.createElement('a')
-                    a.href = url
-                    a.download = filename
-                    document.body.appendChild(a)
-                    a.click()
-                    a.remove()
-                })
-                .catch((err) => {
-                    console.error(err)
-                })
+        if (submitted?.bestand) {
+            const url = window.URL.createObjectURL(submitted?.bestand)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = submitted.filename
+                ? submitted.filename
+                : 'opgave.zip'
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
         }
     }
 
