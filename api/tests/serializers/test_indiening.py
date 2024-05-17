@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.core.files.uploadedfile import SimpleUploadedFile
-from api.serializers.indiening import IndieningSerializer, IndieningBestandSerializer
-from api.tests.factories.indiening import IndieningFactory, IndieningBestandFactory
+from api.serializers.indiening import IndieningSerializer
+from api.tests.factories.indiening import IndieningFactory
 from api.tests.factories.groep import GroepFactory
 from api.tests.factories.restrictie import RestrictieFactory
 
@@ -24,9 +24,10 @@ class IndieningSerializerTest(TestCase):
                     "status",
                     "result",
                     "artefacten",
-                    "indiening_bestanden",
+                    "bestand",
                 ]
             ),
+            
         )
 
     def test_indiening_serializer_create(self):
@@ -45,40 +46,3 @@ class IndieningSerializerTest(TestCase):
         self.assertTrue(serializer.is_valid())
         indiening = serializer.save()
         self.assertEqual(indiening.groep, self.indiening.groep)
-
-
-class IndieningBestandSerializerTest(TestCase):
-    def setUp(self):
-        self.indiening_bestand = IndieningBestandFactory.create(
-            bestand=SimpleUploadedFile("file.txt", b"file_content")
-        )
-        self.serializer = IndieningBestandSerializer(instance=self.indiening_bestand)
-
-    def test_indiening_bestand_serializer_fields(self):
-        data = self.serializer.data
-        self.assertEqual(
-            set(data.keys()), set(["indiening_bestand_id", "indiening", "bestand"])
-        )
-
-    def test_indiening_bestand_serializer_create(self):
-        indiening = IndieningFactory.create()
-        data = {
-            "indiening": indiening.indiening_id,
-            "bestand": SimpleUploadedFile("file.txt", b"file_content"),
-        }
-        serializer = IndieningBestandSerializer(data=data)
-        self.assertTrue(serializer.is_valid())
-        indiening_bestand = serializer.save()
-        self.assertEqual(indiening_bestand.indiening, indiening)
-
-    def test_indiening_bestand_serializer_update(self):
-        new_data = {
-            "indiening": self.indiening_bestand.indiening.indiening_id,
-            "bestand": SimpleUploadedFile("file.txt", b"file_content"),
-        }
-        serializer = IndieningBestandSerializer(
-            instance=self.indiening_bestand, data=new_data, partial=True
-        )
-        self.assertTrue(serializer.is_valid())
-        indiening_bestand = serializer.save()
-        self.assertEqual(indiening_bestand.indiening, self.indiening_bestand.indiening)

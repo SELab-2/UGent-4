@@ -58,7 +58,7 @@ class Indiening(models.Model):
     indiening_id = models.AutoField(primary_key=True)
     groep = models.ForeignKey("Groep", on_delete=models.CASCADE)
     tijdstip = models.DateTimeField(auto_now_add=True)
-    bestand = models.FileField(upload_to=upload_to)
+    bestand = models.FileField(upload_to=upload_to, default="")
     status = models.IntegerField(default=0, choices=STATUS_CHOICES)
     result = models.TextField(default="", blank=True)
     artefacten = models.FileField(blank=True)
