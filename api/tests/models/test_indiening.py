@@ -42,9 +42,11 @@ class IndieningModelTest(TestCase):
         self.assertIsNotNone(self.indiening.bestand)
 
     # TODO: Fix this test
-    @patch('smtplib.SMTP_SSL')
-    @patch('ssl.create_default_context')
-    def test_send_indiening_confirmation_mail(self, mock_create_default_context, mock_smtp):
+    @patch("smtplib.SMTP_SSL")
+    @patch("ssl.create_default_context")
+    def test_send_indiening_confirmation_mail(
+        self, mock_create_default_context, mock_smtp
+    ):
         indiening = self.indiening
         project = indiening.groep.project
 
@@ -73,14 +75,24 @@ class IndieningModelTest(TestCase):
 
         # Check that SMTP_SSL was called with the correct arguments
         assert mock_smtp.call_count == indiening.groep.studenten.count()
-        mock_smtp.assert_has_calls([call(smtp_server_address, smtp_port, context=mock_create_default_context.return_value)] * indiening.groep.studenten.count())
+        mock_smtp.assert_has_calls(
+            [
+                call(
+                    smtp_server_address,
+                    smtp_port,
+                    context=mock_create_default_context.return_value,
+                )
+            ]
+            * indiening.groep.studenten.count()
+        )
 
         # Check that login was called with the correct arguments
         mock_smtp_instance.login.assert_called_with(mail_username, mail_app_password)
 
-
         # Check that sendmail was called once for each student
-        assert mock_smtp_instance.sendmail.call_count == indiening.groep.studenten.count()
+        assert (
+            mock_smtp_instance.sendmail.call_count == indiening.groep.studenten.count()
+        )
 
         # Check that sendmail was called with the correct arguments
         for student in indiening.groep.studenten.all():
@@ -111,13 +123,26 @@ class IndieningModelTest(TestCase):
 
             email.attach(MIMEText(plain_text, "plain"))
             email.attach(MIMEText(html_text, "html"))
-            
+
             call_args_list = mock_smtp_instance.sendmail.call_args_list
             for mock_call in call_args_list:
-                sent_mail_username, sent_student_email, sent_email_content = mock_call.args
+                (
+                    sent_mail_username,
+                    sent_student_email,
+                    sent_email_content,
+                ) = mock_call.args
                 assert sent_mail_username == mail_username
                 assert sent_student_email == student.user.email
                 assert subject in sent_email_content
-                assert f"Beste {student.user.first_name} {student.user.last_name}" in sent_email_content
-                assert f"Dit is een bevestiging dat uw indiening voor het project {project.titel} is ontvangen." in sent_email_content
-                assert f"De indiening {indiening_status[indiening.status]}" in sent_email_content
+                assert (
+                    f"Beste {student.user.first_name} {student.user.last_name}"
+                    in sent_email_content
+                )
+                assert (
+                    f"Dit is een bevestiging dat uw indiening voor het project {project.titel} is ontvangen."
+                    in sent_email_content
+                )
+                assert (
+                    f"De indiening {indiening_status[indiening.status]}"
+                    in sent_email_content
+                )
