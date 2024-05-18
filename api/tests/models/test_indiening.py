@@ -41,7 +41,6 @@ class IndieningModelTest(TestCase):
     def test_bestand(self):
         self.assertIsNotNone(self.indiening.bestand)
 
-    # TODO: Fix this test
     @patch("smtplib.SMTP_SSL")
     @patch("ssl.create_default_context")
     def test_send_indiening_confirmation_mail(
