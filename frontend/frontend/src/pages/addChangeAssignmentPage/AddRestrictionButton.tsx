@@ -68,6 +68,7 @@ export default function AddRestrictionButton({
                 <DialogActions>
                     {/* Cancel Button */}
                     <SecundaryButton id='cancelButton' onClick={handleClose}>{t('cancel')}</SecundaryButton>
+
                 </DialogActions>
             </Dialog>
         </>

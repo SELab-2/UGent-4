@@ -100,7 +100,9 @@ const dutch = {
     join: 'Voeg toe',
     acces: 'Dit geeft je toegang tot het vak.',
     deadlines_on: 'Deadlines op',
-    open_with_ui: 'Open met UI'
+    open_with_ui: 'Open met UI',
+    choose_existing: 'Kies een bestaand script',
+    make_new_script: 'Maak nieuw script aan'
 }
 
 export default dutch
