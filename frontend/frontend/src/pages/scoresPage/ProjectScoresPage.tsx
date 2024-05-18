@@ -19,6 +19,7 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 import ErrorPage from '../ErrorPage.tsx'
 import JSZip from 'jszip'
 import Papa from 'papaparse'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 const VisuallyHiddenInput = styled('input')({
     clipPath: 'inset(50%)',
@@ -89,9 +90,11 @@ export function ProjectScoresPage() {
     const [project, setProject] = useState<Project>()
     const [groepen, setGroepen] = useState<ScoreGroep[]>([])
     const [fetchError, setFetchError] = useState(false)
+    const [user, setUser] = useState<User>()
 
     // State for loading the page properly
     const [loading, setLoading] = useState(true)
+    const [userLoading, setUserLoading] = useState(true)
 
     const navigate = useNavigate()
 
@@ -138,7 +141,11 @@ export function ProjectScoresPage() {
     useEffect(() => {
         async function fetchData() {
             try {
+                setUserLoading(true)
                 setLoading(true)
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
+                setUserLoading(false)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
@@ -275,6 +282,24 @@ export function ProjectScoresPage() {
 
     return (
         <>
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <CircularProgress color={'primary'} />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                    <>
             <Stack
                 direction={'column'}
                 spacing={0}
@@ -413,5 +438,10 @@ export function ProjectScoresPage() {
                 />
             </Stack>
         </>
-    )
-}
+    ):(
+        navigate('*')
+    )}
+</>
+)} 
+</>
+)}

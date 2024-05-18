@@ -46,7 +46,7 @@ export function AssignmentPage() {
 
     const goToGroups = () => {
         console.log('go to scores')
-        navigate(`/course/${courseId}/assignment/${assignmentId}/groups`)
+        navigate(`/course/${courseId}/assignment/${assignmentId}/groups/choose`)
     }
 
     // State variables

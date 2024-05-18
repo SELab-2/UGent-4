@@ -889,7 +889,7 @@ export function GroupsPage() {
                         />
                     </>
                 ):(
-                    navigate('/course/' + courseId + '/assignment/' + assignmentId + '/groups/choose')
+                    navigate('*')
                 )}
             </>
         )} 
