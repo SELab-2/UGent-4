@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ChangeEvent, useState } from 'react'
-import { Button } from '../../components/CustomComponents.tsx'
+import { Card,Button,SecundaryButton } from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import {
     Box,
+    Stack,
     ButtonGroup,
     FormControl,
     MenuItem,
@@ -21,6 +22,7 @@ import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import RestrictionsTemplateUI from './RestrictionTemplateUI.tsx'
 import instance from '../../axiosConfig.ts'
+import theme from "../../Theme.ts";
 
 interface RestrictionsDialogProps {
     restrictions: restriction[]
@@ -287,148 +289,171 @@ export default function RestrictionsDialog({
             </Dialog>
             {/* This is the code editor. */}
             <Dialog fullScreen open={openTextEditor} onClose={handleCloseTextEditor}>
-                <Box>
-                    <AppBar sx={{ position: 'relative' }}>
+                <Stack>
+                    <AppBar sx={{ position: 'relative' }} elevation={0}>
                         <Toolbar>
-                            <Box
-                                display={'flex'}
-                                flexDirection={'row'}
-                                alignItems={'center'}
-                                width={'100%'}
-                                justifyContent={'space-between'}
+                            <IconButton
+                                edge="start"
+                                color="inherit"
+                                onClick={handleCloseTextEditor}
+                                aria-label="close"
                             >
-                                <Box
-                                    display={'flex'}
-                                    flexDirection={'row'}
-                                    alignItems={'center'}
-                                    justifyContent={'flex-start'}
-                                >
-                                    <IconButton
-                                        edge="start"
-                                        color="inherit"
-                                        onClick={handleCloseTextEditor}
-                                        aria-label="close"
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                    <Box
-                                        display={'flex'}
-                                        flexDirection={'row'}
-                                        alignItems={'center'}
-                                        padding={1}
-                                        justifyContent={'center'}
-                                        gap={1}
-                                    >
-                                        <TextField
-                                            // Specify the name of the test script.
-                                            label={t('name')}
-                                            value={restrictionName}
-                                            required
-                                            error={nameError}
-                                            helperText={
-                                                nameError
-                                                    ? t('is_required')
-                                                    : ''
-                                            }
-                                            variant={'standard'}
-                                            sx={{
-                                                '& .MuiInputBase-root': {
-                                                    color: 'secondary.main',
-                                                },
-                                                marginTop: -1.2,
-                                                borderRadius: 1,
-                                            }}
-                                            onChange={(e) => {
-                                                setNameError(false)
-                                                setRestrictionName(
-                                                    e.target.value
-                                                )
-                                            }}
-                                        />
-                                        <FormControl
-                                            sx={{ minWidth: 80 }}
-                                            size="small"
-                                        >
-                                            <Select
-                                                // Select the file extension of the test script.
-                                                // This can be for instance .py or .sh.
-                                                label={t('restrictionType')}
-                                                labelId={t('restrictionType')}
-                                                value={restrictionType}
-                                                variant={'standard'}
-                                                required
-                                                autoWidth
-                                                sx={{
-                                                    '& .MuiSelect-select': {
-                                                        color: 'secondary.main',
-                                                    },
-                                                    borderRadius: 1,
-                                                    padding: 0.5,
-                                                }}
-                                                onChange={(e) =>
-                                                    setRestrictionType(
-                                                        e.target
-                                                            .value as restrictionExtension
-                                                    )
-                                                }
-                                            >
-                                                <MenuItem
-                                                    value={
-                                                        restrictionExtension.Shell
-                                                    }
-                                                    color={'text.secondary'}
-                                                >
-                                                    {restrictionExtension.Shell}
-                                                </MenuItem>
-                                                <MenuItem
-                                                    value={
-                                                        restrictionExtension.Python
-                                                    }
-                                                >
-                                                    {
-                                                        restrictionExtension.Python
-                                                    }
-                                                </MenuItem>
-                                            </Select>
-                                        </FormControl>
-                                    </Box>
-                                </Box>
-                                <Button
-                                    autoFocus
-                                    color="inherit"
-                                    onClick={() => handleSaveTemplate(restrictionName, restrictionType, textFieldContent, {template_id: 1, user: 1, bestand: 0})} // bestand if maakt niet uit, wordt toch niet gebruikt
-                                >
-                                    save template
-                                </Button>
-                                <Button
-                                    autoFocus
-                                    color="inherit"
-                                    onClick={() => setPopupOpen(true)}
-                                >
-                                    save
-                                </Button>
-                            </Box>
+                                <CloseIcon />
+                            </IconButton>
                         </Toolbar>
                     </AppBar>
-                    {/* TextField for entering test code */}
-                    <Box aria-label={'Content'} padding={1}>
-                        <TextField
-                            fullWidth
-                            value={textFieldContent}
-                            onChange={(e) =>
-                                setTextFieldContent(e.target.value)
-                            }
-                            id="filled-textarea"
-                            multiline
-                            label={'Test-Content'}
-                            variant="standard"
-                            sx={{
-                                overflowY: 'auto',
-                                maxHeight: '100%',
-                            }}
-                        />
+                    {/* name of template */}
+                    <Box
+                        padding='30px'
+                        display={'flex'}
+                        gap={3}
+                        alignItems={'center'}
+                    >
+                        <Typography
+                            variant={'h5'}
+                            color={'text.primary'}
+                            fontWeight={'bold'}
+                        >
+                            {t('name')}
+                        </Typography>
+                            <Box padding='14px'
+                                sx={{
+                                    border: `1.5px solid gray`,
+                                    borderRadius: 1,
+                                    '&:hover': {
+                                        border: `1.5px solid ${theme.palette.primary.main}`,
+                                    }
+                                }}>
+                            <TextField
+                                // Specify the name of the test script.
+                                value={restrictionName}
+                                required
+                                error={nameError}
+                                helperText={
+                                    nameError
+                                        ? t('is_required')
+                                        : ''
+                                }
+                                variant={'standard'}
+                                sx={{
+                                    marginTop: -1.2,
+                                    borderRadius: 1,
+                                }}
+                                onChange={(e) => {
+                                    setNameError(false)
+                                    setRestrictionName(
+                                        e.target.value
+                                    )
+                                }}
+                            />
+                            </Box>
                     </Box>
-                </Box>
+                    <Box
+                        padding='30px'
+                        display={'flex'}
+                        gap={5}
+                        alignItems={'center'}
+                    >
+
+                        <Typography
+                            variant={'h5'}
+                            color={'text.primary'}
+                            fontWeight={'bold'}
+                        >
+                            Type
+                        </Typography>
+                        <Box padding='5px'
+                             sx={{
+                                 border: `1.5px solid gray`,
+                                 borderRadius: 1,
+                                 '&:hover': {
+                                    border: `1.5px solid ${theme.palette.primary.main}`,
+                                 }
+                             }}
+                            >
+                            <FormControl
+                                size="small"
+                            >
+                                <Select
+                                    // Select the file extension of the test script.
+                                    // This can be for instance .py or .sh.
+                                    label={t('restrictionType')}
+                                    labelId={t('restrictionType')}
+                                    value={restrictionType}
+                                    required
+                                    autoWidth
+                                    variant={'standard'}
+                                    sx={{
+                                        borderRadius: 1,
+                                        padding: 0.5,
+                                    }}
+                                    onChange={(e) =>
+                                        setRestrictionType(
+                                            e.target
+                                                .value as restrictionExtension
+                                        )
+                                    }
+                                >
+                                    <MenuItem
+                                        value={
+                                            restrictionExtension.Shell
+                                        }
+                                        color={'secondary.contrastText'}
+                                    >
+                                        {restrictionExtension.Shell}
+                                    </MenuItem>
+                                    <MenuItem
+                                        value={
+                                            restrictionExtension.Python
+                                        }
+                                    >
+                                        {
+                                            restrictionExtension.Python
+                                        }
+                                    </MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
+                    </Box>
+
+                    {/* TextField for entering test code */}
+                    <Box padding='20px'>
+                        <Card>
+                            <Box aria-label={'Content'} padding={3}>
+                                <TextField
+                                    fullWidth
+                                    value={textFieldContent}
+                                    onChange={(e) =>
+                                        setTextFieldContent(e.target.value)
+                                    }
+                                    id="filled-textarea"
+                                    multiline
+                                    label={'Test-Content'}
+                                    variant="standard"
+                                    sx={{
+                                        overflowY: 'auto',
+                                        maxHeight: '100%',
+                                    }}
+                                />
+                            </Box>
+                        </Card>
+                    </Box>
+                    <Stack direction="row" padding='20px' spacing='20px'>
+                        <Button
+                            autoFocus
+                            color="inherit"
+                            onClick={() => handleSaveTemplate(restrictionName, restrictionType, textFieldContent, {template_id: 1, user: 1, bestand: 0})} // bestand if maakt niet uit, wordt toch niet gebruikt
+                        >
+                            save template
+                        </Button>
+                        <SecundaryButton
+                            autoFocus
+                            onClick={() => setPopupOpen(true)}
+                        >
+                            save
+                        </SecundaryButton>
+                    </Stack>
+                </Stack>
             </Dialog>
             <WarningPopup
                 title={t('add_restriction') + '?'}
