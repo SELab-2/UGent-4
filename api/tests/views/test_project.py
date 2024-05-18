@@ -120,7 +120,7 @@ class ProjectDetailViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_invalid_project_detail_get(self):
-        response = self.client.get(reverse("project_detail", kwargs={"id": 69}))
+        response = self.client.get(reverse("project_detail", kwargs={"id": 6969}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_project_detail_put(self):
@@ -133,6 +133,7 @@ class ProjectDetailViewTest(APITestCase):
             "deadline": self.project.deadline,
             "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
+            "aantal_groepen": self.project.aantal_groepen,
             "max_groep_grootte": self.project.max_groep_grootte,
             "zichtbaar": self.project.zichtbaar,
             "gearchiveerd": self.project.gearchiveerd,

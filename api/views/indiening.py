@@ -155,8 +155,6 @@ def indiening_detail_download_artefacten(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if has_permissions(request.user):
-        return FileResponse(indiening.artefacten.open(), as_attachment=True)
-    if is_lesgever(request.user):
         try:
             return FileResponse(indiening.artefacten.open(), as_attachment=True)
         except (ValueError, FileNotFoundError):

@@ -34,9 +34,8 @@ class IndieningListViewTest(TestCase):
         data = {
             "groep": self.indiening2.groep_id,
         }
-        file1 = SimpleUploadedFile("file1.txt", b"file_content")
-        file2 = SimpleUploadedFile("file2.txt", b"file_content")
-        data["indiening_bestanden"] = [file1, file2]
+        file = SimpleUploadedFile("file1.txt", b"file_content")
+        data["bestand"] = file
         response = self.client.post(self.url, data, format="multipart")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         response = self.client.get(self.url)
