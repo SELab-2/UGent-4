@@ -1,3 +1,4 @@
+import { darken,lighten } from '@mui/system';
 import {
     Button as BaseButton,
     Card as BaseCard,
@@ -13,12 +14,33 @@ export const Button = ({ children, ...props }: any) => {
             size="large"
             sx={{
                 maxHeight: '35px',
-                bgcolor: 'primary.main',
+                backgroundColor: 'primary.main',
                 textTransform: 'none',
                 color: 'primary.contrastText',
                 '&:hover': {
-                    backgroundColor: 'secondary.main',
-                    color: 'secondary.contrastText',
+                    backgroundColor: darken(theme.palette.primary.main,0.5),
+                },
+            }}
+            {...props}
+        >
+            {children}
+        </BaseButton>
+    )
+}
+
+export const SecundaryButton = ({ children, ...props }: any) => {
+    return (
+        <BaseButton
+            variant="contained"
+            disableElevation
+            size="large"
+            sx={{
+                maxHeight: '35px',
+                backgroundColor: 'secondary.main',
+                textTransform: 'none',
+                color: 'secondary.contrastText',
+                '&:hover': {
+                    backgroundColor: darken(theme.palette.secondary.main,0.2),
                 },
             }}
             {...props}
