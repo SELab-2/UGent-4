@@ -81,13 +81,16 @@ export function AssignmentPage() {
     }
 
     useEffect(() => {
+        async function fetchUser() {
+            setUserLoading(true)
+            setLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            setUser(userResponse.data)
+            setUserLoading(false)
+        }
+
         async function fetchData() {
             try {
-                setUserLoading(true)
-                setLoading(true)
-                const userResponse = await instance.get('/gebruikers/me/')
-                setUser(userResponse.data)
-                setUserLoading(false)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
@@ -115,15 +118,18 @@ export function AssignmentPage() {
                         return file
                     })
                 setAssignment(newAssignment)
-                if (userResponse.data) {
+                if (user) {
                     if (user.is_lesgever) {
                         const groupsResponse = await instance.get(
                             `/groepen/?project=${assignmentId}`
                         )
                         setGroups(groupsResponse.data)
                     } else {
+                        const groupResponse = await instance.get<[Group]>(
+                            `/groepen/?student=${user.user}&project=${assignmentId}`
+                        )
                         const submissionsResponse = await instance.get(
-                            `/indieningen/?vak=${courseId}`
+                            `/indieningen/?project=${assignmentId}&groep=${groupResponse.data[0].groep_id}`
                         )
                         setSubmissions(submissionsResponse.data)
                     }
@@ -136,8 +142,14 @@ export function AssignmentPage() {
             }
         }
 
-        fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever, submit])
+        // Ensure fetchUser completes before fetchData starts
+        ;(async () => {
+            if (user.user === 0) {
+                await fetchUser()
+            }
+            await fetchData() // Use await here to ensure fetchData waits for fetchUser to complete
+        })()
+    }, [assignmentId, courseId, user.is_lesgever, submit, user])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -233,12 +245,10 @@ export function AssignmentPage() {
                 },
             }
             const groupResponse = await instance.get(
-                `/groepen/?student=${user.user}`
+                `/groepen/?student=${user.user}&project=${assignmentId}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data.find(
-                    (group: Group) => String(group.project) === assignmentId
-                )
+                const group = groupResponse.data[0]
                 if (group) {
                     const formData = new FormData()
                     formData.append('groep', group.groep_id)
@@ -301,6 +311,28 @@ export function AssignmentPage() {
                                     backgroundColor: 'background.default',
                                 }}
                             >
+                                <Box
+                                    aria-label={'assignment-box'}
+                                    sx={{
+                                        padding: '20px',
+                                    }}
+                                >
+                                    <Stack direction={'column'}>
+                                        <Typography
+                                            variant={'h5'}
+                                            color={'text.primary'}
+                                            aria-label={'title'}
+                                            sx={{
+                                                fontWeight: 'bold',
+                                            }}
+                                        >
+                                            {t('assignment')}
+                                        </Typography>
+                                        <Typography color={'text.primary'}>
+                                            {assignment?.beschrijving}
+                                        </Typography>
+                                    </Stack>
+                                </Box>
                                 {/*deadline and group button */}
                                 <Box
                                     sx={{
@@ -581,6 +613,41 @@ export function AssignmentPage() {
                                     backgroundColor: 'background.default',
                                 }}
                             >
+                                {/*assignment description*/}
+                                <Box
+                                    aria-label={'assignment-box'}
+                                    sx={{
+                                        padding: '5px',
+                                    }}
+                                >
+                                    <Stack direction={'column'}>
+                                        {loading ? (
+                                            <Skeleton
+                                                variant="text"
+                                                width={200}
+                                                height={50}
+                                            />
+                                        ) : (
+                                            <>
+                                                <Typography
+                                                    variant={'h5'}
+                                                    color={'text.primary'}
+                                                    aria-label={'title'}
+                                                    sx={{
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {t('assignment')}
+                                                </Typography>
+                                                <Typography
+                                                    color={'text.primary'}
+                                                >
+                                                    {assignment?.beschrijving}
+                                                </Typography>
+                                            </>
+                                        )}
+                                    </Stack>
+                                </Box>
                                 {/*deadline and groep button */}
                                 <Box
                                     sx={{
@@ -609,18 +676,26 @@ export function AssignmentPage() {
                                                     height={50}
                                                 />
                                             ) : (
-                                                <Typography
-                                                    variant="h6"
-                                                    color={'text.primary'}
-                                                >
-                                                    {assignment
-                                                        ? dayjs(
-                                                              assignment.deadline
-                                                          ).format(
-                                                              'DD/MM/YYYY-HH:MM'
-                                                          )
-                                                        : 'no deadline'}
-                                                </Typography>
+                                                <>
+                                                    {assignment !== undefined &&
+                                                        assignment.deadline !==
+                                                            null && (
+                                                            <Typography
+                                                                variant="h6"
+                                                                color={
+                                                                    'text.primary'
+                                                                }
+                                                            >
+                                                                {assignment
+                                                                    ? dayjs(
+                                                                          assignment.deadline
+                                                                      ).format(
+                                                                          'DD/MM/YYYY-HH:MM'
+                                                                      )
+                                                                    : 'no deadline'}
+                                                            </Typography>
+                                                        )}
+                                                </>
                                             )}
                                         </Box>
                                         <Box style={{ flexGrow: 1 }} />
@@ -655,6 +730,44 @@ export function AssignmentPage() {
                                         )}
                                     </Stack>
                                 </Box>
+                                {/*extra deadline*/}
+                                {assignment?.extra_deadline && (
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        alignItems={'center'}
+                                        gap={1}
+                                        pl={2.5}
+                                    >
+                                        <Typography
+                                            variant="h6"
+                                            color="text.primary"
+                                            fontWeight={'bold'}
+                                        >
+                                            Extra Deadline:
+                                        </Typography>
+                                        {loading ? (
+                                            <Skeleton
+                                                variant="text"
+                                                width={180}
+                                                height={50}
+                                            />
+                                        ) : (
+                                            <Typography
+                                                variant="h6"
+                                                color={'text.primary'}
+                                            >
+                                                {assignment
+                                                    ? dayjs(
+                                                          assignment.extra_deadline
+                                                      ).format(
+                                                          'DD/MM/YYYY-HH:MM'
+                                                      )
+                                                    : 'no deadline'}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                )}
                                 {/*download opgave*/}
                                 <Box
                                     aria-label={'file-box'}
@@ -682,6 +795,7 @@ export function AssignmentPage() {
                                     <Button
                                         startIcon={<DownloadIcon />}
                                         onClick={downloadAssignment}
+                                        disabled={assignment === undefined}
                                     >
                                         {loading ? (
                                             <Skeleton
@@ -696,7 +810,7 @@ export function AssignmentPage() {
                                             <>
                                                 {assignment
                                                     ? assignment.filename
-                                                    : 'error'}
+                                                    : t('no_assignmentfile')}
                                             </>
                                         )}
                                     </Button>

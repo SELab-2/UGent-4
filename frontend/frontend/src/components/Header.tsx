@@ -120,7 +120,8 @@ export const Header = ({ variant, title }: Props) => {
                                 </IconButton>
                             </Tooltip>
                             {/* Back Button (if variant is not default) */}
-                            {!(variant === 'default' || variant === 'main') && (
+                            {(variant === 'not_main' ||
+                                variant === 'editable') && (
                                 <Tooltip title={t('back')}>
                                     <IconButton
                                         onClick={handleBack}

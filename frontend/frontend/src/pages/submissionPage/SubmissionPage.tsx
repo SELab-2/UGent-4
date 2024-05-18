@@ -289,21 +289,40 @@ export function SubmissionPage() {
                             />
                         )}
                     </Box>
-                    <Box
-                        aria-label={'deadline'}
-                        sx={{
-                            padding: '20px',
-                        }}
-                    >
-                        <Typography variant={'h5'} color="text.primary">
-                            <strong>Deadline </strong>
-                            {project?.deadline
-                                ? dayjs(project.deadline).format(
-                                      'DD/MM/YYYY HH:mm'
-                                  )
-                                : 'error'}
-                        </Typography>
-                    </Box>
+                    {project?.deadline && (
+                        <Box
+                            aria-label={'deadline'}
+                            sx={{
+                                padding: '20px',
+                            }}
+                        >
+                            <Typography variant={'h5'} color="text.primary">
+                                <strong>Deadline </strong>
+                                {project?.deadline
+                                    ? dayjs(project.deadline).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
+                                    : 'error'}
+                            </Typography>
+                        </Box>
+                    )}
+                    {project?.extra_deadline && (
+                        <Box
+                            aria-label={'extradeadline'}
+                            sx={{
+                                padding: '20px',
+                            }}
+                        >
+                            <Typography variant={'h5'} color="text.primary">
+                                <strong>Extra Deadline </strong>
+                                {project?.extra_deadline
+                                    ? dayjs(project.extra_deadline).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
+                                    : 'error'}
+                            </Typography>
+                        </Box>
+                    )}
                     <Box
                         // This box shows the filename of the submission and
                         // allows the user to download the submission.

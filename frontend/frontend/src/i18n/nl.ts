@@ -105,6 +105,8 @@ const dutch = {
     join_group: 'Wordt lid',
     leave: 'Verlaat',
     acces: 'Dit geeft je toegang tot het vak.',
+    copy_invite: 'Kopieer uitnodigingslink',
+    no_assignmentfile: 'Geen opdrachtbestand',
     deadlines_on: 'Deadlines op',
     email: 'email',
     copy_invite: 'Kopieer uitnodigingslink',
