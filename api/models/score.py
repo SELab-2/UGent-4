@@ -18,7 +18,7 @@ class Score(models.Model):
     """
 
     score_id = models.AutoField(primary_key=True)
-    score = models.SmallIntegerField()
+    score = models.PositiveSmallIntegerField()
     indiening = models.ForeignKey("Indiening", on_delete=models.CASCADE)
 
     def __str__(self):

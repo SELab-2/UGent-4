@@ -200,5 +200,3 @@ class ProjectSerializerTest(APITestCase):
         serializer = ProjectSerializer(instance=self.project, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-    
-    # test voor validatie aantal groepen?
