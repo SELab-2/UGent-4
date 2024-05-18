@@ -13,6 +13,7 @@ import instance from '../axiosConfig'
 import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
 import { t } from 'i18next'
 import dayjs from 'dayjs'
+import {EvenlySpacedRow} from "./CustomComponents.tsx";
 
 interface SubmissionListItemTeacherPageProps {
     relative_group_id: string
@@ -126,21 +127,11 @@ export function SubmissionListItemTeacherPage({
 
     return (
         <>
-            <ListItem id={group_id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={group_id} sx={{ margin: 0 }} disablePadding>
                 <ListItemButton
-                    sx={{
-                        width: '100%',
-                        height: 40,
-                        paddingX: 4,
-                        paddingY: 3,
-                        borderRadius: 2,
-                        display: 'flex',
-                        flexDirection: 'row',
-                    }}
                     onClick={handleSubmissionClick}
                 >
-                    {/* Display group id */}
-                    <ListItemText
+                    <EvenlySpacedRow items={[<ListItemText
                         sx={{
                             maxWidth: '24%',
                             color: 'primary.main',
@@ -149,41 +140,36 @@ export function SubmissionListItemTeacherPage({
                             },
                         }}
                         primary={relative_group_id}
-                    />
-                    {/* Display submission timestamp */}
-                    <ListItemText
-                        sx={{ minWidth: '24%' }}
-                        primary={
-                            submitted
-                                ? dayjs(submitted.tijdstip).format(
-                                      'DD/MM/YYYY HH:mm'
-                                  )
-                                : '-'
-                        }
-                    />
-                    {/* Display score */}
-                    <ListItemText
-                        sx={{ minWidth: '24%' }}
-                        primary={
-                            score
-                                ? `${Number(score.score)}` + '/20'
-                                : t('no_score_yet')
-                        }
-                    />
-                    {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: '24%' }}>
-                        {!submitted?.status ? (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
-                        ) : (
-                            submitted !== undefined && (
-                                <CheckCircleOutlineIcon
-                                    sx={{ color: 'success.main' }}
-                                />
-                            )
-                        )}
-                    </ListItemIcon>
-                    {/* Display download icon */}
-                    <ListItemText sx={{ maxWidth: 35 }}>
+                    />,
+                        <ListItemText
+                            sx={{ minWidth: '24%' }}
+                            primary={
+                                submitted
+                                    ? dayjs(submitted.tijdstip).format(
+                                        'DD/MM/YYYY HH:mm'
+                                    )
+                                    : '-'
+                            }
+                        />,
+                        <ListItemText
+                            sx={{ minWidth: '24%' }}
+                            primary={
+                                score
+                                    ? `${Number(score.score)}` + '/20'
+                                    : t('no_score_yet')
+                            }
+                        />,
+                        <ListItemIcon sx={{ minWidth: '24%' }}>
+                            {!submitted?.status ? (
+                                <HighlightOffIcon sx={{ color: 'error.main' }} />
+                            ) : (
+                                submitted !== undefined && (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: 'success.main' }}
+                                    />
+                                )
+                            )}
+                        </ListItemIcon>,
                         <ListItemIcon>
                             <div onClick={handleDownloadClick}>
                                 {submitted ? (
@@ -200,7 +186,8 @@ export function SubmissionListItemTeacherPage({
                                 )}
                             </div>
                         </ListItemIcon>
-                    </ListItemText>
+                    ]}>
+                    </EvenlySpacedRow>
                 </ListItemButton>
             </ListItem>
         </>

@@ -1,3 +1,4 @@
+import { EvenlySpacedRow} from "./CustomComponents.tsx";
 import {
     ListItem,
     ListItemButton,
@@ -49,46 +50,31 @@ export function SubmissionListItemStudentPage({
 
     return (
         <>
-            <ListItem key={realId} sx={{ margin: 0 }} disablePadding={true}>
-                <ListItemButton
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 5,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
-                    onClick={handleSubmissionClick}
-                >
-                    {/* Display submission id */}
-                    <ListItemText
-                        sx={{
-                            maxWidth: 110,
-                            color: 'primary.main',
-                            '&:hover': {
-                                color: 'primary.light',
-                            },
-                        }}
-                        primary={visualId}
-                    />
-                    {/* Display submission timestamp */}
-                    <ListItemText
-                        sx={{ maxWidth: 150 }}
-                        primary={timestamp ? timestamp : t('time')}
-                    />
-                    {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        {status ? (
-                            <CheckCircleOutlineIcon
-                                sx={{ color: 'success.main' }}
-                            />
-                        ) : (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
-                        )}
-                    </ListItemIcon>
+            <ListItem key={realId} sx={{ margin: 0 }} disablePadding>
+                <ListItemButton onClick={handleSubmissionClick}>
+                    <EvenlySpacedRow items={[
+                        <ListItemText
+                            sx={{
+                                color: 'primary.main',
+                                '&:hover': {
+                                    color: 'primary.light',
+                                },
+                            }}
+                            primary={visualId}
+                        />,
+                        <ListItemText
+                            primary={timestamp ? timestamp : t('time')}
+                        />,
+                        <ListItemIcon sx={{ minWidth: 35 }}>
+                            {status ? (
+                                <CheckCircleOutlineIcon
+                                    sx={{ color: 'success.main' }}
+                                />
+                            ) : (
+                                <HighlightOffIcon sx={{ color: 'error.main' }} />
+                            )}
+                        </ListItemIcon>
+                    ]}/>
                 </ListItemButton>
             </ListItem>
         </>

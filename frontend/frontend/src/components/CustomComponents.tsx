@@ -3,6 +3,7 @@ import {
     Button as BaseButton,
     Card as BaseCard,
     Divider as BaseDivider,
+    Box
 } from '@mui/material'
 import theme from '../Theme.ts'
 
@@ -80,4 +81,33 @@ export const Divider = ({ children, ...props }: any) => {
     )
 }
 
-export default { Button, Card, Divider }
+export const EvenlySpacedRow = ({items}) => {
+    return (
+        <Box
+            width={'100%'}
+            display="flex"
+            justifyContent={'space-between'}
+        >
+            {items.map((item, index) => (
+
+                <Box
+                    key={index}
+                     width={(100/items.length)+'%'}
+                     sx={{
+                         border: '1px solid red',
+                         display: 'flex',
+                         alignItems: 'center',
+                         justifyContent: index == 0 ? 'left' : ( index == items.length - 1 ? 'right' : 'center' )
+                     }}>
+                    <Box>
+                        {item}
+                    </Box>
+                </Box>
+            ))}
+    </Box>
+    )
+}
+
+
+
+export default { Button, Card, Divider, EvenlySpacedRow }
