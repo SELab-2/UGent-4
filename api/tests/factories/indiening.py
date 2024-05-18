@@ -15,7 +15,6 @@ class IndieningFactory(DjangoModelFactory):
     class Meta:
         model = Indiening
 
-    indiening_id = factory.Sequence(lambda n: n+1000)
     groep = SubFactory(GroepFactory)
     tijdstip = factory.LazyFunction(
         lambda: timezone.make_aware(

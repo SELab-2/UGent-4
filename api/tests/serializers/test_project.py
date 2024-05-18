@@ -26,6 +26,7 @@ class ProjectSerializerTest(APITestCase):
                 "deadline",
                 "extra_deadline",
                 "max_score",
+                "aantal_groepen",
                 "max_groep_grootte",
                 "student_groep",
                 "zichtbaar",
@@ -86,6 +87,7 @@ class ProjectSerializerTest(APITestCase):
                 "deadline": "",
                 "extra_deadline": "",
                 "max_score": "",
+                'aantal_groepen': "",
                 "max_groep_grootte": "",
                 "zichtbaar": "",
                 "gearchiveerd": "",
@@ -103,6 +105,7 @@ class ProjectSerializerTest(APITestCase):
             "deadline": self.serializer.data["deadline"],
             "extra_deadline": self.serializer.data["extra_deadline"],
             "max_score": 20,
+            'aantal_groepen': 50,
             "max_groep_grootte": 1,
             "zichtbaar": True,
             "gearchiveerd": False,
@@ -122,6 +125,7 @@ class ProjectSerializerTest(APITestCase):
             "deadline": None,
             "extra_deadline": None,
             "max_score": 20,
+            'aantal_groepen': 50,
             "max_groep_grootte": 1,
             "zichtbaar": True,
             "gearchiveerd": False,
@@ -141,6 +145,7 @@ class ProjectSerializerTest(APITestCase):
             "deadline": datetime.now() - timedelta(days=1),
             "extra_deadline": self.serializer.data["extra_deadline"],
             "max_score": 20,
+            'aantal_groepen': 50,
             "max_groep_grootte": 1,
             "zichtbaar": True,
             "gearchiveerd": False,
@@ -159,6 +164,7 @@ class ProjectSerializerTest(APITestCase):
             "deadline": self.serializer.data["deadline"],
             "extra_deadline": datetime.now() - timedelta(days=1),
             "max_score": 20,
+            'aantal_groepen': 50,
             "max_groep_grootte": 1,
             "zichtbaar": True,
             "gearchiveerd": False,
@@ -176,6 +182,7 @@ class ProjectSerializerTest(APITestCase):
             "deadline": self.serializer.data["deadline"],
             "extra_deadline": self.serializer.data["extra_deadline"],
             "max_score": 20,
+            "aantal_groepen": 50,
             "max_groep_grootte": 1,
             "zichtbaar": True,
             "gearchiveerd": False,
@@ -193,3 +200,5 @@ class ProjectSerializerTest(APITestCase):
         serializer = ProjectSerializer(instance=self.project, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+    
+    # test voor validatie aantal groepen?
