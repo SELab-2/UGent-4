@@ -13,7 +13,7 @@ def upload_to(instance, filename):
     Returns:
         str: Het pad waar het bestand moet worden opgeslagen.
     """
-    return f"data/templates/gebruiker_{instance.gebruiker.user.id}/{filename}"
+    return f"data/templates/gebruiker_{instance.user.id}/{filename}"
 
 
 class Template(models.Model):
