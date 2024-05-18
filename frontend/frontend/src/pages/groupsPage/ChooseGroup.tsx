@@ -321,21 +321,27 @@ export function ChooseGroup() {
                                         />
 
                                         <Box display={'flex'} flexDirection={'column'}>
-                                            {group.studenten.length > 0 ? (
-                                                group.studenten.map((studentid) => {
-                                                    const student = studenten[studentid];
-                                                    if (student) {
-                                                        console.log('Student:', student);
-                                                        return (
-                                                            <Typography key={studentid}>
-                                                                {student.first_name + " " + student.last_name}
-                                                            </Typography>
-                                                        );
-                                                    }
-                                                    return null;
-                                                })
+                                            {loading ? (
+                                                <Typography>{t('members_loading')}</Typography>
                                             ) : (
-                                                <Typography>{t('no_members_yet')}</Typography>
+                                                <>
+                                                    {group.studenten.length > 0 ? (
+                                                        group.studenten.map((studentid) => {
+                                                            const student = studenten[studentid];
+                                                            if (student) {
+                                                                console.log('Student:', student);
+                                                                return (
+                                                                    <Typography key={studentid}>
+                                                                        {student.first_name + " " + student.last_name}
+                                                                    </Typography>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })
+                                                    ) : (
+                                                        <Typography>{t('no_members_yet')}</Typography>
+                                                    )}
+                                                </>
                                             )}
                                         </Box>
 
