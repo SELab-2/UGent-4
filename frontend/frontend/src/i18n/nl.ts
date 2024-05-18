@@ -109,6 +109,9 @@ const dutch = {
     email: 'email',
     copy_invite: 'Kopieer uitnodigingslink',
     n_of_members: 'Max Aantal Leden',
+    existing_submissions:
+        'Dit kan invloed hebben op bestaande indieningen. Weet je het zeker?',
+    divide_groups: 'Verdeel Groepen',
 }
 
 export default dutch

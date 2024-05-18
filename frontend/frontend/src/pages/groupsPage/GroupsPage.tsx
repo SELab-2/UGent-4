@@ -16,7 +16,6 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField,
     Tooltip,
     Typography,
 } from '@mui/material'
@@ -59,14 +58,16 @@ export function GroupsPage() {
     )
     //state for new groups and new groupSize, don't change the old groups and groupSize until the user clicks save
     const [newGroups, setNewGroups] = useState<Group[]>([])
-    const [newGroupSize, setNewGroupSize] = useState(1)
     const [currentGroup, setCurrentGroup] = useState('')
     const [availableStudents, setAvailableStudents] = useState<number[]>([])
     const [projectName, setProjectName] = useState('')
     const [user, setUser] = useState<User>()
-
+    const [max_group_size, setMaxGroupSize] = useState(0)
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
+
+    //random groups dialog state
+    const [randomOpen, setRandomOpen] = useState(false)
 
     // state for correct loading of the page
     const [loading, setLoading] = useState(true)
@@ -106,17 +107,15 @@ export function GroupsPage() {
         } else {
             // update the old groups with the new groups
             for (const group of newGroups) {
-                if (group.studenten.length !== 0) {
-                    instance
-                        .put('/groepen/' + group.groep_id + '/', {
-                            groep_id: group.groep_id,
-                            studenten: group.studenten,
-                            project: parseInt(assignmentId),
-                        })
-                        .catch((error) => {
-                            console.log(error)
-                        })
-                }
+                instance
+                    .put('/groepen/' + group.groep_id + '/', {
+                        groep_id: group.groep_id,
+                        studenten: group.studenten,
+                        project: parseInt(assignmentId),
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
             }
         }
         navigate('/course/' + courseId + '/assignment/' + assignmentId)
@@ -136,46 +135,6 @@ export function GroupsPage() {
     // Close the dialog
     const handleCancel = () => {
         navigate('/course/' + courseId + '/assignment/' + assignmentId)
-    }
-
-    // Change max group size
-    const handleGroupSizeChange = (newValue: number) => {
-        setNewGroupSize(newValue)
-        setAvailableStudents(() => Array.from(studentNames.keys()))
-        setCurrentGroup('0')
-        setNewGroups(() => {
-            const newGroups = []
-            for (
-                let i = 0;
-                i < Math.ceil(availableStudents.length / newValue);
-                i++
-            ) {
-                newGroups.push({
-                    studenten: [],
-                    project: parseInt(assignmentId),
-                })
-            }
-            return newGroups
-        })
-        async function fetchCourse() {
-            setLoading(true)
-            instance
-                .get('/vakken/' + courseId)
-                .then((response) => {
-                    setAvailableStudents(response.data.studenten)
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
-            setLoading(false)
-        }
-        fetchCourse()
-            .catch((error) => {
-                console.error(error)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
     }
 
     //get the current groups and group size from the backend
@@ -236,7 +195,8 @@ export function GroupsPage() {
                 .get('/projecten/' + assignmentId)
                 .then((response) => {
                     setProjectName(response.data.titel)
-                    setNewGroupSize(response.data.max_groep_grootte)
+
+                    setMaxGroupSize(response.data.max_groep_grootte)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -251,21 +211,6 @@ export function GroupsPage() {
                 .get<Group[]>(`/groepen/?project=${assignmentId}`)
                 .then((response) => {
                     const newgroups: Group[] = response.data
-                    if (
-                        newgroups.length <
-                        Math.ceil(studentNames.size / newGroupSize)
-                    ) {
-                        for (
-                            let i = newgroups.length;
-                            i < Math.ceil(studentNames.size / newGroupSize);
-                            i++
-                        ) {
-                            newgroups.push({
-                                studenten: [],
-                                project: parseInt(assignmentId),
-                            })
-                        }
-                    }
                     setNewGroups(newgroups)
                 })
                 .catch((error) => {
@@ -276,14 +221,11 @@ export function GroupsPage() {
             setLoading(false)
         }
 
-        fetchData()
-            .catch((error) => {
-                console.error(error)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }, [assignmentId, courseId, newGroupSize, studentNames.size])
+        fetchData().catch((error) => {
+            console.error(error)
+        })
+        setCurrentGroup('0')
+    }, [assignmentId, courseId, studentNames.size])
 
     useEffect(() => {
         setAvailableStudents(() =>
@@ -296,34 +238,6 @@ export function GroupsPage() {
         )
     }, [newGroups, studentNames])
 
-    // Create new groups when the group size changes
-    useEffect(() => {
-        if (newGroups.length === 0) {
-            setAvailableStudents(() => Array.from(studentNames.keys()))
-            setCurrentGroup('0')
-            setNewGroups(() => {
-                const newGroups = []
-                for (
-                    let i = 0;
-                    i < Math.ceil(availableStudents.length / newGroupSize);
-                    i++
-                ) {
-                    newGroups.push({
-                        studenten: [],
-                        project: parseInt(assignmentId),
-                    })
-                }
-                return newGroups
-            })
-        }
-    }, [
-        assignmentId,
-        availableStudents.length,
-        newGroupSize,
-        newGroups.length,
-        studentNames,
-    ])
-
     //Handle current group change
     const handleCurrentGroupChange = (event: SelectChangeEvent) => {
         setCurrentGroup(event.target.value as string)
@@ -332,22 +246,18 @@ export function GroupsPage() {
     // Randomise groups
     const randomGroups = () => {
         const students = Array.from(studentNames.keys())
-        const newGroups: Group[] = []
-        for (let i = 0; i < Math.ceil(students.length / newGroupSize); i++) {
-            newGroups.push({
-                studenten: [],
-                project: parseInt(assignmentId),
+        const shuffledStudents = students.sort(() => Math.random() - 0.5)
+        const randomisedGroups: Group[] = []
+        for (const group of newGroups) {
+            const sliceSize = Math.min(max_group_size, shuffledStudents.length)
+            randomisedGroups.push({
+                ...group,
+                studenten: shuffledStudents.slice(0, sliceSize),
             })
+            shuffledStudents.splice(0, sliceSize)
+            if (shuffledStudents.length === 0) break
         }
-        for (let i = 0; i < students.length; i++) {
-            let randomGroup = Math.floor(Math.random() * newGroups.length)
-            while (newGroups[randomGroup].studenten.length >= newGroupSize) {
-                randomGroup = Math.floor(Math.random() * newGroups.length)
-            }
-            newGroups[randomGroup].studenten.push(students[i])
-        }
-
-        setNewGroups(newGroups)
+        setNewGroups(randomisedGroups)
     }
 
     // assign a student to a group
@@ -479,50 +389,6 @@ export function GroupsPage() {
                                                             {t('group')}
                                                         </Typography>
                                                     </Grid>
-                                                    <Grid item minWidth={3}>
-                                                        {loading ? (
-                                                            <Skeleton
-                                                                variant={'text'}
-                                                                width={80}
-                                                                height={80}
-                                                            />
-                                                        ) : (
-                                                            <TextField
-                                                                // The teacher can specify the maximum group size
-                                                                // If a number smaller than 1 is entered, the input will be ignored
-                                                                aria-label={
-                                                                    'maxGroupSize'
-                                                                }
-                                                                value={
-                                                                    newGroupSize
-                                                                }
-                                                                type={'number'}
-                                                                onChange={(
-                                                                    newValue
-                                                                ) => {
-                                                                    if (
-                                                                        parseInt(
-                                                                            newValue
-                                                                                .target
-                                                                                .value
-                                                                        ) < 1
-                                                                    )
-                                                                        return
-                                                                    handleGroupSizeChange(
-                                                                        parseInt(
-                                                                            newValue
-                                                                                .target
-                                                                                .value
-                                                                        )
-                                                                    )
-                                                                }}
-                                                                variant="outlined"
-                                                                sx={{
-                                                                    width: 80,
-                                                                }}
-                                                            />
-                                                        )}
-                                                    </Grid>
                                                 </Grid>
                                             </Stack>
                                             <Stack
@@ -552,7 +418,9 @@ export function GroupsPage() {
                                                                 'secondary.main',
                                                             padding: 1,
                                                         }}
-                                                        onClick={randomGroups}
+                                                        onClick={() =>
+                                                            setRandomOpen(true)
+                                                        }
                                                     >
                                                         <Typography
                                                             color="text.primary"
@@ -709,7 +577,7 @@ export function GroupsPage() {
                                                                                                   ]
                                                                                                       .studenten
                                                                                                       .length >=
-                                                                                                  newGroupSize
+                                                                                                  max_group_size
                                                                                                 : true
                                                                                         }
                                                                                         onClick={() => {
@@ -988,6 +856,14 @@ export function GroupsPage() {
                                 open={confirmOpen}
                                 handleClose={handleCloseConfirm}
                                 doAction={confirmSave}
+                            />
+                            <WarningPopup
+                                title={t('random') + ' ' + t('groups') + '?'}
+                                content={t('existing_submissions')}
+                                buttonName={t('divide_groups')}
+                                open={randomOpen}
+                                handleClose={() => setRandomOpen(false)}
+                                doAction={randomGroups}
                             />
                         </>
                     ) : (

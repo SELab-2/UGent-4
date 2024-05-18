@@ -109,6 +109,9 @@ const english = {
     email: 'email',
     copy_invite: 'Copy invitation link',
     n_of_members: 'Max Amount Of Members',
+    existing_submissions:
+        'This could impact existing submissions. Are you sure?',
+    divide_groups: 'Divide Groups',
 }
 
 export default english
