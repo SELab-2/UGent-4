@@ -247,23 +247,21 @@ export default function RestrictionsDialog({
                 multiple
             />
             {/* Vertical button group */}
-            <ButtonGroup
-                orientation="vertical"
-                aria-label="Vertical button group"
-                variant={'outlined'}
-                color={'primary'}
+            <Box
+                padding='10px'
+                display={'flex'}
+                gap={5}
+                alignItems={'center'}
             >
-                {buttons}
-            </ButtonGroup>
-            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
-                {/* This box will contain the templates */}
-                <Typography variant={'body2'}>
-                    {t('open_with_ui') + ':'}
-                </Typography>
-                <Switch
-                    value={openTemplateInUI}
-                    onChange={() => setOpenTemplateInUI(!openTemplateInUI)}
-                />
+                <ButtonGroup
+                    orientation="vertical"
+                    aria-label="Vertical button group"
+                    variant={'outlined'}
+                    color={'primary'}
+                >
+
+                    {buttons}
+                </ButtonGroup>
                 <ButtonGroup
                     orientation="vertical"
                     aria-label="Vertical button group"
@@ -273,15 +271,33 @@ export default function RestrictionsDialog({
                     {templateButtons}
                 </ButtonGroup>
             </Box>
-            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
-                <Typography variant={'body2'}>
-                    {t('must_pass') + ':'}
-                </Typography>
-                <Switch
-                    id='mustPassSwitch'
-                    value={mustPass}
-                    onChange={() => setMustPass(!mustPass)}
-                />
+            <Box
+                padding='10px'
+                display={'flex'}
+                gap={5}
+                alignItems={'center'}
+            >
+                <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                    {/* This box will contain the templates */}
+                    <Typography variant={'body2'}>
+                        {t('open_with_ui') + ':'}
+                    </Typography>
+                    <Switch
+                        value={openTemplateInUI}
+                        onChange={() => setOpenTemplateInUI(!openTemplateInUI)}
+                    />
+
+                </Box>
+                <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                    <Typography variant={'body2'}>
+                        {t('must_pass') + ':'}
+                    </Typography>
+                    <Switch
+                        id='mustPassSwitch'
+                        value={mustPass}
+                        onChange={() => setMustPass(!mustPass)}
+                    />
+                </Box>
             </Box>
             {/* This is the template interface. */}
             <Dialog fullScreen open={openTemplateInterface} onClose={handleCloseTemplateInterface}>

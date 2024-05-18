@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button } from '../../components/CustomComponents.tsx'
+import { Button,SecundaryButton } from '../../components/CustomComponents.tsx'
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -67,7 +67,7 @@ export default function AddRestrictionButton({
                 </DialogContent>
                 <DialogActions>
                     {/* Cancel Button */}
-                    <Button id='cancelButton' onClick={handleClose}>{t('cancel')}</Button>
+                    <SecundaryButton id='cancelButton' onClick={handleClose}>{t('cancel')}</SecundaryButton>
                 </DialogActions>
             </Dialog>
         </>
