@@ -461,7 +461,7 @@ export function SubjectsPage() {
                                         doAction={confirmJoinCourse}
                                     />
                                 </Box>
-                                <Card
+                                <Box
                                     sx={{
                                         padding: 0,
                                         backgroundColor: 'background.default',
@@ -473,7 +473,7 @@ export function SubjectsPage() {
                                         students={studentsLoading ? []: students}
                                         text='students'
                                     ></StudentPopUp>
-                                </Card>
+                                </Box>
                             </Stack>
                         </>
                     )}

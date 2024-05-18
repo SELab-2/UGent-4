@@ -150,6 +150,7 @@ export function ProjectsView({
 
     return (
         <>
+            <Card>
             <Box
                 aria-label={'courseHeader'}
                 sx={{
@@ -305,6 +306,7 @@ export function ProjectsView({
                     </Box>
                 </Box>
             </Box>
+            </Card>
         </>
     )
 }

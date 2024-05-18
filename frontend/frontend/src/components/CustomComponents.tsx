@@ -81,4 +81,3 @@ export const Divider = ({ children, ...props }: any) => {
 }
 
 export default { Button, Card, Divider }
-``

@@ -1,7 +1,7 @@
 import { User } from './AddChangeSubjectPage'
 import * as React from 'react'
 import { IconButton, List, ListItem, ListItemText, Typography } from '@mui/material'
-import { Button } from '../../components/CustomComponents'
+import {Button, SecundaryButton} from '../../components/CustomComponents'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import CloseIcon from '@mui/icons-material/Close'
@@ -23,15 +23,13 @@ export default function StudentPopUp({ students, text }: StudentPopUpProps) {
     return (
         <>
             {/* Students Button */}
-            <Button
-                variant="contained"
-                color="secondary"
+            <SecundaryButton
                 onClick={() => {
                     setOpen(true)
                 }}
             >
                 {t(text)}
-            </Button>
+            </SecundaryButton>
             {/* Students Dialog */}
             <Dialog
                 open={open}
