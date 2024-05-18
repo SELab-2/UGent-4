@@ -128,10 +128,12 @@ export function AssignmentPage() {
                         const groupResponse = await instance.get<[Group]>(
                             `/groepen/?student=${user.user}&project=${assignmentId}`
                         )
-                        const submissionsResponse = await instance.get(
-                            `/indieningen/?project=${assignmentId}&groep=${groupResponse.data[0].groep_id}`
-                        )
-                        setSubmissions(submissionsResponse.data)
+                        if (groupResponse.data.length > 0){
+                            const submissionsResponse = await instance.get(
+                                `/indieningen/?project=${assignmentId}&groep=${groupResponse.data[0].groep_id}`
+                            )
+                            setSubmissions(submissionsResponse.data)
+                        }
                     }
                 }
             } catch (error) {
