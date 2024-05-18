@@ -6,10 +6,12 @@ from django.urls import reverse
 from rest_framework import status
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.files.base import ContentFile
+from unittest.mock import patch
 
 
 class IndieningListViewTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.client = APIClient()
         self.teacher = GebruikerFactory.create(is_lesgever=True)
         self.student = GebruikerFactory.create(is_lesgever=False)
@@ -30,7 +32,8 @@ class IndieningListViewTest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
-    def test_indiening_list_post(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def test_indiening_list_post(self, mock_send_mail):
         data = {
             "groep": self.indiening2.groep_id,
         }
@@ -96,7 +99,8 @@ class IndieningListViewTest(TestCase):
 
 
 class IndieningDetailViewTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.client = APIClient()
         self.gebruiker = GebruikerFactory.create()
         self.gebruiker.user.is_superuser = True
@@ -133,7 +137,8 @@ class IndieningDetailViewTest(TestCase):
 
 
 class IndieningDetailDownloadBestandenTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.client = APIClient()
         self.teacher = GebruikerFactory.create(is_lesgever=True)
         self.student = GebruikerFactory.create(is_lesgever=False)
@@ -167,7 +172,8 @@ class IndieningDetailDownloadBestandenTest(TestCase):
 
 
 class IndieningDetailDownloadArtefactenTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.client = APIClient()
         self.teacher = GebruikerFactory.create(is_lesgever=True)
         self.student = GebruikerFactory.create(is_lesgever=False)

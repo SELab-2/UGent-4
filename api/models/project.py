@@ -38,7 +38,7 @@ class Project(models.Model):
         Standaard ingesteld op 20.
         max_groep_grootte (IntegerField): Een veld voor het instellen van de max grootte van de groep voor het project.
         Standaard ingesteld op 1.
-        student_groep (BooleanField): Een veld om aan te geven of het een individueel project is of niet.
+        student_groep (BooleanField): Een veld om aan te geven of de studenten hun eigen groep mogen kiezen.
         Standaard ingesteld of False.
         zichtbaar (BooleanField): Een veld om aan te geven of het project zichtbaar is of niet.
         Standaard ingesteld op True.

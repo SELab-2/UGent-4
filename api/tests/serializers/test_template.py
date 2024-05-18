@@ -3,6 +3,7 @@ from rest_framework.exceptions import ValidationError
 from api.tests.factories.template import TemplateFactory
 from api.serializers.template import TemplateSerializer
 
+
 class TemplateSerializerTest(TestCase):
     def setUp(self):
         self.template = TemplateFactory.create()
@@ -10,24 +11,24 @@ class TemplateSerializerTest(TestCase):
 
     def test_contains_expected_fields(self):
         data = self.serializer.data
-        self.assertCountEqual(data.keys(), ['template_id', 'user', 'bestand'])
+        self.assertCountEqual(data.keys(), ["template_id", "user", "bestand"])
 
     def test_template_id_field_content(self):
         data = self.serializer.data
-        self.assertEqual(data['template_id'], self.template.template_id)
+        self.assertEqual(data["template_id"], self.template.template_id)
 
     def test_user_field_content(self):
         data = self.serializer.data
-        self.assertEqual(data['user'], self.template.user.id)
+        self.assertEqual(data["user"], self.template.user.id)
 
     def test_bestand_field_content(self):
         data = self.serializer.data
-        self.assertEqual(data['bestand'], self.template.bestand.url)
+        self.assertEqual(data["bestand"], self.template.bestand.url)
 
     def test_validation(self):
         invalid_data = {
-            'user': '',
-            'bestand': '',
+            "user": "",
+            "bestand": "",
         }
         serializer = TemplateSerializer(data=invalid_data)
         with self.assertRaises(ValidationError):

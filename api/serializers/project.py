@@ -76,6 +76,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             Project: Het bijgewerkte project.
         """
         validated_data.pop("max_groep_grootte", instance.max_groep_grootte)
+        validated_data.pop("student_groep", instance.student_groep)
         validated_data.pop("aantal_groepen", instance.aantal_groepen)
 
         deadline = validated_data.pop("deadline", instance.deadline)

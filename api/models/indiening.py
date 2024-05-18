@@ -1,4 +1,4 @@
-from django.db import IntegrityError, models
+from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from api.docker.python_entrypoint import run_tests_on
@@ -66,31 +66,18 @@ class Indiening(models.Model):
     def __str__(self):
         return str(self.indiening_id)
 
-def save(self, *args, **kwargs):
-    # Loop until the instance is saved successfully
-    while True:
-        try:
-            # First save to generate the indiening_id if it doesn't exist
-            if not self.indiening_id:
-                super(Indiening, self).save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        # Update the bestand path if it's still using the temporary path
+        if "temp" in self.bestand.name:
+            old_file = self.bestand
+            new_path = self.bestand.name.replace(
+                "temp", f"indiening_{self.indiening_id}"
+            )
+            default_storage.save(new_path, ContentFile(old_file.read()))
+            old_file.storage.delete(old_file.name)
+            self.bestand.name = new_path
 
-            # Update the bestand path if it's still using the temporary path
-            if "temp" in self.bestand.name:
-                old_file = self.bestand
-                new_path = self.bestand.name.replace(
-                    "temp", f"indiening_{self.indiening_id}"
-                )
-                default_storage.save(new_path, ContentFile(old_file.read()))
-                old_file.storage.delete(old_file.name)
-                self.bestand.name = new_path
-
-            super(Indiening, self).save(*args, **kwargs)
-            # If the instance was saved successfully, break the loop
-            break
-        except IntegrityError:
-            # If an IntegrityError was raised, the indiening_id was a duplicate,
-            # so we'll try again with a new one
-            pass
+        super(Indiening, self).save(*args, **kwargs)
 
 
 def run_tests_async(instance):

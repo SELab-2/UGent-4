@@ -3,6 +3,7 @@ from api.tests.factories.template import TemplateFactory
 from api.models.template import Template
 from api.models.template import upload_to
 
+
 class TemplateModelTest(TestCase):
     def setUp(self):
         self.template = TemplateFactory.create()

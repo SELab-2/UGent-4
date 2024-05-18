@@ -7,7 +7,7 @@ from api.models.groep import Groep
 from api.models.vak import Vak
 from api.models.project import Project
 from api.serializers.indiening import IndieningSerializer
-from api.utils import has_permissions, contains, is_lesgever
+from api.utils import has_permissions, contains
 
 from django.http import FileResponse
 
