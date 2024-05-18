@@ -24,6 +24,7 @@ import { Project } from '../scoresPage/ProjectScoresPage.tsx'
 import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
 import dayjs from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
+import WarningPopup from '../../components/WarningPopup.tsx'
 
 // group interface
 export interface Group {
@@ -45,7 +46,7 @@ export function AssignmentPage() {
 
     const goToGroups = () => {
         console.log('go to scores')
-        navigate(`/course/${courseId}/assignment/${assignmentId}/groups`)
+        navigate(`/course/${courseId}/assignment/${assignmentId}/groups/choose`)
     }
 
     // State variables
@@ -65,14 +66,31 @@ export function AssignmentPage() {
     const [loading, setLoading] = useState(true)
     const [userLoading, setUserLoading] = useState(true)
 
+    // state for the warning popup
+    const [openNoGroup, setOpenNoGroup] = useState(false)
+
+    // Function to handle the error when the user has no group
+    function handleNoGroupError() {
+        if (assignment?.student_groep) {
+            navigate(
+                `/course/${courseId}/assignment/${assignmentId}/groups/choose`
+            )
+        } else {
+            setOpenNoGroup(false)
+        }
+    }
+
     useEffect(() => {
+        async function fetchUser() {
+            setUserLoading(true)
+            setLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            setUser(userResponse.data)
+            setUserLoading(false)
+        }
+
         async function fetchData() {
             try {
-                setUserLoading(true)
-                setLoading(true)
-                const userResponse = await instance.get('/gebruikers/me/')
-                setUser(userResponse.data)
-                setUserLoading(false)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
@@ -100,65 +118,80 @@ export function AssignmentPage() {
                         return file
                     })
                 setAssignment(newAssignment)
-                if (userResponse.data) {
+                if (user) {
                     if (user.is_lesgever) {
                         const groupsResponse = await instance.get(
                             `/groepen/?project=${assignmentId}`
                         )
                         setGroups(groupsResponse.data)
                     } else {
-                        const submissionsResponse = await instance.get(
-                            `/indieningen/?vak=${courseId}`
+                        const groupResponse = await instance.get<[Group]>(
+                            `/groepen/?student=${user.user}&project=${assignmentId}`
                         )
-                        setSubmissions(submissionsResponse.data)
+                        if (groupResponse.data.length > 0){
+                            const submissionsResponse = await instance.get(
+                                `/indieningen/?project=${assignmentId}&groep=${groupResponse.data[0].groep_id}`
+                            )
+                            setSubmissions(submissionsResponse.data)
+                        }
                     }
                 }
             } catch (error) {
                 console.error('Error fetching data:', error)
+                navigate('/error')
             } finally {
                 setLoading(false)
             }
         }
 
-        fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever, submit])
+        // Ensure fetchUser completes before fetchData starts
+        ;(async () => {
+            if (user.user === 0) {
+                await fetchUser()
+            }
+            await fetchData() // Use await here to ensure fetchData waits for fetchUser to complete
+        })()
+    }, [assignmentId, courseId, user.is_lesgever, submit, user])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
         const zip = new JSZip()
         const downloadPromises: Promise<void>[] = []
-        submissions.forEach((submission, index) => {
-            // Iterating over submissions and creating promises for each download
+        submissions.forEach(submission => {
             downloadPromises.push(
-                new Promise((resolve, reject) => {
-                    instance
-                        .get(
-                            `/indieningen/${submission.indiening_id}/indiening_bestanden/`,
+                new Promise(async (resolve, reject) => {
+                    try {
+                        // Get the submission details
+                        const submissionResponse = await instance.get(
+                            `/indieningen/${submission.indiening_id}/`
+                        );
+                        const newSubmission = submissionResponse.data;
+                        // Get the submission file
+                        const fileResponse = await instance.get(
+                            `/indieningen/${submission.indiening_id}/indiening_bestand/`,
                             { responseType: 'blob' }
-                        )
-                        .then((res) => {
-                            let filename = 'lege_indiening_zip.zip'
-                            if (submission.indiening_bestanden.length > 0) {
-                                filename =
-                                    submission.indiening_bestanden[0].bestand.replace(
-                                        /^.*[\\/]/,
-                                        ''
-                                    )
-                            }
-                            if (filename !== 'lege_indiening_zip.zip') {
-                                zip.file(filename, res.data)
-                            }
-                            resolve()
-                        })
-                        .catch((err) => {
-                            console.error(
-                                `Error downloading submission ${index + 1}:`,
-                                err
-                            )
-                            reject(err)
-                        })
+                        );
+                        let filename = 'indiening.zip';
+                        if (newSubmission.bestand) {
+                            filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                        }
+                        const blob = new Blob([fileResponse.data], {
+                            type: fileResponse.headers['content-type'],
+                        });
+                        const file = new File([blob], filename, {
+                            type: fileResponse.headers['content-type'],
+                        });
+                        newSubmission.bestand = file;
+                        newSubmission.filename = filename;
+                        // Add the file to the zip
+                        zip.file(filename, fileResponse.data);
+                        resolve(newSubmission);
+                    } catch (err) {
+                        console.error(`Error downloading submission:`, err);
+                        reject(err);
+                    }
                 })
-            )
+            );
         })
         Promise.all(downloadPromises)
             .then(() => {
@@ -167,7 +200,7 @@ export function AssignmentPage() {
                         const url = window.URL.createObjectURL(blob)
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = 'all_submissions.zip'
+                        a.download = 'all_submissions_' + assignment?.titel + '_.zip'
                         document.body.appendChild(a)
                         a.click()
                         a.remove()
@@ -205,6 +238,7 @@ export function AssignmentPage() {
     }
 
     // Function to upload submission file
+    // check for failures and open popup if no group
     const uploadIndiening = async () => {
         if (submissionFile) {
             const config = {
@@ -213,16 +247,14 @@ export function AssignmentPage() {
                 },
             }
             const groupResponse = await instance.get(
-                `/groepen/?student=${user.user}`
+                `/groepen/?student=${user.user}&project=${assignmentId}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data.find(
-                    (group: Group) => String(group.project) === assignmentId
-                )
+                const group = groupResponse.data[0]
                 if (group) {
                     const formData = new FormData()
                     formData.append('groep', group.groep_id)
-                    formData.append('indiening_bestanden', submissionFile)
+                    formData.append('bestand', submissionFile)
 
                     await instance
                         .post('/indieningen/', formData, config)
@@ -231,6 +263,7 @@ export function AssignmentPage() {
                         })
                     setSubmissionFile(undefined)
                 } else {
+                    setOpenNoGroup(true)
                     console.error(
                         'Group not found for assingmentId: ',
                         assignmentId
@@ -280,6 +313,28 @@ export function AssignmentPage() {
                                     backgroundColor: 'background.default',
                                 }}
                             >
+                                <Box
+                                    aria-label={'assignment-box'}
+                                    sx={{
+                                        padding: '20px',
+                                    }}
+                                >
+                                    <Stack direction={'column'}>
+                                        <Typography
+                                            variant={'h5'}
+                                            color={'text.primary'}
+                                            aria-label={'title'}
+                                            sx={{
+                                                fontWeight: 'bold',
+                                            }}
+                                        >
+                                            {t('assignment')}
+                                        </Typography>
+                                        <Typography color={'text.primary'}>
+                                            {assignment?.beschrijving}
+                                        </Typography>
+                                    </Stack>
+                                </Box>
                                 {/*deadline and group button */}
                                 <Box
                                     sx={{
@@ -545,6 +600,7 @@ export function AssignmentPage() {
                             </Stack>
                         </>
                     ) : (
+                        // Rendering UI for student
                         <>
                             <Header
                                 variant={'not_main'}
@@ -567,6 +623,41 @@ export function AssignmentPage() {
                                     backgroundColor: 'background.default',
                                 }}
                             >
+                                {/*assignment description*/}
+                                <Box
+                                    aria-label={'assignment-box'}
+                                    sx={{
+                                        padding: '5px',
+                                    }}
+                                >
+                                    <Stack direction={'column'}>
+                                        {loading ? (
+                                            <Skeleton
+                                                variant="text"
+                                                width={200}
+                                                height={50}
+                                            />
+                                        ) : (
+                                            <>
+                                                <Typography
+                                                    variant={'h5'}
+                                                    color={'text.primary'}
+                                                    aria-label={'title'}
+                                                    sx={{
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                >
+                                                    {t('assignment')}
+                                                </Typography>
+                                                <Typography
+                                                    color={'text.primary'}
+                                                >
+                                                    {assignment?.beschrijving}
+                                                </Typography>
+                                            </>
+                                        )}
+                                    </Stack>
+                                </Box>
                                 {/*deadline and groep button */}
                                 <Box
                                     sx={{
@@ -595,18 +686,26 @@ export function AssignmentPage() {
                                                     height={50}
                                                 />
                                             ) : (
-                                                <Typography
-                                                    variant="h6"
-                                                    color={'text.primary'}
-                                                >
-                                                    {assignment
-                                                        ? dayjs(
-                                                              assignment.deadline
-                                                          ).format(
-                                                              'DD/MM/YYYY-HH:MM'
-                                                          )
-                                                        : 'no deadline'}
-                                                </Typography>
+                                                <>
+                                                    {assignment !== undefined &&
+                                                        assignment.deadline !==
+                                                            null && (
+                                                            <Typography
+                                                                variant="h6"
+                                                                color={
+                                                                    'text.primary'
+                                                                }
+                                                            >
+                                                                {assignment
+                                                                    ? dayjs(
+                                                                          assignment.deadline
+                                                                      ).format(
+                                                                          'DD/MM/YYYY-HH:MM'
+                                                                      )
+                                                                    : 'no deadline'}
+                                                            </Typography>
+                                                        )}
+                                                </>
                                             )}
                                         </Box>
                                         <Box style={{ flexGrow: 1 }} />
@@ -641,6 +740,44 @@ export function AssignmentPage() {
                                         )}
                                     </Stack>
                                 </Box>
+                                {/*extra deadline*/}
+                                {assignment?.extra_deadline && (
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        alignItems={'center'}
+                                        gap={1}
+                                        pl={2.5}
+                                    >
+                                        <Typography
+                                            variant="h6"
+                                            color="text.primary"
+                                            fontWeight={'bold'}
+                                        >
+                                            Extra Deadline:
+                                        </Typography>
+                                        {loading ? (
+                                            <Skeleton
+                                                variant="text"
+                                                width={180}
+                                                height={50}
+                                            />
+                                        ) : (
+                                            <Typography
+                                                variant="h6"
+                                                color={'text.primary'}
+                                            >
+                                                {assignment
+                                                    ? dayjs(
+                                                          assignment.extra_deadline
+                                                      ).format(
+                                                          'DD/MM/YYYY-HH:MM'
+                                                      )
+                                                    : 'no deadline'}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                )}
                                 {/*download opgave*/}
                                 <Box
                                     aria-label={'file-box'}
@@ -668,6 +805,7 @@ export function AssignmentPage() {
                                     <Button
                                         startIcon={<DownloadIcon />}
                                         onClick={downloadAssignment}
+                                        disabled={assignment === undefined}
                                     >
                                         {loading ? (
                                             <Skeleton
@@ -682,7 +820,7 @@ export function AssignmentPage() {
                                             <>
                                                 {assignment
                                                     ? assignment.filename
-                                                    : 'error'}
+                                                    : t('no_assignmentfile')}
                                             </>
                                         )}
                                     </Button>
@@ -948,6 +1086,23 @@ export function AssignmentPage() {
                                     </Stack>
                                 </Box>
                             </Stack>
+                            <WarningPopup
+                                title={t('error')}
+                                content={
+                                    t('noGroup') +
+                                    (assignment?.student_groep
+                                        ? t('chooseGroup')
+                                        : t('contactTeacher'))
+                                }
+                                buttonName={
+                                    assignment?.student_groep
+                                        ? t('join')
+                                        : t('ok')
+                                }
+                                open={openNoGroup}
+                                handleClose={() => setOpenNoGroup(false)}
+                                doAction={handleNoGroupError}
+                            />
                         </>
                     )}
                 </>

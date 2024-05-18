@@ -2,19 +2,19 @@ import {
     Box,
     Card,
     Divider,
-    IconButton,
     ListItem,
     ListItemText,
     Stack,
     Typography,
     Dialog,
+    CircularProgress,
 } from '@mui/material'
 import List from '@mui/material/List'
 import { useEffect, useState } from 'react'
 import {Header} from "../../components/Header.tsx";
 import { t } from 'i18next'
 import { Button } from '../../components/CustomComponents.tsx';
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import instance from "../../axiosConfig.ts";
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx';
 
@@ -69,7 +69,7 @@ function joinLeaveButton(isin:boolean,handleJoin: ()=> void,handleLeave: ()=> vo
 export function ChooseGroup() {
 
     const params = useParams()
-
+    const navigate = useNavigate()
 
     const [studenten,setStudenten]=useState<Record<number, User>>({});
     const [groups,setGroups]=useState<Group[]>([]);
@@ -78,6 +78,7 @@ export function ChooseGroup() {
     const [assignment,setAssignment]= useState<Assignment>()
 
     const [loading, setLoading] = useState(true)
+    const [userLoading, setUserLoading] = useState(true)
 
     const assignmentId = params.assignmentId
 
@@ -86,6 +87,7 @@ export function ChooseGroup() {
     }
 
     useEffect(()=>{
+        setUserLoading(true)
         setLoading(true);
         instance
             .get('/gebruikers/me/')
@@ -95,6 +97,7 @@ export function ChooseGroup() {
             .catch((err) => {
                 console.log(err)
             })
+        setUserLoading(false)
         instance
             .get('/projecten/'+assignmentId+'/')
             .then((res) => {
@@ -161,7 +164,25 @@ export function ChooseGroup() {
 
     return (
         <>
-            <Stack direction={'column'}>
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <CircularProgress color={'primary'} />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {!user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                    <>
+                <Stack direction={'column'}>
                 <Header variant={'not_main'} title={loading ? '' : `${assignment?.titel}: ${t('groups')}`} />
                 <Stack
                     direction={'column'}
@@ -322,18 +343,28 @@ export function ChooseGroup() {
                                         />
 
                                         <Box display={'flex'} flexDirection={'column'}>
-                                            {group.studenten.length > 0 ? (
-                                                    group.studenten.map((studentid) => (
-                                                        <Typography>
-                                                            {studenten[studentid] !== undefined
-                                                                ? `${studenten[studentid].first_name} ${studenten[studentid].last_name}`
-                                                                : t('members_loading')}
-                                                        </Typography>
-                                                    ))
-                                                ) : (
-                                                    <Typography>{t('no_members_yet')}</Typography>
-                                                )}
-
+                                            {loading ? (
+                                                <Typography>{t('members_loading')}</Typography>
+                                            ) : (
+                                                <>
+                                                    {group.studenten.length > 0 ? (
+                                                        group.studenten.map((studentid) => {
+                                                            const student = studenten[studentid];
+                                                            if (student) {
+                                                                console.log('Student:', student);
+                                                                return (
+                                                                    <Typography key={studentid}>
+                                                                        {student.first_name + " " + student.last_name}
+                                                                    </Typography>
+                                                                );
+                                                            }
+                                                            return null;
+                                                        })
+                                                    ) : (
+                                                        <Typography>{t('no_members_yet')}</Typography>
+                                                    )}
+                                                </>
+                                            )}
                                         </Box>
 
                                         {joinLeaveButton(user!=undefined ? group.studenten.includes(user.user):false,handleJoin,handleLeave)}
@@ -357,5 +388,10 @@ export function ChooseGroup() {
                 </Stack>
             </Stack>
         </>
-    )
-}
+    ):(
+        navigate('*')
+    )}
+</>
+)} 
+</>
+)}

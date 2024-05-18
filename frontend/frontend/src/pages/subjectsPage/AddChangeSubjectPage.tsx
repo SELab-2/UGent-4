@@ -9,11 +9,12 @@ import {
     Stack,
     TextField,
     Typography,
+    CircularProgress
 } from '@mui/material'
 import { Header } from '../../components/Header'
 import { Button } from '../../components/CustomComponents.tsx'
 import React, { ChangeEvent, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
 import 'dayjs/locale/nl'
@@ -222,6 +223,8 @@ function DialogWindow(
 
 export function AddChangeSubjectPage() {
     const params = useParams()
+    const navigate = useNavigate()
+
     // State for the different fields of the subject
     const [title, setTitle] = useState<string>('')
     const [emailStudent, setEmailStudent] = useState<string>('')
@@ -234,11 +237,13 @@ export function AddChangeSubjectPage() {
     const [openTeacher, setOpenTeacher] = useState<boolean>(false)
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
+    const [user, setUser] = useState<User>()
 
     const [vakID, setVakID] = useState(params.courseId)
 
     // state for spinners
     const [loading, setLoading] = useState(false)
+    const [userLoading, setUserLoading] = useState(true)
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
@@ -472,6 +477,12 @@ export function AddChangeSubjectPage() {
     }
 
     useEffect(() => {
+        async function fetchUser() {
+            setUserLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            setUser(userResponse.data)
+            setUserLoading(false)
+        }
         async function fetchData() {
             setLoading(true)
             await instance
@@ -532,6 +543,9 @@ export function AddChangeSubjectPage() {
                 })
             setLoading(false)
         }
+        fetchUser().catch((err) => {
+            console.log(err)
+        })
         if (vakID != undefined) {
             fetchData().catch((err) => {
                 console.log(err)
@@ -541,6 +555,24 @@ export function AddChangeSubjectPage() {
 
     return (
         <>
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <CircularProgress color={'primary'} />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                    <>
             <Stack direction={'column'}>
                 <Header variant={loading ? 'default' : 'not_main'} title={loading ? '' : title} />
                 <Stack
@@ -687,5 +719,10 @@ export function AddChangeSubjectPage() {
                 </Stack>
             </Stack>
         </>
-    )
-}
+    ):(
+        navigate('*')
+    )}
+</>
+)} 
+</>
+)}

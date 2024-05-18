@@ -105,13 +105,18 @@ const english = {
     join_group: 'Join',
     leave: 'Leave',
     acces: 'This gives you access to the course.',
+    copy_invite: 'Copy invitation link',
     deadlines_on: 'Deadlines on',
+    no_assignmentfile: 'No assignment file',
     email: 'email',
     copy_invite: 'Copy invitation link',
     n_of_members: 'Max Amount Of Members',
     existing_submissions:
         'This could impact existing submissions. Are you sure?',
     divide_groups: 'Divide Groups',
+    noGroup: "You don't seem to be in a group yet.",
+    contactTeacher: 'Please contact your teacher.',
+    chooseGroup: 'Join a group before submitting.',
 }
 
 export default english

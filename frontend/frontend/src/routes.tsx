@@ -64,6 +64,10 @@ const router = createBrowserRouter([
     },
     {
         path: '*',
+        element: <ErrorPage />, // todo: change to 404-page
+    },
+    {
+        path: '/error',
         element: <ErrorPage />,
     },
 ])

@@ -105,6 +105,8 @@ const dutch = {
     join_group: 'Wordt lid',
     leave: 'Verlaat',
     acces: 'Dit geeft je toegang tot het vak.',
+    copy_invite: 'Kopieer uitnodigingslink',
+    no_assignmentfile: 'Geen opdrachtbestand',
     deadlines_on: 'Deadlines op',
     email: 'email',
     copy_invite: 'Kopieer uitnodigingslink',
@@ -112,6 +114,9 @@ const dutch = {
     existing_submissions:
         'Dit kan invloed hebben op bestaande indieningen. Weet je het zeker?',
     divide_groups: 'Verdeel Groepen',
+    noGroup: 'Je lijkt nog geen groep te hebben.',
+    chooseGroup: 'Kies een groep voor je indient',
+    contactTeacher: 'Gelieve contact op te nemen met je lesgever.',
 }
 
 export default dutch

@@ -34,6 +34,7 @@ import instance from '../../axiosConfig.ts'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import AddRestrictionButton from './AddRestrictionButton.tsx'
 import { RestrictionCard } from '../../components/RestrictionCard.tsx'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 /**
  * This page is used to add or change an assignment.
@@ -87,6 +88,7 @@ export function AddChangeAssignmentPage() {
 
     //State for loading the data or showing skeletons
     const [loading, setLoading] = useState(false)
+    const [userLoading, setUserLoading] = useState(true)
 
     // State for the different fields of the assignment
     const [title, setTitle] = useState('')
@@ -100,6 +102,8 @@ export function AddChangeAssignmentPage() {
     const [cleared, setCleared] = useState<boolean>(false)
     const [filename, setFilename] = useState<string>('indiening.zip')
     const [groupSize, setGroupSize] = useState<number>(1)
+
+    const [user, setUser] = useState<User>()
 
     // State for the error checks of the assignment
     const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
@@ -161,7 +165,11 @@ export function AddChangeAssignmentPage() {
         //get the data
         const fetchData = async () => {
             //begin loading -> set loading to true
+            setUserLoading(true)
             setLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            setUser(userResponse.data)
+            setUserLoading(false)
 
             //get the assignment
             await instance
@@ -445,6 +453,24 @@ export function AddChangeAssignmentPage() {
 
     return (
         <>
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <CircularProgress color={'primary'} />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                    <>
             {/* Stack container for layout */}
             <Stack direction={'column'} paddingX={2}>
                 {/*very ugly but it works functionally*/}
@@ -1001,5 +1027,10 @@ export function AddChangeAssignmentPage() {
                 />
             </Stack>
         </>
-    )
-}
+    ):(
+        navigate('*')
+    )}
+</>
+)} 
+</>
+)}
