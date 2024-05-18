@@ -30,6 +30,7 @@ API_URLS = {
     "scores": "api/scores",
     "projecten": "api/projecten",
     "restricties": "api/restricties",
+    "templates": "api/templates"
 }
 
 
