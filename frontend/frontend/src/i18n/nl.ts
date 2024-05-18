@@ -107,7 +107,10 @@ const dutch = {
     acces: 'Dit geeft je toegang tot het vak.',
     deadlines_on: 'Deadlines op',
     email: 'email',
-    copy_invite: 'Kopieer uitnodigingslink'
+    copy_invite: 'Kopieer uitnodigingslink',
+    noGroup: 'Je lijkt nog geen groep te hebben.',
+    chooseGroup: 'Kies een groep voor je indient',
+    contactTeacher: 'Gelieve contact op te nemen met je lesgever.',
 }
 
 export default dutch
