@@ -6,6 +6,7 @@ import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
+import {SecundaryButton} from "../../components/CustomComponents.tsx";
 
 
 const saveRestrictionTemplate = (restrictionCode: string, params: { [key: string]: any }, extension: string) => {
@@ -135,13 +136,13 @@ export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemp
                     <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
                         {templateName}
                     </Typography>
-                    <Button
+                    <SecundaryButton
                         autoFocus
                         color="inherit"
                         onClick={() => saveRestrictionTemplate(restrictionCode, paramsState, templateExtension)}
                     >
                         save
-                    </Button>
+                    </SecundaryButton>
                 </Toolbar>
             </AppBar>
             <Box aria-label={'Content'} padding={1}>
@@ -157,7 +158,6 @@ export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemp
                                 <TextField
                                     type='number'
                                     value={paramsState[param.variable]}
-                                    fullWidth
                                     onChange={(e) => handleArrayChange(param.variable, Number(e.target.value))}
                                 />
                             </>
@@ -172,7 +172,6 @@ export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemp
                                 <TextField
                                     type='text'
                                     value={paramsState[param.variable]}
-                                    fullWidth
                                     onChange={(e) => handleArrayChange(param.variable, e.target.value)}
                                 />
                             </>
@@ -215,7 +214,7 @@ export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemp
                                         </ListItem>
                                     ))}
                                 </List>
-                                <Button variant="outlined" onClick={() => handleAddRow(param.variable)} startIcon={<AddCircleOutlineIcon />}>Add Row</Button>
+                                <SecundaryButton onClick={() => handleAddRow(param.variable)} startIcon={<AddCircleOutlineIcon />}>Add Row</SecundaryButton>
                             </div>
                         )}
                     </div>

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { ChangeEvent, useState } from 'react'
-import { Card,Button,SecundaryButton } from '../../components/CustomComponents.tsx'
+import {Button, Card, SecundaryButton} from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -9,12 +9,11 @@ import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
 import {
     Box,
-    Stack,
     ButtonGroup,
     FormControl,
     MenuItem,
     Select,
-    TextField, Divider,
+    TextField,
 } from '@mui/material'
 import { t, use } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
@@ -22,7 +21,6 @@ import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import RestrictionsTemplateUI from './RestrictionTemplateUI.tsx'
 import instance from '../../axiosConfig.ts'
-import theme from "../../Theme.ts";
 
 interface RestrictionsDialogProps {
     restrictions: restriction[]
@@ -279,15 +277,21 @@ export default function RestrictionsDialog({
                 gap={5}
                 alignItems={'center'}
             >
-                <ButtonGroup
-                    orientation="vertical"
-                    aria-label="Vertical button group"
-                    variant={'outlined'}
-                    color={'primary'}
+                <Box
+                    sx={{
+                        maxHeight: 150,
+                        overflowY: 'auto',
+                    }}
                 >
-                    {templateButtons}
-                </ButtonGroup>
-
+                    <ButtonGroup
+                        orientation="vertical"
+                        aria-label="Vertical button group"
+                        variant={'outlined'}
+                        color={'primary'}
+                    >
+                        {templateButtons}
+                    </ButtonGroup>
+            </Box>
             </Box>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
                 {/* This box will contain the templates */}
@@ -307,7 +311,7 @@ export default function RestrictionsDialog({
             {/* This is the code editor. */}
             <Dialog fullScreen open={openTextEditor} onClose={handleCloseTextEditor}>
                 <Box>
-                    <AppBar sx={{ position: 'relative' }}>
+                    <AppBar elevation={0} sx={{ position: 'relative' }}>
                         <Toolbar>
                             <Box
                                 display={'flex'}
@@ -412,40 +416,52 @@ export default function RestrictionsDialog({
                                         </FormControl>
                                     </Box>
                                 </Box>
-                                <Button
-                                    autoFocus
-                                    color="inherit"
-                                    onClick={() => handleSaveTemplate(restrictionName, restrictionType, textFieldContent, {template_id: 1, user: 1, bestand: 0})} // bestand if maakt niet uit, wordt toch niet gebruikt
+                                <Box
+                                    display="flex"
+                                    flexDirection="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
                                 >
-                                    save template
-                                </Button>
-                                <Button
-                                    autoFocus
-                                    color="inherit"
-                                    onClick={() => setPopupOpen(true)}
-                                >
-                                    save
-                                </Button>
+                                    <SecundaryButton
+                                        autoFocus
+                                        color="inherit"
+                                        onClick={() => handleSaveTemplate(restrictionName, restrictionType, textFieldContent, {template_id: 1, user: 1, bestand: 0})} // bestand if maakt niet uit, wordt toch niet gebruikt
+                                    >
+                                        save as template
+                                    </SecundaryButton>
+                                    <Box paddingRight='10px'/>
+                                    <SecundaryButton
+                                        autoFocus
+                                        color="inherit"
+                                        onClick={() => setPopupOpen(true)}
+                                    >
+                                        save
+                                    </SecundaryButton>
+                                </Box>
                             </Box>
                         </Toolbar>
                     </AppBar>
                     {/* TextField for entering test code */}
-                    <Box aria-label={'Content'} padding={1}>
-                        <TextField
-                            fullWidth
-                            value={textFieldContent}
-                            onChange={(e) =>
-                                setTextFieldContent(e.target.value)
-                            }
-                            id="filled-textarea"
-                            multiline
-                            label={'Test-Content'}
-                            variant="standard"
-                            sx={{
-                                overflowY: 'auto',
-                                maxHeight: '100%',
-                            }}
-                        />
+                    <Box padding='20px'>
+                        <Card>
+                            <Box aria-label={'Content'} padding={1}>
+                                <TextField
+                                    fullWidth
+                                    value={textFieldContent}
+                                    onChange={(e) =>
+                                        setTextFieldContent(e.target.value)
+                                    }
+                                    id="filled-textarea"
+                                    multiline
+                                    label={'Test-Content'}
+                                    variant="standard"
+                                    sx={{
+                                        overflowY: 'auto',
+                                        maxHeight: '100%',
+                                    }}
+                                />
+                            </Box>
+                        </Card>
                     </Box>
                 </Box>
             </Dialog>
