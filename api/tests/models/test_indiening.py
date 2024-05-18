@@ -1,11 +1,12 @@
 from django.test import TestCase
 from api.tests.factories.indiening import IndieningFactory
 from api.models.indiening import upload_to
-from unittest.mock import patch, call, MagicMock
-from api.models.indiening import send_indiening_confirmation_mail
-import os
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
+from unittest.mock import patch  # , MagicMock, call
+
+# from api.models.indiening import send_indiening_confirmation_mail
+# from email.mime.multipart import MIMEMultipart
+# from email.mime.text import MIMEText
+# import os
 
 
 class IndieningModelTest(TestCase):
@@ -42,9 +43,11 @@ class IndieningModelTest(TestCase):
         self.assertIsNotNone(self.indiening.bestand)
 
     # TODO: Fix this test
-    # @patch('smtplib.SMTP_SSL')
-    # @patch('ssl.create_default_context')
-    # def test_send_indiening_confirmation_mail(self, mock_create_default_context, mock_smtp):
+    # @patch("smtplib.SMTP_SSL")
+    # @patch("ssl.create_default_context")
+    # def test_send_indiening_confirmation_mail(
+    #     self, mock_create_default_context, mock_smtp
+    # ):
     #     # Create a test indiening object
     #     mock_create_default_context.reset_mock()
     #     mock_smtp.reset_mock()
@@ -72,7 +75,16 @@ class IndieningModelTest(TestCase):
 
     #     # Check that SMTP_SSL was called with the correct arguments
     #     assert mock_smtp.call_count == indiening.groep.studenten.count()
-    #     mock_smtp.assert_has_calls([call(smtp_server_address, smtp_port, context=mock_create_default_context.return_value)] * indiening.groep.studenten.count())
+    #     mock_smtp.assert_has_calls(
+    #         [
+    #             call(
+    #                 smtp_server_address,
+    #                 smtp_port,
+    #                 context=mock_create_default_context.return_value,
+    #             )
+    #         ]
+    #         * indiening.groep.studenten.count()
+    #     )
 
     #     # Check that login was called with the correct arguments
     #     mock_smtp_instance.login.assert_called_with(mail_username, mail_app_password)
@@ -90,4 +102,6 @@ class IndieningModelTest(TestCase):
     #         email["To"] = student.user.email
     #         email["Subject"] = "Bevestiging van indiening"
     #         email.attach(MIMEText(plain_text, "plain"))
-    #         mock_smtp_instance.sendmail.assert_any_call(mail_username, student.user.email, email.as_string())
+    #         mock_smtp_instance.sendmail.assert_any_call(
+    #             mail_username, student.user.email, email.as_string()
+    #         )
