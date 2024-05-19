@@ -100,7 +100,9 @@ const english = {
     join: 'Join',
     acces: 'This gives you access to the course.',
     deadlines_on: 'Deadlines on',
-    open_with_ui: 'Open with UI'
+    open_with_ui: 'Open with UI',
+    choose_existing: 'Choose existing',
+    make_new_script: 'Make new script',
 }
 
 export default english

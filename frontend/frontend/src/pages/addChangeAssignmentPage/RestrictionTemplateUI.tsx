@@ -6,6 +6,8 @@ import Typography from '@mui/material/Typography';
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
+import {SecundaryButton} from "../../components/CustomComponents.tsx";
+
 import { restriction } from './AddChangeAssignmentPage.tsx'
 
 
@@ -174,7 +176,7 @@ export default function RestrictionTemplateUI({
                     <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
                         {templateName}
                     </Typography>
-                    <Button
+                    <SecundaryButton
                         autoFocus
                         color="inherit"
                         onClick={() => handleSubmit(
@@ -182,7 +184,7 @@ export default function RestrictionTemplateUI({
                         )}
                     >
                         save
-                    </Button>
+                    </SecundaryButton>
                 </Toolbar>
             </AppBar>
             <Box aria-label={'Content'} padding={1}>
@@ -198,7 +200,6 @@ export default function RestrictionTemplateUI({
                                 <TextField
                                     type='number'
                                     value={paramsState[param.variable]}
-                                    fullWidth
                                     onChange={(e) => handleArrayChange(param.variable, Number(e.target.value))}
                                 />
                             </>
@@ -213,7 +214,6 @@ export default function RestrictionTemplateUI({
                                 <TextField
                                     type='text'
                                     value={paramsState[param.variable]}
-                                    fullWidth
                                     onChange={(e) => handleArrayChange(param.variable, e.target.value)}
                                 />
                             </>
@@ -256,7 +256,7 @@ export default function RestrictionTemplateUI({
                                         </ListItem>
                                     ))}
                                 </List>
-                                <Button variant="outlined" onClick={() => handleAddRow(param.variable)} startIcon={<AddCircleOutlineIcon />}>Add Row</Button>
+                                <SecundaryButton onClick={() => handleAddRow(param.variable)} startIcon={<AddCircleOutlineIcon />}>Add Row</SecundaryButton>
                             </div>
                         )}
                     </div>
