@@ -480,7 +480,9 @@ export function SubmissionPage() {
                                     height={40}
                                 />
                             ) : (
-                                <Typography variant={'body1'}>
+                                <Typography variant={'body1'}
+                                    color={(submission?.status === SubmissionStatus.PASSED ? 'green' : 'red')}
+                                >
                                     {submission?.status ===
                                     SubmissionStatus.PENDING
                                         ? t('pending')
