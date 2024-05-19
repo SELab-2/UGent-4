@@ -395,7 +395,15 @@ export function AssignmentPage() {
                         It shows metadata about the submissions and allows the teacher to download them.
                         The metadata includes group number, submission time, score, and status.
                         */}
-                                <Card sx={{padding: '20px'}}>
+                                <Card>
+                                    <Box
+                                        aria-label={'courseHeader'}
+                                        sx={{
+                                            backgroundColor: 'secondary.main',
+                                            height: 20,
+                                            padding: 3,
+                                        }}
+                                    >
                                     <EvenlySpacedRow items={[
                                         <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
                                             {t('group')}
@@ -414,12 +422,16 @@ export function AssignmentPage() {
                                         </Typography>
                                     ]}
                                     />
-                                    <Box
-                                        style={{
-                                            maxHeight: '40vh',
-                                            overflow: 'auto',
+                                </Box>
+                                <Divider/>
+                                <Box
+                                        sx={{
+                                            position: 'relative', top: '-6px',
+                                            height: 340,
                                         }}
-                                    >
+                                >
+                                    <Box sx={{ width: '100%', height: 320, overflow: 'auto' }}>
+                                    <List DisablePadding>
                                         {loading ? (
                                             [...Array(3)].map((_, index) => (
                                                 <Skeleton
@@ -431,10 +443,10 @@ export function AssignmentPage() {
                                                 />
                                             ))
                                         ) : (
-                                            <List>
-                                                {groups.map((group) => (
-                                                    <Box key={group.groep_id}>
-                                                        <Divider/>
+                                                <>
+                                                {groups.map((group,index) => (
+                                                    <>
+                                                        {index != 0 ?  <Divider/> : <></>}
                                                         <SubmissionListItemTeacherPage
                                                             relative_group_id={(
                                                                 group.groep_id -
@@ -460,10 +472,12 @@ export function AssignmentPage() {
                                                                     : ''
                                                             }
                                                         />
-                                                    </Box>
+                                                    </>
                                                 ))}
-                                            </List>
+                                                </>
                                         )}
+                                        </List>
+                                        </Box>
                                     </Box>
                                 </Card>
 
@@ -694,15 +708,15 @@ export function AssignmentPage() {
                                 </Card>
 
                                 {/* Submissions */}
-                                <Card
-                                    elevation={1}
-                                    sx={{
-                                        color: 'text.primary',
-                                        backgroundColor: 'background.default',
-                                        borderRadius: 2,
-                                        padding: 2,
-                                    }}
-                                >
+                                <Card>
+                                    <Box
+                                        aria-label={'courseHeader'}
+                                        sx={{
+                                            backgroundColor: 'secondary.main',
+                                            height: 20,
+                                            padding: 3,
+                                        }}
+                                    >
                                    <EvenlySpacedRow items={[
                                         <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
                                             {t('submission')}
@@ -714,9 +728,12 @@ export function AssignmentPage() {
                                             Status
                                         </Typography>
                                         ]}/>
+                                    </Box>
+                                    <Divider/>
                                     <Box
                                         style={{
-                                            maxHeight: '40vh',
+                                            position: 'relative', top: '-6px',
+                                            maxHeight: 340,
                                         }}
                                     >
                                         <List
@@ -749,16 +766,13 @@ export function AssignmentPage() {
                                                                     ? 1
                                                                     : -1
                                                             )
-                                                            .map(
-                                                                (
-                                                                    submission
-                                                                ) => (
+                                                            .map((submission,index) => (
                                                                     <Box
                                                                         key={
                                                                             submission.indiening_id
                                                                         }
                                                                     >
-                                                                        <Divider/>
+                                                                        {index != 0 ?  <Divider/> : <></>}
                                                                         <SubmissionListItemStudentPage
                                                                             realId={submission.indiening_id.toString()}
                                                                             visualId={(

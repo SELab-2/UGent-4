@@ -4,6 +4,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Box,
 } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -50,7 +51,7 @@ export function SubmissionListItemStudentPage({
 
     return (
         <>
-            <ListItem key={realId} sx={{ margin: 0 }} disablePadding>
+            <ListItem key={realId} sx={{ maxHeight: '30px' }} disablePadding>
                 <ListItemButton onClick={handleSubmissionClick}>
                     <EvenlySpacedRow items={[
                         <ListItemText
@@ -65,15 +66,17 @@ export function SubmissionListItemStudentPage({
                         <ListItemText
                             primary={timestamp ? timestamp : t('time')}
                         />,
-                        <ListItemIcon sx={{ minWidth: 35 }}>
-                            {status ? (
-                                <CheckCircleOutlineIcon
-                                    sx={{ color: 'success.main' }}
-                                />
-                            ) : (
-                                <HighlightOffIcon sx={{ color: 'error.main' }} />
-                            )}
-                        </ListItemIcon>
+                        <Box sx={{ maxWidth: '24px', }}>
+                            <ListItemIcon sx={{ minWidth: 35 }}>
+                                {status ? (
+                                    <CheckCircleOutlineIcon
+                                        sx={{ color: 'success.main' }}
+                                    />
+                                ) : (
+                                    <HighlightOffIcon sx={{ color: 'error.main' }} />
+                                )}
+                            </ListItemIcon>
+                        </Box>
                     ]}/>
                 </ListItemButton>
             </ListItem>

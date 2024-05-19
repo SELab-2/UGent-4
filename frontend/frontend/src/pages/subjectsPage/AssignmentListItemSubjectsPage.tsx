@@ -13,6 +13,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import React, { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
+import {EvenlySpacedRow} from "../../components/CustomComponents.tsx";
 
 /**
  * This component is used to display a single assignment in the list of assignments.
@@ -71,32 +72,15 @@ export function AssignmentListItemSubjectsPage({
 
     return (
         <>
-            <ListItem
-                key={projectName}
-                sx={{ margin: 0 }}
-                disablePadding={true}
+            <ListItem key={projectName}  disablePadding sx={{ maxHeight: '30px'}}
             >
-                <ListItemButton
-                    onClick={handleProjectClick}
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 3,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
-                >
+                <ListItemButton onClick={handleProjectClick}>
                     {isStudent ? (
-                        <>
+                        <EvenlySpacedRow items={[
                             <ListItemText
-                                sx={{ maxWidth: 120 }}
                                 primary={projectName}
-                            />
+                            />,
                             <ListItemText
-                                sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
                                         ? dayjs(dueDate).format(
@@ -104,9 +88,8 @@ export function AssignmentListItemSubjectsPage({
                                           )
                                         : t('no_deadline')
                                 }
-                            />
+                            />,
                             <ListItemText
-                                sx={{ maxWidth: 170 }}
                                 primary={
                                     submissions > 0
                                         ? submissions > 1
@@ -118,10 +101,10 @@ export function AssignmentListItemSubjectsPage({
                                               t('submission')
                                         : t('no_submissions')
                                 }
-                            />
+                            />,
+                            <>
                             {submissions > 0 ? (
                                 <ListItemText
-                                    sx={{ maxWidth: 80 }}
                                     primary={
                                         score
                                             ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
@@ -130,20 +113,19 @@ export function AssignmentListItemSubjectsPage({
                                 />
                             ) : (
                                 <ListItemText
-                                    sx={{ maxWidth: 80 }}
                                     primary={`0/${maxScore} (0%)`}
                                 />
                             )}
-                        </>
+                            </>
+                            ]}/>
                     ) : (
                         <>
                             {/* In case of the user being the teacher: */}
+                            <EvenlySpacedRow items={[
                             <ListItemText
-                                sx={{ maxWidth: 100 }}
                                 primary={projectName}
-                            />
+                            />,
                             <ListItemText
-                                sx={{ maxWidth: 150 }}
                                 primary={
                                     dueDate
                                         ? dayjs(dueDate).format(
@@ -151,14 +133,14 @@ export function AssignmentListItemSubjectsPage({
                                           )
                                         : t('no_deadline')
                                 }
-                            />
+                            />,
                             <ButtonActions
                                 archived={archived}
                                 startVisible={visible}
                                 deleteEvent={deleteEvent}
                                 archiveEvent={archiveEvent}
                                 visibilityEvent={visibilityEvent}
-                            />
+                            />]}/>
                         </>
                     )}
                 </ListItemButton>

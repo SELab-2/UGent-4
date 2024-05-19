@@ -92,12 +92,12 @@ export const EvenlySpacedRow = ({items}) => {
 
                 <Box
                     key={index}
-                     width={(100/items.length)+'%'}
+                     width={(index == 0 || index == items.length-1) ? ((50/items.length)+'%') : ((100 - (100/items.length))/(items.length-2) +'%')}
                      sx={{
-                         border: '1px solid red',
+                         //border: '1px solid red',
                          display: 'flex',
                          alignItems: 'center',
-                         justifyContent: index == 0 ? 'left' : ( index == items.length - 1 ? 'right' : 'center' )
+                         justifyContent: 'center'
                      }}>
                     <Box>
                         {item}

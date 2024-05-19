@@ -3,6 +3,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Box
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -127,13 +128,14 @@ export function SubmissionListItemTeacherPage({
 
     return (
         <>
-            <ListItem id={group_id} sx={{ margin: 0 }} disablePadding>
+            <ListItem id={group_id} sx={{maxHeight: '30px'}} disablePadding>
                 <ListItemButton
                     onClick={handleSubmissionClick}
                 >
-                    <EvenlySpacedRow items={[<ListItemText
+                    <EvenlySpacedRow
+
+                        items={[<ListItemText
                         sx={{
-                            maxWidth: '24%',
                             color: 'primary.main',
                             '&:hover': {
                                 color: 'primary.light',
@@ -142,7 +144,6 @@ export function SubmissionListItemTeacherPage({
                         primary={relative_group_id}
                     />,
                         <ListItemText
-                            sx={{ minWidth: '24%' }}
                             primary={
                                 submitted
                                     ? dayjs(submitted.tijdstip).format(
@@ -152,40 +153,43 @@ export function SubmissionListItemTeacherPage({
                             }
                         />,
                         <ListItemText
-                            sx={{ minWidth: '24%' }}
                             primary={
                                 score
                                     ? `${Number(score.score)}` + '/20'
                                     : t('no_score_yet')
                             }
                         />,
-                        <ListItemIcon sx={{ minWidth: '24%' }}>
-                            {!submitted?.status ? (
-                                <HighlightOffIcon sx={{ color: 'error.main' }} />
-                            ) : (
-                                submitted !== undefined && (
-                                    <CheckCircleOutlineIcon
-                                        sx={{ color: 'success.main' }}
-                                    />
-                                )
-                            )}
-                        </ListItemIcon>,
-                        <ListItemIcon>
-                            <div onClick={handleDownloadClick}>
-                                {submitted ? (
-                                    <DownloadIcon
-                                        sx={{
-                                            color: 'primary.main',
-                                            '&:hover': {
-                                                color: 'primary.light',
-                                            },
-                                        }}
-                                    />
+                        <Box sx={{ maxWidth: '24px'}}>
+                            <ListItemIcon>
+                                {!submitted?.status ? (
+                                    <HighlightOffIcon sx={{ color: 'error.main' }} />
                                 ) : (
-                                    <DownloadIcon sx={{ color: 'gray' }} />
+                                    submitted !== undefined && (
+                                        <CheckCircleOutlineIcon
+                                            sx={{ color: 'success.main' }}
+                                        />
+                                    )
                                 )}
-                            </div>
-                        </ListItemIcon>
+                            </ListItemIcon>
+                        </Box>,
+                        <Box sx={{ maxWidth: '24px'}}>
+                            <ListItemIcon>
+                                <div onClick={handleDownloadClick}>
+                                    {submitted ? (
+                                        <DownloadIcon
+                                            sx={{
+                                                color: 'primary.main',
+                                                '&:hover': {
+                                                    color: 'primary.light',
+                                                },
+                                            }}
+                                        />
+                                    ) : (
+                                        <DownloadIcon sx={{ color: 'gray' }} />
+                                    )}
+                                </div>
+                            </ListItemIcon>
+                        </Box>
                     ]}>
                     </EvenlySpacedRow>
                 </ListItemButton>
