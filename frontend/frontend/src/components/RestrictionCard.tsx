@@ -42,6 +42,7 @@ export function RestrictionCard({
                 <Switch
                     id="mustPassSwitch"
                     value={mustPass}
+                    checked={mustPass}
                     onChange={() => handleMustPassChange()}
                 />
 
