@@ -109,7 +109,6 @@ const dutch = {
     no_assignmentfile: 'Geen opdrachtbestand',
     deadlines_on: 'Deadlines op',
     email: 'email',
-    copy_invite: 'Kopieer uitnodigingslink',
     n_of_members: 'Max Aantal Leden',
     existing_submissions:
         'Dit kan invloed hebben op bestaande indieningen. Weet je het zeker?',
