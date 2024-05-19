@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header'
-import { Button, Card } from '../../components/CustomComponents.tsx'
+import {Button, Card, SecondaryButton} from '../../components/CustomComponents.tsx'
 import {
     Box,
     CircularProgress,
@@ -372,11 +372,11 @@ export function ProjectScoresPage() {
                                             spacing={2}
                                             marginY={6}
                                         >
-                                            <Button onClick={exportSubmissions}>
+                                            <SecondaryButton onClick={exportSubmissions}>
                                                 {t('export_submissions')}
-                                            </Button>
+                                            </SecondaryButton>
 
-                                            <Button variant={'contained'}>
+                                            <SecondaryButton variant={'contained'}>
                                                 {t('upload_scores')}
                                                 <VisuallyHiddenInput
                                                     type="file"
@@ -385,14 +385,14 @@ export function ProjectScoresPage() {
                                                     multiple={false}
                                                     onChange={uploadScores}
                                                 />
-                                            </Button>
+                                            </SecondaryButton>
                                         </Stack>
                                     </Box>
                                     <Box
                                         display="flex"
                                         flexDirection="row-reverse"
                                         padding={'3px'}
-                                        sx={{ width: '50%', height: 'auto' }}
+                                        sx={{ width: '50%', height: '40px', marginTop: 6 }}
                                     >
                                         {loading ? (
                                             <Skeleton
@@ -413,8 +413,7 @@ export function ProjectScoresPage() {
                                                         '&:hover': {
                                                             color: 'text.primary',
                                                         },
-                                                        backgroundColor:
-                                                            'primary.main',
+                                                        backgroundColor: 'primary.main',
                                                         borderRadius: 2,
                                                     }}
                                                 >
@@ -422,6 +421,7 @@ export function ProjectScoresPage() {
                                                 </IconButton>
                                             </>
                                         )}
+                                        <Box paddingLeft={'10px'}/>
                                         <IconButton
                                             onClick={() =>
                                                 setOpenDeleteScoresPopup(true)

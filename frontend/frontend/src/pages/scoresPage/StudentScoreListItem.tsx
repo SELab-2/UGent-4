@@ -1,4 +1,4 @@
-import { Divider } from '../../components/CustomComponents.tsx'
+import {Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
 import {
     CircularProgress,
     ListItemIcon,
@@ -95,32 +95,20 @@ export function StudentScoreListItem({
 
     return (
         <>
-            <ListItem key={key} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem key={key} sx={{ maxHeight: '35px' }} disablePadding>
                 {/* Inner list item for displaying submission details */}
-                <ListItem
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 1,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
-                >
+                <ListItem>
                     {/* Content section */}
                     <>
                         {loading ? (
                             <CircularProgress size={20} color={'primary'} />
                         ) : (
+                            <EvenlySpacedRow items={[
                             <ListItemText
                                 sx={{ maxWidth: 200 }}
                                 primary={name}
-                            />
-                        )}
+                            />,
                         <ListItemText
-                            sx={{ maxWidth: '30%' }}
                             primary={
                                 lastSubmission
                                     ? t('last_submission') +
@@ -130,12 +118,11 @@ export function StudentScoreListItem({
                                       )
                                     : t('no_submissions')
                             }
-                        />
-                        {/* Score section */}
-                        <ListItem sx={{ maxWidth: '30%' }}>
+                        />,
+                        <ListItem>
                             {lastSubmission ? (
                                 <>
-                                    <Box width={'50px'}>
+                                    <Box width={'24px'} height={'25px'}>
                                         <TextField
                                             hiddenLabel
                                             defaultValue={score}
@@ -144,7 +131,7 @@ export function StudentScoreListItem({
                                                     parseInt(event.target.value)
                                                 )
                                             }
-                                            variant="outlined"
+                                            variant="standard"
                                             size="small"
                                         />
                                     </Box>
@@ -153,9 +140,8 @@ export function StudentScoreListItem({
                             ) : (
                                 <ListItemText primary={'0/' + maxScore} />
                             )}
-                        </ListItem>
-                        {/* Display download icon */}
-                        <ListItemText sx={{ maxWidth: 35 }}>
+                        </ListItem>,
+                        <ListItemText >
                             <ListItemIcon>
                                 <div onClick={downloadSubmission}>
                                     {lastSubmission ? (
@@ -172,7 +158,9 @@ export function StudentScoreListItem({
                                     )}
                                 </div>
                             </ListItemIcon>
-                        </ListItemText>
+                        </ListItemText>]}
+                        />
+                        )}
                     </>
                 </ListItem>
             </ListItem>
