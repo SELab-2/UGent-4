@@ -53,7 +53,7 @@ class Project(models.Model):
     project_id = models.AutoField(primary_key=True)
     titel = models.CharField(max_length=100)
     beschrijving = models.TextField()
-    opgave_bestand = models.FileField(upload_to=upload_to)
+    opgave_bestand = models.FileField(upload_to=upload_to, blank=True)
     vak = models.ForeignKey(Vak, on_delete=models.CASCADE)
     deadline = models.DateTimeField(null=True, blank=True)
     extra_deadline = models.DateTimeField(null=True, blank=True)

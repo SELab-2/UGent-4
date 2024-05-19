@@ -66,8 +66,8 @@ def gebruiker_detail(request, id):
     if request.method == "GET":
         if (
             has_permissions(request.user)
-            or gebruiker.is_lesgever
             or int(id) == request.user.id
+            or gebruiker.is_lesgever
         ):
             serializer = GebruikerSerializer(gebruiker)
             return Response(serializer.data)

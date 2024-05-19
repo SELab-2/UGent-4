@@ -117,6 +117,9 @@ const dutch = {
     chooseGroup: 'Kies een groep voor je indient',
     contactTeacher: 'Gelieve contact op te nemen met je lesgever.',
     group_number: 'GroepsNummer',
+    open_with_ui: 'Open met UI',
+    choose_existing: 'Kies een bestaand script',
+    make_new_script: 'Maak nieuw script aan'
 }
 
 export default dutch

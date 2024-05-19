@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button } from '../../components/CustomComponents.tsx'
+import { SecundaryButton } from '../../components/CustomComponents.tsx'
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -16,11 +16,13 @@ import { restriction } from './AddChangeAssignmentPage.tsx'
  */
 
 interface AddRestrictionButtonProps {
+    userid: number
     restrictions: restriction[]
     setRestrictions: (restriction: restriction[]) => void
 }
 
 export default function AddRestrictionButton({
+    userid,
     restrictions,
     setRestrictions,
 }: AddRestrictionButtonProps) {
@@ -35,6 +37,7 @@ export default function AddRestrictionButton({
         <>
             {/* Add Restriction Button */}
             <IconButton
+                id="addRestrictionButton"
                 sx={{
                     bgcolor: 'secondary.main',
                     marginRight: 1,
@@ -59,6 +62,7 @@ export default function AddRestrictionButton({
                 </DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
                     <RestrictionsDialog
+                        userid={userid}
                         closeParentDialog={handleClose}
                         restrictions={restrictions}
                         setRestrictions={setRestrictions}
@@ -66,7 +70,9 @@ export default function AddRestrictionButton({
                 </DialogContent>
                 <DialogActions>
                     {/* Cancel Button */}
-                    <Button onClick={handleClose}>{t('cancel')}</Button>
+                    <SecundaryButton id="cancelButton" onClick={handleClose}>
+                        {t('cancel')}
+                    </SecundaryButton>
                 </DialogActions>
             </Dialog>
         </>

@@ -104,7 +104,6 @@ export function AddChangeAssignmentPage() {
     const [groupSize, setGroupSize] = useState<number>(1)
 
     const [user, setUser] = useState<User>()
-
     // State for the error checks of the assignment
     const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
         title: false,

@@ -734,7 +734,6 @@ export function AddChangeSubjectPage() {
                                             </Stack>
                                         </Box>
                                     </Stack>
-
                                 </Stack>
                             </Stack>
                         </>

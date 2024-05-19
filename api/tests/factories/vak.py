@@ -1,15 +1,16 @@
 import factory
 from api.models.vak import Vak
 from factory.django import DjangoModelFactory
-from factory import Faker
 from .gebruiker import GebruikerFactory
+from datetime import date
 
 
 class VakFactory(DjangoModelFactory):
     class Meta:
         model = Vak
 
-    naam = Faker("name")
+    jaartal = factory.LazyFunction(lambda: date.today().year)
+    gearchiveerd = False
 
     @factory.post_generation
     def studenten(self, create, extracted, **kwargs):
