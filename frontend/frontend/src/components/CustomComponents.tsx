@@ -3,9 +3,10 @@ import {
     Button as BaseButton,
     Card as BaseCard,
     Divider as BaseDivider,
-    Box
+    Box, ButtonProps
 } from '@mui/material'
 import theme from '../Theme.ts'
+import {ReactNode} from "react";
 
 export const Button = ({ children, ...props }: any) => {
     return (
@@ -29,7 +30,11 @@ export const Button = ({ children, ...props }: any) => {
     )
 }
 
-export const SecondaryButton = ({ children, ...props }: any) => {
+interface SecondaryButtonProps extends ButtonProps {
+    children: ReactNode;
+}
+
+export const SecondaryButton = ({ children, ...props }: SecondaryButtonProps) => {
     return (
         <BaseButton
             variant="contained"

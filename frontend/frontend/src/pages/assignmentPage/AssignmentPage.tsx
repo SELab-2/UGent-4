@@ -490,20 +490,16 @@ export function AssignmentPage() {
                                 >
                                     <Stack direction={'row'}>
                                         {submissions.length > 0 && (
-                                            <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
+                                            <SecondaryButton
                                                 onClick={downloadAllSubmissions}
                                             >
                                                 <Typography color="secondary.contrastText">
                                                     {t('export')}{' '}
                                                     {t('submissions')}
                                                 </Typography>
-                                            </Button>
+                                            </SecondaryButton>
                                         )}
-                                        <Box style={{ flexGrow: 1 }} />
+                                        <Box paddingLeft={'20px'} />
                                         {loading ? (
                                             <Skeleton
                                                 variant={'rectangular'}
@@ -517,17 +513,11 @@ export function AssignmentPage() {
                                                 }}
                                             />
                                         ) : (
-                                            <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
+                                            <SecondaryButton
                                                 onClick={adjustScores}
                                             >
-                                                <Typography color="secondary.contrastText">
-                                                    {t('adjust_scores')}
-                                                </Typography>
-                                            </Button>
+                                                {t('adjust_scores')}
+                                            </SecondaryButton>
                                         )}
                                     </Stack>
                                 </Box>
