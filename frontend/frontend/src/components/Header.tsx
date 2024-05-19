@@ -147,6 +147,7 @@ export const Header = ({ variant, title }: Props) => {
                         >
                             {variant === 'main' && (
                                 <Box
+                                    id='logo'
                                     component="img"
                                     src={'assets/logo_duif_top_wit.png'}
                                     alt="logo_app"

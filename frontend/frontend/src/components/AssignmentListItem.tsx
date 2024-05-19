@@ -46,6 +46,7 @@ export function AssignmentListItem({
     return (
         <>
             <ListItem
+                id={`project${id}`}
                 key={projectName}
                 sx={{ margin: 0 }}
                 disablePadding={true}
@@ -65,11 +66,13 @@ export function AssignmentListItem({
                 >
                     {/* Project Name */}
                     <ListItemText
+                        id='projectName'
                         sx={{ maxWidth: 100 }}
                         primary={projectName}
                     />
                     {/* Due Date */}
                     <ListItemText
+                        id='dueDate' 
                         sx={{ maxWidth: 150 }}
                         primary={dueDate ? dueDate : t('no_deadline')}
                     />
@@ -78,10 +81,12 @@ export function AssignmentListItem({
                         <ListItemIcon sx={{ minWidth: 35 }}>
                             {status ? (
                                 <CheckCircleOutlineIcon
+                                    id='check'
                                     sx={{ color: 'success.main' }}
                                 />
                             ) : (
                                 <HighlightOffIcon
+                                    id='cross'
                                     sx={{ color: 'error.main' }}
                                 />
                             )}

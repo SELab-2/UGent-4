@@ -2,17 +2,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 
-from api.models.indiening import Indiening, IndieningBestand
+from api.models.indiening import Indiening
 from api.models.groep import Groep
 from api.models.vak import Vak
 from api.models.project import Project
 from api.serializers.indiening import IndieningSerializer
 from api.utils import has_permissions, contains
 
-import os
-import tempfile
-import zipfile
-from django.http import HttpResponse
 from django.http import FileResponse
 
 
@@ -70,21 +66,12 @@ def indiening_list(request, format=None):
         return Response(serializer.data)
 
     elif request.method == "POST":
-        if "indiening_bestanden" not in request.FILES:
-            return Response(
-                {"indiening_bestanden": ["This field is required."]},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-
         serializer = IndieningSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            indiening = serializer.instance
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        for file in request.FILES.getlist("indiening_bestanden"):
-            IndieningBestand.objects.create(indiening=indiening, bestand=file)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -121,7 +108,7 @@ def indiening_detail(request, id, format=None):
 
 
 @api_view(["GET"])
-def indiening_detail_download_bestanden(request, id, format=None):
+def indiening_detail_download_bestand(request, id, format=None):
     """
     Een view om de bestanden van een specifieke indiening te downloaden als een zip-archief.
 
@@ -142,21 +129,8 @@ def indiening_detail_download_bestanden(request, id, format=None):
     if has_permissions(request.user) or contains(
         indiening.groep.studenten, request.user
     ):
-        indiening_bestanden = IndieningBestand.objects.filter(indiening=indiening)
 
-        temp_dir = tempfile.mkdtemp()
-
-        zip_file_name = f"groep_{indiening.groep.groep_id}_indiening_{indiening.indiening_id}_bestanden.zip"
-        zip_file_path = os.path.join(temp_dir, zip_file_name)
-        with zipfile.ZipFile(zip_file_path, "w") as zip_file:
-            for indiening_bestand in indiening_bestanden:
-                path = indiening_bestand.bestand.path
-                zip_file.write(path, os.path.basename(path))
-
-        with open(zip_file_path, "rb") as zip_file:
-            response = HttpResponse(zip_file.read(), content_type="application/zip")
-            response["Content-Disposition"] = f"attachment; filename={zip_file_name}"
-            return response
+        return FileResponse(indiening.bestand.open(), as_attachment=True)
 
     return Response(status=status.HTTP_403_FORBIDDEN)
 
@@ -177,9 +151,12 @@ def indiening_detail_download_artefacten(request, id, format=None):
     """
     try:
         indiening = Indiening.objects.get(pk=id)
-    except Project.DoesNotExist:
+    except Indiening.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if is_lesgever(request.user):
-        return FileResponse(indiening.artefacten.open(), as_attachment=True)
+    if has_permissions(request.user):
+        try:
+            return FileResponse(indiening.artefacten.open(), as_attachment=True)
+        except (ValueError, FileNotFoundError):
+            return Response(status=status.HTTP_404_NOT_FOUND)
     return Response(status=status.HTTP_403_FORBIDDEN)

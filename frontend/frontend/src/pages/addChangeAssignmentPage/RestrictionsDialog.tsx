@@ -1,6 +1,10 @@
 import * as React from 'react'
 import { ChangeEvent, useState } from 'react'
-import { Button } from '../../components/CustomComponents.tsx'
+import {
+    Button,
+    Card,
+    SecundaryButton,
+} from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -19,8 +23,11 @@ import { t } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
+import RestrictionsTemplateUI from './RestrictionTemplateUI.tsx'
+import instance from '../../axiosConfig.ts'
 
 interface RestrictionsDialogProps {
+    userid: number
     restrictions: restriction[]
     setRestrictions: (restriction: restriction[]) => void
     closeParentDialog: () => void
@@ -31,6 +38,35 @@ enum restrictionExtension {
     Python = '.py',
 }
 
+export interface Template {
+    template_id: number
+    user: number
+    bestand: string
+}
+
+const code = `
+
+#@param
+# Schrijf in dit veld je voornaam.
+naam=""
+
+#@param
+# Schrijf in dit veld je leeftijd.
+leeftijd=0
+
+#@param
+# Ben je lesgever?
+lesgever=False
+
+#@param
+# Welke bestanden moeten aanwezig zijn?
+bestanden=["main.py", "test.py"]
+
+# de constante pi, nodig voor wanneer we de omtrek berekenen van het object dat de student indient.
+pi=3.14159
+
+#code...`
+
 /**
  * Dialog component for managing restrictions related to file uploads.
  * @param {Object} props - Props object.
@@ -38,18 +74,22 @@ enum restrictionExtension {
  * @returns {React.ReactElement} - Dialog component.
  */
 export default function RestrictionsDialog({
+    userid,
     restrictions,
     setRestrictions,
     closeParentDialog,
 }: RestrictionsDialogProps) {
-    const [open, setOpen] = useState(false)
+    const [openTextEditor, setOpenTextEditor] = useState(false)
+    const [openTemplateInterface, setOpenTemplateInterface] = useState(false)
     const [mustPass, setMustPass] = useState(false)
+    const [openTemplateInUI, setOpenTemplateInUI] = useState(false)
     const [textFieldContent, setTextFieldContent] = useState('')
     const [restrictionName, setRestrictionName] = useState('')
     const [restrictionType, setRestrictionType] =
         useState<restrictionExtension>(restrictionExtension.Shell)
     const [nameError, setNameError] = useState(false)
     const [popupOpen, setPopupOpen] = useState(false)
+    const [myTemplates, setMyTemplates] = useState<Template[]>([])
 
     // function to handle the uploaded files and send them to the parent component
     const handleUploadedFiles = (e: ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +109,7 @@ export default function RestrictionsDialog({
             }
         }
         setRestrictions([...restrictions, ...newRestrictions])
-        handleClose()
+        closeParentDialog()
     }
 
     //handle the submission of the form
@@ -89,47 +129,90 @@ export default function RestrictionsDialog({
             moet_slagen: mustPass,
         }
         setRestrictions([...restrictions, newRestriction])
-        handleClose()
+        handleCloseTextEditor()
     }
 
-    const handleClickOpen = () => {
-        setOpen(true)
+    const handleClickOpenTextEditor = () => {
+        setOpenTextEditor(true)
+    }
+
+    const handleClickOpenTemplateInterface = () => {
+        setOpenTemplateInterface(true)
+    }
+
+    //upload the test script as a template for later use
+    const handleSaveTemplate = async (
+        filename: string,
+        fileExtension: restrictionExtension,
+        code: string
+    ) => {
+        // note how we don't write a dot between the filename and the file extension
+        // this is because the file extension already starts with a dot
+        const file = new File([code], `${filename}${fileExtension}`, {
+            type: 'text/plain',
+        })
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+            const formdata = new FormData()
+
+            formdata.append('user', userid.toString())
+            formdata.append('bestand', file)
+
+            await instance.post(`/templates/`, formdata, config)
+        } catch (error) {
+            console.error('Error updating data:', error)
+        }
     }
 
     // Buttons array for the vertical button group
     const buttons = [
-        <Button key="Upload" component={'label'}>
-            Upload
+        <Button id="upload" key="Upload" component={'label'}>
+            Upload script
             <input hidden type="file" multiple onChange={handleUploadedFiles} />
         </Button>,
         <Button
+            id="newScript"
             key="New_Script"
             onClick={() => {
-                handleClickOpen()
+                handleClickOpenTextEditor()
             }}
         >
             {t('new_script')}
         </Button>,
-        <Button
-            key="FileExtensionCheck"
-            onClick={() => {
-                handleClickOpen()
-            }}
-        >
-            File Extension Check
-        </Button>,
-        <Button
-            key="FilesPresentCheck"
-            onClick={() => {
-                handleClickOpen()
-            }}
-        >
-            Files Present Check
-        </Button>,
     ]
 
-    const handleClose = () => {
-        setOpen(false)
+    React.useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await instance.get<Template[]>(
+                    `/templates/?lesgever_id=${userid}`
+                )
+                setMyTemplates(response.data)
+                console.log('templates:')
+                console.log(response.data)
+                console.log('----------')
+            } catch (error) {
+                console.error('Error fetching data:', error)
+            }
+        }
+
+        fetchData().catch((e) => {
+            console.error(e)
+        })
+    }, [userid])
+
+
+    const handleCloseTextEditor = () => {
+        setOpenTextEditor(false)
+        closeParentDialog()
+    }
+
+    const handleCloseTemplateInterface = () => {
+        setOpenTemplateInterface(false)
         closeParentDialog()
     }
 
@@ -145,27 +228,118 @@ export default function RestrictionsDialog({
                 multiple
             />
             {/* Vertical button group */}
-            <ButtonGroup
-                orientation="vertical"
-                aria-label="Vertical button group"
-                variant={'outlined'}
-                color={'primary'}
+            <Typography variant={'h6'} color={'secondary.contrastText'}>
+                {t('make_new_script') + ':'}
+            </Typography>
+
+            <Box
+                paddingTop="5px"
+                display={'flex'}
+                gap={5}
+                alignItems={'center'}
             >
                 {buttons}
-            </ButtonGroup>
-            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+            </Box>
+            <Box
+                paddingTop="5px"
+                display={'flex'}
+                flexDirection={'row'}
+                alignItems={'center'}
+            >
                 <Typography variant={'body2'}>
                     {t('must_pass') + ':'}
                 </Typography>
                 <Switch
+                    id="mustPassSwitch"
                     value={mustPass}
                     onChange={() => setMustPass(!mustPass)}
                 />
             </Box>
+            <Box padding="20px" />
+            <Typography variant={'h6'} color={'secondary.contrastText'}>
+                {t('choose_existing') + ':'}
+            </Typography>
+            <Box
+                paddingTop="5px"
+                paddingBottom="5px"
+                display={'flex'}
+                gap={5}
+                alignItems={'center'}
+            >
+                <Box
+                    sx={{
+                        maxHeight: 150,
+                        overflowY: 'auto',
+                    }}
+                >
+                    <ButtonGroup
+                        orientation="vertical"
+                        aria-label="Vertical button group"
+                        variant={'outlined'}
+                        color={'primary'}
+                    >
+                        {templateButtons}
+                    </ButtonGroup>
+                    {/* This button groups shows the templates the teacher has made */}
+                    <ButtonGroup
+                        orientation="vertical"
+                        aria-label="My templates"
+                        variant={'outlined'}
+                        color={'primary'}
+                    >
+                        {myTemplates.map((template) => (
+                            <Button
+                                key={template.template_id}
+                                onClick={async () => {
+                                    const response = await instance.get(
+                                        `/templates/${template.template_id}/template/?content=true`
+                                    )
+                                    setTextFieldContent(response.data.content)
+                                    if (openTemplateInUI) {
+                                        handleClickOpenTemplateInterface()
+                                    } else {
+                                        handleClickOpenTextEditor()
+                                    }
+                                }}
+                            >
+                                {template.bestand.replace(/^.*[\\/]/, '')}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+                </Box>
+            </Box>
+            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+                {/* This box will contain the templates */}
+                <Typography variant={'body2'}>
+                    {t('open_with_ui') + ':'}
+                </Typography>
+                <Switch
+                    value={openTemplateInUI}
+                    onChange={() => setOpenTemplateInUI(!openTemplateInUI)}
+                />
+            </Box>
+            {/* This is the template interface. */}
+            <Dialog
+                fullScreen
+                open={openTemplateInterface}
+                onClose={handleCloseTemplateInterface}
+            >
+                <RestrictionsTemplateUI
+                    restrictionCode={code}
+                    handleCloseTemplateInterface={handleCloseTemplateInterface}
+                    templateFileName="template_example.sh"
+                    restrictions={restrictions}
+                    setRestrictions={setRestrictions}
+                />
+            </Dialog>
             {/* This is the code editor. */}
-            <Dialog fullScreen open={open} onClose={handleClose}>
+            <Dialog
+                fullScreen
+                open={openTextEditor}
+                onClose={handleCloseTextEditor}
+            >
                 <Box>
-                    <AppBar sx={{ position: 'relative' }}>
+                    <AppBar elevation={0} sx={{ position: 'relative' }}>
                         <Toolbar>
                             <Box
                                 display={'flex'}
@@ -183,7 +357,7 @@ export default function RestrictionsDialog({
                                     <IconButton
                                         edge="start"
                                         color="inherit"
-                                        onClick={handleClose}
+                                        onClick={handleCloseTextEditor}
                                         aria-label="close"
                                     >
                                         <CloseIcon />
@@ -270,33 +444,58 @@ export default function RestrictionsDialog({
                                         </FormControl>
                                     </Box>
                                 </Box>
-                                <Button
-                                    autoFocus
-                                    color="inherit"
-                                    onClick={() => setPopupOpen(true)}
+                                <Box
+                                    display="flex"
+                                    flexDirection="row"
+                                    justifyContent="space-between"
+                                    alignItems="center"
                                 >
-                                    save
-                                </Button>
+                                    <SecundaryButton
+                                        autoFocus
+                                        color="inherit"
+                                        onClick={() =>
+                                            handleSaveTemplate(
+                                                restrictionName,
+                                                restrictionType,
+                                                textFieldContent
+                                            )
+                                        } // bestand if maakt niet uit, wordt toch niet gebruikt
+                                    >
+                                        save as template
+                                    </SecundaryButton>
+                                    <Box paddingRight="10px" />
+                                    <SecundaryButton
+                                        autoFocus
+                                        color="inherit"
+                                        onClick={() => setPopupOpen(true)}
+                                    >
+                                        save
+                                    </SecundaryButton>
+                                </Box>
                             </Box>
                         </Toolbar>
                     </AppBar>
                     {/* TextField for entering test code */}
-                    <Box aria-label={'Content'} padding={1}>
-                        <TextField
-                            fullWidth
-                            value={textFieldContent}
-                            onChange={(e) =>
-                                setTextFieldContent(e.target.value)
-                            }
-                            id="filled-textarea"
-                            multiline
-                            label={'Test-Content'}
-                            variant="standard"
-                            sx={{
-                                overflowY: 'auto',
-                                maxHeight: '100%',
-                            }}
-                        />
+                    <Box padding="20px">
+                        <Card>
+                            <Box aria-label={'Content'} padding={1}>
+                                <TextField
+                                    fullWidth
+                                    value={textFieldContent}
+                                    onChange={(e) =>
+                                        setTextFieldContent(e.target.value)
+                                    }
+                                    id="filled-textarea"
+                                    multiline
+                                    label={'Test-Content'}
+                                    variant="standard"
+                                    sx={{
+                                        overflowY: 'auto',
+                                        maxHeight: '100%',
+                                    }}
+                                />
+                            </Box>
+                        </Card>
                     </Box>
                 </Box>
             </Dialog>

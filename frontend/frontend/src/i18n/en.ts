@@ -117,6 +117,9 @@ const english = {
     contactTeacher: 'Please contact your teacher.',
     chooseGroup: 'Join a group before submitting.',
     group_number: 'Group Number',
+    open_with_ui: 'Open with UI',
+    choose_existing: 'Choose existing',
+    make_new_script: 'Make new script',
 }
 
 export default english

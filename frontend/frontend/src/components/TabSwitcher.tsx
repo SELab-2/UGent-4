@@ -30,13 +30,13 @@ export default function TabSwitcher({ titles, nodes }: TabSwitcherProps) {
         <Tabs defaultValue={0} color={'background.default'}>
             <TabsList>
                 {titles.map((title, index) => (
-                    <Tab key={index} value={index}>
+                    <Tab id={`tab${index}`} key={index} value={index}>
                         {t(title)}
                     </Tab>
                 ))}
             </TabsList>
             {nodes.map((node, index) => (
-                <TabPanel key={index} value={index}>
+                <TabPanel id={`node${index}`} key={index} value={index}>
                     {node}
                 </TabPanel>
             ))}
