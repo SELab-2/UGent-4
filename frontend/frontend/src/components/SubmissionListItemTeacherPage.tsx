@@ -129,7 +129,7 @@ export function SubmissionListItemTeacherPage({
     return (
         <>
             <ListItem id={group_id} sx={{maxHeight: '30px'}} disablePadding>
-                <ListItemButton
+                <ListItemButton sx={{maxHeight: '30px'}}
                     onClick={handleSubmissionClick}
                 >
                     <EvenlySpacedRow

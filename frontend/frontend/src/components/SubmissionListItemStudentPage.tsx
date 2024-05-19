@@ -52,7 +52,9 @@ export function SubmissionListItemStudentPage({
     return (
         <>
             <ListItem key={realId} sx={{ maxHeight: '30px' }} disablePadding>
-                <ListItemButton onClick={handleSubmissionClick}>
+                <ListItemButton
+                    sx={{maxHeight: '30px'}}
+                    onClick={handleSubmissionClick}>
                     <EvenlySpacedRow items={[
                         <ListItemText
                             sx={{
