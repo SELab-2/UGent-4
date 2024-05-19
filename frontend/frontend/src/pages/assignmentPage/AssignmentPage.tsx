@@ -671,41 +671,6 @@ export function AssignmentPage() {
                                     backgroundColor: 'background.default',
                                 }}
                             >
-                                {/*assignment description*/}
-                                <Box
-                                    aria-label={'assignment-box'}
-                                    sx={{
-                                        padding: '5px',
-                                    }}
-                                >
-                                    <Stack direction={'column'}>
-                                        {loading ? (
-                                            <Skeleton
-                                                variant="text"
-                                                width={200}
-                                                height={50}
-                                            />
-                                        ) : (
-                                            <>
-                                                <Typography
-                                                    variant={'h5'}
-                                                    color={'text.primary'}
-                                                    aria-label={'title'}
-                                                    sx={{
-                                                        fontWeight: 'bold',
-                                                    }}
-                                                >
-                                                    {t('assignment')}
-                                                </Typography>
-                                                <Typography
-                                                    color={'text.primary'}
-                                                >
-                                                    {assignment?.beschrijving}
-                                                </Typography>
-                                            </>
-                                        )}
-                                    </Stack>
-                                </Box>
                                 {/*deadline and groep button */}
                                 <Box
                                     sx={{
