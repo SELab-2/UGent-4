@@ -111,6 +111,7 @@ const dutch = {
     noGroup: 'Je lijkt nog geen groep te hebben.',
     chooseGroup: 'Kies een groep voor je indient',
     contactTeacher: 'Gelieve contact op te nemen met je lesgever.',
+    group_number: 'GroepsNummer',
 }
 
 export default dutch

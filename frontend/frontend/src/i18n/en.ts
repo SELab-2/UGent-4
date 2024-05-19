@@ -1,3 +1,5 @@
+import {t} from "i18next";
+
 const english = {
     logo: '/assets/logo_UGent_EN_RGB_2400_white.png',
     logo_blue: '/assets/logo_UGent_EN_RGB_2400_color.png',
@@ -111,6 +113,7 @@ const english = {
     noGroup: "You don't seem to be in a group yet.",
     contactTeacher: 'Please contact your teacher.',
     chooseGroup: 'Join a group before submitting.',
+    group_number: 'Group Number',
 }
 
 export default english

@@ -319,7 +319,7 @@ export function SubjectsPage() {
                                     )}
                                 </Box>
                                 <Box
-                                    padding={'10px'}
+                                    paddingLeft={'10px'}
                                     display="flex"
                                     flexDirection="row"
                                     justifyContent="space-between"
@@ -331,19 +331,19 @@ export function SubjectsPage() {
                                             '/accept_invitation'
                                         }
                                     />
-                                    <IconButton
-                                        onClick={addProject}
-                                        color="primary"
-                                        edge="end"
-                                        aria-label="add-project"
-                                    >
-                                        <AddCircleIcon
-                                            sx={{
-                                                fontSize: 60,
-                                                height: '100%',
-                                            }}
-                                        />
-                                    </IconButton>
+                                        <IconButton
+                                            onClick={addProject}
+                                            color="primary"
+                                            edge="end"
+                                            aria-label="add-project"
+                                        >
+                                            <AddCircleIcon
+                                                sx={{
+                                                    fontSize: 60,
+                                                    height: '100%',
+                                                }}
+                                            />
+                                        </IconButton>
                                 </Box>
                                 <WarningPopup
                                     title={t('delete_project_warning')}

@@ -1,7 +1,5 @@
 import {
     Box,
-    Card,
-    Divider,
     ListItem,
     ListItemText,
     Stack,
@@ -13,7 +11,7 @@ import List from '@mui/material/List'
 import { useEffect, useState } from 'react'
 import { Header } from '../../components/Header.tsx'
 import { t } from 'i18next'
-import { Button } from '../../components/CustomComponents.tsx'
+import {Button, Card, Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
 import instance from '../../axiosConfig.ts'
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
@@ -49,7 +47,6 @@ function joinLeaveButton(
             <>
                 <Button
                     size={'small'}
-                    sx={{ marginBottom: 1 }}
                     onClick={handleLeave}
                 >
                     <Typography>{t('leave')}</Typography>
@@ -61,7 +58,6 @@ function joinLeaveButton(
         <>
             <Button
                 size={'small'}
-                sx={{ marginBottom: 1 }}
                 onClick={handleJoin}
             >
                 <Typography>{t('join_group')}</Typography>
@@ -208,36 +204,30 @@ export function ChooseGroup() {
                                         backgroundColor: 'background.default',
                                     }}
                                 >
-                                    <Card
-                                        elevation={1}
-                                        sx={{
-                                            color: 'text.primary',
-                                            backgroundColor:
-                                                'background.default',
-                                            borderRadius: 5,
-                                            padding: '20px',
-                                        }}
-                                    >
+                                    <Card>
                                         <Box
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            justifyContent={'space-between'}
-                                            pl={3}
-                                            pr={3}
+                                            aria-label={'courseHeader'}
+                                            sx={{
+                                                backgroundColor: 'secondary.main',
+                                                height: 20,
+                                                padding: 3,
+                                            }}
                                         >
+                                            <EvenlySpacedRow items={[
                                             <Typography
                                                 sx={{ fontWeight: 'bold' }}
                                             >
                                                 {t('group_number')}
-                                            </Typography>
+                                            </Typography>,
                                             <Typography
                                                 sx={{ fontWeight: 'bold' }}
                                             >
                                                 {t('members')}
-                                            </Typography>
+                                            </Typography>,
                                             <Typography
                                                 sx={{ fontWeight: 'bold' }}
-                                            ></Typography>
+                                            ></Typography>]}
+                                            />
                                         </Box>
                                         <List
                                             disablePadding={true}
@@ -575,36 +565,24 @@ export function ChooseGroup() {
 
                                                 return (
                                                     <>
+                                                        <Divider/>
                                                         <ListItem
                                                             sx={{
                                                                 width: '100%',
-                                                                //minheight: 30,
-                                                                display: 'flex',
-                                                                flexDirection:
-                                                                    'row',
-                                                                justifyContent:
-                                                                    'space-between',
-                                                                paddingX: 1,
-                                                                paddingY: 3,
-                                                                borderRadius: 2,
+                                                                minheight: 30,
                                                             }}
                                                         >
+                                                            <EvenlySpacedRow items={[
                                                             <ListItemText
-                                                                sx={{
-                                                                    maxWidth: 100,
-                                                                }}
                                                                 primary={
                                                                     groups.indexOf(
                                                                         group
                                                                     ) + 1
                                                                 }
-                                                            />
-
+                                                            />,
                                                             <Box
                                                                 display={'flex'}
-                                                                flexDirection={
-                                                                    'column'
-                                                                }
+                                                                flexDirection={'column'}
                                                             >
                                                                 {loading ? (
                                                                     <Typography>
@@ -657,8 +635,8 @@ export function ChooseGroup() {
                                                                         )}
                                                                     </>
                                                                 )}
-                                                            </Box>
-
+                                                            </Box>,
+                                                            <>
                                                             {joinLeaveButton(
                                                                 user !=
                                                                     undefined
@@ -668,11 +646,10 @@ export function ChooseGroup() {
                                                                     : false,
                                                                 handleJoin,
                                                                 handleLeave
-                                                            )}
+                                                            )}</>
+                                                            ]}/>
                                                         </ListItem>
-                                                        <Divider
-                                                            color={'text.main'}
-                                                        ></Divider>
+
                                                     </>
                                                 )
                                             })}
