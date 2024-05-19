@@ -389,14 +389,26 @@ export function GroupsPage() {
                                                     spacing={2}
                                                     alignItems="center"
                                                 >
-                                                    <Grid item>
+                                                    <Grid
+                                                        item
+                                                        display={'flex'}
+                                                        flexDirection={'row'}
+                                                        gap={2}
+                                                    >
                                                         <Typography
                                                             color="text.primary"
                                                             fontWeight={'bold'}
                                                         >
                                                             {t('amount')}{' '}
                                                             {t('members')}/
-                                                            {t('group')}
+                                                            {t('group') + ':'}
+                                                        </Typography>
+                                                        <Typography
+                                                            color={
+                                                                'text.primary'
+                                                            }
+                                                        >
+                                                            {max_group_size}
                                                         </Typography>
                                                     </Grid>
                                                 </Grid>
