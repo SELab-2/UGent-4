@@ -1,6 +1,7 @@
-import { Divider, Card } from '../../components/CustomComponents.tsx'
+import { Button, Card, Divider } from '../../components/CustomComponents.tsx'
 import {
     Box,
+    CircularProgress,
     IconButton,
     ListItem,
     ListItemButton,
@@ -9,10 +10,8 @@ import {
     Stack,
     TextField,
     Typography,
-    CircularProgress
 } from '@mui/material'
 import { Header } from '../../components/Header'
-import { Button } from '../../components/CustomComponents.tsx'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import List from '@mui/material/List'
@@ -572,157 +571,176 @@ export function AddChangeSubjectPage() {
                 <>
                     {user?.is_lesgever ? (
                         // Rendering UI for teacher
-                    <>
-            <Stack direction={'column'}>
-                <Header variant={loading ? 'default' : 'not_main'} title={loading ? '' : title} />
-                <Stack
-                    direction={'column'}
-                    spacing={5}
-                    marginTop={11}
-                    sx={{
-                        width: '100%',
-                        height: '70%',
-                        backgroundColor: 'background.default',
-                    }}
-                >
-                    <Box
-                        sx={{
-                            backgroundColor: 'background.default',
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                        }}
-                    >
-                        <Box
-                            // This box contains the title of the subject.
-                            // This title can be changed if necessary.
-                            aria-label={'title'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={2}
-                            alignItems={'center'}
-                        >
-                            <Typography
-                                variant={'h5'}
-                                color={'text.primary'}
-                                fontWeight={'bold'}
-                            >
-                                {t('subject_name') + ':'}
-                            </Typography>
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={200}
-                                    height={60}
+                        <>
+                            <Stack direction={'column'}>
+                                <Header
+                                    variant={loading ? 'default' : 'not_main'}
+                                    title={loading ? '' : title}
                                 />
-                            ) : (
-                                <TextField
-                                    type="text"
-                                    placeholder={t('title')}
-                                    onChange={(event) =>
-                                        setTitle(event.target.value)
-                                    }
-                                    sx={{ height: 60 }}
-                                />
-                            )}
-                        </Box>
-                        <Box padding={'20px'}>
-                            <Button
-                                /* This is the large save button on the top of the page */
-                                onClick={handleSave}
-                            >
-                                {t('save')}
-                            </Button>
-                        </Box>
-                    </Box>
-                    <Card>
-                        <Box bgcolor={'primary.light'} padding={'20px'}>
-                            <Typography
-                                variant="h5"
-                                sx={{ fontWeight: 'bold' }}
-                            >
-                                {t('students')}
-                            </Typography>
-                        </Box>
-                        <Box
-                            display={'flex'}
-                            flexDirection={'row'}
-                            alignItems={'center'}
-                            gap={1}
-                            style={{ maxHeight: 300, overflow: 'auto' }}
-                        >
-                            {UserList(
-                                loading,
-                                students,
-                                setSelectedStudent,
-                                setOpenStudent
-                            )}
-                        </Box>
-                    </Card>
-                    <Box marginTop={-30}>
-                        {UploadPart(
-                            studentFile,
-                            handleStudentFileChange,
-                            setEmailStudent,
-                            handleAddStudent,
-                            t('upload_students')
-                        )}
-                    </Box>
+                                <Stack
+                                    direction={'column'}
+                                    spacing={5}
+                                    marginTop={11}
+                                    sx={{
+                                        width: '100%',
+                                        height: '70%',
+                                        backgroundColor: 'background.default',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            backgroundColor:
+                                                'background.default',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <Box
+                                            // This box contains the title of the subject.
+                                            // This title can be changed if necessary.
+                                            aria-label={'title'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                            alignItems={'center'}
+                                        >
+                                            <Typography
+                                                variant={'h5'}
+                                                color={'text.primary'}
+                                                fontWeight={'bold'}
+                                            >
+                                                {t('subject_name') + ':'}
+                                            </Typography>
+                                            {loading ? (
+                                                <Skeleton
+                                                    variant={'text'}
+                                                    width={200}
+                                                    height={60}
+                                                />
+                                            ) : (
+                                                <TextField
+                                                    type="text"
+                                                    placeholder={t('title')}
+                                                    onChange={(event) =>
+                                                        setTitle(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    sx={{ height: 60 }}
+                                                />
+                                            )}
+                                        </Box>
+                                        <Box padding={'20px'}>
+                                            <Button
+                                                /* This is the large save button on the top of the page */
+                                                onClick={handleSave}
+                                            >
+                                                {t('save')}
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                    <Card>
+                                        <Box
+                                            bgcolor={'primary.light'}
+                                            padding={'20px'}
+                                        >
+                                            <Typography
+                                                variant="h5"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                {t('students')}
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            alignItems={'center'}
+                                            gap={1}
+                                            style={{
+                                                maxHeight: 300,
+                                                overflow: 'auto',
+                                            }}
+                                        >
+                                            {UserList(
+                                                loading,
+                                                students,
+                                                setSelectedStudent,
+                                                setOpenStudent
+                                            )}
+                                        </Box>
+                                    </Card>
+                                    <Box marginTop={-30}>
+                                        {UploadPart(
+                                            studentFile,
+                                            handleStudentFileChange,
+                                            setEmailStudent,
+                                            handleAddStudent,
+                                            t('upload_students')
+                                        )}
+                                    </Box>
 
-                    {DialogWindow(
-                        handleCloseStudent,
-                        openStudent,
-                        handleRemoveStudent,
-                        t('delete_student')
+                                    {DialogWindow(
+                                        handleCloseStudent,
+                                        openStudent,
+                                        handleRemoveStudent,
+                                        t('delete_student')
+                                    )}
+
+                                    <Card>
+                                        <Box
+                                            bgcolor={'primary.light'}
+                                            padding={'20px'}
+                                        >
+                                            <Typography
+                                                variant="h5"
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                {t('teachers')}
+                                            </Typography>
+                                        </Box>
+                                        <Box
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            alignItems={'center'}
+                                            style={{
+                                                maxHeight: 300,
+                                                overflow: 'auto',
+                                            }}
+                                        >
+                                            {UserList(
+                                                loading,
+                                                teachers,
+                                                setSelectedTeacher,
+                                                setOpenTeacher
+                                            )}
+                                        </Box>
+                                    </Card>
+                                    <Box marginTop={1}>
+                                        {UploadPart(
+                                            teacherFile,
+                                            handleTeacherFileChange,
+                                            setEmailTeacher,
+                                            handleAddTeacher,
+                                            t('upload_teachers')
+                                        )}
+                                    </Box>
+
+                                    {DialogWindow(
+                                        handleCloseTeacher,
+                                        openTeacher,
+                                        handleRemoveTeacher,
+                                        t('delete_teacher')
+                                    )}
+                                </Stack>
+                            </Stack>
+                        </>
+                    ) : (
+                        navigate('*')
                     )}
-
-                    <Card>
-                        <Box bgcolor={'primary.light'} padding={'20px'}>
-                            <Typography
-                                variant="h5"
-                                sx={{ fontWeight: 'bold' }}
-                            >
-                                {t('teachers')}
-                            </Typography>
-                        </Box>
-                        <Box
-                            display={'flex'}
-                            flexDirection={'row'}
-                            alignItems={'center'}
-                            style={{ maxHeight: 300, overflow: 'auto' }}
-                        >
-                            {UserList(
-                                loading,
-                                teachers,
-                                setSelectedTeacher,
-                                setOpenTeacher
-                            )}
-                        </Box>
-                    </Card>
-                    <Box marginTop={1}>
-                        {UploadPart(
-                            teacherFile,
-                            handleTeacherFileChange,
-                            setEmailTeacher,
-                            handleAddTeacher,
-                            t('upload_teachers')
-                        )}
-                    </Box>
-
-                    {DialogWindow(
-                        handleCloseTeacher,
-                        openTeacher,
-                        handleRemoveTeacher,
-                        t('delete_teacher')
-                    )}
-                </Stack>
-            </Stack>
+                </>
+            )}
         </>
-    ):(
-        navigate('*')
-    )}
-</>
-)} 
-</>
-)}
+    )
+}
