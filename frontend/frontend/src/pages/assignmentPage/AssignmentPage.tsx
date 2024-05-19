@@ -561,7 +561,7 @@ export function AssignmentPage() {
                                                                         <></>
                                                                     )}
                                                                     <SubmissionListItemTeacherPage
-                                                                        relative_group_id={(
+                                                                        group_name={(
                                                                             group.groep_id -
                                                                             Math.min(
                                                                                 ...groups.map(

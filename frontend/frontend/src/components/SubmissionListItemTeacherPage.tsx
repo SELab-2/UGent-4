@@ -150,7 +150,7 @@ export function SubmissionListItemTeacherPage({
                                         color: 'primary.light',
                                     },
                                 }}
-                                primary={relative_group_id}
+                                primary={group_name}
                             />,
                             <ListItemText
                                 primary={
