@@ -81,7 +81,6 @@ export default function RestrictionTemplateUI({
     // voor de templateFileName 'template.sh':
     // templateExtension = 'sh'
     // templateName = 'template'
-    const templateExtension = templateFileName.split('.').pop();
     const templateName =  templateFileName.split('.').shift();
     
     
@@ -125,7 +124,7 @@ export default function RestrictionTemplateUI({
     }
 
     // All functions beneath are for handling the array type of parameters.
-    const handleArrayChange = (variable: string, newValue: string) => {
+    const handleArrayChange = (variable: string, newValue: number | string | boolean | string[]) => {
         setParamsState(prevState => ({
             ...prevState,
             [variable]: newValue
@@ -241,7 +240,7 @@ export default function RestrictionTemplateUI({
                                     {param.description}
                                 </Typography>
                                 <List>
-                                    {(paramsState[param.variable] || []).map((item, idx) => (
+                                    {(paramsState[param.variable] || []).map((item: string, idx: number) => (
                                         <ListItem key={idx}>
                                             <ListItemText>
                                                 <TextField
