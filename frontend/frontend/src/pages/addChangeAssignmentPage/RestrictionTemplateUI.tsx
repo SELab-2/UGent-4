@@ -8,12 +8,18 @@ import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
 import {SecundaryButton} from "../../components/CustomComponents.tsx";
 
+import { restriction } from './AddChangeAssignmentPage.tsx'
 
-const saveRestrictionTemplate = (restrictionCode: string, params: { [key: string]: any }, extension: string) => {
+
+const saveRestrictionTemplate = (restrictionCode: string, params: { [key: string]: any }, templateFileName: string) => {
     // This function will save the restriction template with the given parameters.
     // It finds the #@param tags in the restriction code and replaces the values with the given parameters.
     // It does this with javascript regexp
     
+    // get the extension after the dot of the filename
+    const extension = templateFileName.split('.').pop();
+    
+
     let newRestrictionCode = restrictionCode;
     Object.keys(params).forEach(key => {
         // match on the #@param tag and the variable name
@@ -53,11 +59,25 @@ const saveRestrictionTemplate = (restrictionCode: string, params: { [key: string
     return newRestrictionCode;
 }
 
+interface RestrictionTemplateUIProps {
+    restrictionCode: string;
+    handleCloseTemplateInterface: () => void;
+    templateFileName: string;
+    restrictions: restriction[];
+    setRestrictions: (restriction: restriction[]) => void
+}
+
 /**
  * This UI will show different fields for parameters regarding the restrictions template.
  * @returns {React.ReactElement} - The rendered component.
  */
-export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemplateInterface, templateFileName }: { restrictionCode: string, handleCloseTemplateInterface: () => void, templateFileName: string }) {
+export default function RestrictionTemplateUI({ 
+    restrictionCode, 
+    handleCloseTemplateInterface, 
+    templateFileName ,
+    restrictions,
+    setRestrictions
+}: RestrictionTemplateUIProps) {
     
     // De onderste twee rijen code zouden bijvoorbeeld het volgende doen
     // voor de templateFileName 'template.sh':
@@ -85,6 +105,26 @@ export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemp
         });
         setParamsState(initialState);
     });
+
+    //handle the submission of the form
+    const handleSubmit = (code: string) => {
+        /*if (restrictionName === '') {
+            setNameError(true)
+            return
+        }*/
+
+        const newRestriction: restriction = {
+            script: templateFileName,
+            file: new File(
+                [code],
+                templateFileName,
+                { type: 'text/plain' }
+            ),
+            moet_slagen: false,
+        }
+        setRestrictions([...restrictions, newRestriction])
+        handleCloseTemplateInterface()
+    }
 
     // All functions beneath are for handling the array type of parameters.
     const handleArrayChange = (variable: string, newValue: string) => {
@@ -139,7 +179,9 @@ export default function RestrictionTemplateUI({ restrictionCode, handleCloseTemp
                     <SecundaryButton
                         autoFocus
                         color="inherit"
-                        onClick={() => saveRestrictionTemplate(restrictionCode, paramsState, templateExtension)}
+                        onClick={() => handleSubmit(
+                            saveRestrictionTemplate(restrictionCode, paramsState, templateFileName)
+                        )}
                     >
                         save
                     </SecundaryButton>

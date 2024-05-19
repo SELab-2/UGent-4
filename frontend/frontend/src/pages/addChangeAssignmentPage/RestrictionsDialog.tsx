@@ -146,7 +146,9 @@ export default function RestrictionsDialog({
         fileExtension: restrictionExtension,
         code: string
     ) => {
-        const file = new File([code], `${filename}.${fileExtension}`, {
+        // note how we don't write a dot between the filename and the file extension
+        // this is because the file extension already starts with a dot
+        const file = new File([code], `${filename}${fileExtension}`, {
             type: 'text/plain',
         })
         try {
@@ -203,36 +205,6 @@ export default function RestrictionsDialog({
         })
     }, [userid])
 
-    const templateButtons = [
-        <Button
-            id="fileExtensionCheck"
-            key="FileExtensionCheck"
-            onClick={() => {
-                setTextFieldContent(code)
-                if (openTemplateInUI) {
-                    handleClickOpenTemplateInterface()
-                } else {
-                    handleClickOpenTextEditor()
-                }
-            }}
-        >
-            File Extension Check
-        </Button>,
-        <Button
-            id="filesPresentCheck"
-            key="FilesPresentCheck"
-            onClick={() => {
-                setTextFieldContent(code)
-                if (openTemplateInUI) {
-                    handleClickOpenTemplateInterface()
-                } else {
-                    handleClickOpenTextEditor()
-                }
-            }}
-        >
-            Files Present Check
-        </Button>,
-    ]
 
     const handleCloseTextEditor = () => {
         setOpenTextEditor(false)
@@ -356,6 +328,8 @@ export default function RestrictionsDialog({
                     restrictionCode={code}
                     handleCloseTemplateInterface={handleCloseTemplateInterface}
                     templateFileName="template_example.sh"
+                    restrictions={restrictions}
+                    setRestrictions={setRestrictions}
                 />
             </Dialog>
             {/* This is the code editor. */}
