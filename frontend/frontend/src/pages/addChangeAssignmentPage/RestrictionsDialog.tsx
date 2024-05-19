@@ -205,7 +205,6 @@ export default function RestrictionsDialog({
         })
     }, [userid])
 
-
     const handleCloseTextEditor = () => {
         setOpenTextEditor(false)
         closeParentDialog()
@@ -272,14 +271,6 @@ export default function RestrictionsDialog({
                         overflowY: 'auto',
                     }}
                 >
-                    <ButtonGroup
-                        orientation="vertical"
-                        aria-label="Vertical button group"
-                        variant={'outlined'}
-                        color={'primary'}
-                    >
-                        {templateButtons}
-                    </ButtonGroup>
                     {/* This button groups shows the templates the teacher has made */}
                     <ButtonGroup
                         orientation="vertical"

@@ -871,6 +871,7 @@ export function AddChangeAssignmentPage() {
                                                                 newRestrictions
                                                             )
                                                         }
+                                                        userid={user.user}
                                                     ></AddRestrictionButton>
                                                 </Tooltip>
                                             </Box>

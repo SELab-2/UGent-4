@@ -1,12 +1,14 @@
 import {
-    Divider,
+    Button,
     Card,
-    SecondaryButton,
+    Divider,
     EvenlySpacedRow,
+    SecondaryButton,
 } from '../../components/CustomComponents.tsx'
 
 import {
     Box,
+    CircularProgress,
     IconButton,
     ListItem,
     ListItemText,
@@ -14,7 +16,6 @@ import {
     Stack,
     TextField,
     Typography,
-    CircularProgress,
 } from '@mui/material'
 import { Header } from '../../components/Header'
 import React, { ChangeEvent, useEffect, useState } from 'react'
@@ -24,13 +25,9 @@ import { t } from 'i18next'
 import 'dayjs/locale/nl'
 import FileUploadButton from '../../components/FileUploadButton'
 import ClearIcon from '@mui/icons-material/Clear'
-
 import Dialog from '@mui/material/Dialog'
-
 import instance from '../../axiosConfig.ts'
-
 import Papa, { ParseResult } from 'papaparse'
-import Button from "@mui/material/Button";
 
 export interface User {
     user: number
@@ -198,10 +195,10 @@ function DialogWindow(
                 <Box padding={2} alignItems={'center'} gap={1}>
                     <Typography> {str + '?'} </Typography>
                     <Box display={'flex'} flexDirection={'row'}>
-                        <Button size={'small'} onClick={handleClose}>
+                        <SecondaryButton size={'small'} onClick={handleClose}>
                             {t('cancel')}
-                        </Button>
-                        <Box padding={'7px'}/>
+                        </SecondaryButton>
+                        <Box padding={'7px'} />
                         <Button size={'small'} onClick={handleRemove}>
                             {t('delete')}
                         </Button>

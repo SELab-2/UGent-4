@@ -119,7 +119,7 @@ const dutch = {
     group_number: 'GroepsNummer',
     open_with_ui: 'Open met UI',
     choose_existing: 'Kies een bestaand script',
-    make_new_script: 'Maak nieuw script aan'
+    make_new_script: 'Maak nieuw script aan',
 }
 
 export default dutch

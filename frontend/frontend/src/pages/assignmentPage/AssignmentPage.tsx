@@ -3,8 +3,8 @@ import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
 import {
-    Card,
     Button,
+    Card,
     Divider,
     EvenlySpacedRow,
     SecondaryButton,
@@ -210,65 +210,70 @@ export function AssignmentPage() {
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
         const zip = new JSZip()
-        const downloadPromises: Promise<void>[] = []
-        submissions.forEach((submission) => {
-            downloadPromises.push(
-                new Promise(async (resolve, reject) => {
-                    try {
-                        // Get the submission details
-                        const submissionResponse = await instance.get(
-                            `/indieningen/${submission.indiening_id}/`
-                        )
-                        const newSubmission = submissionResponse.data
-                        // Get the submission file
-                        const fileResponse = await instance.get(
-                            `/indieningen/${submission.indiening_id}/indiening_bestand/`,
-                            { responseType: 'blob' }
-                        )
-                        let filename = 'indiening.zip'
-                        if (newSubmission.bestand) {
-                            filename = newSubmission.bestand.replace(
-                                /^.*[\\/]/,
-                                ''
-                            )
-                        }
-                        const blob = new Blob([fileResponse.data], {
-                            type: fileResponse.headers['content-type'],
-                        })
-                        const file = new File([blob], filename, {
-                            type: fileResponse.headers['content-type'],
-                        })
-                        newSubmission.bestand = file
-                        newSubmission.filename = filename
-                        // Add the file to the zip
-                        zip.file(filename, fileResponse.data)
-                        resolve(newSubmission)
-                    } catch (err) {
-                        console.error(`Error downloading submission:`, err)
-                        reject(err)
-                    }
+        const downloadPromises = submissions.map(async (submission) => {
+            try {
+                // Get the submission details
+                const submissionResponse = await instance.get(
+                    `/indieningen/${submission.indiening_id}/`
+                )
+                const newSubmission = submissionResponse.data
+
+                // Get the submission file
+                const fileResponse = await instance.get(
+                    `/indieningen/${submission.indiening_id}/indiening_bestand/`,
+                    { responseType: 'blob' }
+                )
+
+                let filename = 'indiening.zip'
+                if (newSubmission.bestand) {
+                    filename = newSubmission.bestand.replace(/^.*[\\/]/, '')
+                }
+
+                const blob = new Blob([fileResponse.data], {
+                    type: fileResponse.headers['content-type'],
                 })
-            )
+                newSubmission.bestand = new File([blob], filename, {
+                    type: fileResponse.headers['content-type'],
+                })
+                newSubmission.filename = filename
+
+                // Add the file to the zip
+                zip.file(filename, fileResponse.data)
+
+                return newSubmission
+            } catch (err) {
+                console.error(
+                    `Error downloading submission for id ${submission.indiening_id}:`,
+                    err
+                )
+                throw err
+            }
         })
-        Promise.all(downloadPromises)
-            .then(() => {
-                zip.generateAsync({ type: 'blob' })
-                    .then((blob) => {
-                        const url = window.URL.createObjectURL(blob)
-                        const a = document.createElement('a')
-                        a.href = url
-                        a.download =
-                            'all_submissions_' + assignment?.titel + '_.zip'
-                        document.body.appendChild(a)
-                        a.click()
-                        a.remove()
-                    })
-                    .catch((err) => {
-                        console.error('Error generating zip file:', err)
-                    })
+
+        Promise.allSettled(downloadPromises)
+            .then((results) => {
+                const errors = results.filter(
+                    (result) => result.status === 'rejected'
+                )
+                if (errors.length > 0) {
+                    console.error(
+                        'Some submissions failed to download:',
+                        errors
+                    )
+                }
+                return zip.generateAsync({ type: 'blob' })
+            })
+            .then((blob) => {
+                const url = window.URL.createObjectURL(blob)
+                const a = document.createElement('a')
+                a.href = url
+                a.download = `all_submissions_${assignment?.titel || 'assignment'}.zip`
+                document.body.appendChild(a)
+                a.click()
+                a.remove()
             })
             .catch((err) => {
-                console.error('Error downloading submissions:', err)
+                console.error('Error generating zip file:', err)
             })
     }
 
@@ -534,7 +539,7 @@ export function AssignmentPage() {
                                                 overflow: 'auto',
                                             }}
                                         >
-                                            <List DisablePadding>
+                                            <List disablePadding>
                                                 {loading ? (
                                                     [...Array(3)].map(
                                                         (_, index) => (
@@ -561,18 +566,33 @@ export function AssignmentPage() {
                                                                         <></>
                                                                     )}
                                                                     <SubmissionListItemTeacherPage
-                                                                        group_name={(
-                                                                            group.groep_id -
-                                                                            Math.min(
-                                                                                ...groups.map(
-                                                                                    (
-                                                                                        group
-                                                                                    ) =>
-                                                                                        group.groep_id
-                                                                                )
-                                                                            ) +
-                                                                            1
-                                                                        ).toString()}
+                                                                        group_name={
+                                                                            assignment
+                                                                                ? assignment.max_groep_grootte >
+                                                                                  1
+                                                                                    ? t(
+                                                                                          'group'
+                                                                                      ) +
+                                                                                      ' ' +
+                                                                                      (
+                                                                                          index +
+                                                                                          1
+                                                                                      ).toString()
+                                                                                    : singleStudents[
+                                                                                            index
+                                                                                        ]
+                                                                                      ? singleStudents[
+                                                                                            index
+                                                                                        ]
+                                                                                            .first_name +
+                                                                                        ' ' +
+                                                                                        singleStudents[
+                                                                                            index
+                                                                                        ]
+                                                                                            .last_name
+                                                                                      : ''
+                                                                                : ''
+                                                                        }
                                                                         group_id={group.groep_id.toString()}
                                                                         assignment_id={
                                                                             assignmentId
@@ -764,9 +784,6 @@ export function AssignmentPage() {
                                                             </Typography>
                                                         ) : (
                                                             <>
-                                                                {console.log(
-                                                                    students
-                                                                )}
                                                                 <StudentPopUp
                                                                     students={
                                                                         studentsLoading

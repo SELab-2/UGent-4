@@ -137,7 +137,7 @@ export function CourseCard({
                         {/* Clickable area for the card */}
                         <CardActionArea onClick={handleCardClick}>
                             <Box
-                                id='courseInfo'
+                                id="courseInfo"
                                 aria-label={'courseHeader'}
                                 sx={{
                                     backgroundColor: 'secondary.main',
@@ -151,7 +151,6 @@ export function CourseCard({
                             >
                                 {/* Course name and teachers */}
                                 <Box
-                                
                                     width={'70%'}
                                     height={'100%'}
                                     display={'flex'}
@@ -246,23 +245,29 @@ export function CourseCard({
                             {isStudent ? (
                                 // Display assignments for students
                                 <Box
-                                    id='student'
+                                    id="student"
                                     display={'flex'}
                                     flexDirection={'row'}
                                     justifyContent={'space-between'}
                                     pl={3}
                                     pr={3}
                                 >
-                                    <Typography id='project' width={30}>Project</Typography>
-                                    <Typography id='deadline' width={30}>Deadline</Typography>
-                                    <Typography id='status' width={30}>Status</Typography>
+                                    <Typography id="project" width={30}>
+                                        Project
+                                    </Typography>
+                                    <Typography id="deadline" width={30}>
+                                        Deadline
+                                    </Typography>
+                                    <Typography id="status" width={30}>
+                                        Status
+                                    </Typography>
                                 </Box>
                             ) : (
                                 // Display assignments for teachers
                                 <>
                                     {archived ? (
                                         <Box
-                                            id='teacherArchived'
+                                            id="teacherArchived"
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -270,16 +275,22 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '81%', sm: '85%' }}
                                         >
-                                            <Typography id='project' maxWidth={100}>
+                                            <Typography
+                                                id="project"
+                                                maxWidth={100}
+                                            >
                                                 Project
                                             </Typography>
-                                            <Typography id='deadline' minWidth={50}>
+                                            <Typography
+                                                id="deadline"
+                                                minWidth={50}
+                                            >
                                                 Deadline
                                             </Typography>
                                         </Box>
                                     ) : (
                                         <Box
-                                            id='teacherNonArchived'
+                                            id="teacherNonArchived"
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -287,10 +298,16 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '71%', sm: '75%' }}
                                         >
-                                            <Typography id='project' maxWidth={100}>
+                                            <Typography
+                                                id="project"
+                                                maxWidth={100}
+                                            >
                                                 Project
                                             </Typography>
-                                            <Typography id='deadline' minWidth={50}>
+                                            <Typography
+                                                id="deadline"
+                                                minWidth={50}
+                                            >
                                                 Deadline
                                             </Typography>
                                         </Box>
@@ -442,7 +459,7 @@ export function CourseCard({
                                                 }}
                                             >
                                                 <IconButton
-                                                    id='archiveButton'
+                                                    id="archiveButton"
                                                     onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:

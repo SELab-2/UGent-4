@@ -20,6 +20,7 @@ import ErrorPage from '../ErrorPage.tsx'
 import JSZip from 'jszip'
 import Papa from 'papaparse'
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
+import { Submission } from '../submissionPage/SubmissionPage.tsx'
 
 const VisuallyHiddenInput = styled('input')({
     clipPath: 'inset(50%)',
@@ -163,13 +164,14 @@ export function ProjectScoresPage() {
 
     const downloadAllSubmissions = () => {
         const zip = new JSZip()
-        const downloadPromises: Promise<void>[] = []
+        const downloadPromises: Promise<Submission>[] = []
+
         groepen
             .filter((groep) => groep.lastSubmission !== undefined)
             .map((groep) => groep.lastSubmission)
             .forEach((submission) => {
                 downloadPromises.push(
-                    new Promise(async (resolve, reject) => {
+                    (async () => {
                         try {
                             // Get the submission details
                             const submissionResponse = await instance.get(
@@ -191,21 +193,21 @@ export function ProjectScoresPage() {
                             const blob = new Blob([fileResponse.data], {
                                 type: fileResponse.headers['content-type'],
                             })
-                            const file = new File([blob], filename, {
+                            newSubmission.bestand = new File([blob], filename, {
                                 type: fileResponse.headers['content-type'],
                             })
-                            newSubmission.bestand = file
                             newSubmission.filename = filename
                             // Add the file to the zip
                             zip.file(filename, fileResponse.data)
-                            resolve(newSubmission)
+                            return newSubmission // Return the submission instead of resolving a promise
                         } catch (err) {
                             console.error(`Error downloading submission:`, err)
-                            reject(err)
+                            throw err // Throw error instead of rejecting a promise
                         }
-                    })
+                    })() // Immediately invoke the async function
                 )
             })
+
         Promise.all(downloadPromises)
             .then(() => {
                 zip.generateAsync({ type: 'blob' })
