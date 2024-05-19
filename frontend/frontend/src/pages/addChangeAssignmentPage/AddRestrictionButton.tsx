@@ -16,11 +16,13 @@ import { restriction } from './AddChangeAssignmentPage.tsx'
  */
 
 interface AddRestrictionButtonProps {
+    userid: number
     restrictions: restriction[]
     setRestrictions: (restriction: restriction[]) => void
 }
 
 export default function AddRestrictionButton({
+    userid,
     restrictions,
     setRestrictions,
 }: AddRestrictionButtonProps) {
@@ -60,6 +62,7 @@ export default function AddRestrictionButton({
                 </DialogTitle>
                 <DialogContent dividers={scroll === 'paper'}>
                     <RestrictionsDialog
+                        userid={userid}
                         closeParentDialog={handleClose}
                         restrictions={restrictions}
                         setRestrictions={setRestrictions}
@@ -67,8 +70,9 @@ export default function AddRestrictionButton({
                 </DialogContent>
                 <DialogActions>
                     {/* Cancel Button */}
-                    <SecundaryButton id='cancelButton' onClick={handleClose}>{t('cancel')}</SecundaryButton>
-
+                    <SecundaryButton id="cancelButton" onClick={handleClose}>
+                        {t('cancel')}
+                    </SecundaryButton>
                 </DialogActions>
             </Dialog>
         </>

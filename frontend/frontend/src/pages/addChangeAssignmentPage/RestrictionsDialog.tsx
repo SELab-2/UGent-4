@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { ChangeEvent, useState } from 'react'
-import {Button, Card, SecundaryButton} from '../../components/CustomComponents.tsx'
+import {Button, Card, SecundaryButton,
+} from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
@@ -13,9 +14,10 @@ import {
     FormControl,
     MenuItem,
     Select,
+    Stack,
     TextField,
 } from '@mui/material'
-import { t, use } from 'i18next'
+import { t } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
@@ -23,6 +25,7 @@ import RestrictionsTemplateUI from './RestrictionTemplateUI.tsx'
 import instance from '../../axiosConfig.ts'
 
 interface RestrictionsDialogProps {
+    userid: number
     restrictions: restriction[]
     setRestrictions: (restriction: restriction[]) => void
     closeParentDialog: () => void
@@ -36,7 +39,7 @@ enum restrictionExtension {
 export interface Template {
     template_id: number
     user: number
-    bestand: number
+    bestand: string
 }
 
 const code = `
@@ -69,6 +72,7 @@ pi=3.14159
  * @returns {React.ReactElement} - Dialog component.
  */
 export default function RestrictionsDialog({
+    userid,
     restrictions,
     setRestrictions,
     closeParentDialog,
@@ -83,6 +87,7 @@ export default function RestrictionsDialog({
         useState<restrictionExtension>(restrictionExtension.Shell)
     const [nameError, setNameError] = useState(false)
     const [popupOpen, setPopupOpen] = useState(false)
+    const [myTemplates, setMyTemplates] = useState<Template[]>([])
 
     // function to handle the uploaded files and send them to the parent component
     const handleUploadedFiles = (e: ChangeEvent<HTMLInputElement>) => {
@@ -133,19 +138,27 @@ export default function RestrictionsDialog({
         setOpenTemplateInterface(true)
     }
 
-    const handleSaveTemplate = async (filename: string, 
-                                        fileExtension: restrictionExtension, 
-                                        code: string, 
-                                        templateMetaData: Template) => {
-        var file = new File([code], 
-                            `${filename}.${fileExtension}`, 
-                            {type: "text/plain"});
+    //upload the test script as a template for later use
+    const handleSaveTemplate = async (
+        filename: string,
+        fileExtension: restrictionExtension,
+        code: string
+    ) => {
+        const file = new File([code], `${filename}.${fileExtension}`, {
+            type: 'text/plain',
+        })
         try {
-            await instance.post(`/templates/`, {
-                template_id: templateMetaData.template_id,
-                user: templateMetaData.user,
-                bestand: file,
-            })
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+            const formdata = new FormData()
+
+            formdata.append('user', userid.toString())
+            formdata.append('bestand', file)
+
+            await instance.post(`/templates/`, formdata, config)
         } catch (error) {
             console.error('Error updating data:', error)
         }
@@ -153,12 +166,12 @@ export default function RestrictionsDialog({
 
     // Buttons array for the vertical button group
     const buttons = [
-        <Button id='upload' key="Upload" component={'label'}>
+        <Button id="upload" key="Upload" component={'label'}>
             Upload script
             <input hidden type="file" multiple onChange={handleUploadedFiles} />
         </Button>,
         <Button
-            id='newScript'
+            id="newScript"
             key="New_Script"
             onClick={() => {
                 handleClickOpenTextEditor()
@@ -169,15 +182,15 @@ export default function RestrictionsDialog({
     ]
 
     React.useEffect(() => {
-        let templates: Template[] = []
         async function fetchData() {
-            
             try {
-                const response =
-                    await instance.get<Template[]>('/vakken/?in=true')
-                templates = response.data
-                
-                
+                const response = await instance.get<Template[]>(
+                    `/templates/?lesgever_id=${userid}`
+                )
+                setMyTemplates(response.data)
+                console.log('templates:')
+                console.log(response.data)
+                console.log('----------')
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
@@ -186,15 +199,11 @@ export default function RestrictionsDialog({
         fetchData().catch((e) => {
             console.error(e)
         })
-        console.log("templates:")
-        console.log(templates)
-        console.log("----------")
-        
-    }, [])
+    }, [userid])
 
     const templateButtons = [
         <Button
-            id='fileExtensionCheck'
+            id="fileExtensionCheck"
             key="FileExtensionCheck"
             onClick={() => {
                 setTextFieldContent(code)
@@ -208,7 +217,7 @@ export default function RestrictionsDialog({
             File Extension Check
         </Button>,
         <Button
-            id='filesPresentCheck'
+            id="filesPresentCheck"
             key="FilesPresentCheck"
             onClick={() => {
                 setTextFieldContent(code)
@@ -291,6 +300,32 @@ export default function RestrictionsDialog({
                     >
                         {templateButtons}
                     </ButtonGroup>
+                {/* This button groups shows the templates the teacher has made */}
+                <ButtonGroup
+                    orientation="vertical"
+                    aria-label="My templates"
+                    variant={'outlined'}
+                    color={'primary'}
+                >
+                    {myTemplates.map((template) => (
+                        <Button
+                            key={template.template_id}
+                            onClick={async () => {
+                                const response = await instance.get(
+                                    `/templates/${template.template_id}/template/?content=true`
+                                )
+                                setTextFieldContent(response.data.content)
+                                if (openTemplateInUI) {
+                                    handleClickOpenTemplateInterface()
+                                } else {
+                                    handleClickOpenTextEditor()
+                                }
+                            }}
+                        >
+                            {template.bestand.replace(/^.*[\\/]/, '')}
+                        </Button>
+                    ))}
+                </ButtonGroup>
             </Box>
             </Box>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
@@ -305,11 +340,23 @@ export default function RestrictionsDialog({
 
             </Box>
             {/* This is the template interface. */}
-            <Dialog fullScreen open={openTemplateInterface} onClose={handleCloseTemplateInterface}>
-                <RestrictionsTemplateUI restrictionCode={code} handleCloseTemplateInterface={handleCloseTemplateInterface} templateFileName='template_example.sh'/>
+            <Dialog
+                fullScreen
+                open={openTemplateInterface}
+                onClose={handleCloseTemplateInterface}
+            >
+                <RestrictionsTemplateUI
+                    restrictionCode={code}
+                    handleCloseTemplateInterface={handleCloseTemplateInterface}
+                    templateFileName="template_example.sh"
+                />
             </Dialog>
             {/* This is the code editor. */}
-            <Dialog fullScreen open={openTextEditor} onClose={handleCloseTextEditor}>
+            <Dialog
+                fullScreen
+                open={openTextEditor}
+                onClose={handleCloseTextEditor}
+            >
                 <Box>
                     <AppBar elevation={0} sx={{ position: 'relative' }}>
                         <Toolbar>
@@ -442,7 +489,7 @@ export default function RestrictionsDialog({
                         </Toolbar>
                     </AppBar>
                     {/* TextField for entering test code */}
-                    <Box padding='20px'>
+                    <Box padding="20px">
                         <Card>
                             <Box aria-label={'Content'} padding={1}>
                                 <TextField
