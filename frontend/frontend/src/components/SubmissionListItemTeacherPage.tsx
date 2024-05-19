@@ -3,6 +3,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Skeleton,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -61,30 +62,40 @@ export function SubmissionListItemTeacherPage({
                     submissionsResponse.data[
                         submissionsResponse.data.length - 1
                     ]
-                const lastSubmissionResponse = await instance.get(`indieningen/${lastSubmission.indiening_id}/`)
-                //Get the submission file
-                const newSubmission: Submission = lastSubmissionResponse.data
-                newSubmission.filename = lastSubmissionResponse.data.bestand.replace(
-                    /^.*[\\/]/,
-                    ''
-                )
-                newSubmission.bestand = await instance
-                    .get(`/indieningen/${lastSubmission.indiening_id}/indiening_bestand`, {
-                        responseType: 'blob',
-                    }).then((res) => {
-                        let filename = 'indiening.zip'
-                        if (newSubmission.filename) {
-                            filename = newSubmission.filename
-                        }
-                        const blob = new Blob([res.data], {
-                            type: res.headers['content-type'],
+                if (lastSubmission) {
+                    const lastSubmissionResponse = await instance.get(
+                        `indieningen/${lastSubmission.indiening_id}/`
+                    )
+                    //Get the submission file
+                    const newSubmission: Submission =
+                        lastSubmissionResponse.data
+                    newSubmission.filename =
+                        lastSubmissionResponse.data.bestand.replace(
+                            /^.*[\\/]/,
+                            ''
+                        )
+                    newSubmission.bestand = await instance
+                        .get(
+                            `/indieningen/${lastSubmission.indiening_id}/indiening_bestand`,
+                            {
+                                responseType: 'blob',
+                            }
+                        )
+                        .then((res) => {
+                            let filename = 'indiening.zip'
+                            if (newSubmission.filename) {
+                                filename = newSubmission.filename
+                            }
+                            const blob = new Blob([res.data], {
+                                type: res.headers['content-type'],
+                            })
+                            const file: File = new File([blob], filename, {
+                                type: res.headers['content-type'],
+                            })
+                            return file
                         })
-                        const file: File = new File([blob], filename, {
-                            type: res.headers['content-type'],
-                        })
-                        return file
-                    })
-                setSubmitted(newSubmission)
+                    setSubmitted(newSubmission)
+                }
                 if (lastSubmission) {
                     const scoreResponse = await instance.get(
                         `/scores/?indiening=${lastSubmission.indiening_id}`
@@ -105,9 +116,7 @@ export function SubmissionListItemTeacherPage({
             const url = window.URL.createObjectURL(submitted?.bestand)
             const a = document.createElement('a')
             a.href = url
-            a.download = submitted.filename
-                ? submitted.filename
-                : 'opgave.zip'
+            a.download = submitted.filename ? submitted.filename : 'opgave.zip'
             document.body.appendChild(a)
             a.click()
             a.remove()
@@ -128,6 +137,7 @@ export function SubmissionListItemTeacherPage({
         <>
             <ListItem id={group_id} sx={{ margin: 0 }} disablePadding={true}>
                 <ListItemButton
+                    disabled={!submitted}
                     sx={{
                         width: '100%',
                         height: 40,
@@ -140,16 +150,24 @@ export function SubmissionListItemTeacherPage({
                     onClick={handleSubmissionClick}
                 >
                     {/* Display group id */}
-                    <ListItemText
-                        sx={{
-                            maxWidth: '24%',
-                            color: 'primary.main',
-                            '&:hover': {
-                                color: 'primary.light',
-                            },
-                        }}
-                        primary={group_name}
-                    />
+                    {!group_name ? (
+                        <Skeleton
+                            variant="text"
+                            sx={{ minWidth: '24%' }}
+                            height={30}
+                        />
+                    ) : (
+                        <ListItemText
+                            sx={{
+                                maxWidth: '24%',
+                                color: 'primary.main',
+                                '&:hover': {
+                                    color: 'primary.light',
+                                },
+                            }}
+                            primary={group_name}
+                        />
+                    )}
                     {/* Display submission timestamp */}
                     <ListItemText
                         sx={{ minWidth: '24%' }}
