@@ -3,11 +3,11 @@ import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
 import {
-    Button,
     Card,
+    Button,
     Divider,
     EvenlySpacedRow,
-    SecundaryButton,
+    SecondaryButton,
 } from '../../components/CustomComponents.tsx'
 import {
     Box,
@@ -465,7 +465,7 @@ export function AssignmentPage() {
                                                 overflow: 'auto',
                                             }}
                                         >
-                                            <List disablePadding>
+                                            <List DisablePadding>
                                                 {loading ? (
                                                     [...Array(3)].map(
                                                         (_, index) => (
@@ -535,20 +535,16 @@ export function AssignmentPage() {
                                 >
                                     <Stack direction={'row'}>
                                         {submissions.length > 0 && (
-                                            <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
+                                            <SecondaryButton
                                                 onClick={downloadAllSubmissions}
                                             >
                                                 <Typography color="secondary.contrastText">
                                                     {t('export')}{' '}
                                                     {t('submissions')}
                                                 </Typography>
-                                            </Button>
+                                            </SecondaryButton>
                                         )}
-                                        <Box style={{ flexGrow: 1 }} />
+                                        <Box paddingLeft={'20px'} />
                                         {loading ? (
                                             <Skeleton
                                                 variant={'rectangular'}
@@ -562,17 +558,11 @@ export function AssignmentPage() {
                                                 }}
                                             />
                                         ) : (
-                                            <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
+                                            <SecondaryButton
                                                 onClick={adjustScores}
                                             >
-                                                <Typography color="secondary.contrastText">
-                                                    {t('adjust_scores')}
-                                                </Typography>
-                                            </Button>
+                                                {t('adjust_scores')}
+                                            </SecondaryButton>
                                         )}
                                     </Stack>
                                 </Box>
@@ -934,13 +924,13 @@ export function AssignmentPage() {
                                             }}
                                         >
                                             <Tooltip title={t('upload')}>
-                                                <SecundaryButton
+                                                <SecondaryButton
                                                     onClick={uploadIndiening}
                                                 >
                                                     <Typography>
                                                         {t('submit')}
                                                     </Typography>
-                                                </SecundaryButton>
+                                                </SecondaryButton>
                                             </Tooltip>
                                         </Box>
                                     </Grid>

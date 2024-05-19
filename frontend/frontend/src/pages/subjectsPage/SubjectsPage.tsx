@@ -1,7 +1,6 @@
 import { Header } from '../../components/Header'
 import {
     Box,
-    Card,
     CircularProgress,
     Grid,
     IconButton,

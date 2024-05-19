@@ -7,7 +7,7 @@ import {
     ListItemText,
     Typography,
 } from '@mui/material'
-import { Button, SecundaryButton } from '../../components/CustomComponents'
+import { SecondaryButton } from '../../components/CustomComponents'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import CloseIcon from '@mui/icons-material/Close'
@@ -29,13 +29,13 @@ export default function StudentPopUp({ students, text }: StudentPopUpProps) {
     return (
         <>
             {/* Students Button */}
-            <SecundaryButton
+            <SecondaryButton
                 onClick={() => {
                     setOpen(true)
                 }}
             >
                 {t(text)}
-            </SecundaryButton>
+            </SecondaryButton>
             {/* Students Dialog */}
             <Dialog
                 open={open}

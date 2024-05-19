@@ -1,13 +1,21 @@
-import { darken, lighten } from '@mui/system'
+import { darken } from '@mui/system'
 import {
     Button as BaseButton,
     Card as BaseCard,
     Divider as BaseDivider,
     Box,
+    ButtonProps,
+    CardProps,
+    DividerProps,
 } from '@mui/material'
 import theme from '../Theme.ts'
+import { ReactNode } from 'react'
 
-export const Button = ({ children, ...props }: any) => {
+interface PrimaryButtonProps extends ButtonProps {
+    children: ReactNode
+}
+
+export const Button = ({ children, ...props }: PrimaryButtonProps) => {
     return (
         <BaseButton
             variant="contained"
@@ -29,7 +37,14 @@ export const Button = ({ children, ...props }: any) => {
     )
 }
 
-export const SecundaryButton = ({ children, ...props }: any) => {
+interface SecondaryButtonProps extends ButtonProps {
+    children: ReactNode
+}
+
+export const SecondaryButton = ({
+    children,
+    ...props
+}: SecondaryButtonProps) => {
     return (
         <BaseButton
             variant="contained"
@@ -51,7 +66,11 @@ export const SecundaryButton = ({ children, ...props }: any) => {
     )
 }
 
-export const Card = ({ children, ...props }: any) => {
+interface CustomCardProps extends CardProps {
+    children: ReactNode
+}
+
+export const Card = ({ children, ...props }: CustomCardProps) => {
     return (
         <BaseCard
             elevation={0}
@@ -67,7 +86,11 @@ export const Card = ({ children, ...props }: any) => {
     )
 }
 
-export const Divider = ({ children, ...props }: any) => {
+interface CustomDividerProps extends DividerProps {
+    children?: ReactNode
+}
+
+export const Divider = ({ children, ...props }: CustomCardProps) => {
     return (
         <BaseDivider
             sx={{
@@ -81,7 +104,12 @@ export const Divider = ({ children, ...props }: any) => {
     )
 }
 
-export const EvenlySpacedRow = ({ items }) => {
+
+interface EvenlySpacedRowProps {
+    items: ReactNode[]
+}
+
+export const EvenlySpacedRow = ({ items }: EvenlySpacedRowProps) => {
     return (
         <Box width={'100%'} display="flex" justifyContent={'space-between'}>
             {items.map((item, index) => (

@@ -77,7 +77,10 @@ export function AssignmentListItemSubjectsPage({
                 disablePadding
                 sx={{ maxHeight: '30px' }}
             >
-                <ListItemButton onClick={handleProjectClick}>
+                <ListItemButton
+                    sx={{ maxHeight: '30px' }}
+                    onClick={handleProjectClick}
+                >
                     {isStudent ? (
                         <EvenlySpacedRow
                             items={[
