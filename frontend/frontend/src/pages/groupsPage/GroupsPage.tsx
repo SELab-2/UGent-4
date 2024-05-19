@@ -1,6 +1,7 @@
 import { Header } from '../../components/Header.tsx'
 import { Button, Card } from '../../components/CustomComponents.tsx'
 import {
+    Autocomplete,
     Box,
     Grid,
     IconButton,
@@ -135,6 +136,7 @@ export function GroupsPage() {
     const handleGroupSizeChange = (newValue: number) => {
         setNewGroupSize(newValue)
         setAvailableStudents(() => Array.from(studentNames.keys()))
+        setFilteredStudents(availableStudents);
         setCurrentGroup('0')
         setNewGroups(() => {
             const newGroups = []
@@ -156,6 +158,7 @@ export function GroupsPage() {
                 .get('/vakken/' + courseId)
                 .then((response) => {
                     setAvailableStudents(response.data.studenten)
+                    setFilteredStudents(availableStudents)
                 })
                 .catch((error) => {
                     console.error(error)
@@ -283,12 +286,14 @@ export function GroupsPage() {
                     )
             )
         )
+        setFilteredStudents(availableStudents);
     }, [newGroups, studentNames])
 
     // Create new groups when the group size changes
     useEffect(() => {
         if (newGroups.length === 0) {
             setAvailableStudents(() => Array.from(studentNames.keys()))
+            setFilteredStudents(availableStudents);
             setCurrentGroup('0')
             setNewGroups(() => {
                 const newGroups = []
@@ -346,6 +351,7 @@ export function GroupsPage() {
             (student) => student !== studentId
         )
         setAvailableStudents(updatedAvailableStudents)
+        setFilteredStudents(availableStudents);
         // Then, create a new copy of the newGroups array with the updated group
         const updatedNewGroups = newGroups.map((group, index) => {
             if (index === groupId) {
@@ -386,6 +392,26 @@ export function GroupsPage() {
         setNewGroups(updatedNewGroups)
     }
 
+    const [filteredStudents, setFilteredStudents] = useState(availableStudents);
+
+    // for filtering students
+    const handleAutocompleteChange = (_, value) => {
+        if(value){
+            setFilteredStudents([value])
+        }
+    };
+
+    const resetAutocompleteChange = () => {
+        setFilteredStudents(availableStudents);
+    }
+
+    const filterOptions = (_,{ inputValue }) => {
+        const filtered = availableStudents.filter((option) => {
+            const label = studentNames.get(option);
+            return label?.toLowerCase().startsWith(inputValue.toLowerCase());
+        });
+        return filtered;
+    };
     return (
         <>
             <Box
@@ -532,7 +558,6 @@ export function GroupsPage() {
                                 </Box>
                             </Stack>
                         </Box>
-
                         <Box
                             sx={{
                                 marginTop: -3,
@@ -693,14 +718,42 @@ export function GroupsPage() {
                                 <Card>
                                     <Box
                                         bgcolor={'primary.light'}
-                                        padding={'30px'}
+                                        padding={'17px'}
                                     >
-                                        <Typography
-                                            variant="h5"
-                                            sx={{ fontWeight: 'bold' }}
-                                        >
-                                            {t('studenten')}
-                                        </Typography>
+                                        <Stack direction={'row'}>
+                                            <Grid
+                                                container
+                                                alignItems="center"
+                                            >
+                                                <Grid>
+                                                    <Typography
+                                                        variant="h5"
+                                                        sx={{ fontWeight: 'bold' }}
+                                                    >
+                                                        {t('studenten')}
+                                                    </Typography>
+                                                </Grid>
+                                                <Box paddingLeft={1}></Box>
+                                                <Grid>
+                                                    <Box sx={{ width: '200px' }}>
+                                                        {loading ? (
+                                                            <Skeleton
+                                                                variant={'text'}
+                                                                width={160}
+                                                                height={80}
+                                                            />
+                                                        ) : (
+                                                            <Autocomplete
+                                                                options={availableStudents}
+                                                                getOptionLabel={(student) => studentNames.get(student)}
+                                                                onChange={handleAutocompleteChange}
+                                                                filterOptions={filterOptions}
+                                                                renderInput={(student) => <TextField {...student} />}
+                                                            />)}
+                                                    </Box>
+                                                </Grid>
+                                            </Grid>
+                                        </Stack>
                                     </Box>
                                     <TableContainer sx={{ maxHeight: '55vh' }}>
                                         <Table
@@ -729,12 +782,10 @@ export function GroupsPage() {
                                                             direction={'row'}
                                                         >
                                                             {chunkArray(
-                                                                availableStudents,
-                                                                Math.floor(
-                                                                    Math.sqrt(
-                                                                        availableStudents.length
-                                                                    )
-                                                                ) + 1
+                                                                filteredStudents,
+                                                                Math.ceil(
+                                                                        Math.sqrt(filteredStudents.length)
+                                                                )
                                                             ).map(
                                                                 (students) => (
                                                                     <Box>
@@ -792,6 +843,7 @@ export function GroupsPage() {
                                                                                                         currentGroup
                                                                                                     )
                                                                                                 )
+                                                                                                resetAutocompleteChange()
                                                                                             }}
                                                                                         >
                                                                                             <Add />
