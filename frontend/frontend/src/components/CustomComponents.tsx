@@ -14,7 +14,7 @@ export const Button = ({ children, ...props }: any) => {
             disableElevation
             size="large"
             sx={{
-                maxHeight: '35px',
+                maxHeight: '40px',
                 backgroundColor: 'primary.main',
                 textTransform: 'none',
                 color: 'primary.contrastText',
@@ -36,7 +36,7 @@ export const SecundaryButton = ({ children, ...props }: any) => {
             disableElevation
             size="large"
             sx={{
-                maxHeight: '35px',
+                maxHeight: '40px',
                 backgroundColor: 'secondary.main',
                 textTransform: 'none',
                 color: 'secondary.contrastText',

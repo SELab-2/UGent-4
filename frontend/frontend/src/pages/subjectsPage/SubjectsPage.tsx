@@ -461,14 +461,7 @@ export function SubjectsPage() {
                                         doAction={confirmJoinCourse}
                                     />
                                 </Box>
-                                <Box
-                                    sx={{
-                                        padding: 0,
-                                        backgroundColor: 'background.default',
-                                        width: 'fit-content',
-                                        height: 'fit-content',
-                                    }}
-                                >
+                                <Box sx={{paddingLeft: '20px'}}>
                                     <StudentPopUp
                                         students={studentsLoading ? []: students}
                                         text='students'

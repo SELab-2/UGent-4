@@ -2,10 +2,10 @@ import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
-import {Card, Button, Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
+import {Card, Button, Divider, EvenlySpacedRow, SecundaryButton} from '../../components/CustomComponents.tsx'
 import {
     Box,
-    CircularProgress,
+    CircularProgress, Grid,
     List,
     Skeleton,
     Stack,
@@ -840,65 +840,42 @@ export function AssignmentPage() {
                                 </Card>
 
                                 {/*Upload button, this is what the student will see. */}
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        backgroundColor: 'background.default',
-                                    }}
-                                >
-                                    <Stack
-                                        direction={'row'}
-                                        alignItems={'flex-start'}
-                                        justifyContent={'flex-end'}
-                                        width={'100%'}
-                                    >
-                                        {
-                                            <FileUploadButton
-                                                name={t('upload')}
-                                                path={
-                                                    loading
-                                                        ? new File(
-                                                              [],
-                                                              t('loading') +
-                                                                  '...'
-                                                          )
-                                                        : submissionFile
-                                                }
-                                                onFileChange={handleFileChange}
-                                                fileTypes={[
-                                                    '.zip',
-                                                    '.pdf',
-                                                    '.txt',
-                                                ]}
-                                                tooltip={t('uploadToolTip')}
-                                            />
-                                        }
-                                        <Box
-                                            sx={{
-                                                padding: 1.2,
-                                                mr: 3,
-                                            }}
+                                <Grid container spacing={2}>
+                                <Grid>
+                                <FileUploadButton
+                                    name={t('upload')}
+                                    path={
+                                        loading
+                                            ? new File(
+                                                  [],
+                                                  t('loading') +
+                                                      '...'
+                                              )
+                                            : submissionFile
+                                    }
+                                    onFileChange={handleFileChange}
+                                    fileTypes={[
+                                        '.zip',
+                                        '.pdf',
+                                        '.txt',
+                                    ]}
+                                    tooltip={t('uploadToolTip')}
+                                />
+                                </Grid>
+                                <Grid>
+                                <Box  sx={{ position: 'relative', top: '8px', ml: 2}}>
+                                    <Tooltip title={t('upload')}>
+                                        <SecundaryButton
+                                            onClick={uploadIndiening}
                                         >
-                                            <Tooltip title={t('upload')}>
-                                                <Button
-                                                    variant={'contained'}
-                                                    disableElevation
-                                                    sx={{
-                                                        textTransform: 'none',
-                                                    }}
-                                                    onClick={uploadIndiening}
-                                                >
-                                                    <Typography
-                                                        padding={0}
-                                                        margin={0}
-                                                    >
-                                                        {t('submit')}
-                                                    </Typography>
-                                                </Button>
-                                            </Tooltip>
-                                        </Box>
-                                    </Stack>
+                                            <Typography>
+                                                {t('submit')}
+                                            </Typography>
+                                        </SecundaryButton>
+                                    </Tooltip>
                                 </Box>
+                                </Grid>
+                                </Grid>
                             </Stack>
                             <WarningPopup
                                 title={t('error')}
