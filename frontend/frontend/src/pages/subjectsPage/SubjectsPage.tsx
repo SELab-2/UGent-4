@@ -71,7 +71,7 @@ export function SubjectsPage() {
     // State for loading the page
     const [loading, setLoading] = useState(true)
     const [userLoading, setUserLoading] = useState(true)
-    const [studentsLoading, setStudentsLoading] = useState(true);
+    const [studentsLoading, setStudentsLoading] = useState(true)
 
     useEffect(() => {
         // Get the data for this course.
@@ -136,27 +136,27 @@ export function SubjectsPage() {
 
     useEffect(() => {
         async function fetchStudents() {
-            setStudentsLoading(true);
-            const temp_students = [];
+            setStudentsLoading(true)
+            const temp_students = []
             for (const s of course?.studenten || []) {
                 try {
-                    const userResponse = await instance.get(`/gebruikers/${s}/`);
-                    temp_students.push(userResponse.data);
+                    const userResponse = await instance.get(`/gebruikers/${s}/`)
+                    temp_students.push(userResponse.data)
                 } catch (error) {
-                    console.error('Error fetching student data:', error);
-                    setFetchError(true);
+                    console.error('Error fetching student data:', error)
+                    setFetchError(true)
                 }
             }
             // Update the state with the fetched data
-            setStudents(temp_students);
-            setStudentsLoading(false);
+            setStudents(temp_students)
+            setStudentsLoading(false)
         }
-    
+
         // Fetch students
         fetchStudents().catch((error) =>
             console.error('Error fetching students data:', error)
-        );
-    }, [course]);
+        )
+    }, [course])
 
     const addProject = () => {
         console.log('add project')
@@ -261,15 +261,13 @@ export function SubjectsPage() {
                                     }}
                                 >
                                     {/* Give the student the option to select current or archived projects. */}
-                                    {course.gearchiveerd?
+                                    {course.gearchiveerd ? (
                                         <ProjectsView
                                             gebruiker={user}
                                             showAllAssignments={true}
                                             archived={true}
                                             assignments={assignments}
-                                            deleteAssignment={
-                                                deleteAssignment
-                                            }
+                                            deleteAssignment={deleteAssignment}
                                             archiveAssignment={
                                                 archiveAssignment
                                             }
@@ -278,7 +276,7 @@ export function SubjectsPage() {
                                             }
                                             courseId={courseID}
                                         />
-                                    :
+                                    ) : (
                                         <TabSwitcher
                                             titles={[
                                                 'current_projects',
@@ -319,7 +317,7 @@ export function SubjectsPage() {
                                                 />,
                                             ]}
                                         />
-                                    }
+                                    )}
                                 </Box>
                                 <Box
                                     display="flex"
@@ -393,24 +391,20 @@ export function SubjectsPage() {
                                         marginTop: 10,
                                     }}
                                 >
-                                    {course.gearchiveerd?
+                                    {course.gearchiveerd ? (
                                         <ProjectsView
                                             gebruiker={user}
                                             showAllAssignments={true}
                                             archived={true}
                                             assignments={assignments}
-                                            deleteAssignment={() =>
-                                                undefined
-                                            }
-                                            archiveAssignment={() =>
-                                                undefined
-                                            }
+                                            deleteAssignment={() => undefined}
+                                            archiveAssignment={() => undefined}
                                             changeVisibilityAssignment={() =>
                                                 undefined
                                             }
                                             courseId={courseID}
                                         />
-                                    :
+                                    ) : (
                                         <TabSwitcher
                                             titles={[
                                                 'current_projects',
@@ -451,7 +445,7 @@ export function SubjectsPage() {
                                                 />,
                                             ]}
                                         />
-                                    }
+                                    )}
                                     <WarningPopup
                                         title={t('join_course')}
                                         content={t('acces')}
@@ -461,10 +455,12 @@ export function SubjectsPage() {
                                         doAction={confirmJoinCourse}
                                     />
                                 </Box>
-                                <Box sx={{paddingLeft: '20px'}}>
+                                <Box sx={{ paddingLeft: '20px' }}>
                                     <StudentPopUp
-                                        students={studentsLoading ? []: students}
-                                        text='students'
+                                        students={
+                                            studentsLoading ? [] : students
+                                        }
+                                        text="students"
                                     ></StudentPopUp>
                                 </Box>
                             </Stack>

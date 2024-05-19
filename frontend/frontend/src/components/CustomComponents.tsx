@@ -1,9 +1,9 @@
-import { darken,lighten } from '@mui/system';
+import { darken, lighten } from '@mui/system'
 import {
     Button as BaseButton,
     Card as BaseCard,
     Divider as BaseDivider,
-    Box
+    Box,
 } from '@mui/material'
 import theme from '../Theme.ts'
 
@@ -19,7 +19,7 @@ export const Button = ({ children, ...props }: any) => {
                 textTransform: 'none',
                 color: 'primary.contrastText',
                 '&:hover': {
-                    backgroundColor: darken(theme.palette.primary.main,0.5),
+                    backgroundColor: darken(theme.palette.primary.main, 0.5),
                 },
             }}
             {...props}
@@ -41,7 +41,7 @@ export const SecundaryButton = ({ children, ...props }: any) => {
                 textTransform: 'none',
                 color: 'secondary.contrastText',
                 '&:hover': {
-                    backgroundColor: darken(theme.palette.secondary.main,0.2),
+                    backgroundColor: darken(theme.palette.secondary.main, 0.2),
                 },
             }}
             {...props}
@@ -81,33 +81,30 @@ export const Divider = ({ children, ...props }: any) => {
     )
 }
 
-export const EvenlySpacedRow = ({items}) => {
+export const EvenlySpacedRow = ({ items }) => {
     return (
-        <Box
-            width={'100%'}
-            display="flex"
-            justifyContent={'space-between'}
-        >
+        <Box width={'100%'} display="flex" justifyContent={'space-between'}>
             {items.map((item, index) => (
-
                 <Box
                     key={index}
-                     width={(index == 0 || index == items.length-1) ? ((50/items.length)+'%') : ((100 - (100/items.length))/(items.length-2) +'%')}
-                     sx={{
-                         //border: '1px solid red',
-                         display: 'flex',
-                         alignItems: 'center',
-                         justifyContent: 'center'
-                     }}>
-                    <Box>
-                        {item}
-                    </Box>
+                    width={
+                        index == 0 || index == items.length - 1
+                            ? 50 / items.length + '%'
+                            : (100 - 100 / items.length) / (items.length - 2) +
+                              '%'
+                    }
+                    sx={{
+                        //border: '1px solid red',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Box>{item}</Box>
                 </Box>
             ))}
-    </Box>
+        </Box>
     )
 }
-
-
 
 export default { Button, Card, Divider, EvenlySpacedRow }

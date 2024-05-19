@@ -2,10 +2,17 @@ import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
-import {Card, Button, Divider, EvenlySpacedRow, SecundaryButton} from '../../components/CustomComponents.tsx'
+import {
+    Button,
+    Card,
+    Divider,
+    EvenlySpacedRow,
+    SecundaryButton,
+} from '../../components/CustomComponents.tsx'
 import {
     Box,
-    CircularProgress, Grid,
+    CircularProgress,
+    Grid,
     List,
     Skeleton,
     Stack,
@@ -141,41 +148,44 @@ export function AssignmentPage() {
     const downloadAllSubmissions = () => {
         const zip = new JSZip()
         const downloadPromises: Promise<void>[] = []
-        submissions.forEach(submission => {
+        submissions.forEach((submission) => {
             downloadPromises.push(
                 new Promise(async (resolve, reject) => {
                     try {
                         // Get the submission details
                         const submissionResponse = await instance.get(
                             `/indieningen/${submission.indiening_id}/`
-                        );
-                        const newSubmission = submissionResponse.data;
+                        )
+                        const newSubmission = submissionResponse.data
                         // Get the submission file
                         const fileResponse = await instance.get(
                             `/indieningen/${submission.indiening_id}/indiening_bestand/`,
                             { responseType: 'blob' }
-                        );
-                        let filename = 'indiening.zip';
+                        )
+                        let filename = 'indiening.zip'
                         if (newSubmission.bestand) {
-                            filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                            filename = newSubmission.bestand.replace(
+                                /^.*[\\/]/,
+                                ''
+                            )
                         }
                         const blob = new Blob([fileResponse.data], {
                             type: fileResponse.headers['content-type'],
-                        });
+                        })
                         const file = new File([blob], filename, {
                             type: fileResponse.headers['content-type'],
-                        });
-                        newSubmission.bestand = file;
-                        newSubmission.filename = filename;
+                        })
+                        newSubmission.bestand = file
+                        newSubmission.filename = filename
                         // Add the file to the zip
-                        zip.file(filename, fileResponse.data);
-                        resolve(newSubmission);
+                        zip.file(filename, fileResponse.data)
+                        resolve(newSubmission)
                     } catch (err) {
-                        console.error(`Error downloading submission:`, err);
-                        reject(err);
+                        console.error(`Error downloading submission:`, err)
+                        reject(err)
                     }
                 })
-            );
+            )
         })
         Promise.all(downloadPromises)
             .then(() => {
@@ -184,7 +194,8 @@ export function AssignmentPage() {
                         const url = window.URL.createObjectURL(blob)
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = 'all_submissions_' + assignment?.titel + '_.zip'
+                        a.download =
+                            'all_submissions_' + assignment?.titel + '_.zip'
                         document.body.appendChild(a)
                         a.click()
                         a.remove()
@@ -365,7 +376,7 @@ export function AssignmentPage() {
                                 </Box>
 
                                 {/* Assignment description */}
-                                <Card sx={{padding: '20px'}}>
+                                <Card sx={{ padding: '20px' }}>
                                     <Stack direction={'column'}>
                                         <Typography
                                             sx={{
@@ -404,79 +415,113 @@ export function AssignmentPage() {
                                             padding: 3,
                                         }}
                                     >
-                                    <EvenlySpacedRow items={[
-                                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                                            {t('group')}
-                                        </Typography>,
-                                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                                            {t('time')}
-                                        </Typography>,
-                                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                                            Score
-                                        </Typography>,
-                                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                                            Status
-                                        </Typography>,
-                                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                                            {t('download')}
-                                        </Typography>
-                                    ]}
-                                    />
-                                </Box>
-                                <Divider/>
-                                <Box
+                                        <EvenlySpacedRow
+                                            items={[
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('group')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('time')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    Score
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    Status
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('download')}
+                                                </Typography>,
+                                            ]}
+                                        />
+                                    </Box>
+                                    <Divider />
+                                    <Box
                                         sx={{
-                                            position: 'relative', top: '-6px',
+                                            position: 'relative',
+                                            top: '-6px',
                                             height: 340,
                                         }}
-                                >
-                                    <Box sx={{ width: '100%', height: 320, overflow: 'auto' }}>
-                                    <List DisablePadding>
-                                        {loading ? (
-                                            [...Array(3)].map((_, index) => (
-                                                <Skeleton
-                                                    key={index}
-                                                    variant="text"
-                                                    width={'100%'}
-                                                    height={50}
-                                                    sx={{ margin: 0 }}
-                                                />
-                                            ))
-                                        ) : (
-                                                <>
-                                                {groups.map((group,index) => (
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: '100%',
+                                                height: 320,
+                                                overflow: 'auto',
+                                            }}
+                                        >
+                                            <List disablePadding>
+                                                {loading ? (
+                                                    [...Array(3)].map(
+                                                        (_, index) => (
+                                                            <Skeleton
+                                                                key={index}
+                                                                variant="text"
+                                                                width={'100%'}
+                                                                height={50}
+                                                                sx={{
+                                                                    margin: 0,
+                                                                }}
+                                                            />
+                                                        )
+                                                    )
+                                                ) : (
                                                     <>
-                                                        {index != 0 ?  <Divider/> : <></>}
-                                                        <SubmissionListItemTeacherPage
-                                                            relative_group_id={(
-                                                                group.groep_id -
-                                                                Math.min(
-                                                                    ...groups.map(
-                                                                        (
-                                                                            group
-                                                                        ) =>
-                                                                            group.groep_id
-                                                                    )
-                                                                ) +
-                                                                1
-                                                            ).toString()}
-                                                            group_id={group.groep_id.toString()}
-                                                            assignment_id={
-                                                                assignmentId
-                                                                    ? assignmentId
-                                                                    : ''
-                                                            }
-                                                            course_id={
-                                                                courseId
-                                                                    ? courseId
-                                                                    : ''
-                                                            }
-                                                        />
+                                                        {groups.map(
+                                                            (group, index) => (
+                                                                <>
+                                                                    {index !=
+                                                                    0 ? (
+                                                                        <Divider />
+                                                                    ) : (
+                                                                        <></>
+                                                                    )}
+                                                                    <SubmissionListItemTeacherPage
+                                                                        relative_group_id={(
+                                                                            group.groep_id -
+                                                                            Math.min(
+                                                                                ...groups.map(
+                                                                                    (
+                                                                                        group
+                                                                                    ) =>
+                                                                                        group.groep_id
+                                                                                )
+                                                                            ) +
+                                                                            1
+                                                                        ).toString()}
+                                                                        group_id={group.groep_id.toString()}
+                                                                        assignment_id={
+                                                                            assignmentId
+                                                                                ? assignmentId
+                                                                                : ''
+                                                                        }
+                                                                        course_id={
+                                                                            courseId
+                                                                                ? courseId
+                                                                                : ''
+                                                                        }
+                                                                    />
+                                                                </>
+                                                            )
+                                                        )}
                                                     </>
-                                                ))}
-                                                </>
-                                        )}
-                                        </List>
+                                                )}
+                                            </List>
                                         </Box>
                                     </Box>
                                 </Card>
@@ -717,22 +762,34 @@ export function AssignmentPage() {
                                             padding: 3,
                                         }}
                                     >
-                                   <EvenlySpacedRow items={[
-                                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                                            {t('submission')}
-                                        </Typography>,
-                                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                                            {t('time')}
-                                        </Typography>,
-                                        <Typography variant={'h5'}  sx={{ fontWeight: 'bold' }}>
-                                            Status
-                                        </Typography>
-                                        ]}/>
+                                        <EvenlySpacedRow
+                                            items={[
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('submission')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('time')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    Status
+                                                </Typography>,
+                                            ]}
+                                        />
                                     </Box>
-                                    <Divider/>
+                                    <Divider />
                                     <Box
                                         style={{
-                                            position: 'relative', top: '-6px',
+                                            position: 'relative',
+                                            top: '-6px',
                                             maxHeight: 340,
                                         }}
                                     >
@@ -766,13 +823,24 @@ export function AssignmentPage() {
                                                                     ? 1
                                                                     : -1
                                                             )
-                                                            .map((submission,index) => (
+                                                            .map(
+                                                                (
+                                                                    submission,
+                                                                    index
+                                                                ) => (
                                                                     <Box
                                                                         key={
                                                                             submission.indiening_id
                                                                         }
                                                                     >
-                                                                        {index != 0 ?  <Divider/> : <></>}
+                                                                        {index !=
+                                                                        0 ? (
+                                                                            <Divider />
+                                                                        ) : (
+                                                                            <>
+
+                                                                            </>
+                                                                        )}
                                                                         <SubmissionListItemStudentPage
                                                                             realId={submission.indiening_id.toString()}
                                                                             visualId={(
@@ -841,40 +909,41 @@ export function AssignmentPage() {
 
                                 {/*Upload button, this is what the student will see. */}
                                 <Grid container spacing={2}>
-                                <Grid>
-                                <FileUploadButton
-                                    name={t('upload')}
-                                    path={
-                                        loading
-                                            ? new File(
-                                                  [],
-                                                  t('loading') +
-                                                      '...'
-                                              )
-                                            : submissionFile
-                                    }
-                                    onFileChange={handleFileChange}
-                                    fileTypes={[
-                                        '.zip',
-                                        '.pdf',
-                                        '.txt',
-                                    ]}
-                                    tooltip={t('uploadToolTip')}
-                                />
-                                </Grid>
-                                <Grid>
-                                <Box  sx={{ position: 'relative', top: '8px', ml: 2}}>
-                                    <Tooltip title={t('upload')}>
-                                        <SecundaryButton
-                                            onClick={uploadIndiening}
+                                    <Grid>
+                                        <FileUploadButton
+                                            name={t('upload')}
+                                            path={
+                                                loading
+                                                    ? new File(
+                                                          [],
+                                                          t('loading') + '...'
+                                                      )
+                                                    : submissionFile
+                                            }
+                                            onFileChange={handleFileChange}
+                                            fileTypes={['.zip', '.pdf', '.txt']}
+                                            tooltip={t('uploadToolTip')}
+                                        />
+                                    </Grid>
+                                    <Grid>
+                                        <Box
+                                            sx={{
+                                                position: 'relative',
+                                                top: '8px',
+                                                ml: 2,
+                                            }}
                                         >
-                                            <Typography>
-                                                {t('submit')}
-                                            </Typography>
-                                        </SecundaryButton>
-                                    </Tooltip>
-                                </Box>
-                                </Grid>
+                                            <Tooltip title={t('upload')}>
+                                                <SecundaryButton
+                                                    onClick={uploadIndiening}
+                                                >
+                                                    <Typography>
+                                                        {t('submit')}
+                                                    </Typography>
+                                                </SecundaryButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Grid>
                                 </Grid>
                             </Stack>
                             <WarningPopup

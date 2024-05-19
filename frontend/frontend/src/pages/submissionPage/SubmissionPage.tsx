@@ -129,17 +129,18 @@ export function SubmissionPage() {
                 )
                 setRestrictions(restrictions.data)
 
-                const submissionResponse = await instance.get(`indieningen/${submissionId}/`)
+                const submissionResponse = await instance.get(
+                    `indieningen/${submissionId}/`
+                )
                 //Get the submission file
                 const newSubmission: Submission = submissionResponse.data
-                newSubmission.filename = submissionResponse.data.bestand.replace(
-                    /^.*[\\/]/,
-                    ''
-                )
+                newSubmission.filename =
+                    submissionResponse.data.bestand.replace(/^.*[\\/]/, '')
                 newSubmission.bestand = await instance
                     .get(`/indieningen/${submissionId}/indiening_bestand`, {
                         responseType: 'blob',
-                    }).then((res) => {
+                    })
+                    .then((res) => {
                         let filename = 'indiening.zip'
                         if (newSubmission.filename) {
                             filename = newSubmission.filename
