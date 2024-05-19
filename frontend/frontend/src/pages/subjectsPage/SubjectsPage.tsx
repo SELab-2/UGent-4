@@ -319,6 +319,7 @@ export function SubjectsPage() {
                                     )}
                                 </Box>
                                 <Box
+                                    padding={'10px'}
                                     display="flex"
                                     flexDirection="row"
                                     justifyContent="space-between"
