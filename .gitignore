@@ -16,4 +16,3 @@ uploads
 /data/
 cypress/screenshots
 /package-lock.json
-cypress.env.json

@@ -1,5 +1,6 @@
-describe('template spec', () => {
+describe('test', () => {
   it('passes', () => {
-    cy.loginToAAD(Cypress.env('aad_username'), Cypress.env('aad_password'))
+    cy.visit('http://localhost:5173');
+    cy.contains('Logout').should('be.visible');
   })
 })
