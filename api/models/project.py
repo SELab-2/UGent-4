@@ -58,7 +58,6 @@ class Project(models.Model):
     deadline = models.DateTimeField(null=True, blank=True)
     extra_deadline = models.DateTimeField(null=True, blank=True)
     max_score = models.PositiveSmallIntegerField(default=20)
-    aantal_groepen = models.PositiveSmallIntegerField(default=10)
     max_groep_grootte = models.PositiveSmallIntegerField(default=1)
     student_groep = models.BooleanField(default=False, blank=True)
     zichtbaar = models.BooleanField(default=True, blank=True)

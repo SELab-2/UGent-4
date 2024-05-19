@@ -6,6 +6,7 @@ from api.models.project import Project
 from api.models.indiening import Indiening
 from api.models.score import Score
 from api.models.restrictie import Restrictie
+from api.models.template import Template
 
 admin.site.register(Gebruiker)
 admin.site.register(Vak)
@@ -14,3 +15,4 @@ admin.site.register(Project)
 admin.site.register(Indiening)
 admin.site.register(Score)
 admin.site.register(Restrictie)
+admin.site.register(Template)

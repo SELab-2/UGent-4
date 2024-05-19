@@ -35,7 +35,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             "deadline",
             "extra_deadline",
             "max_score",
-            "aantal_groepen",
             "max_groep_grootte",
             "student_groep",
             "zichtbaar",
@@ -76,8 +75,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             Project: Het bijgewerkte project.
         """
         validated_data.pop("max_groep_grootte", instance.max_groep_grootte)
-        validated_data.pop("student_groep", instance.student_groep)
-        validated_data.pop("aantal_groepen", instance.aantal_groepen)
 
         deadline = validated_data.pop("deadline", instance.deadline)
         extra_deadline = validated_data.pop("extra_deadline", instance.extra_deadline)
@@ -105,7 +102,9 @@ def create_groepen(instance):
             except Exception:
                 pass
     else:
-        for _ in range(instance.aantal_groepen):
+        for _ in range(
+            len(instance.vak.studenten.all()) // instance.max_groep_grootte + 1
+        ):
             try:
                 serializer = GroepSerializer(
                     data={"studenten": [], "project": instance.project_id}

@@ -133,7 +133,6 @@ class ProjectDetailViewTest(APITestCase):
             "deadline": self.project.deadline,
             "extra_deadline": self.project.extra_deadline,
             "max_score": self.project.max_score,
-            "aantal_groepen": self.project.aantal_groepen,
             "max_groep_grootte": self.project.max_groep_grootte,
             "zichtbaar": self.project.zichtbaar,
             "gearchiveerd": self.project.gearchiveerd,

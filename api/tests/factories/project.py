@@ -28,7 +28,6 @@ class ProjectFactory(DjangoModelFactory):
         )
     )
     max_score = factory.Faker("random_int", min=10, max=100)
-    aantal_groepen = factory.Faker("random_int", min=2, max=100)
     max_groep_grootte = factory.Faker("random_int", min=1, max=5)
     student_groep = factory.Faker("boolean")
     zichtbaar = factory.Faker("boolean")

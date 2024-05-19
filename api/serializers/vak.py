@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from api.models.vak import Vak
 from api.models.project import Project
+from api.models.groep import Groep
 from api.serializers.groep import GroepSerializer
 
 
@@ -80,6 +81,23 @@ def add_students_to_group(instance):
                 try:
                     serializer = GroepSerializer(
                         data={"studenten": [student], "project": project.project_id}
+                    )
+                    if serializer.is_valid():
+                        serializer.save()
+                except Exception:
+                    pass
+
+        else:
+            groepen = Groep.objects.filter(project=project.project_id)
+            nieuwe_groepen = (
+                len(instance.studenten.all()) // project.max_groep_grootte
+                + 1
+                - len(groepen)
+            )
+            for _ in range(nieuwe_groepen):
+                try:
+                    serializer = GroepSerializer(
+                        data={"studenten": [], "project": project.project_id}
                     )
                     if serializer.is_valid():
                         serializer.save()

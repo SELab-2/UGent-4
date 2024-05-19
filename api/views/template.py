@@ -6,6 +6,8 @@ from api.models.template import Template
 from api.serializers.template import TemplateSerializer
 from api.utils import has_permissions
 
+from django.http import FileResponse
+
 
 @api_view(["GET", "POST"])
 def template_list(request, format=None):
@@ -86,4 +88,35 @@ def template_detail(request, id, format=None):
         elif request.method == "DELETE":
             template.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+def template_detail_bestand(request, id, format=None):
+    """
+    Een view om het bestand van een specifieke tempalte te downloaden of de content in JSON-formaat te krijgen.
+
+    Args:
+        id (int): De primaire sleutel van de template.
+        format (str, optional): Het gewenste formaat voor de respons. Standaard is None.
+
+    Returns:
+        Response: Json met de inhoud van het bestand,
+        indien de content parameter of true stond
+        FileResponse: Attachment met het bestand
+    """
+    try:
+        template = Template.objects.get(pk=id)
+    except Template.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if has_permissions(request.user):
+        if request.method == "GET":
+            bestand = template.bestand.open()
+            if (
+                "content" in request.GET
+                and request.GET.get("content").lower() == "true"
+            ):
+                return Response({"content": bestand.read()})
+            return FileResponse(bestand, as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)
