@@ -27,6 +27,7 @@ import DownloadIcon from '@mui/icons-material/Download'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
+import axios, { AxiosResponse } from 'axios'
 
 // group interface
 export interface Group {
@@ -89,7 +90,6 @@ export function AssignmentPage() {
     useEffect(() => {
         async function fetchUser() {
             setUserLoading(true)
-            setLoading(true)
             const userResponse = await instance.get('/gebruikers/me/')
             setUser(userResponse.data)
             setUserLoading(false)
@@ -97,6 +97,7 @@ export function AssignmentPage() {
 
         async function fetchData() {
             try {
+                setLoading(true)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
@@ -133,21 +134,18 @@ export function AssignmentPage() {
                         )
                         setGroups(groupsResponse.data)
                         if (newAssignment.max_groep_grootte == 1) {
-                            const temp_students = []
-                            for (const g of groupsResponse.data) {
-                                try {
-                                    const userResponse = await instance.get(
-                                        `/gebruikers/${g.studenten[0]}/`
+                            const userPromises: Promise<AxiosResponse<User>>[] =
+                                groupsResponse.data.map((group: Group) =>
+                                    instance.get(
+                                        '/gebruikers/' + group.studenten[0]
                                     )
-                                    temp_students.push(userResponse.data)
-                                } catch (error) {
-                                    console.error(
-                                        'Error fetching student data:',
-                                        error
-                                    )
-                                }
-                            }
-                            setSingleStudents(temp_students)
+                                )
+
+                            const temp_students = await axios.all(userPromises)
+
+                            setSingleStudents(
+                                temp_students.map((res) => res.data)
+                            )
                         }
                     } else {
                         const groupResponse = await instance.get<[Group]>(
@@ -185,24 +183,24 @@ export function AssignmentPage() {
                 `groepen/?student=${user.user}&project=${assignmentId}`
             )
             const group: Group = groupResponse.data[0]
-            const temp_students = []
-            for (const s of group.studenten || []) {
-                try {
-                    const userResponse = await instance.get(`/gebruikers/${s}/`)
-                    temp_students.push(userResponse.data)
-                } catch (error) {
-                    console.error('Error fetching student data:', error)
-                }
-            }
-            // Update the state with the fetched data
-            setStudents(temp_students)
+
+            const studentPromises: Promise<AxiosResponse<User>>[] =
+                group.studenten.map((id: number) =>
+                    instance.get('/gebruikers/' + id)
+                )
+
+            const temp_students = await axios.all(studentPromises)
+            setStudents(temp_students.map((res) => res.data))
+
             setStudentsLoading(false)
         }
         // Fetch students
-        fetchStudents().catch((error) =>
-            console.error('Error fetching students data:', error)
-        )
-    }, [user, assignment, groups])
+        if (!user.is_lesgever && user.user !== 0) {
+            fetchStudents().catch((error) =>
+                console.error('Error fetching students data:', error)
+            )
+        }
+    }, [user, assignment, groups, assignmentId])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
