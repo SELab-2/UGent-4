@@ -65,22 +65,22 @@ export function StudentScoreListItem({
             // Get the submission details
             const submissionResponse = await instance.get(
                 `/indieningen/${lastSubmission?.indiening_id}/`
-            );
-            const newSubmission = submissionResponse.data;
+            )
+            const newSubmission = submissionResponse.data
             // Get the submission file
             const fileResponse = await instance.get(
                 `/indieningen/${lastSubmission?.indiening_id}/indiening_bestand/`,
                 { responseType: 'blob' }
-            );
+            )
             if (newSubmission.bestand) {
-                filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                filename = newSubmission.bestand.replace(/^.*[\\/]/, '')
             }
             const blob = new Blob([fileResponse.data], {
                 type: fileResponse.headers['content-type'],
-            });
+            })
             const file = new File([blob], filename, {
                 type: fileResponse.headers['content-type'],
-            });
+            })
             const url = window.URL.createObjectURL(file)
             const a = document.createElement('a')
             a.href = url
@@ -155,24 +155,24 @@ export function StudentScoreListItem({
                             )}
                         </ListItem>
                         {/* Display download icon */}
-                    <ListItemText sx={{ maxWidth: 35 }}>
-                        <ListItemIcon>
-                            <div onClick={downloadSubmission}>
-                                {lastSubmission ? (
-                                    <DownloadIcon
-                                        sx={{
-                                            color: 'primary.main',
-                                            '&:hover': {
-                                                color: 'primary.light',
-                                            },
-                                        }}
-                                    />
-                                ) : (
-                                    <DownloadIcon sx={{ color: 'gray' }} />
-                                )}
-                            </div>
-                        </ListItemIcon>
-                    </ListItemText>
+                        <ListItemText sx={{ maxWidth: 35 }}>
+                            <ListItemIcon>
+                                <div onClick={downloadSubmission}>
+                                    {lastSubmission ? (
+                                        <DownloadIcon
+                                            sx={{
+                                                color: 'primary.main',
+                                                '&:hover': {
+                                                    color: 'primary.light',
+                                                },
+                                            }}
+                                        />
+                                    ) : (
+                                        <DownloadIcon sx={{ color: 'gray' }} />
+                                    )}
+                                </div>
+                            </ListItemIcon>
+                        </ListItemText>
                     </>
                 </ListItem>
             </ListItem>

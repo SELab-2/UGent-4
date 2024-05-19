@@ -136,7 +136,7 @@ export function GroupsPage() {
     const handleGroupSizeChange = (newValue: number) => {
         setNewGroupSize(newValue)
         setAvailableStudents(() => Array.from(studentNames.keys()))
-        setFilteredStudents(availableStudents);
+        setFilteredStudents(availableStudents)
         setCurrentGroup('0')
         setNewGroups(() => {
             const newGroups = []
@@ -191,8 +191,8 @@ export function GroupsPage() {
                                 newStudentNames.set(
                                     student,
                                     response.data.first_name +
-                                    ' ' +
-                                    response.data.last_name
+                                        ' ' +
+                                        response.data.last_name
                                 )
                             })
                             .catch((error) => {
@@ -206,12 +206,12 @@ export function GroupsPage() {
                                 newStudentNames.set(
                                     student,
                                     response.data.first_name +
-                                    ' ' +
-                                    response.data.last_name
+                                        ' ' +
+                                        response.data.last_name
                                 )
                                 console.log(
                                     'available names:' +
-                                    Array.from(newStudentNames.entries())
+                                        Array.from(newStudentNames.entries())
                                 )
                             })
                     }
@@ -286,14 +286,14 @@ export function GroupsPage() {
                     )
             )
         )
-        setFilteredStudents(availableStudents);
+        setFilteredStudents(availableStudents)
     }, [newGroups, studentNames])
 
     // Create new groups when the group size changes
     useEffect(() => {
         if (newGroups.length === 0) {
             setAvailableStudents(() => Array.from(studentNames.keys()))
-            setFilteredStudents(availableStudents);
+            setFilteredStudents(availableStudents)
             setCurrentGroup('0')
             setNewGroups(() => {
                 const newGroups = []
@@ -351,7 +351,7 @@ export function GroupsPage() {
             (student) => student !== studentId
         )
         setAvailableStudents(updatedAvailableStudents)
-        setFilteredStudents(availableStudents);
+        setFilteredStudents(availableStudents)
         // Then, create a new copy of the newGroups array with the updated group
         const updatedNewGroups = newGroups.map((group, index) => {
             if (index === groupId) {
@@ -392,26 +392,26 @@ export function GroupsPage() {
         setNewGroups(updatedNewGroups)
     }
 
-    const [filteredStudents, setFilteredStudents] = useState(availableStudents);
+    const [filteredStudents, setFilteredStudents] = useState(availableStudents)
 
     // for filtering students
     const handleAutocompleteChange = (_, value) => {
-        if(value){
+        if (value) {
             setFilteredStudents([value])
         }
-    };
-
-    const resetAutocompleteChange = () => {
-        setFilteredStudents(availableStudents);
     }
 
-    const filterOptions = (_,{ inputValue }) => {
+    const resetAutocompleteChange = () => {
+        setFilteredStudents(availableStudents)
+    }
+
+    const filterOptions = (_, { inputValue }) => {
         const filtered = availableStudents.filter((option) => {
-            const label = studentNames.get(option);
-            return label?.toLowerCase().startsWith(inputValue.toLowerCase());
-        });
-        return filtered;
-    };
+            const label = studentNames.get(option)
+            return label?.toLowerCase().startsWith(inputValue.toLowerCase())
+        })
+        return filtered
+    }
     return (
         <>
             <Box
@@ -605,33 +605,34 @@ export function GroupsPage() {
                                                             width={80}
                                                             height={80}
                                                         />
-                                                    ) : (<Select
-                                                        aria-label={
-                                                            'groupSelect'
-                                                        }
-                                                        value={currentGroup}
-                                                        sx={{ width: 120 }}
-                                                        onChange={
-                                                            handleCurrentGroupChange
-                                                        }
-                                                        label={t('group')}
-                                                    >
-                                                        {newGroups.map(
-                                                            (_, index) => (
-                                                                <MenuItem
-                                                                    key={index.toString()}
-                                                                    value={index.toString()}
-                                                                >
-                                                                    {t(
+                                                    ) : (
+                                                        <Select
+                                                            aria-label={
+                                                                'groupSelect'
+                                                            }
+                                                            value={currentGroup}
+                                                            sx={{ width: 120 }}
+                                                            onChange={
+                                                                handleCurrentGroupChange
+                                                            }
+                                                            label={t('group')}
+                                                        >
+                                                            {newGroups.map(
+                                                                (_, index) => (
+                                                                    <MenuItem
+                                                                        key={index.toString()}
+                                                                        value={index.toString()}
+                                                                    >
+                                                                        {t(
                                                                             'group'
                                                                         ) +
-                                                                        (index +
-                                                                            1)}
-                                                                </MenuItem>
-                                                            )
-                                                        )}
-                                                    </Select>)
-                                                    }
+                                                                            (index +
+                                                                                1)}
+                                                                    </MenuItem>
+                                                                )
+                                                            )}
+                                                        </Select>
+                                                    )}
                                                 </Grid>
                                             </Grid>
                                         </Stack>
@@ -662,15 +663,15 @@ export function GroupsPage() {
                                                 ) : (
                                                     <>
                                                         {newGroups[
-                                                                parseInt(
-                                                                    currentGroup
-                                                                )
-                                                                ] &&
+                                                            parseInt(
+                                                                currentGroup
+                                                            )
+                                                        ] &&
                                                             newGroups[
                                                                 parseInt(
                                                                     currentGroup
                                                                 )
-                                                                ].studenten.map(
+                                                            ].studenten.map(
                                                                 (student) => (
                                                                     <TableRow
                                                                         key={
@@ -721,21 +722,22 @@ export function GroupsPage() {
                                         padding={'17px'}
                                     >
                                         <Stack direction={'row'}>
-                                            <Grid
-                                                container
-                                                alignItems="center"
-                                            >
+                                            <Grid container alignItems="center">
                                                 <Grid>
                                                     <Typography
                                                         variant="h5"
-                                                        sx={{ fontWeight: 'bold' }}
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                        }}
                                                     >
                                                         {t('studenten')}
                                                     </Typography>
                                                 </Grid>
                                                 <Box paddingLeft={1}></Box>
                                                 <Grid>
-                                                    <Box sx={{ width: '200px' }}>
+                                                    <Box
+                                                        sx={{ width: '200px' }}
+                                                    >
                                                         {loading ? (
                                                             <Skeleton
                                                                 variant={'text'}
@@ -744,12 +746,31 @@ export function GroupsPage() {
                                                             />
                                                         ) : (
                                                             <Autocomplete
-                                                                options={availableStudents}
-                                                                getOptionLabel={(student) => studentNames.get(student)}
-                                                                onChange={handleAutocompleteChange}
-                                                                filterOptions={filterOptions}
-                                                                renderInput={(student) => <TextField {...student} />}
-                                                            />)}
+                                                                options={
+                                                                    availableStudents
+                                                                }
+                                                                getOptionLabel={(
+                                                                    student
+                                                                ) =>
+                                                                    studentNames.get(
+                                                                        student
+                                                                    )
+                                                                }
+                                                                onChange={
+                                                                    handleAutocompleteChange
+                                                                }
+                                                                filterOptions={
+                                                                    filterOptions
+                                                                }
+                                                                renderInput={(
+                                                                    student
+                                                                ) => (
+                                                                    <TextField
+                                                                        {...student}
+                                                                    />
+                                                                )}
+                                                            />
+                                                        )}
                                                     </Box>
                                                 </Grid>
                                             </Grid>
@@ -757,9 +778,9 @@ export function GroupsPage() {
                                     </Box>
                                     <TableContainer sx={{ maxHeight: '55vh' }}>
                                         <Table
-                                            // The teacher can see the available students
-                                            // on the left side of the screen.
-                                            // They are displayed in a table with a sticky header.aria-label={'studentTable'}
+                                        // The teacher can see the available students
+                                        // on the left side of the screen.
+                                        // They are displayed in a table with a sticky header.aria-label={'studentTable'}
                                         >
                                             <TableBody>
                                                 {loading ? (
@@ -784,7 +805,9 @@ export function GroupsPage() {
                                                             {chunkArray(
                                                                 filteredStudents,
                                                                 Math.ceil(
-                                                                        Math.sqrt(filteredStudents.length)
+                                                                    Math.sqrt(
+                                                                        filteredStudents.length
+                                                                    )
                                                                 )
                                                             ).map(
                                                                 (students) => (
@@ -817,23 +840,23 @@ export function GroupsPage() {
                                                                                         ''
                                                                                             ? student
                                                                                             : studentNames.get(
-                                                                                                student
-                                                                                            )}
+                                                                                                  student
+                                                                                              )}
                                                                                         <IconButton // people can be added to groups by clicking on the plus icon
                                                                                             disabled={
                                                                                                 newGroups[
                                                                                                     parseInt(
                                                                                                         currentGroup
                                                                                                     )
-                                                                                                    ]
+                                                                                                ]
                                                                                                     ? newGroups[
-                                                                                                        parseInt(
-                                                                                                            currentGroup
-                                                                                                        )
-                                                                                                        ]
-                                                                                                        .studenten
-                                                                                                        .length >=
-                                                                                                    newGroupSize
+                                                                                                          parseInt(
+                                                                                                              currentGroup
+                                                                                                          )
+                                                                                                      ]
+                                                                                                          .studenten
+                                                                                                          .length >=
+                                                                                                      newGroupSize
                                                                                                     : true
                                                                                             }
                                                                                             onClick={() => {
@@ -941,9 +964,9 @@ export function GroupsPage() {
 }
 
 function chunkArray<T>(arr: T[], chunkSize: number): T[][] {
-    let result: T[][] = []
+    const result: T[][] = []
     for (let i = 0; i < arr.length; i += chunkSize) {
-        let chunk: T[] = arr.slice(i, i + chunkSize)
+        const chunk: T[] = arr.slice(i, i + chunkSize)
         result.push(chunk)
     }
     return result

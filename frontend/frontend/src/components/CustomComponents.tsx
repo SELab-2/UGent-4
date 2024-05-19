@@ -1,15 +1,18 @@
-import { darken } from '@mui/system';
+import { darken } from '@mui/system'
 import {
     Button as BaseButton,
     Card as BaseCard,
     Divider as BaseDivider,
-    Box, ButtonProps, CardProps, DividerProps
+    Box,
+    ButtonProps,
+    CardProps,
+    DividerProps,
 } from '@mui/material'
 import theme from '../Theme.ts'
-import {ReactNode} from "react";
+import { ReactNode } from 'react'
 
 interface PrimaryButtonProps extends ButtonProps {
-    children: ReactNode;
+    children: ReactNode
 }
 
 export const Button = ({ children, ...props }: PrimaryButtonProps) => {
@@ -24,7 +27,7 @@ export const Button = ({ children, ...props }: PrimaryButtonProps) => {
                 textTransform: 'none',
                 color: 'primary.contrastText',
                 '&:hover': {
-                    backgroundColor: darken(theme.palette.primary.main,0.5),
+                    backgroundColor: darken(theme.palette.primary.main, 0.5),
                 },
             }}
             {...props}
@@ -35,10 +38,13 @@ export const Button = ({ children, ...props }: PrimaryButtonProps) => {
 }
 
 interface SecondaryButtonProps extends ButtonProps {
-    children: ReactNode;
+    children: ReactNode
 }
 
-export const SecondaryButton = ({ children, ...props }: SecondaryButtonProps) => {
+export const SecondaryButton = ({
+    children,
+    ...props
+}: SecondaryButtonProps) => {
     return (
         <BaseButton
             variant="contained"
@@ -50,7 +56,7 @@ export const SecondaryButton = ({ children, ...props }: SecondaryButtonProps) =>
                 textTransform: 'none',
                 color: 'secondary.contrastText',
                 '&:hover': {
-                    backgroundColor: darken(theme.palette.secondary.main,0.2),
+                    backgroundColor: darken(theme.palette.secondary.main, 0.2),
                 },
             }}
             {...props}
@@ -61,7 +67,7 @@ export const SecondaryButton = ({ children, ...props }: SecondaryButtonProps) =>
 }
 
 interface CustomCardProps extends CardProps {
-    children: ReactNode;
+    children: ReactNode
 }
 
 export const Card = ({ children, ...props }: CustomCardProps) => {
@@ -81,7 +87,7 @@ export const Card = ({ children, ...props }: CustomCardProps) => {
 }
 
 interface CustomDividerProps extends DividerProps {
-    children?: ReactNode;
+    children?: ReactNode
 }
 
 export const Divider = ({ children, ...props }: CustomCardProps) => {
@@ -99,36 +105,33 @@ export const Divider = ({ children, ...props }: CustomCardProps) => {
 }
 
 interface EvenlySpacedRowProps {
-    items: ReactNode[];
+    items: ReactNode[]
 }
 
-export const EvenlySpacedRow = ({items} : EvenlySpacedRowProps) => {
+export const EvenlySpacedRow = ({ items }: EvenlySpacedRowProps) => {
     return (
-        <Box
-            width={'100%'}
-            display="flex"
-            justifyContent={'space-between'}
-        >
+        <Box width={'100%'} display="flex" justifyContent={'space-between'}>
             {items.map((item, index) => (
-
                 <Box
                     key={index}
-                     width={(index == 0 || index == items.length-1) ? ((50/items.length)+'%') : ((100 - (100/items.length))/(items.length-2) +'%')}
-                     sx={{
-                         //border: '1px solid red',
-                         display: 'flex',
-                         alignItems: 'center',
-                         justifyContent: 'center'
-                     }}>
-                    <Box>
-                        {item}
-                    </Box>
+                    width={
+                        index == 0 || index == items.length - 1
+                            ? 50 / items.length + '%'
+                            : (100 - 100 / items.length) / (items.length - 2) +
+                              '%'
+                    }
+                    sx={{
+                        //border: '1px solid red',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}
+                >
+                    <Box>{item}</Box>
                 </Box>
             ))}
-    </Box>
+        </Box>
     )
 }
-
-
 
 export default { Button, Card, Divider, EvenlySpacedRow }

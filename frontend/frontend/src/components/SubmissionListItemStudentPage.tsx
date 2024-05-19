@@ -1,4 +1,4 @@
-import { EvenlySpacedRow} from "./CustomComponents.tsx";
+import { EvenlySpacedRow } from './CustomComponents.tsx'
 import {
     ListItem,
     ListItemButton,
@@ -53,33 +53,38 @@ export function SubmissionListItemStudentPage({
         <>
             <ListItem key={realId} sx={{ maxHeight: '30px' }} disablePadding>
                 <ListItemButton
-                    sx={{maxHeight: '30px'}}
-                    onClick={handleSubmissionClick}>
-                    <EvenlySpacedRow items={[
-                        <ListItemText
-                            sx={{
-                                color: 'primary.main',
-                                '&:hover': {
-                                    color: 'primary.light',
-                                },
-                            }}
-                            primary={visualId}
-                        />,
-                        <ListItemText
-                            primary={timestamp ? timestamp : t('time')}
-                        />,
-                        <Box sx={{ maxWidth: '24px', }}>
-                            <ListItemIcon sx={{ minWidth: 35 }}>
-                                {status ? (
-                                    <CheckCircleOutlineIcon
-                                        sx={{ color: 'success.main' }}
-                                    />
-                                ) : (
-                                    <HighlightOffIcon sx={{ color: 'error.main' }} />
-                                )}
-                            </ListItemIcon>
-                        </Box>
-                    ]}/>
+                    sx={{ maxHeight: '30px' }}
+                    onClick={handleSubmissionClick}
+                >
+                    <EvenlySpacedRow
+                        items={[
+                            <ListItemText
+                                sx={{
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        color: 'primary.light',
+                                    },
+                                }}
+                                primary={visualId}
+                            />,
+                            <ListItemText
+                                primary={timestamp ? timestamp : t('time')}
+                            />,
+                            <Box sx={{ maxWidth: '24px' }}>
+                                <ListItemIcon sx={{ minWidth: 35 }}>
+                                    {status ? (
+                                        <CheckCircleOutlineIcon
+                                            sx={{ color: 'success.main' }}
+                                        />
+                                    ) : (
+                                        <HighlightOffIcon
+                                            sx={{ color: 'error.main' }}
+                                        />
+                                    )}
+                                </ListItemIcon>
+                            </Box>,
+                        ]}
+                    />
                 </ListItemButton>
             </ListItem>
         </>
