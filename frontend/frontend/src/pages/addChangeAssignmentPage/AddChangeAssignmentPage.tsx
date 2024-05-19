@@ -585,7 +585,7 @@ export function AddChangeAssignmentPage() {
                                         </Box>
                                     </Box>
                                     {/* Deadline section.
-                    There is both the normal deadline,
+                    There is both the normal deadline, 
                     and an extra deadline in case people need more time. */}
                                     <Box
                                         aria-label={'deadline'}

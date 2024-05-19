@@ -116,6 +116,7 @@ const english = {
     noGroup: "You don't seem to be in a group yet.",
     contactTeacher: 'Please contact your teacher.',
     chooseGroup: 'Join a group before submitting.',
+    group_number: 'Group Number',
 }
 
 export default english

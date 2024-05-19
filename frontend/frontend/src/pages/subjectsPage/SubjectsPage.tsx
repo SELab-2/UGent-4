@@ -1,12 +1,5 @@
 import { Header } from '../../components/Header'
-import {
-    Box,
-    Card,
-    CircularProgress,
-    Grid,
-    IconButton,
-    Stack,
-} from '@mui/material'
+import { Box, CircularProgress, Grid, IconButton, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -320,6 +313,7 @@ export function SubjectsPage() {
                                     )}
                                 </Box>
                                 <Box
+                                    paddingLeft={'10px'}
                                     display="flex"
                                     flexDirection="row"
                                     justifyContent="space-between"
@@ -455,21 +449,14 @@ export function SubjectsPage() {
                                         doAction={confirmJoinCourse}
                                     />
                                 </Box>
-                                <Card
-                                    sx={{
-                                        padding: 0,
-                                        backgroundColor: 'background.default',
-                                        width: 'fit-content',
-                                        height: 'fit-content',
-                                    }}
-                                >
+                                <Box sx={{ paddingLeft: '20px' }}>
                                     <StudentPopUp
                                         students={
                                             studentsLoading ? [] : students
                                         }
                                         text="students"
                                     ></StudentPopUp>
-                                </Card>
+                                </Box>
                             </Stack>
                         </>
                     )}

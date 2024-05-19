@@ -7,13 +7,13 @@ import {
 import dayjs, { Dayjs } from 'dayjs'
 import {
     Badge,
+    SxProps,
+    Stack,
+    Typography,
     List,
     ListItem,
     ListItemButton,
     ListItemText,
-    Stack,
-    SxProps,
-    Typography,
 } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
@@ -125,14 +125,7 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
                         <ListItem>
                             <ListItemButton
                                 sx={{
-                                    border: 0.5,
-                                    borderColor: 'primary.main',
-                                    textAlign: 'center',
-                                    width: '100%',
-                                    borderRadius: 2,
-                                    '&:hover': {
-                                        backgroundColor: 'primary.light',
-                                    },
+                                    border: 1,
                                 }}
                                 onClick={() =>
                                     handleProjectClick(
@@ -141,11 +134,8 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
                                     )
                                 }
                             >
-                                <ListItemText>
-                                    <Typography color={'text.primary'}>
-                                        {assignment.titel}
-                                    </Typography>
-                                </ListItemText>
+                                <ListItemText primary={assignment.titel} />
+
                             </ListItemButton>
                         </ListItem>
                     ))}

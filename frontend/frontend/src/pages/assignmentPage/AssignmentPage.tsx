@@ -3,11 +3,16 @@ import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
 import {
-    Box,
-    Button,
     Card,
-    CircularProgress,
+    Button,
     Divider,
+    EvenlySpacedRow,
+    SecondaryButton,
+} from '../../components/CustomComponents.tsx'
+import {
+    Box,
+    CircularProgress,
+    Grid,
     List,
     Skeleton,
     Stack,
@@ -440,15 +445,7 @@ export function AssignmentPage() {
                                 </Box>
 
                                 {/* Assignment description */}
-                                <Card
-                                    elevation={1}
-                                    sx={{
-                                        color: 'text.primary',
-                                        padding: '20px',
-                                        backgroundColor: 'background.default',
-                                        borderRadius: 2,
-                                    }}
-                                >
+                                <Card sx={{ padding: '20px' }}>
                                     <Stack direction={'column'}>
                                         <Typography
                                             sx={{
@@ -478,118 +475,123 @@ export function AssignmentPage() {
                         It shows metadata about the submissions and allows the teacher to download them.
                         The metadata includes group number, submission time, score, and status.
                         */}
-                                <Card
-                                    elevation={1}
-                                    sx={{
-                                        color: 'text.primary',
-                                        backgroundColor: 'background.default',
-                                        borderRadius: 2,
-                                        padding: '20px',
-                                    }}
-                                >
+                                <Card>
                                     <Box
-                                        display={'flex'}
-                                        flexDirection={'row'}
-                                        justifyContent={'space-between'}
-                                        pl={3}
-                                        pr={3}
-                                    >
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            Student
-                                        </Typography>
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            {t('time')}
-                                        </Typography>
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            Score
-                                        </Typography>
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            Status
-                                        </Typography>
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            {t('download')}
-                                        </Typography>
-                                    </Box>
-                                    <Box
-                                        style={{
-                                            maxHeight: '40vh',
-                                            overflow: 'auto',
+                                        aria-label={'courseHeader'}
+                                        sx={{
+                                            backgroundColor: 'secondary.main',
+                                            height: 20,
+                                            padding: 3,
                                         }}
                                     >
-                                        <Divider color={'text.main'}></Divider>
-                                        {loading ? (
-                                            [...Array(3)].map((_, index) => (
-                                                <Skeleton
-                                                    key={index}
-                                                    variant="text"
-                                                    width={'100%'}
-                                                    height={50}
-                                                    sx={{ margin: 0 }}
-                                                />
-                                            ))
-                                        ) : (
-                                            <List disablePadding={true}>
-                                                {groups.map((group, index) => (
-                                                    <Box key={group.groep_id}>
-                                                        <Divider
-                                                            color={'text.main'}
-                                                        ></Divider>
-                                                        <Box
-                                                            display={'flex'}
-                                                            flexDirection={
-                                                                'row'
-                                                            }
-                                                            justifyContent={
-                                                                'space-between'
-                                                            }
-                                                            pl={3}
-                                                            pr={3}
-                                                        >
-                                                            <SubmissionListItemTeacherPage
-                                                                group_name={
-                                                                    assignment
-                                                                        ? assignment.max_groep_grootte >
-                                                                          1
-                                                                            ? t(
-                                                                                  'group'
-                                                                              ) +
-                                                                              ' ' +
-                                                                              (
-                                                                                  index +
-                                                                                  1
-                                                                              ).toString()
-                                                                            : singleStudents[
-                                                                                    index
-                                                                                ]
-                                                                              ? singleStudents[
-                                                                                    index
-                                                                                ]
-                                                                                    .first_name +
-                                                                                ' ' +
-                                                                                singleStudents[
-                                                                                    index
-                                                                                ]
-                                                                                    .last_name
-                                                                              : ''
-                                                                        : ''
-                                                                }
-                                                                group_id={group.groep_id.toString()}
-                                                                assignment_id={
-                                                                    assignmentId
-                                                                        ? assignmentId
-                                                                        : ''
-                                                                }
-                                                                course_id={
-                                                                    courseId
-                                                                        ? courseId
-                                                                        : ''
-                                                                }
+                                        <EvenlySpacedRow
+                                            items={[
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('group')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('time')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    Score
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    Status
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('download')}
+                                                </Typography>,
+                                            ]}
+                                        />
+                                    </Box>
+                                    <Divider />
+                                    <Box
+                                        sx={{
+                                            position: 'relative',
+                                            top: '-6px',
+                                            height: 340,
+                                        }}
+                                    >
+                                        <Box
+                                            sx={{
+                                                width: '100%',
+                                                height: 320,
+                                                overflow: 'auto',
+                                            }}
+                                        >
+                                            <List DisablePadding>
+                                                {loading ? (
+                                                    [...Array(3)].map(
+                                                        (_, index) => (
+                                                            <Skeleton
+                                                                key={index}
+                                                                variant="text"
+                                                                width={'100%'}
+                                                                height={50}
+                                                                sx={{
+                                                                    margin: 0,
+                                                                }}
                                                             />
-                                                        </Box>
-                                                    </Box>
-                                                ))}
+                                                        )
+                                                    )
+                                                ) : (
+                                                    <>
+                                                        {groups.map(
+                                                            (group, index) => (
+                                                                <>
+                                                                    {index !=
+                                                                    0 ? (
+                                                                        <Divider />
+                                                                    ) : (
+                                                                        <></>
+                                                                    )}
+                                                                    <SubmissionListItemTeacherPage
+                                                                        relative_group_id={(
+                                                                            group.groep_id -
+                                                                            Math.min(
+                                                                                ...groups.map(
+                                                                                    (
+                                                                                        group
+                                                                                    ) =>
+                                                                                        group.groep_id
+                                                                                )
+                                                                            ) +
+                                                                            1
+                                                                        ).toString()}
+                                                                        group_id={group.groep_id.toString()}
+                                                                        assignment_id={
+                                                                            assignmentId
+                                                                                ? assignmentId
+                                                                                : ''
+                                                                        }
+                                                                        course_id={
+                                                                            courseId
+                                                                                ? courseId
+                                                                                : ''
+                                                                        }
+                                                                    />
+                                                                </>
+                                                            )
+                                                        )}
+                                                    </>
+                                                )}
                                             </List>
-                                        )}
+                                        </Box>
                                     </Box>
                                 </Card>
 
@@ -602,20 +604,16 @@ export function AssignmentPage() {
                                 >
                                     <Stack direction={'row'}>
                                         {submissions.length > 0 && (
-                                            <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
+                                            <SecondaryButton
                                                 onClick={downloadAllSubmissions}
                                             >
                                                 <Typography color="secondary.contrastText">
                                                     {t('export')}{' '}
                                                     {t('submissions')}
                                                 </Typography>
-                                            </Button>
+                                            </SecondaryButton>
                                         )}
-                                        <Box style={{ flexGrow: 1 }} />
+                                        <Box paddingLeft={'20px'} />
                                         {loading ? (
                                             <Skeleton
                                                 variant={'rectangular'}
@@ -629,17 +627,11 @@ export function AssignmentPage() {
                                                 }}
                                             />
                                         ) : (
-                                            <Button
-                                                sx={{
-                                                    bgcolor: 'secondary.main',
-                                                    textTransform: 'none',
-                                                }}
+                                            <SecondaryButton
                                                 onClick={adjustScores}
                                             >
-                                                <Typography color="secondary.contrastText">
-                                                    {t('adjust_scores')}
-                                                </Typography>
-                                            </Button>
+                                                {t('adjust_scores')}
+                                            </SecondaryButton>
                                         )}
                                     </Stack>
                                 </Box>
@@ -883,15 +875,7 @@ export function AssignmentPage() {
                                 </Box>
 
                                 {/* Assignment */}
-                                <Card
-                                    elevation={1}
-                                    sx={{
-                                        color: 'text.primary',
-                                        padding: '20px',
-                                        backgroundColor: 'background.default',
-                                        borderRadius: 2,
-                                    }}
-                                >
+                                <Card sx={{ padding: '20px' }}>
                                     <Stack direction={'column'}>
                                         <Typography
                                             sx={{
@@ -920,40 +904,47 @@ export function AssignmentPage() {
                                 </Card>
 
                                 {/* Submissions */}
-                                <Card
-                                    elevation={1}
-                                    sx={{
-                                        color: 'text.primary',
-                                        backgroundColor: 'background.default',
-                                        borderRadius: 2,
-                                        padding: 2,
-                                    }}
-                                >
+                                <Card>
                                     <Box
-                                        display={'flex'}
-                                        flexDirection={'row'}
-                                        justifyContent={'space-between'}
-                                        pl={3}
-                                        pr={3}
-                                    >
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            {t('submission')}
-                                        </Typography>
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            {t('time')}
-                                        </Typography>
-                                        <Typography sx={{ fontWeight: 'bold' }}>
-                                            Status
-                                        </Typography>
-                                    </Box>
-                                    <Box
-                                        style={{
-                                            maxHeight: '40vh',
+                                        aria-label={'courseHeader'}
+                                        sx={{
+                                            backgroundColor: 'secondary.main',
+                                            height: 20,
+                                            padding: 3,
                                         }}
                                     >
-                                        <Divider color={'text.main'}></Divider>
+                                        <EvenlySpacedRow
+                                            items={[
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('submission')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    {t('time')}
+                                                </Typography>,
+                                                <Typography
+                                                    variant={'h5'}
+                                                    sx={{ fontWeight: 'bold' }}
+                                                >
+                                                    Status
+                                                </Typography>,
+                                            ]}
+                                        />
+                                    </Box>
+                                    <Divider />
+                                    <Box
+                                        style={{
+                                            position: 'relative',
+                                            top: '-6px',
+                                            maxHeight: 340,
+                                        }}
+                                    >
                                         <List
-                                            disablePadding={true}
                                             sx={{
                                                 height: '100%',
                                                 minHeight: '20vh',
@@ -985,70 +976,56 @@ export function AssignmentPage() {
                                                             )
                                                             .map(
                                                                 (
-                                                                    submission
+                                                                    submission,
+                                                                    index
                                                                 ) => (
                                                                     <Box
                                                                         key={
                                                                             submission.indiening_id
                                                                         }
                                                                     >
-                                                                        <Divider
-                                                                            color={
-                                                                                'text.main'
+                                                                        {index !=
+                                                                        0 ? (
+                                                                            <Divider />
+                                                                        ) : (
+                                                                            <>
+
+                                                                            </>
+                                                                        )}
+                                                                        <SubmissionListItemStudentPage
+                                                                            realId={submission.indiening_id.toString()}
+                                                                            visualId={(
+                                                                                submission.indiening_id -
+                                                                                Math.min(
+                                                                                    ...submissions.map(
+                                                                                        (
+                                                                                            submission
+                                                                                        ) =>
+                                                                                            submission.indiening_id
+                                                                                    )
+                                                                                ) +
+                                                                                1
+                                                                            ).toString()}
+                                                                            timestamp={dayjs(
+                                                                                submission.tijdstip
+                                                                            ).format(
+                                                                                'DD/MM/YYYY HH:mm'
+                                                                            )}
+                                                                            status={
+                                                                                submission.status >
+                                                                                0
                                                                             }
-                                                                        ></Divider>
-                                                                        <Box
-                                                                            display={
-                                                                                'flex'
+                                                                            assignment_id={
+                                                                                assignmentId
+                                                                                    ? assignmentId
+                                                                                    : ''
                                                                             }
-                                                                            flexDirection={
-                                                                                'row'
+                                                                            course_id={
+                                                                                courseId
+                                                                                    ? courseId
+                                                                                    : ''
                                                                             }
-                                                                            justifyContent={
-                                                                                'space-between'
-                                                                            }
-                                                                            pl={
-                                                                                3
-                                                                            }
-                                                                            pr={
-                                                                                3
-                                                                            }
-                                                                        >
-                                                                            <SubmissionListItemStudentPage
-                                                                                realId={submission.indiening_id.toString()}
-                                                                                visualId={(
-                                                                                    submission.indiening_id -
-                                                                                    Math.min(
-                                                                                        ...submissions.map(
-                                                                                            (
-                                                                                                submission
-                                                                                            ) =>
-                                                                                                submission.indiening_id
-                                                                                        )
-                                                                                    ) +
-                                                                                    1
-                                                                                ).toString()}
-                                                                                timestamp={dayjs(
-                                                                                    submission.tijdstip
-                                                                                ).format(
-                                                                                    'DD/MM/YYYY HH:mm'
-                                                                                )}
-                                                                                status={
-                                                                                    submission.status >
-                                                                                    0
-                                                                                }
-                                                                                assignment_id={
-                                                                                    assignmentId
-                                                                                        ? assignmentId
-                                                                                        : ''
-                                                                                }
-                                                                                course_id={
-                                                                                    courseId
-                                                                                        ? courseId
-                                                                                        : ''
-                                                                                }
-                                                                            />
-                                                                        </Box>
+                                                                        />
                                                                     </Box>
                                                                 )
                                                             )
@@ -1082,65 +1059,43 @@ export function AssignmentPage() {
                                 </Card>
 
                                 {/*Upload button, this is what the student will see. */}
-                                <Box
-                                    sx={{
-                                        width: '100%',
-                                        backgroundColor: 'background.default',
-                                    }}
-                                >
-                                    <Stack
-                                        direction={'row'}
-                                        alignItems={'flex-start'}
-                                        justifyContent={'flex-end'}
-                                        width={'100%'}
-                                    >
-                                        {
-                                            <FileUploadButton
-                                                name={t('upload')}
-                                                path={
-                                                    loading
-                                                        ? new File(
-                                                              [],
-                                                              t('loading') +
-                                                                  '...'
-                                                          )
-                                                        : submissionFile
-                                                }
-                                                onFileChange={handleFileChange}
-                                                fileTypes={[
-                                                    '.zip',
-                                                    '.pdf',
-                                                    '.txt',
-                                                ]}
-                                                tooltip={t('uploadToolTip')}
-                                            />
-                                        }
+                                <Grid container spacing={2}>
+                                    <Grid>
+                                        <FileUploadButton
+                                            name={t('upload')}
+                                            path={
+                                                loading
+                                                    ? new File(
+                                                          [],
+                                                          t('loading') + '...'
+                                                      )
+                                                    : submissionFile
+                                            }
+                                            onFileChange={handleFileChange}
+                                            fileTypes={['.zip', '.pdf', '.txt']}
+                                            tooltip={t('uploadToolTip')}
+                                        />
+                                    </Grid>
+                                    <Grid>
                                         <Box
                                             sx={{
-                                                padding: 1.2,
-                                                mr: 3,
+                                                position: 'relative',
+                                                top: '8px',
+                                                ml: 2,
                                             }}
                                         >
                                             <Tooltip title={t('upload')}>
-                                                <Button
-                                                    variant={'contained'}
-                                                    disableElevation
-                                                    sx={{
-                                                        textTransform: 'none',
-                                                    }}
+                                                <SecondaryButton
                                                     onClick={uploadIndiening}
                                                 >
-                                                    <Typography
-                                                        padding={0}
-                                                        margin={0}
-                                                    >
+                                                    <Typography>
                                                         {t('submit')}
                                                     </Typography>
-                                                </Button>
+                                                </SecondaryButton>
                                             </Tooltip>
                                         </Box>
-                                    </Stack>
-                                </Box>
+                                    </Grid>
+                                </Grid>
                             </Stack>
                             <WarningPopup
                                 title={t('error')}

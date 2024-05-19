@@ -1,5 +1,5 @@
 import { Header } from '../../components/Header'
-import { Button, Card } from '../../components/CustomComponents.tsx'
+import { Card, SecondaryButton } from '../../components/CustomComponents.tsx'
 import {
     Box,
     CircularProgress,
@@ -167,38 +167,41 @@ export function ProjectScoresPage() {
         groepen
             .filter((groep) => groep.lastSubmission !== undefined)
             .map((groep) => groep.lastSubmission)
-            .forEach(submission => {
+            .forEach((submission) => {
                 downloadPromises.push(
                     new Promise(async (resolve, reject) => {
                         try {
                             // Get the submission details
                             const submissionResponse = await instance.get(
                                 `/indieningen/${submission?.indiening_id}/`
-                            );
-                            const newSubmission = submissionResponse.data;
+                            )
+                            const newSubmission = submissionResponse.data
                             // Get the submission file
                             const fileResponse = await instance.get(
                                 `/indieningen/${submission?.indiening_id}/indiening_bestand/`,
                                 { responseType: 'blob' }
-                            );
-                            let filename = 'indiening.zip';
+                            )
+                            let filename = 'indiening.zip'
                             if (newSubmission.bestand) {
-                                filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                                filename = newSubmission.bestand.replace(
+                                    /^.*[\\/]/,
+                                    ''
+                                )
                             }
                             const blob = new Blob([fileResponse.data], {
                                 type: fileResponse.headers['content-type'],
-                            });
+                            })
                             const file = new File([blob], filename, {
                                 type: fileResponse.headers['content-type'],
-                            });
-                            newSubmission.bestand = file;
-                            newSubmission.filename = filename;
+                            })
+                            newSubmission.bestand = file
+                            newSubmission.filename = filename
                             // Add the file to the zip
-                            zip.file(filename, fileResponse.data);
-                            resolve(newSubmission);
+                            zip.file(filename, fileResponse.data)
+                            resolve(newSubmission)
                         } catch (err) {
-                            console.error(`Error downloading submission:`, err);
-                            reject(err);
+                            console.error(`Error downloading submission:`, err)
+                            reject(err)
                         }
                     })
                 )
@@ -210,7 +213,8 @@ export function ProjectScoresPage() {
                         const url = window.URL.createObjectURL(blob)
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = 'all_submissions_' + project?.titel +'_.zip'
+                        a.download =
+                            'all_submissions_' + project?.titel + '_.zip'
                         document.body.appendChild(a)
                         a.click()
                         a.remove()
@@ -299,149 +303,177 @@ export function ProjectScoresPage() {
                 <>
                     {user?.is_lesgever ? (
                         // Rendering UI for teacher
-                    <>
-            <Stack
-                direction={'column'}
-                spacing={0}
-                sx={{
-                    width: '100%',
-                    height: '100%',
-                    backgroundColor: 'background.default',
-                }}
-            >
-                <Header
-                    variant={'default'}
-                    title={loading ? '' : project?.titel + ': Scores'}
-                />
-                {/* Main content box */}
-
-                <Card
-                    sx={{
-                        marginTop: 12,
-                    }}
-                >
-                    {/* Render StudentsView component if project is defined */}
-                    {loading ? (
-                        <Box
-                            display={'flex'}
-                            justifyContent={'center'}
-                            flexGrow={1}
-                        >
-                            <CircularProgress color={'primary'} />
-                        </Box>
-                    ) : (
                         <>
-                            {project && (
-                                <StudentsView
-                                    project={project}
-                                    groepen={groepen}
-                                    setGroepen={setGroepen}
-                                    changeScore={changeScore}
+                            <Stack
+                                direction={'column'}
+                                spacing={0}
+                                sx={{
+                                    width: '100%',
+                                    height: '100%',
+                                    backgroundColor: 'background.default',
+                                }}
+                            >
+                                <Header
+                                    variant={'default'}
+                                    title={
+                                        loading
+                                            ? ''
+                                            : project?.titel + ': Scores'
+                                    }
                                 />
-                            )}
-                        </>
-                    )}
-                </Card>
-                {/* Footer section with action buttons */}
-                <Box
-                    display="flex"
-                    flexDirection="row"
-                    sx={{
-                        marginTop: -4,
-                    }}
-                >
-                    <Box
-                        display="flex"
-                        flexDirection="row"
-                        padding={'3px'}
-                        sx={{ width: '50%', height: 'auto' }}
-                    >
-                        <Stack
-                            direction="row"
-                            alignItems="center"
-                            spacing={2}
-                            marginY={6}
-                        >
-                            <Button onClick={exportSubmissions}>
-                                {t('export_submissions')}
-                            </Button>
+                                {/* Main content box */}
 
-                            <Button variant={'contained'}>
-                                {t('upload_scores')}
-                                <VisuallyHiddenInput
-                                    type="file"
-                                    value={undefined}
-                                    accept={['.csv'].join(',')}
-                                    multiple={false}
-                                    onChange={uploadScores}
-                                />
-                            </Button>
-                        </Stack>
-                    </Box>
-                    <Box
-                        display="flex"
-                        flexDirection="row-reverse"
-                        padding={'3px'}
-                        sx={{ width: '50%', height: 'auto' }}
-                    >
-                        {loading ? (
-                            <Skeleton
-                                variant="rectangular"
-                                width={40}
-                                height={40}
-                            />
-                        ) : (
-                            <>
-                                <IconButton
-                                    onClick={() => setOpenSaveScoresPopup(true)}
+                                <Card
                                     sx={{
-                                        color: 'background.default',
-                                        '&:hover': {
-                                            color: 'text.primary',
-                                        },
-                                        backgroundColor: 'primary.main',
-                                        borderRadius: 2,
+                                        marginTop: 12,
                                     }}
                                 >
-                                    <SaveIcon />
-                                </IconButton>
-                            </>
-                        )}
-                        <IconButton
-                            onClick={() => setOpenDeleteScoresPopup(true)}
-                            sx={{
-                                backgroundColor: 'secondary.main',
-                                borderRadius: 2,
-                            }}
-                        >
-                            <CloseIcon />
-                        </IconButton>
-                    </Box>
-                </Box>
-                {/* Popup for confirming saving scores */}
-                <WarningPopup
-                    title={t('edit_scores_warning')}
-                    content={t('visible_for_everyone')}
-                    buttonName={t('confirm')}
-                    open={openSaveScoresPopup}
-                    handleClose={() => setOpenSaveScoresPopup(false)}
-                    doAction={saveScores}
-                />
-                {/* Popup for confirming deletion of scores */}
-                <WarningPopup
-                    title={t('undo_changes_warning')}
-                    content={t('cant_be_undone')}
-                    buttonName={t('confirm')}
-                    open={openDeleteScoresPopup}
-                    handleClose={() => setOpenDeleteScoresPopup(false)}
-                    doAction={deleteScores}
-                />
-            </Stack>
+                                    {/* Render StudentsView component if project is defined */}
+                                    {loading ? (
+                                        <Box
+                                            display={'flex'}
+                                            justifyContent={'center'}
+                                            flexGrow={1}
+                                        >
+                                            <CircularProgress
+                                                color={'primary'}
+                                            />
+                                        </Box>
+                                    ) : (
+                                        <>
+                                            {project && (
+                                                <StudentsView
+                                                    project={project}
+                                                    groepen={groepen}
+                                                    setGroepen={setGroepen}
+                                                    changeScore={changeScore}
+                                                />
+                                            )}
+                                        </>
+                                    )}
+                                </Card>
+                                {/* Footer section with action buttons */}
+                                <Box
+                                    display="flex"
+                                    flexDirection="row"
+                                    sx={{
+                                        marginTop: -4,
+                                    }}
+                                >
+                                    <Box
+                                        display="flex"
+                                        flexDirection="row"
+                                        padding={'3px'}
+                                        sx={{ width: '50%', height: 'auto' }}
+                                    >
+                                        <Stack
+                                            direction="row"
+                                            alignItems="center"
+                                            spacing={2}
+                                            marginY={6}
+                                        >
+                                            <SecondaryButton
+                                                onClick={exportSubmissions}
+                                            >
+                                                {t('export_submissions')}
+                                            </SecondaryButton>
+
+                                            <SecondaryButton
+                                                variant={'contained'}
+                                            >
+                                                {t('upload_scores')}
+                                                <VisuallyHiddenInput
+                                                    type="file"
+                                                    value={undefined}
+                                                    accept={['.csv'].join(',')}
+                                                    multiple={false}
+                                                    onChange={uploadScores}
+                                                />
+                                            </SecondaryButton>
+                                        </Stack>
+                                    </Box>
+                                    <Box
+                                        display="flex"
+                                        flexDirection="row-reverse"
+                                        padding={'3px'}
+                                        sx={{
+                                            width: '50%',
+                                            height: '40px',
+                                            marginTop: 6,
+                                        }}
+                                    >
+                                        {loading ? (
+                                            <Skeleton
+                                                variant="rectangular"
+                                                width={40}
+                                                height={40}
+                                            />
+                                        ) : (
+                                            <>
+                                                <IconButton
+                                                    onClick={() =>
+                                                        setOpenSaveScoresPopup(
+                                                            true
+                                                        )
+                                                    }
+                                                    sx={{
+                                                        color: 'background.default',
+                                                        '&:hover': {
+                                                            color: 'text.primary',
+                                                        },
+                                                        backgroundColor:
+                                                            'primary.main',
+                                                        borderRadius: 2,
+                                                    }}
+                                                >
+                                                    <SaveIcon />
+                                                </IconButton>
+                                            </>
+                                        )}
+                                        <Box paddingLeft={'10px'} />
+                                        <IconButton
+                                            onClick={() =>
+                                                setOpenDeleteScoresPopup(true)
+                                            }
+                                            sx={{
+                                                backgroundColor:
+                                                    'secondary.main',
+                                                borderRadius: 2,
+                                            }}
+                                        >
+                                            <CloseIcon />
+                                        </IconButton>
+                                    </Box>
+                                </Box>
+                                {/* Popup for confirming saving scores */}
+                                <WarningPopup
+                                    title={t('edit_scores_warning')}
+                                    content={t('visible_for_everyone')}
+                                    buttonName={t('confirm')}
+                                    open={openSaveScoresPopup}
+                                    handleClose={() =>
+                                        setOpenSaveScoresPopup(false)
+                                    }
+                                    doAction={saveScores}
+                                />
+                                {/* Popup for confirming deletion of scores */}
+                                <WarningPopup
+                                    title={t('undo_changes_warning')}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('confirm')}
+                                    open={openDeleteScoresPopup}
+                                    handleClose={() =>
+                                        setOpenDeleteScoresPopup(false)
+                                    }
+                                    doAction={deleteScores}
+                                />
+                            </Stack>
+                        </>
+                    ) : (
+                        navigate('*')
+                    )}
+                </>
+            )}
         </>
-    ):(
-        navigate('*')
-    )}
-</>
-)} 
-</>
-)}
+    )
+}

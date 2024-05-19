@@ -134,6 +134,7 @@ export function SubmissionPage() {
                 )
                 //Get the submission file
                 const newSubmission: Submission = submissionResponse.data
+
                 if (newSubmission.result !== 'No tests: OK') {
                     const regex = /Testing (.*):/g
                     const matches = newSubmission.result.match(regex)
@@ -509,7 +510,15 @@ export function SubmissionPage() {
                                     height={40}
                                 />
                             ) : (
-                                <Typography variant={'body1'}>
+                                <Typography
+                                    variant={'body1'}
+                                    color={
+                                        submission?.status ===
+                                        SubmissionStatus.PASSED
+                                            ? 'green'
+                                            : 'red'
+                                    }
+                                >
                                     {submission?.status ===
                                     SubmissionStatus.PENDING
                                         ? t('pending')

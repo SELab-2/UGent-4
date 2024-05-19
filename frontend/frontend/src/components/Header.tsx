@@ -194,6 +194,7 @@ export const Header = ({ variant, title }: Props) => {
                                 sx={{
                                     color: 'background.default',
                                     paddingTop: 1,
+                                    textTransform: 'none',
                                 }}
                             >
                                 Logout

@@ -3,7 +3,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Skeleton,
+    Box,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -14,6 +14,7 @@ import instance from '../axiosConfig'
 import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
 import { t } from 'i18next'
 import dayjs from 'dayjs'
+import { EvenlySpacedRow } from './CustomComponents.tsx'
 
 interface SubmissionListItemTeacherPageProps {
     group_name: string
@@ -135,90 +136,75 @@ export function SubmissionListItemTeacherPage({
 
     return (
         <>
-            <ListItem id={group_id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={group_id} sx={{ maxHeight: '30px' }} disablePadding>
                 <ListItemButton
-                    disabled={!submitted}
-                    sx={{
-                        width: '100%',
-                        height: 40,
-                        paddingX: 4,
-                        paddingY: 3,
-                        borderRadius: 2,
-                        display: 'flex',
-                        flexDirection: 'row',
-                    }}
+                    sx={{ maxHeight: '30px' }}
                     onClick={handleSubmissionClick}
                 >
-                    {/* Display group id */}
-                    {!group_name ? (
-                        <Skeleton
-                            variant="text"
-                            sx={{ minWidth: '24%' }}
-                            height={30}
-                        />
-                    ) : (
-                        <ListItemText
-                            sx={{
-                                maxWidth: '24%',
-                                color: 'primary.main',
-                                '&:hover': {
-                                    color: 'primary.light',
-                                },
-                            }}
-                            primary={group_name}
-                        />
-                    )}
-                    {/* Display submission timestamp */}
-                    <ListItemText
-                        sx={{ minWidth: '24%' }}
-                        primary={
-                            submitted
-                                ? dayjs(submitted.tijdstip).format(
-                                      'DD/MM/YYYY HH:mm'
-                                  )
-                                : '-'
-                        }
-                    />
-                    {/* Display score */}
-                    <ListItemText
-                        sx={{ minWidth: '24%' }}
-                        primary={
-                            score
-                                ? `${Number(score.score)}` + '/20'
-                                : t('no_score_yet')
-                        }
-                    />
-                    {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: '24%' }}>
-                        {!submitted?.status ? (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
-                        ) : (
-                            submitted !== undefined && (
-                                <CheckCircleOutlineIcon
-                                    sx={{ color: 'success.main' }}
-                                />
-                            )
-                        )}
-                    </ListItemIcon>
-                    {/* Display download icon */}
-                    <ListItemText sx={{ maxWidth: 35 }}>
-                        <ListItemIcon>
-                            <div onClick={handleDownloadClick}>
-                                {submitted ? (
-                                    <DownloadIcon
-                                        sx={{
-                                            color: 'primary.main',
-                                            '&:hover': {
-                                                color: 'primary.light',
-                                            },
-                                        }}
-                                    />
-                                ) : (
-                                    <DownloadIcon sx={{ color: 'gray' }} />
-                                )}
-                            </div>
-                        </ListItemIcon>
-                    </ListItemText>
+                    <EvenlySpacedRow
+                        items={[
+                            <ListItemText
+                                sx={{
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        color: 'primary.light',
+                                    },
+                                }}
+                                primary={relative_group_id}
+                            />,
+                            <ListItemText
+                                primary={
+                                    submitted
+                                        ? dayjs(submitted.tijdstip).format(
+                                              'DD/MM/YYYY HH:mm'
+                                          )
+                                        : '-'
+                                }
+                            />,
+                            <ListItemText
+                                primary={
+                                    score
+                                        ? `${Number(score.score)}` + '/20'
+                                        : t('no_score_yet')
+                                }
+                            />,
+                            <Box sx={{ maxWidth: '24px' }}>
+                                <ListItemIcon>
+                                    {!submitted?.status ? (
+                                        <HighlightOffIcon
+                                            sx={{ color: 'error.main' }}
+                                        />
+                                    ) : (
+                                        submitted !== undefined && (
+                                            <CheckCircleOutlineIcon
+                                                sx={{ color: 'success.main' }}
+                                            />
+                                        )
+                                    )}
+                                </ListItemIcon>
+                            </Box>,
+                            <Box sx={{ maxWidth: '24px' }}>
+                                <ListItemIcon>
+                                    <div onClick={handleDownloadClick}>
+                                        {submitted ? (
+                                            <DownloadIcon
+                                                sx={{
+                                                    color: 'primary.main',
+                                                    '&:hover': {
+                                                        color: 'primary.light',
+                                                    },
+                                                }}
+                                            />
+                                        ) : (
+                                            <DownloadIcon
+                                                sx={{ color: 'gray' }}
+                                            />
+                                        )}
+                                    </div>
+                                </ListItemIcon>
+                            </Box>,
+                        ]}
+                    ></EvenlySpacedRow>
                 </ListItemButton>
             </ListItem>
         </>
