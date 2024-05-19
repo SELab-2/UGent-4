@@ -19,6 +19,7 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 import ErrorPage from '../ErrorPage.tsx'
 import JSZip from 'jszip'
 import Papa from 'papaparse'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 const VisuallyHiddenInput = styled('input')({
     clipPath: 'inset(50%)',
@@ -56,16 +57,10 @@ interface Groep {
 export interface Indiening {
     indiening_id: number
     groep: number
+    bestand: File
     tijdstip: Date
     status: number
     result: string
-    indiening_bestanden: IndieningBestand[]
-}
-
-interface IndieningBestand {
-    indiening_bestand_id: number
-    indiening: number
-    bestand: string
 }
 
 interface Score {
@@ -95,9 +90,11 @@ export function ProjectScoresPage() {
     const [project, setProject] = useState<Project>()
     const [groepen, setGroepen] = useState<ScoreGroep[]>([])
     const [fetchError, setFetchError] = useState(false)
+    const [user, setUser] = useState<User>()
 
     // State for loading the page properly
     const [loading, setLoading] = useState(true)
+    const [userLoading, setUserLoading] = useState(true)
 
     const navigate = useNavigate()
 
@@ -144,7 +141,11 @@ export function ProjectScoresPage() {
     useEffect(() => {
         async function fetchData() {
             try {
+                setUserLoading(true)
                 setLoading(true)
+                const userResponse = await instance.get('/gebruikers/me/')
+                setUser(userResponse.data)
+                setUserLoading(false)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
@@ -166,36 +167,39 @@ export function ProjectScoresPage() {
         groepen
             .filter((groep) => groep.lastSubmission !== undefined)
             .map((groep) => groep.lastSubmission)
-            .forEach((submission, index) => {
+            .forEach(submission => {
                 downloadPromises.push(
-                    new Promise((resolve, reject) => {
-                        instance
-                            .get(
-                                `/indieningen/${submission?.indiening_id}/indiening_bestanden/`,
+                    new Promise(async (resolve, reject) => {
+                        try {
+                            // Get the submission details
+                            const submissionResponse = await instance.get(
+                                `/indieningen/${submission?.indiening_id}/`
+                            );
+                            const newSubmission = submissionResponse.data;
+                            // Get the submission file
+                            const fileResponse = await instance.get(
+                                `/indieningen/${submission?.indiening_id}/indiening_bestand/`,
                                 { responseType: 'blob' }
-                            )
-                            .then((res) => {
-                                let filename = 'lege_indiening_zip.zip'
-                                if (submission === undefined) return
-                                if (submission.indiening_bestanden.length > 0) {
-                                    filename =
-                                        submission?.indiening_bestanden[0].bestand.replace(
-                                            /^.*[\\/]/,
-                                            ''
-                                        )
-                                }
-                                if (filename !== 'lege_indiening_zip.zip') {
-                                    zip.file(filename, res.data)
-                                }
-                                resolve()
-                            })
-                            .catch((err) => {
-                                console.error(
-                                    `Error downloading submission ${index + 1}:`,
-                                    err
-                                )
-                                reject(err)
-                            })
+                            );
+                            let filename = 'indiening.zip';
+                            if (newSubmission.bestand) {
+                                filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                            }
+                            const blob = new Blob([fileResponse.data], {
+                                type: fileResponse.headers['content-type'],
+                            });
+                            const file = new File([blob], filename, {
+                                type: fileResponse.headers['content-type'],
+                            });
+                            newSubmission.bestand = file;
+                            newSubmission.filename = filename;
+                            // Add the file to the zip
+                            zip.file(filename, fileResponse.data);
+                            resolve(newSubmission);
+                        } catch (err) {
+                            console.error(`Error downloading submission:`, err);
+                            reject(err);
+                        }
                     })
                 )
             })
@@ -206,7 +210,7 @@ export function ProjectScoresPage() {
                         const url = window.URL.createObjectURL(blob)
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = 'all_submissions.zip'
+                        a.download = 'all_submissions_' + project?.titel +'_.zip'
                         document.body.appendChild(a)
                         a.click()
                         a.remove()
@@ -278,6 +282,24 @@ export function ProjectScoresPage() {
 
     return (
         <>
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
+                >
+                    <CircularProgress color={'primary'} />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                    <>
             <Stack
                 direction={'column'}
                 spacing={0}
@@ -416,5 +438,10 @@ export function ProjectScoresPage() {
                 />
             </Stack>
         </>
-    )
-}
+    ):(
+        navigate('*')
+    )}
+</>
+)} 
+</>
+)}

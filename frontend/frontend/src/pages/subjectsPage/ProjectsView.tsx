@@ -1,4 +1,4 @@
-import { Card, Divider } from '../../components/CustomComponents.tsx'
+import { Divider } from '../../components/CustomComponents.tsx'
 import { Box, Skeleton, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { t } from 'i18next'
