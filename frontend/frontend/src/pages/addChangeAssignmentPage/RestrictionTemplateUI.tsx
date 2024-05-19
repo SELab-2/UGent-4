@@ -18,18 +18,11 @@ import CloseIcon from '@mui/icons-material/Close'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 
 // Define a type for the parameters
-type ParamValue = string | number | boolean | string[];
-
-interface Param {
-    type: 'number' | 'string' | 'boolean' | 'array'
-    description: string
-    variable: string
-    value: ParamValue
-}
+type ParamValue = string | number | boolean | string[]
 
 const saveRestrictionTemplate = (
     restrictionCode: string,
-    params: { [key: string]: any },
+    params: { [key: string]: ParamValue },
     templateFileName: string
 ) => {
     // This function will save the restriction template with the given parameters.
@@ -117,8 +110,8 @@ export default function RestrictionTemplateUI({
 
     // Initialize paramsState with default values
     useState(() => {
-        const initialState: { [key: string]: any } = {}
-        params.forEach(param => {
+        const initialState: { [key: string]: ParamValue } = {}
+        params.forEach((param) => {
             initialState[param.variable] = param.value
         })
         setParamsState(initialState)
@@ -147,7 +140,7 @@ export default function RestrictionTemplateUI({
         variable: string,
         newValue: number | string | boolean | string[]
     ) => {
-        setParamsState(prevState => ({
+        setParamsState((prevState) => ({
             ...prevState,
             [variable]: newValue,
         }))
@@ -157,12 +150,12 @@ export default function RestrictionTemplateUI({
     // It will change the row at the given index to the new value.
     const handleChangeRow = (
         variable: string,
-        newValue: any,
+        newValue: string,
         index: number
     ) => {
         const newArrayValues = [...paramsState[variable]]
         newArrayValues[index] = newValue
-        setParamsState(prevState => ({
+        setParamsState((prevState) => ({
             ...prevState,
             [variable]: newArrayValues,
         }))
@@ -171,14 +164,14 @@ export default function RestrictionTemplateUI({
     const handleDeleteRow = (variable: string, index: number) => {
         const newArrayValues = [...paramsState[variable]]
         newArrayValues.splice(index, 1)
-        setParamsState(prevState => ({
+        setParamsState((prevState) => ({
             ...prevState,
             [variable]: newArrayValues,
         }))
     }
 
     const handleAddRow = (variable: string) => {
-        setParamsState(prevState => ({
+        setParamsState((prevState) => ({
             ...prevState,
             [variable]: [...(prevState[variable] || []), ''], // Initialize with an empty string
         }))
@@ -353,13 +346,14 @@ function parseValue(value: string): string | number | boolean | string[] {
         return value
             .slice(1, -1)
             .split(',')
-            .map((item) => parseValue(item.trim())) // in python the values are separated by commas
-    } else if (value.startsWith('(') && value.endsWith(')')) { // round brackets for bash lists
+            .map((item) => String(parseValue(item.trim()))) // in python the values are separated by commas
+    } else if (value.startsWith('(') && value.endsWith(')')) {
+        // round brackets for bash lists
         // Bash-style list
         return value
             .slice(1, -1)
             .split(' ')
-            .map((item) => parseValue(item.trim())) // in bash the values are separated by whitespace
+            .map((item) => String(parseValue(item.trim()))) // in bash the values are separated by whitespace
     } else {
         return value
     }
