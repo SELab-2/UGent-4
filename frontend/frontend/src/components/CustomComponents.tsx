@@ -104,6 +104,7 @@ export const Divider = ({ children, ...props }: CustomCardProps) => {
     )
 }
 
+
 interface EvenlySpacedRowProps {
     items: ReactNode[]
 }

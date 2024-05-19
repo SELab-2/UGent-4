@@ -395,7 +395,7 @@ export function GroupsPage() {
     const [filteredStudents, setFilteredStudents] = useState(availableStudents)
 
     // for filtering students
-    const handleAutocompleteChange = (_, value) => {
+    const handleAutocompleteChange = (_: unknown, value: number | null) => {
         if (value) {
             setFilteredStudents([value])
         }
@@ -405,12 +405,14 @@ export function GroupsPage() {
         setFilteredStudents(availableStudents)
     }
 
-    const filterOptions = (_, { inputValue }) => {
-        const filtered = availableStudents.filter((option) => {
+    const filterOptions = (
+        _: unknown,
+        { inputValue }: { inputValue: string }
+    ) => {
+        return availableStudents.filter((option) => {
             const label = studentNames.get(option)
             return label?.toLowerCase().startsWith(inputValue.toLowerCase())
         })
-        return filtered
     }
     return (
         <>
@@ -751,11 +753,16 @@ export function GroupsPage() {
                                                                 }
                                                                 getOptionLabel={(
                                                                     student
-                                                                ) =>
-                                                                    studentNames.get(
-                                                                        student
-                                                                    )
-                                                                }
+                                                                ) => {
+                                                                    const name =
+                                                                        studentNames.get(
+                                                                            student
+                                                                        )
+                                                                    return name !=
+                                                                        null
+                                                                        ? name
+                                                                        : '' // This checks for both null and undefined
+                                                                }}
                                                                 onChange={
                                                                     handleAutocompleteChange
                                                                 }
