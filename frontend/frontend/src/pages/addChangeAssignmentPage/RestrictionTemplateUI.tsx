@@ -106,7 +106,12 @@ export default function RestrictionTemplateUI({
 
     const params = parseParams(restrictionCode)
 
-    const [paramsState, setParamsState] = useState<{ [key: string]: any }>({})
+    // change this paramsState to be an array of the following type of objects:
+    // {name: string, value: string | number | boolean | string[]}
+    // it mus have a [Symbol.iterator] method
+    const [paramsState, setParamsState] = useState<{
+        [key: string]: number | string | boolean | string[]
+    }>({})
 
     // Initialize paramsState with default values
     useState(() => {
@@ -153,28 +158,55 @@ export default function RestrictionTemplateUI({
         newValue: string,
         index: number
     ) => {
-        const newArrayValues = [...paramsState[variable]]
-        newArrayValues[index] = newValue
-        setParamsState((prevState) => ({
-            ...prevState,
-            [variable]: newArrayValues,
-        }))
+        const currentValue = paramsState[variable]
+        if (Array.isArray(currentValue)) {
+            const newArrayValues = [...currentValue] // TypeScript now knows currentValue is a string[]
+            newArrayValues[index] = newValue
+            setParamsState((prevState) => ({
+                ...prevState,
+                [variable]: newArrayValues,
+            }))
+        } else {
+            console.error(
+                `Expected an array for variable ${variable}, but got:`,
+                currentValue
+            )
+        }
     }
 
     const handleDeleteRow = (variable: string, index: number) => {
-        const newArrayValues = [...paramsState[variable]]
-        newArrayValues.splice(index, 1)
-        setParamsState((prevState) => ({
-            ...prevState,
-            [variable]: newArrayValues,
-        }))
+        const currentValue = paramsState[variable]
+        if (Array.isArray(currentValue)) {
+            const newArrayValues = [...currentValue] // TypeScript now knows currentValue is a string[]
+            newArrayValues.splice(index, 1)
+            setParamsState((prevState) => ({
+                ...prevState,
+                [variable]: newArrayValues,
+            }))
+        } else {
+            console.error(
+                `Expected an array for variable ${variable}, but got:`,
+                currentValue
+            )
+        }
     }
 
     const handleAddRow = (variable: string) => {
-        setParamsState((prevState) => ({
-            ...prevState,
-            [variable]: [...(prevState[variable] || []), ''], // Initialize with an empty string
-        }))
+        setParamsState((prevState) => {
+            const currentArray = prevState[variable]
+            if (Array.isArray(currentArray)) {
+                return {
+                    ...prevState,
+                    [variable]: [...currentArray, ''], // Initialize with an empty string
+                }
+            } else {
+                console.error(
+                    `Expected an array for variable ${variable}, but got:`,
+                    currentArray
+                )
+                return prevState // Return previous state without modification
+            }
+        })
     }
 
     return (
@@ -260,7 +292,9 @@ export default function RestrictionTemplateUI({
                                     {param.description}
                                 </Typography>
                                 <Checkbox
-                                    checked={paramsState[param.variable]}
+                                    checked={Boolean(
+                                        paramsState[param.variable]
+                                    )}
                                     color="primary"
                                     onChange={(e) =>
                                         handleArrayChange(
@@ -280,38 +314,48 @@ export default function RestrictionTemplateUI({
                                     {param.description}
                                 </Typography>
                                 <List>
-                                    {(paramsState[param.variable] || []).map(
-                                        (item: string, idx: number) => (
-                                            <ListItem key={idx}>
-                                                <ListItemText>
-                                                    <TextField
-                                                        type="text"
-                                                        value={item}
-                                                        onChange={(e) =>
-                                                            handleChangeRow(
-                                                                param.variable,
-                                                                e.target.value,
-                                                                idx
-                                                            )
-                                                        }
-                                                    />
-                                                </ListItemText>
-                                                <IconButton
-                                                    edge="end"
-                                                    aria-label="delete"
-                                                    onClick={() =>
-                                                        handleDeleteRow(
-                                                            param.variable,
-                                                            idx
-                                                        )
-                                                    }
-                                                >
-                                                    <DeleteOutlineIcon />
-                                                </IconButton>
-                                            </ListItem>
+                                    {(() => {
+                                        const paramArray = paramsState[
+                                            param.variable
+                                        ] as string[] | undefined
+                                        return (
+                                            Array.isArray(paramArray) &&
+                                            paramArray.map(
+                                                (item: string, idx: number) => (
+                                                    <ListItem key={idx}>
+                                                        <ListItemText>
+                                                            <TextField
+                                                                type="text"
+                                                                value={item}
+                                                                onChange={(e) =>
+                                                                    handleChangeRow(
+                                                                        param.variable,
+                                                                        e.target
+                                                                            .value,
+                                                                        idx
+                                                                    )
+                                                                }
+                                                            />
+                                                        </ListItemText>
+                                                        <IconButton
+                                                            edge="end"
+                                                            aria-label="delete"
+                                                            onClick={() =>
+                                                                handleDeleteRow(
+                                                                    param.variable,
+                                                                    idx
+                                                                )
+                                                            }
+                                                        >
+                                                            <DeleteOutlineIcon />
+                                                        </IconButton>
+                                                    </ListItem>
+                                                )
+                                            )
                                         )
-                                    )}
+                                    })()}
                                 </List>
+
                                 <Button
                                     variant="outlined"
                                     onClick={() => handleAddRow(param.variable)}
