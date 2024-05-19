@@ -1,4 +1,4 @@
-import {Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
+import { Divider, EvenlySpacedRow } from '../../components/CustomComponents.tsx'
 import { Box, Skeleton, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { StudentScoreListItem } from './StudentScoreListItem.tsx'
@@ -121,19 +121,21 @@ export function StudentsView({
                     padding: 3,
                 }}
             >
-                <EvenlySpacedRow items={[
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        {t('group')}
-                    </Typography>,
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        {t('time')}
-                    </Typography>,
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        Score
-                    </Typography>,
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        Download
-                    </Typography>]}
+                <EvenlySpacedRow
+                    items={[
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            {t('group')}
+                        </Typography>,
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            {t('time')}
+                        </Typography>,
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            Score
+                        </Typography>,
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            Download
+                        </Typography>,
+                    ]}
                 />
             </Box>
             <Divider color={'text.main'}></Divider>

@@ -1,9 +1,13 @@
-import { Divider, Card } from '../../components/CustomComponents.tsx'
+import {
+    Divider,
+    Card,
+    SecondaryButton,
+    EvenlySpacedRow,
+} from '../../components/CustomComponents.tsx'
 import {
     Box,
     IconButton,
     ListItem,
-    ListItemButton,
     ListItemText,
     Skeleton,
     Stack,
@@ -48,11 +52,7 @@ function UserList(
             <List
                 disablePadding={true}
                 sx={{
-                    '& > :not(style)': {
-                        marginBottom: '8px',
-                        width: '99vw',
-                    },
-                    minHeight: '20vh',
+                    minHeight: '30vh',
                     maxHeight: '30vh',
                     overflowY: 'auto',
                 }}
@@ -80,66 +80,55 @@ function UserList(
                             }
                             return (
                                 <>
-                                    <ListItemButton
-                                        sx={{
-                                            width: '100%',
-                                            height: 30,
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            paddingX: 1,
-                                            paddingY: 2,
-                                            borderRadius: 2,
-                                        }}
-                                    >
-                                        <Box
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            gap={1}
-                                            alignItems={'center'}
-                                        >
-                                            <ListItemText
-                                                sx={{ maxWidth: 100 }}
-                                                primary={
-                                                    user.first_name +
-                                                    ' ' +
-                                                    user.last_name
-                                                }
-                                            />
-                                        </Box>
-                                        <Box
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            gap={1}
-                                            alignItems={'center'}
-                                        >
-                                            <ListItemText
-                                                sx={{
-                                                    maxWidth: 300,
-                                                    textOverflow: 'ellipsis',
-                                                }}
-                                                primary={user.email}
-                                            />
-                                            <IconButton
-                                                disabled={
-                                                    users.length == 1 &&
-                                                    users[0].is_lesgever
-                                                }
-                                                aria-label={'delete_file'}
-                                                size={'small'}
-                                                onClick={handleClickOpen}
-                                                sx={{
-                                                    '&:disabled': {
-                                                        color: 'text.primary',
-                                                    },
-                                                    color: 'error.main',
-                                                }}
-                                            >
-                                                <ClearIcon />
-                                            </IconButton>
-                                        </Box>
-                                    </ListItemButton>
-                                    <Divider color={'text.main'}></Divider>
+                                    <ListItem>
+                                        <EvenlySpacedRow
+                                            items={[
+                                                <ListItemText
+                                                    primary={
+                                                        user.first_name +
+                                                        ' ' +
+                                                        user.last_name
+                                                    }
+                                                />,
+                                                <Box
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    gap={1}
+                                                    alignItems={'center'}
+                                                >
+                                                    <ListItemText
+                                                        sx={{
+                                                            textOverflow:
+                                                                'ellipsis',
+                                                        }}
+                                                        primary={user.email}
+                                                    />
+                                                    <IconButton
+                                                        disabled={
+                                                            users.length == 1 &&
+                                                            users[0].is_lesgever
+                                                        }
+                                                        aria-label={
+                                                            'delete_file'
+                                                        }
+                                                        size={'small'}
+                                                        onClick={
+                                                            handleClickOpen
+                                                        }
+                                                        sx={{
+                                                            '&:disabled': {
+                                                                color: 'text.primary',
+                                                            },
+                                                            color: 'error.main',
+                                                        }}
+                                                    >
+                                                        <ClearIcon />
+                                                    </IconButton>
+                                                </Box>,
+                                            ]}
+                                        />
+                                    </ListItem>
+                                    <Divider />
                                 </>
                             )
                         })}
@@ -175,9 +164,9 @@ function UploadPart(
                             />
                         </Box>
                         <Box>
-                            <Button size={'small'} onClick={handleAdd}>
+                            <SecondaryButton size={'small'} onClick={handleAdd}>
                                 {t('add')}
-                            </Button>
+                            </SecondaryButton>
                         </Box>
                     </Stack>
                     <FileUploadButton
@@ -584,7 +573,6 @@ export function AddChangeSubjectPage() {
                                     marginTop={11}
                                     sx={{
                                         width: '100%',
-                                        height: '70%',
                                         backgroundColor: 'background.default',
                                     }}
                                 >
@@ -623,7 +611,8 @@ export function AddChangeSubjectPage() {
                                             ) : (
                                                 <TextField
                                                     type="text"
-                                                    placeholder={t('title')}
+                                                    value={title}
+                                                    placeholder={t('name')}
                                                     onChange={(event) =>
                                                         setTitle(
                                                             event.target.value
@@ -634,106 +623,117 @@ export function AddChangeSubjectPage() {
                                             )}
                                         </Box>
                                         <Box padding={'20px'}>
-                                            <Button
+                                            <SecondaryButton
                                                 /* This is the large save button on the top of the page */
                                                 onClick={handleSave}
                                             >
                                                 {t('save')}
-                                            </Button>
+                                            </SecondaryButton>
                                         </Box>
                                     </Box>
-                                    <Card>
-                                        <Box
-                                            bgcolor={'primary.light'}
-                                            padding={'20px'}
-                                        >
-                                            <Typography
-                                                variant="h5"
-                                                sx={{ fontWeight: 'bold' }}
-                                            >
-                                                {t('students')}
-                                            </Typography>
+                                    <Stack direction={'row'} gap={10}>
+                                        <Box width={'50%'}>
+                                            <Stack direction={'column'}>
+                                                <Card>
+                                                    <Box
+                                                        bgcolor={
+                                                            'primary.light'
+                                                        }
+                                                        padding={'20px'}
+                                                    >
+                                                        <Typography
+                                                            variant="h5"
+                                                            sx={{
+                                                                fontWeight:
+                                                                    'bold',
+                                                            }}
+                                                        >
+                                                            {t('students')}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Divider />
+                                                    <Box
+                                                        sx={{
+                                                            marginTop: -2.5,
+                                                        }}
+                                                    >
+                                                        {UserList(
+                                                            loading,
+                                                            students,
+                                                            setSelectedStudent,
+                                                            setOpenStudent
+                                                        )}
+                                                    </Box>
+                                                </Card>
+                                                <Box marginTop={2}>
+                                                    {UploadPart(
+                                                        studentFile,
+                                                        handleStudentFileChange,
+                                                        setEmailStudent,
+                                                        handleAddStudent,
+                                                        t('upload_students')
+                                                    )}
+                                                </Box>
+                                                {DialogWindow(
+                                                    handleCloseStudent,
+                                                    openStudent,
+                                                    handleRemoveStudent,
+                                                    t('delete_student')
+                                                )}
+                                            </Stack>
                                         </Box>
-                                        <Box
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            alignItems={'center'}
-                                            gap={1}
-                                            style={{
-                                                maxHeight: 300,
-                                                overflow: 'auto',
-                                            }}
-                                        >
-                                            {UserList(
-                                                loading,
-                                                students,
-                                                setSelectedStudent,
-                                                setOpenStudent
-                                            )}
-                                        </Box>
-                                    </Card>
-                                    <Box marginTop={-30}>
-                                        {UploadPart(
-                                            studentFile,
-                                            handleStudentFileChange,
-                                            setEmailStudent,
-                                            handleAddStudent,
-                                            t('upload_students')
-                                        )}
-                                    </Box>
+                                        <Box width={'50%'}>
+                                            <Stack direction={'column'}>
+                                                <Card>
+                                                    <Box
+                                                        bgcolor={
+                                                            'primary.light'
+                                                        }
+                                                        padding={'20px'}
+                                                    >
+                                                        <Typography
+                                                            variant="h5"
+                                                            sx={{
+                                                                fontWeight:
+                                                                    'bold',
+                                                            }}
+                                                        >
+                                                            {t('teachers')}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Divider />
+                                                    <Box
+                                                        sx={{
+                                                            marginTop: -2.5,
+                                                        }}
+                                                    >
+                                                        {UserList(
+                                                            loading,
+                                                            teachers,
+                                                            setSelectedTeacher,
+                                                            setOpenTeacher
+                                                        )}
+                                                    </Box>
+                                                </Card>
+                                                <Box marginTop={1}>
+                                                    {UploadPart(
+                                                        teacherFile,
+                                                        handleTeacherFileChange,
+                                                        setEmailTeacher,
+                                                        handleAddTeacher,
+                                                        t('upload_teachers')
+                                                    )}
+                                                </Box>
 
-                                    {DialogWindow(
-                                        handleCloseStudent,
-                                        openStudent,
-                                        handleRemoveStudent,
-                                        t('delete_student')
-                                    )}
-
-                                    <Card>
-                                        <Box
-                                            bgcolor={'primary.light'}
-                                            padding={'20px'}
-                                        >
-                                            <Typography
-                                                variant="h5"
-                                                sx={{ fontWeight: 'bold' }}
-                                            >
-                                                {t('teachers')}
-                                            </Typography>
+                                                {DialogWindow(
+                                                    handleCloseTeacher,
+                                                    openTeacher,
+                                                    handleRemoveTeacher,
+                                                    t('delete_teacher')
+                                                )}
+                                            </Stack>
                                         </Box>
-                                        <Box
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            alignItems={'center'}
-                                            style={{
-                                                maxHeight: 300,
-                                                overflow: 'auto',
-                                            }}
-                                        >
-                                            {UserList(
-                                                loading,
-                                                teachers,
-                                                setSelectedTeacher,
-                                                setOpenTeacher
-                                            )}
-                                        </Box>
-                                    </Card>
-                                    <Box marginTop={1}>
-                                        {UploadPart(
-                                            teacherFile,
-                                            handleTeacherFileChange,
-                                            setEmailTeacher,
-                                            handleAddTeacher,
-                                            t('upload_teachers')
-                                        )}
-                                    </Box>
-
-                                    {DialogWindow(
-                                        handleCloseTeacher,
-                                        openTeacher,
-                                        handleRemoveTeacher,
-                                        t('delete_teacher')
-                                    )}
+                                    </Stack>
                                 </Stack>
                             </Stack>
                         </>

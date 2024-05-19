@@ -4,7 +4,7 @@ import { Box, Collapse, Tooltip, Typography } from '@mui/material'
 import { Button } from './CustomComponents.tsx'
 import { AssignmentTurnedIn, ContentPaste } from '@mui/icons-material'
 import { t } from 'i18next'
-import theme from "../Theme.ts";
+import theme from '../Theme.ts'
 
 interface CopyToClipboardProps {
     invitationLink: string
@@ -57,7 +57,10 @@ export const CopyToClipboard = ({ invitationLink }: CopyToClipboardProps) => {
                                 padding: 0,
                                 gap: 1,
                                 '&:hover': {
-                                    backgroundColor: darken(theme.palette.secondary.main,0.2)
+                                    backgroundColor: darken(
+                                        theme.palette.secondary.main,
+                                        0.2
+                                    ),
                                 },
                             }}
                         >

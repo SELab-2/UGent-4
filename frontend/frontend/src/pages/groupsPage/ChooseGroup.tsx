@@ -11,7 +11,12 @@ import List from '@mui/material/List'
 import { useEffect, useState } from 'react'
 import { Header } from '../../components/Header.tsx'
 import { t } from 'i18next'
-import {Button, Card, Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
+import {
+    Button,
+    Card,
+    Divider,
+    EvenlySpacedRow,
+} from '../../components/CustomComponents.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
 import instance from '../../axiosConfig.ts'
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
@@ -45,10 +50,7 @@ function joinLeaveButton(
     if (isin) {
         return (
             <>
-                <Button
-                    size={'small'}
-                    onClick={handleLeave}
-                >
+                <Button size={'small'} onClick={handleLeave}>
                     <Typography>{t('leave')}</Typography>
                 </Button>
             </>
@@ -56,10 +58,7 @@ function joinLeaveButton(
     }
     return (
         <>
-            <Button
-                size={'small'}
-                onClick={handleJoin}
-            >
+            <Button size={'small'} onClick={handleJoin}>
                 <Typography>{t('join_group')}</Typography>
             </Button>
         </>
@@ -208,25 +207,34 @@ export function ChooseGroup() {
                                         <Box
                                             aria-label={'courseHeader'}
                                             sx={{
-                                                backgroundColor: 'secondary.main',
+                                                backgroundColor:
+                                                    'secondary.main',
                                                 height: 20,
                                                 padding: 3,
                                             }}
                                         >
-                                            <EvenlySpacedRow items={[
-                                            <Typography
-                                                sx={{ fontWeight: 'bold' }}
-                                            >
-                                                {t('group_number')}
-                                            </Typography>,
-                                            <Typography
-                                                sx={{ fontWeight: 'bold' }}
-                                            >
-                                                {t('members')}
-                                            </Typography>,
-                                            <Typography
-                                                sx={{ fontWeight: 'bold' }}
-                                            ></Typography>]}
+                                            <EvenlySpacedRow
+                                                items={[
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
+                                                        {t('group_number')}
+                                                    </Typography>,
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    >
+                                                        {t('members')}
+                                                    </Typography>,
+                                                    <Typography
+                                                        sx={{
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                    ></Typography>,
+                                                ]}
                                             />
                                         </Box>
                                         <List
@@ -565,91 +573,98 @@ export function ChooseGroup() {
 
                                                 return (
                                                     <>
-                                                        <Divider/>
+                                                        <Divider />
                                                         <ListItem
                                                             sx={{
                                                                 width: '100%',
                                                                 minheight: 30,
                                                             }}
                                                         >
-                                                            <EvenlySpacedRow items={[
-                                                            <ListItemText
-                                                                primary={
-                                                                    groups.indexOf(
-                                                                        group
-                                                                    ) + 1
-                                                                }
-                                                            />,
-                                                            <Box
-                                                                display={'flex'}
-                                                                flexDirection={'column'}
-                                                            >
-                                                                {loading ? (
-                                                                    <Typography>
-                                                                        {t(
-                                                                            'members_loading'
-                                                                        )}
-                                                                    </Typography>
-                                                                ) : (
-                                                                    <>
-                                                                        {group
-                                                                            .studenten
-                                                                            .length >
-                                                                        0 ? (
-                                                                            group.studenten.map(
-                                                                                (
-                                                                                    studentid
-                                                                                ) => {
-                                                                                    const student =
-                                                                                        studenten[
-                                                                                            studentid
-                                                                                        ]
-                                                                                    if (
-                                                                                        student
-                                                                                    ) {
-                                                                                        console.log(
-                                                                                            'Student:',
-                                                                                            student
-                                                                                        )
-                                                                                        return (
-                                                                                            <Typography
-                                                                                                key={
-                                                                                                    studentid
-                                                                                                }
-                                                                                            >
-                                                                                                {student.first_name +
-                                                                                                    ' ' +
-                                                                                                    student.last_name}
-                                                                                            </Typography>
-                                                                                        )
-                                                                                    }
-                                                                                    return null
-                                                                                }
-                                                                            )
-                                                                        ) : (
+                                                            <EvenlySpacedRow
+                                                                items={[
+                                                                    <ListItemText
+                                                                        primary={
+                                                                            groups.indexOf(
+                                                                                group
+                                                                            ) +
+                                                                            1
+                                                                        }
+                                                                    />,
+                                                                    <Box
+                                                                        display={
+                                                                            'flex'
+                                                                        }
+                                                                        flexDirection={
+                                                                            'column'
+                                                                        }
+                                                                    >
+                                                                        {loading ? (
                                                                             <Typography>
                                                                                 {t(
-                                                                                    'no_members_yet'
+                                                                                    'members_loading'
                                                                                 )}
                                                                             </Typography>
+                                                                        ) : (
+                                                                            <>
+                                                                                {group
+                                                                                    .studenten
+                                                                                    .length >
+                                                                                0 ? (
+                                                                                    group.studenten.map(
+                                                                                        (
+                                                                                            studentid
+                                                                                        ) => {
+                                                                                            const student =
+                                                                                                studenten[
+                                                                                                    studentid
+                                                                                                ]
+                                                                                            if (
+                                                                                                student
+                                                                                            ) {
+                                                                                                console.log(
+                                                                                                    'Student:',
+                                                                                                    student
+                                                                                                )
+                                                                                                return (
+                                                                                                    <Typography
+                                                                                                        key={
+                                                                                                            studentid
+                                                                                                        }
+                                                                                                    >
+                                                                                                        {student.first_name +
+                                                                                                            ' ' +
+                                                                                                            student.last_name}
+                                                                                                    </Typography>
+                                                                                                )
+                                                                                            }
+                                                                                            return null
+                                                                                        }
+                                                                                    )
+                                                                                ) : (
+                                                                                    <Typography>
+                                                                                        {t(
+                                                                                            'no_members_yet'
+                                                                                        )}
+                                                                                    </Typography>
+                                                                                )}
+                                                                            </>
                                                                         )}
-                                                                    </>
-                                                                )}
-                                                            </Box>,
-                                                            <>
-                                                            {joinLeaveButton(
-                                                                user !=
-                                                                    undefined
-                                                                    ? group.studenten.includes(
-                                                                          user.user
-                                                                      )
-                                                                    : false,
-                                                                handleJoin,
-                                                                handleLeave
-                                                            )}</>
-                                                            ]}/>
+                                                                    </Box>,
+                                                                    <>
+                                                                        {joinLeaveButton(
+                                                                            user !=
+                                                                                undefined
+                                                                                ? group.studenten.includes(
+                                                                                      user.user
+                                                                                  )
+                                                                                : false,
+                                                                            handleJoin,
+                                                                            handleLeave
+                                                                        )}
+                                                                    </>,
+                                                                ]}
+                                                            />
                                                         </ListItem>
-
                                                     </>
                                                 )
                                             })}

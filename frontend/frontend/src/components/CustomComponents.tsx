@@ -90,7 +90,7 @@ interface CustomDividerProps extends DividerProps {
     children?: ReactNode
 }
 
-export const Divider = ({ children, ...props }: CustomCardProps) => {
+export const Divider = ({ children, ...props }: CustomDividerProps) => {
     return (
         <BaseDivider
             sx={{
@@ -104,7 +104,6 @@ export const Divider = ({ children, ...props }: CustomCardProps) => {
     )
 }
 
-
 interface EvenlySpacedRowProps {
     items: ReactNode[]
 }
@@ -116,10 +115,13 @@ export const EvenlySpacedRow = ({ items }: EvenlySpacedRowProps) => {
                 <Box
                     key={index}
                     width={
-                        index == 0 || index == items.length - 1
-                            ? 50 / items.length + '%'
-                            : (100 - 100 / items.length) / (items.length - 2) +
-                              '%'
+                        items.length == 2
+                            ? '50%'
+                            : index == 0 || index == items.length - 1
+                              ? 50 / items.length + '%'
+                              : (100 - 100 / items.length) /
+                                    (items.length - 2) +
+                                '%'
                     }
                     sx={{
                         //border: '1px solid red',

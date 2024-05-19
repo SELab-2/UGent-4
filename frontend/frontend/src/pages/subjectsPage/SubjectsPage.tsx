@@ -1,11 +1,5 @@
 import { Header } from '../../components/Header'
-import {
-    Box,
-    CircularProgress,
-    Grid,
-    IconButton,
-    Stack,
-} from '@mui/material'
+import { Box, CircularProgress, Grid, IconButton, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -331,19 +325,19 @@ export function SubjectsPage() {
                                             '/accept_invitation'
                                         }
                                     />
-                                        <IconButton
-                                            onClick={addProject}
-                                            color="primary"
-                                            edge="end"
-                                            aria-label="add-project"
-                                        >
-                                            <AddCircleIcon
-                                                sx={{
-                                                    fontSize: 60,
-                                                    height: '100%',
-                                                }}
-                                            />
-                                        </IconButton>
+                                    <IconButton
+                                        onClick={addProject}
+                                        color="primary"
+                                        edge="end"
+                                        aria-label="add-project"
+                                    >
+                                        <AddCircleIcon
+                                            sx={{
+                                                fontSize: 60,
+                                                height: '100%',
+                                            }}
+                                        />
+                                    </IconButton>
                                 </Box>
                                 <WarningPopup
                                     title={t('delete_project_warning')}

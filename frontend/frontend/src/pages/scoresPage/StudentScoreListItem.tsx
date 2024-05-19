@@ -1,4 +1,4 @@
-import {Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
+import { Divider, EvenlySpacedRow } from '../../components/CustomComponents.tsx'
 import {
     CircularProgress,
     ListItemIcon,
@@ -103,63 +103,77 @@ export function StudentScoreListItem({
                         {loading ? (
                             <CircularProgress size={20} color={'primary'} />
                         ) : (
-                            <EvenlySpacedRow items={[
-                            <ListItemText
-                                sx={{ maxWidth: 200 }}
-                                primary={name}
-                            />,
-                        <ListItemText
-                            primary={
-                                lastSubmission
-                                    ? t('last_submission') +
-                                      ' ' +
-                                      dayjs(lastSubmission.tijdstip).format(
-                                          'DD/MM/YYYY HH:mm'
-                                      )
-                                    : t('no_submissions')
-                            }
-                        />,
-                        <ListItem>
-                            {lastSubmission ? (
-                                <>
-                                    <Box width={'24px'} height={'25px'}>
-                                        <TextField
-                                            hiddenLabel
-                                            defaultValue={score}
-                                            onChange={(event) =>
-                                                changeScore(
-                                                    parseInt(event.target.value)
-                                                )
-                                            }
-                                            variant="standard"
-                                            size="small"
-                                        />
-                                    </Box>
-                                    <ListItemText primary={'/' + maxScore} />
-                                </>
-                            ) : (
-                                <ListItemText primary={'0/' + maxScore} />
-                            )}
-                        </ListItem>,
-                        <ListItemText >
-                            <ListItemIcon>
-                                <div onClick={downloadSubmission}>
-                                    {lastSubmission ? (
-                                        <DownloadIcon
-                                            sx={{
-                                                color: 'primary.main',
-                                                '&:hover': {
-                                                    color: 'primary.light',
-                                                },
-                                            }}
-                                        />
-                                    ) : (
-                                        <DownloadIcon sx={{ color: 'gray' }} />
-                                    )}
-                                </div>
-                            </ListItemIcon>
-                        </ListItemText>]}
-                        />
+                            <EvenlySpacedRow
+                                items={[
+                                    <ListItemText
+                                        sx={{ maxWidth: 200 }}
+                                        primary={name}
+                                    />,
+                                    <ListItemText
+                                        primary={
+                                            lastSubmission
+                                                ? t('last_submission') +
+                                                  ' ' +
+                                                  dayjs(
+                                                      lastSubmission.tijdstip
+                                                  ).format('DD/MM/YYYY HH:mm')
+                                                : t('no_submissions')
+                                        }
+                                    />,
+                                    <ListItem>
+                                        {lastSubmission ? (
+                                            <>
+                                                <Box
+                                                    width={'24px'}
+                                                    height={'25px'}
+                                                >
+                                                    <TextField
+                                                        hiddenLabel
+                                                        defaultValue={score}
+                                                        onChange={(event) =>
+                                                            changeScore(
+                                                                parseInt(
+                                                                    event.target
+                                                                        .value
+                                                                )
+                                                            )
+                                                        }
+                                                        variant="standard"
+                                                        size="small"
+                                                    />
+                                                </Box>
+                                                <ListItemText
+                                                    primary={'/' + maxScore}
+                                                />
+                                            </>
+                                        ) : (
+                                            <ListItemText
+                                                primary={'0/' + maxScore}
+                                            />
+                                        )}
+                                    </ListItem>,
+                                    <ListItemText>
+                                        <ListItemIcon>
+                                            <div onClick={downloadSubmission}>
+                                                {lastSubmission ? (
+                                                    <DownloadIcon
+                                                        sx={{
+                                                            color: 'primary.main',
+                                                            '&:hover': {
+                                                                color: 'primary.light',
+                                                            },
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <DownloadIcon
+                                                        sx={{ color: 'gray' }}
+                                                    />
+                                                )}
+                                            </div>
+                                        </ListItemIcon>
+                                    </ListItemText>,
+                                ]}
+                            />
                         )}
                     </>
                 </ListItem>

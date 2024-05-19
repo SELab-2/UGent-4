@@ -10,7 +10,6 @@ import {
     SxProps,
     Stack,
     Typography,
-    Box,
     List,
     ListItem,
     ListItemButton,
