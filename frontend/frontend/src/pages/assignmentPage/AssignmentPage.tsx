@@ -132,14 +132,19 @@ export function AssignmentPage() {
                             `/groepen/?project=${assignmentId}`
                         )
                         setGroups(groupsResponse.data)
-                        if(newAssignment.max_groep_grootte == 1) {
+                        if (newAssignment.max_groep_grootte == 1) {
                             const temp_students = []
                             for (const g of groupsResponse.data) {
                                 try {
-                                    const userResponse = await instance.get(`/gebruikers/${g.studenten[0]}/`)
+                                    const userResponse = await instance.get(
+                                        `/gebruikers/${g.studenten[0]}/`
+                                    )
                                     temp_students.push(userResponse.data)
                                 } catch (error) {
-                                    console.error('Error fetching student data:', error)
+                                    console.error(
+                                        'Error fetching student data:',
+                                        error
+                                    )
                                 }
                             }
                             setSingleStudents(temp_students)
@@ -148,7 +153,7 @@ export function AssignmentPage() {
                         const groupResponse = await instance.get<[Group]>(
                             `/groepen/?student=${user.user}&project=${assignmentId}`
                         )
-                        if (groupResponse.data.length > 0){
+                        if (groupResponse.data.length > 0) {
                             const submissionsResponse = await instance.get(
                                 `/indieningen/?project=${assignmentId}&groep=${groupResponse.data[0].groep_id}`
                             )
@@ -176,7 +181,9 @@ export function AssignmentPage() {
     useEffect(() => {
         async function fetchStudents() {
             setStudentsLoading(true)
-            const groupResponse = await instance.get(`groepen/?student=${user.user}&project=${assignmentId}`)
+            const groupResponse = await instance.get(
+                `groepen/?student=${user.user}&project=${assignmentId}`
+            )
             const group: Group = groupResponse.data[0]
             const temp_students = []
             for (const s of group.studenten || []) {
@@ -201,41 +208,44 @@ export function AssignmentPage() {
     const downloadAllSubmissions = () => {
         const zip = new JSZip()
         const downloadPromises: Promise<void>[] = []
-        submissions.forEach(submission => {
+        submissions.forEach((submission) => {
             downloadPromises.push(
                 new Promise(async (resolve, reject) => {
                     try {
                         // Get the submission details
                         const submissionResponse = await instance.get(
                             `/indieningen/${submission.indiening_id}/`
-                        );
-                        const newSubmission = submissionResponse.data;
+                        )
+                        const newSubmission = submissionResponse.data
                         // Get the submission file
                         const fileResponse = await instance.get(
                             `/indieningen/${submission.indiening_id}/indiening_bestand/`,
                             { responseType: 'blob' }
-                        );
-                        let filename = 'indiening.zip';
+                        )
+                        let filename = 'indiening.zip'
                         if (newSubmission.bestand) {
-                            filename = newSubmission.bestand.replace(/^.*[\\/]/, '');
+                            filename = newSubmission.bestand.replace(
+                                /^.*[\\/]/,
+                                ''
+                            )
                         }
                         const blob = new Blob([fileResponse.data], {
                             type: fileResponse.headers['content-type'],
-                        });
+                        })
                         const file = new File([blob], filename, {
                             type: fileResponse.headers['content-type'],
-                        });
-                        newSubmission.bestand = file;
-                        newSubmission.filename = filename;
+                        })
+                        newSubmission.bestand = file
+                        newSubmission.filename = filename
                         // Add the file to the zip
-                        zip.file(filename, fileResponse.data);
-                        resolve(newSubmission);
+                        zip.file(filename, fileResponse.data)
+                        resolve(newSubmission)
                     } catch (err) {
-                        console.error(`Error downloading submission:`, err);
-                        reject(err);
+                        console.error(`Error downloading submission:`, err)
+                        reject(err)
                     }
                 })
-            );
+            )
         })
         Promise.all(downloadPromises)
             .then(() => {
@@ -244,7 +254,8 @@ export function AssignmentPage() {
                         const url = window.URL.createObjectURL(blob)
                         const a = document.createElement('a')
                         a.href = url
-                        a.download = 'all_submissions_' + assignment?.titel + '_.zip'
+                        a.download =
+                            'all_submissions_' + assignment?.titel + '_.zip'
                         document.body.appendChild(a)
                         a.click()
                         a.remove()
@@ -357,28 +368,6 @@ export function AssignmentPage() {
                                     backgroundColor: 'background.default',
                                 }}
                             >
-                                <Box
-                                    aria-label={'assignment-box'}
-                                    sx={{
-                                        padding: '20px',
-                                    }}
-                                >
-                                    <Stack direction={'column'}>
-                                        <Typography
-                                            variant={'h5'}
-                                            color={'text.primary'}
-                                            aria-label={'title'}
-                                            sx={{
-                                                fontWeight: 'bold',
-                                            }}
-                                        >
-                                            {t('assignment')}
-                                        </Typography>
-                                        <Typography color={'text.primary'}>
-                                            {assignment?.beschrijving}
-                                        </Typography>
-                                    </Stack>
-                                </Box>
                                 {/*deadline and group button */}
                                 <Box
                                     sx={{
@@ -561,11 +550,29 @@ export function AssignmentPage() {
                                                             <SubmissionListItemTeacherPage
                                                                 group_name={
                                                                     assignment
-                                                                        ? assignment.max_groep_grootte > 1
-                                                                            ? t('group') + ' ' + (index + 1).toString()
-                                                                            : singleStudents[index]
-                                                                                ? singleStudents[index].first_name + ' ' + singleStudents[index].last_name
-                                                                                : ''
+                                                                        ? assignment.max_groep_grootte >
+                                                                          1
+                                                                            ? t(
+                                                                                  'group'
+                                                                              ) +
+                                                                              ' ' +
+                                                                              (
+                                                                                  index +
+                                                                                  1
+                                                                              ).toString()
+                                                                            : singleStudents[
+                                                                                    index
+                                                                                ]
+                                                                              ? singleStudents[
+                                                                                    index
+                                                                                ]
+                                                                                    .first_name +
+                                                                                ' ' +
+                                                                                singleStudents[
+                                                                                    index
+                                                                                ]
+                                                                                    .last_name
+                                                                              : ''
                                                                         : ''
                                                                 }
                                                                 group_id={group.groep_id.toString()}
@@ -706,8 +713,10 @@ export function AssignmentPage() {
                                         backgroundColor: 'background.default',
                                     }}
                                 >
-                                    <Stack direction={'row'}
-                                            position='relative'>
+                                    <Stack
+                                        direction={'row'}
+                                        position="relative"
+                                    >
                                         <Box
                                             display={'flex'}
                                             flexDirection={'row'}
@@ -763,46 +772,59 @@ export function AssignmentPage() {
                                             />
                                         ) : (
                                             <>
-                                            {assignment?.student_groep ? (
-                                                <Button
-                                                    sx={{
-                                                        bgcolor: 'secondary.main',
-                                                        textTransform: 'none',
-                                                    }}
-                                                    onClick={goToGroups}
-                                                >
-                                                    <Typography color="secondary.contrastText">
-                                                        {t('group')}
-                                                    </Typography>
-                                                </Button>
-                                            ) : (
-                                                <Box
-                                                    sx={{
-                                                        position: 'absolute',
-                                                        top: 90,
-                                                        right: 50,
-                                                        display: 'flex',
-                                                        justifyContent: 'flex-end',
-                                                        zIndex: 1,
-                                                        marginTop: '-40px',
-                                                    }}
-                                                >
-                                                    {assignment?.max_groep_grootte === 1 ? (
-                                                        <Typography variant="body1">
-                                                            {user.first_name + ' ' + user.last_name}
+                                                {assignment?.student_groep ? (
+                                                    <Button
+                                                        sx={{
+                                                            bgcolor:
+                                                                'secondary.main',
+                                                            textTransform:
+                                                                'none',
+                                                        }}
+                                                        onClick={goToGroups}
+                                                    >
+                                                        <Typography color="secondary.contrastText">
+                                                            {t('group')}
                                                         </Typography>
-                                                    ) : (
-                                                        <>
-                                                        {console.log(students)}
-                                                        <StudentPopUp
-                                                            students={studentsLoading ? [] : students}
-                                                            text="group_members"
-                                                        />
-                                                        </>
-                                                    )}
-                                                </Box>
-                                            )}
-                                        </>
+                                                    </Button>
+                                                ) : (
+                                                    <Box
+                                                        sx={{
+                                                            position:
+                                                                'absolute',
+                                                            top: 90,
+                                                            right: 50,
+                                                            display: 'flex',
+                                                            justifyContent:
+                                                                'flex-end',
+                                                            zIndex: 1,
+                                                            marginTop: '-40px',
+                                                        }}
+                                                    >
+                                                        {assignment?.max_groep_grootte ===
+                                                        1 ? (
+                                                            <Typography variant="body1">
+                                                                {user.first_name +
+                                                                    ' ' +
+                                                                    user.last_name}
+                                                            </Typography>
+                                                        ) : (
+                                                            <>
+                                                                {console.log(
+                                                                    students
+                                                                )}
+                                                                <StudentPopUp
+                                                                    students={
+                                                                        studentsLoading
+                                                                            ? []
+                                                                            : students
+                                                                    }
+                                                                    text="group_members"
+                                                                />
+                                                            </>
+                                                        )}
+                                                    </Box>
+                                                )}
+                                            </>
                                         )}
                                     </Stack>
                                 </Box>
@@ -871,7 +893,10 @@ export function AssignmentPage() {
                                     <Button
                                         startIcon={<DownloadIcon />}
                                         onClick={downloadAssignment}
-                                        disabled={assignment === undefined || assignment.filename === undefined}
+                                        disabled={
+                                            assignment === undefined ||
+                                            assignment.filename === undefined
+                                        }
                                     >
                                         {loading ? (
                                             <Skeleton
