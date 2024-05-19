@@ -30,6 +30,8 @@ import { Add } from '@mui/icons-material'
 import ClearIcon from '@mui/icons-material/Clear'
 import SaveIcon from '@mui/icons-material/Save'
 import WarningPopup from '../../components/WarningPopup.tsx'
+import axios, { AxiosResponse } from 'axios'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 // group interface
 export interface Group {
@@ -182,39 +184,21 @@ export function GroupsPage() {
             await instance
                 .get('/vakken/' + courseId)
                 .then(async (response) => {
+                    // This function fetches the names of the students in parallel
                     const newStudentNames = new Map<number, string>()
+                    const studentPromises: Promise<AxiosResponse<User>>[] =
+                        response.data.studenten.map((id: number) =>
+                            instance.get('/gebruikers/' + id)
+                        )
+                    const studentResponses = await axios.all(studentPromises)
 
-                    for (const student of response.data.studenten) {
-                        await instance
-                            .get('/gebruikers/' + student)
-                            .then((response) => {
-                                newStudentNames.set(
-                                    student,
-                                    response.data.first_name +
-                                        ' ' +
-                                        response.data.last_name
-                                )
-                            })
-                            .catch((error) => {
-                                console.log(error)
-                            })
-                    }
-                    for (const student of response.data.studenten) {
-                        await instance
-                            .get('/gebruikers/' + student)
-                            .then((response) => {
-                                newStudentNames.set(
-                                    student,
-                                    response.data.first_name +
-                                        ' ' +
-                                        response.data.last_name
-                                )
-                                console.log(
-                                    'available names:' +
-                                        Array.from(newStudentNames.entries())
-                                )
-                            })
-                    }
+                    studentResponses.forEach((response) => {
+                        const student: User = response.data
+                        newStudentNames.set(
+                            student.user,
+                            student.first_name + ' ' + student.last_name
+                        )
+                    })
 
                     setStudentNames(() => newStudentNames)
                 })
@@ -275,7 +259,7 @@ export function GroupsPage() {
             .catch((error) => {
                 console.log(error)
             })
-    }, [assignmentId, courseId, newGroupSize, studentNames.size])
+    }, [assignmentId, courseId])
 
     useEffect(() => {
         setAvailableStudents(() =>
@@ -287,7 +271,7 @@ export function GroupsPage() {
             )
         )
         setFilteredStudents(availableStudents)
-    }, [newGroups, studentNames])
+    }, [availableStudents, newGroups, studentNames])
 
     // Create new groups when the group size changes
     useEffect(() => {
@@ -312,6 +296,7 @@ export function GroupsPage() {
         }
     }, [
         assignmentId,
+        availableStudents,
         availableStudents.length,
         newGroupSize,
         newGroups.length,
