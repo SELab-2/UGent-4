@@ -1,6 +1,9 @@
 import * as React from 'react'
 import { ChangeEvent, useState } from 'react'
-import {Button, Card, SecundaryButton,
+import {
+    Button,
+    Card,
+    SecundaryButton,
 } from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
@@ -14,7 +17,6 @@ import {
     FormControl,
     MenuItem,
     Select,
-    Stack,
     TextField,
 } from '@mui/material'
 import { t } from 'i18next'
@@ -255,33 +257,39 @@ export default function RestrictionsDialog({
             />
             {/* Vertical button group */}
             <Typography variant={'h6'} color={'secondary.contrastText'}>
-                {t('make_new_script')+":"}
+                {t('make_new_script') + ':'}
             </Typography>
 
-            <Box paddingTop='5px'
+            <Box
+                paddingTop="5px"
                 display={'flex'}
                 gap={5}
                 alignItems={'center'}
             >
                 {buttons}
             </Box>
-            <Box paddingTop='5px'display={'flex'} flexDirection={'row'} alignItems={'center'}>
+            <Box
+                paddingTop="5px"
+                display={'flex'}
+                flexDirection={'row'}
+                alignItems={'center'}
+            >
                 <Typography variant={'body2'}>
                     {t('must_pass') + ':'}
                 </Typography>
                 <Switch
-                    id='mustPassSwitch'
+                    id="mustPassSwitch"
                     value={mustPass}
                     onChange={() => setMustPass(!mustPass)}
                 />
             </Box>
-            <Box padding='20px'/>
+            <Box padding="20px" />
             <Typography variant={'h6'} color={'secondary.contrastText'}>
-                {t('choose_existing')+":"}
+                {t('choose_existing') + ':'}
             </Typography>
             <Box
-                paddingTop='5px'
-                paddingBottom='5px'
+                paddingTop="5px"
+                paddingBottom="5px"
                 display={'flex'}
                 gap={5}
                 alignItems={'center'}
@@ -300,33 +308,33 @@ export default function RestrictionsDialog({
                     >
                         {templateButtons}
                     </ButtonGroup>
-                {/* This button groups shows the templates the teacher has made */}
-                <ButtonGroup
-                    orientation="vertical"
-                    aria-label="My templates"
-                    variant={'outlined'}
-                    color={'primary'}
-                >
-                    {myTemplates.map((template) => (
-                        <Button
-                            key={template.template_id}
-                            onClick={async () => {
-                                const response = await instance.get(
-                                    `/templates/${template.template_id}/template/?content=true`
-                                )
-                                setTextFieldContent(response.data.content)
-                                if (openTemplateInUI) {
-                                    handleClickOpenTemplateInterface()
-                                } else {
-                                    handleClickOpenTextEditor()
-                                }
-                            }}
-                        >
-                            {template.bestand.replace(/^.*[\\/]/, '')}
-                        </Button>
-                    ))}
-                </ButtonGroup>
-            </Box>
+                    {/* This button groups shows the templates the teacher has made */}
+                    <ButtonGroup
+                        orientation="vertical"
+                        aria-label="My templates"
+                        variant={'outlined'}
+                        color={'primary'}
+                    >
+                        {myTemplates.map((template) => (
+                            <Button
+                                key={template.template_id}
+                                onClick={async () => {
+                                    const response = await instance.get(
+                                        `/templates/${template.template_id}/template/?content=true`
+                                    )
+                                    setTextFieldContent(response.data.content)
+                                    if (openTemplateInUI) {
+                                        handleClickOpenTemplateInterface()
+                                    } else {
+                                        handleClickOpenTextEditor()
+                                    }
+                                }}
+                            >
+                                {template.bestand.replace(/^.*[\\/]/, '')}
+                            </Button>
+                        ))}
+                    </ButtonGroup>
+                </Box>
             </Box>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
                 {/* This box will contain the templates */}
@@ -337,7 +345,6 @@ export default function RestrictionsDialog({
                     value={openTemplateInUI}
                     onChange={() => setOpenTemplateInUI(!openTemplateInUI)}
                 />
-
             </Box>
             {/* This is the template interface. */}
             <Dialog
@@ -472,11 +479,17 @@ export default function RestrictionsDialog({
                                     <SecundaryButton
                                         autoFocus
                                         color="inherit"
-                                        onClick={() => handleSaveTemplate(restrictionName, restrictionType, textFieldContent, {template_id: 1, user: 1, bestand: 0})} // bestand if maakt niet uit, wordt toch niet gebruikt
+                                        onClick={() =>
+                                            handleSaveTemplate(
+                                                restrictionName,
+                                                restrictionType,
+                                                textFieldContent
+                                            )
+                                        } // bestand if maakt niet uit, wordt toch niet gebruikt
                                     >
                                         save as template
                                     </SecundaryButton>
-                                    <Box paddingRight='10px'/>
+                                    <Box paddingRight="10px" />
                                     <SecundaryButton
                                         autoFocus
                                         color="inherit"

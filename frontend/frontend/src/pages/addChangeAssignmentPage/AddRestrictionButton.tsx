@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Button,SecundaryButton } from '../../components/CustomComponents.tsx'
+import { SecundaryButton } from '../../components/CustomComponents.tsx'
 import Dialog, { DialogProps } from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
@@ -37,7 +37,7 @@ export default function AddRestrictionButton({
         <>
             {/* Add Restriction Button */}
             <IconButton
-                id='addRestrictionButton'
+                id="addRestrictionButton"
                 sx={{
                     bgcolor: 'secondary.main',
                     marginRight: 1,
