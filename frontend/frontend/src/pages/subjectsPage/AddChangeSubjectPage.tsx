@@ -7,7 +7,6 @@ import {
 
 import {
     Box,
-    CircularProgress,
     IconButton,
     ListItem,
     ListItemText,
