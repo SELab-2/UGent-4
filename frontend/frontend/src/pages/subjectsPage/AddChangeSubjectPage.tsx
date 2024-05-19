@@ -200,6 +200,7 @@ function DialogWindow(
                         <Button size={'small'} onClick={handleClose}>
                             {t('cancel')}
                         </Button>
+                        <Box padding={'7px'}/>
                         <Button size={'small'} onClick={handleRemove}>
                             {t('delete')}
                         </Button>
@@ -724,7 +725,6 @@ export function AddChangeSubjectPage() {
                                                         t('upload_teachers')
                                                     )}
                                                 </Box>
-
                                                 {DialogWindow(
                                                     handleCloseTeacher,
                                                     openTeacher,
