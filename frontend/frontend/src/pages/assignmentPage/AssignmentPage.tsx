@@ -62,6 +62,7 @@ export function AssignmentPage() {
     const [assignment, setAssignment] = useState<Project>()
     const [submissions, setSubmissions] = useState<Submission[]>([])
     const [groups, setGroups] = useState<Group[]>([])
+    const [singleStudents, setSingleStudents] = useState<User[]>([])
     const [submissionFile, setSubmissionFile] = useState<File>()
     const [submit, setSubmit] = useState(false)
     const [students, setStudents] = useState<User[]>([])
@@ -131,6 +132,18 @@ export function AssignmentPage() {
                             `/groepen/?project=${assignmentId}`
                         )
                         setGroups(groupsResponse.data)
+                        if(newAssignment.max_groep_grootte == 1) {
+                            const temp_students = []
+                            for (const g of groupsResponse.data) {
+                                try {
+                                    const userResponse = await instance.get(`/gebruikers/${g.studenten[0]}/`)
+                                    temp_students.push(userResponse.data)
+                                } catch (error) {
+                                    console.error('Error fetching student data:', error)
+                                }
+                            }
+                            setSingleStudents(temp_students)
+                        }
                     } else {
                         const groupResponse = await instance.get<[Group]>(
                             `/groepen/?student=${user.user}&project=${assignmentId}`
@@ -495,7 +508,7 @@ export function AssignmentPage() {
                                         pr={3}
                                     >
                                         <Typography sx={{ fontWeight: 'bold' }}>
-                                            {t('group')}
+                                            Student
                                         </Typography>
                                         <Typography sx={{ fontWeight: 'bold' }}>
                                             {t('time')}
@@ -550,7 +563,9 @@ export function AssignmentPage() {
                                                                     assignment
                                                                         ? assignment.max_groep_grootte > 1
                                                                             ? t('group') + ' ' + (index + 1).toString()
-                                                                            : t('group') + ' ' + (index + 1).toString() //TODO Dit vervangen door de naam van de student
+                                                                            : singleStudents[index]
+                                                                                ? singleStudents[index].first_name + ' ' + singleStudents[index].last_name
+                                                                                : ''
                                                                         : ''
                                                                 }
                                                                 group_id={group.groep_id.toString()}
