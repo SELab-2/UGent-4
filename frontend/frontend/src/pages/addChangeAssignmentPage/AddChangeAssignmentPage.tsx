@@ -99,7 +99,7 @@ export function AddChangeAssignmentPage() {
     const [maxScore, SetMaxScore] = useState<number>(20)
     const [cleared, setCleared] = useState<boolean>(false)
     const [filename, setFilename] = useState<string>('indiening.zip')
-
+    const [currentUser, setCurrentUser] = useState<number>(0)
     // State for the error checks of the assignment
     const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
         title: false,
@@ -161,6 +161,8 @@ export function AddChangeAssignmentPage() {
         const fetchData = async () => {
             //begin loading -> set loading to true
             setLoading(true)
+            const user = await instance.get('/gebruikers/me')
+            setCurrentUser(user.data.user)
 
             //get the assignment
             await instance
@@ -183,15 +185,11 @@ export function AddChangeAssignmentPage() {
 
                     setVisible(assignment.zichtbaar)
                     if (assignment.deadline !== null) {
-                        setDueDate(
-                            dayjs(assignment.deadline)
-                        )
+                        setDueDate(dayjs(assignment.deadline))
                         console.log('deadline' + assignment.deadline)
                     }
                     if (assignment.extra_deadline !== null) {
-                        setExtraDueDate(
-                            dayjs(assignment.extra_deadline)
-                        )
+                        setExtraDueDate(dayjs(assignment.extra_deadline))
                         console.log(
                             'extra deadline' + assignment.extra_deadline
                         )
@@ -512,7 +510,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                         {/* File Upload button */}
                         <Box
-                            id='uploadButton'
+                            id="uploadButton"
                             padding={0}
                             marginRight={3}
                             display={'flex'}
@@ -734,7 +732,13 @@ export function AddChangeAssignmentPage() {
                             <Typography variant={'h5'} fontWeight={'bold'}>
                                 {t('restrictions')}
                             </Typography>
+                            
                             <Box sx={{ padding: 1 }}>
+                                <Box display="flex" flexDirection="row" justifyContent="space-between" sx={{ padding: 1 }}>
+                                    <Typography variant="body1">Name</Typography>
+                                    <Typography variant="body1">Must pass</Typography>
+                                    <Typography variant="body1">Delete</Typography>
+                                </Box>
                                 {/*This list will render the restrictions that are added to the assignment.*/}
                                 <List
                                     sx={{
@@ -784,6 +788,7 @@ export function AddChangeAssignmentPage() {
                                         setRestrictions={(newRestrictions) =>
                                             setRestrictions(newRestrictions)
                                         }
+                                        userid={currentUser}
                                     ></AddRestrictionButton>
                                 </Tooltip>
                             </Box>
@@ -816,7 +821,7 @@ export function AddChangeAssignmentPage() {
                                     <IconButton
                                         // Allows the teacher to select whether
                                         // the assignment is visible to students or not.
-                                        id='visibilityOn'
+                                        id="visibilityOn"
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -824,7 +829,7 @@ export function AddChangeAssignmentPage() {
                                     </IconButton>
                                 ) : (
                                     <IconButton
-                                        id='visibilityOff'
+                                        id="visibilityOff"
                                         color={'info'}
                                         onClick={() => setVisible(!visible)}
                                     >
@@ -835,7 +840,7 @@ export function AddChangeAssignmentPage() {
                                 )}
                                 <Tooltip title={t('remove')}>
                                     <IconButton
-                                        id='delete'
+                                        id="delete"
                                         color={'warning'}
                                         onClick={openDeleteConfirmation}
                                     >
@@ -855,7 +860,7 @@ export function AddChangeAssignmentPage() {
                                 alignItems={'center'}
                             >
                                 <Typography
-                                    id='maxScore'
+                                    id="maxScore"
                                     fontWeight={'bold'}
                                     color={'text.primary'}
                                 >
@@ -920,7 +925,7 @@ export function AddChangeAssignmentPage() {
                             </Tooltip>
                             <Tooltip title={t('submit')}>
                                 <IconButton
-                                    id='submit'
+                                    id="submit"
                                     type="submit"
                                     aria-label={'submit'}
                                     sx={{
