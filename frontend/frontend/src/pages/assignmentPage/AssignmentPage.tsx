@@ -25,6 +25,8 @@ import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
 import dayjs from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import WarningPopup from '../../components/WarningPopup.tsx'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
+import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
 
 // group interface
 export interface Group {
@@ -62,9 +64,12 @@ export function AssignmentPage() {
     const [groups, setGroups] = useState<Group[]>([])
     const [submissionFile, setSubmissionFile] = useState<File>()
     const [submit, setSubmit] = useState(false)
+    const [students, setStudents] = useState<User[]>([])
+
     //state for loading the page
     const [loading, setLoading] = useState(true)
     const [userLoading, setUserLoading] = useState(true)
+    const [studentsLoading, setStudentsLoading] = useState(true)
 
     // state for the warning popup
     const [openNoGroup, setOpenNoGroup] = useState(false)
@@ -152,6 +157,30 @@ export function AssignmentPage() {
             await fetchData() // Use await here to ensure fetchData waits for fetchUser to complete
         })()
     }, [assignmentId, courseId, user.is_lesgever, submit, user])
+
+    useEffect(() => {
+        async function fetchStudents() {
+            setStudentsLoading(true)
+            const groupResponse = await instance.get(`groepen/?student=${user.user}&project=${assignmentId}`)
+            const group: Group = groupResponse.data[0]
+            const temp_students = []
+            for (const s of group.studenten || []) {
+                try {
+                    const userResponse = await instance.get(`/gebruikers/${s}/`)
+                    temp_students.push(userResponse.data)
+                } catch (error) {
+                    console.error('Error fetching student data:', error)
+                }
+            }
+            // Update the state with the fetched data
+            setStudents(temp_students)
+            setStudentsLoading(false)
+        }
+        // Fetch students
+        fetchStudents().catch((error) =>
+            console.error('Error fetching students data:', error)
+        )
+    }, [user, assignment, groups])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -665,7 +694,8 @@ export function AssignmentPage() {
                                         backgroundColor: 'background.default',
                                     }}
                                 >
-                                    <Stack direction={'row'}>
+                                    <Stack direction={'row'}
+                                            position='relative'>
                                         <Box
                                             display={'flex'}
                                             flexDirection={'row'}
@@ -721,22 +751,46 @@ export function AssignmentPage() {
                                             />
                                         ) : (
                                             <>
-                                                {assignment?.student_groep && (
-                                                    <Button
-                                                        sx={{
-                                                            bgcolor:
-                                                                'secondary.main',
-                                                            textTransform:
-                                                                'none',
-                                                        }}
-                                                        onClick={goToGroups}
-                                                    >
-                                                        <Typography color="secondary.contrastText">
-                                                            {t('group')}
+                                            {assignment?.student_groep ? (
+                                                <Button
+                                                    sx={{
+                                                        bgcolor: 'secondary.main',
+                                                        textTransform: 'none',
+                                                    }}
+                                                    onClick={goToGroups}
+                                                >
+                                                    <Typography color="secondary.contrastText">
+                                                        {t('group')}
+                                                    </Typography>
+                                                </Button>
+                                            ) : (
+                                                <Box
+                                                    sx={{
+                                                        position: 'absolute',
+                                                        top: 90,
+                                                        right: 50,
+                                                        display: 'flex',
+                                                        justifyContent: 'flex-end',
+                                                        zIndex: 1,
+                                                        marginTop: '-40px',
+                                                    }}
+                                                >
+                                                    {assignment?.max_groep_grootte === 1 ? (
+                                                        <Typography variant="body1">
+                                                            {user.first_name + ' ' + user.last_name}
                                                         </Typography>
-                                                    </Button>
-                                                )}
-                                            </>
+                                                    ) : (
+                                                        <>
+                                                        {console.log(students)}
+                                                        <StudentPopUp
+                                                            students={studentsLoading ? [] : students}
+                                                            text="group_members"
+                                                        />
+                                                        </>
+                                                    )}
+                                                </Box>
+                                            )}
+                                        </>
                                         )}
                                     </Stack>
                                 </Box>

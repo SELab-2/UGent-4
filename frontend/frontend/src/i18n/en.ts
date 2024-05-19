@@ -109,7 +109,6 @@ const english = {
     deadlines_on: 'Deadlines on',
     no_assignmentfile: 'No assignment file',
     email: 'email',
-    copy_invite: 'Copy invitation link',
     n_of_members: 'Max Amount Of Members',
     existing_submissions:
         'This could impact existing submissions. Are you sure?',
