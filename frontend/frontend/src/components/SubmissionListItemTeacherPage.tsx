@@ -15,7 +15,7 @@ import { t } from 'i18next'
 import dayjs from 'dayjs'
 
 interface SubmissionListItemTeacherPageProps {
-    relative_group_id: string
+    group_name: string
     group_id: string
     assignment_id: string
     course_id: string
@@ -32,7 +32,7 @@ export interface Score {
  * @param {SubmissionListItemTeacherPageProps} props - Props for SubmissionListItemTeacherPage component
  */
 export function SubmissionListItemTeacherPage({
-    relative_group_id,
+    group_name,
     group_id,
     assignment_id,
     course_id,
@@ -148,7 +148,7 @@ export function SubmissionListItemTeacherPage({
                                 color: 'primary.light',
                             },
                         }}
-                        primary={relative_group_id}
+                        primary={group_name}
                     />
                     {/* Display submission timestamp */}
                     <ListItemText
