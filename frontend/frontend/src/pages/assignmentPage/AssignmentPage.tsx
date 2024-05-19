@@ -527,7 +527,7 @@ export function AssignmentPage() {
                                             ))
                                         ) : (
                                             <List disablePadding={true}>
-                                                {groups.map((group) => (
+                                                {groups.map((group, index) => (
                                                     <Box key={group.groep_id}>
                                                         <Divider
                                                             color={'text.main'}
@@ -544,18 +544,13 @@ export function AssignmentPage() {
                                                             pr={3}
                                                         >
                                                             <SubmissionListItemTeacherPage
-                                                                relative_group_id={(
-                                                                    group.groep_id -
-                                                                    Math.min(
-                                                                        ...groups.map(
-                                                                            (
-                                                                                group
-                                                                            ) =>
-                                                                                group.groep_id
-                                                                        )
-                                                                    ) +
-                                                                    1
-                                                                ).toString()}
+                                                                group_name={
+                                                                    assignment
+                                                                        ? assignment.max_groep_grootte > 1
+                                                                            ? t('group') + ' ' + (index + 1).toString()
+                                                                            : t('group') + ' ' + (index + 1).toString() //TODO Dit vervangen door de naam van de student
+                                                                        : ''
+                                                                }
                                                                 group_id={group.groep_id.toString()}
                                                                 assignment_id={
                                                                     assignmentId
