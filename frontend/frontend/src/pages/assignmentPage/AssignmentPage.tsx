@@ -391,12 +391,20 @@ export function AssignmentPage() {
                                             }}
                                         />
                                     ) : (
-                                        <GroupAccessComponent
-                                            assignmentid={parseInt(
-                                                assignmentId
+                                        <>
+                                            {(assignment?.max_groep_grootte
+                                                ? assignment.max_groep_grootte
+                                                : 1) > 1 && (
+                                                <GroupAccessComponent
+                                                    assignmentid={parseInt(
+                                                        assignmentId
+                                                    )}
+                                                    courseid={parseInt(
+                                                        courseId
+                                                    )}
+                                                />
                                             )}
-                                            courseid={parseInt(courseId)}
-                                        />
+                                        </>
                                     )}
                                 </Box>
 

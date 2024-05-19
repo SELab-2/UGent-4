@@ -101,6 +101,7 @@ export function AddChangeAssignmentPage() {
     const [maxScore, SetMaxScore] = useState<number>(20)
     const [cleared, setCleared] = useState<boolean>(false)
     const [filename, setFilename] = useState<string>('indiening.zip')
+    const [groupSize, setGroupSize] = useState<number>(1)
 
     const [user, setUser] = useState<User>()
 
@@ -191,15 +192,11 @@ export function AddChangeAssignmentPage() {
 
                     setVisible(assignment.zichtbaar)
                     if (assignment.deadline !== null) {
-                        setDueDate(
-                            dayjs(assignment.deadline)
-                        )
+                        setDueDate(dayjs(assignment.deadline))
                         console.log('deadline' + assignment.deadline)
                     }
                     if (assignment.extra_deadline !== null) {
-                        setExtraDueDate(
-                            dayjs(assignment.extra_deadline)
-                        )
+                        setExtraDueDate(dayjs(assignment.extra_deadline))
                         console.log(
                             'extra deadline' + assignment.extra_deadline
                         )
@@ -388,6 +385,7 @@ export function AddChangeAssignmentPage() {
         if (extraDueDate !== null) {
             formData.append('extra_deadline', extraDueDate.format())
         }
+        formData.append('max_groep_grootte', groupSize.toString())
 
         const config = {
             headers: {
@@ -566,7 +564,7 @@ export function AddChangeAssignmentPage() {
                         </Box>
                     </Box>
                     {/* Deadline section.
-                    There is both the normal deadline, 
+                    There is both the normal deadline,
                     and an extra deadline in case people need more time. */}
                     <Box
                         aria-label={'deadline'}
@@ -866,6 +864,44 @@ export function AddChangeAssignmentPage() {
                                     </IconButton>
                                 </Tooltip>
                             </Box>
+                            {/* change group size allowed, no need for extra group switch*/}
+                            {!assignmentId && (
+                                <Box
+                                    aria-label={'groupSize'}
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    gap={1}
+                                    height={40}
+                                    alignItems={'center'}
+                                >
+                                    <Typography
+                                        fontWeight={'bold'}
+                                        color={'text.primary'}
+                                    >
+                                        {t('n_of_members')}
+                                    </Typography>
+                                    {loading ? (
+                                        <Skeleton
+                                            variant={'text'}
+                                            width={60}
+                                            height={60}
+                                        />
+                                    ) : (
+                                        <TextField
+                                            sx={{ width: 80 }}
+                                            label={'Group Size'}
+                                            type={'number'}
+                                            required
+                                            value={groupSize}
+                                            onChange={(event) =>
+                                                setGroupSize(
+                                                    parseInt(event.target.value)
+                                                )
+                                            }
+                                        />
+                                    )}
+                                </Box>
+                            )}
                             {/* This section allows the teacher to set the maximum score for the assignment.*/}
                             <Box
                                 aria-label={'maxScore'}

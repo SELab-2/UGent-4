@@ -9,7 +9,7 @@ import FourOFourPage from "./pages/FourOFourPage.tsx";
 import MainPage from './pages/mainPage/MainPage.tsx'
 import { GroupsPage } from './pages/groupsPage/GroupsPage.tsx'
 import { AssignmentPage } from './pages/assignmentPage/AssignmentPage.tsx'
-import {ChooseGroup} from "./pages/groupsPage/ChooseGroup.tsx";
+import { ChooseGroup } from './pages/groupsPage/ChooseGroup.tsx'
 
 //TODO: add change/add course page when implemented
 const router = createBrowserRouter([

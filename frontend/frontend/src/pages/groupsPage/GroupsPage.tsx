@@ -2,12 +2,12 @@ import { Header } from '../../components/Header.tsx'
 import { Button } from '../../components/CustomComponents.tsx'
 import {
     Box,
+    CircularProgress,
     Grid,
     IconButton,
     MenuItem,
     Select,
     SelectChangeEvent,
-    CircularProgress,
     Skeleton,
     Stack,
     Table,
@@ -16,7 +16,6 @@ import {
     TableContainer,
     TableHead,
     TableRow,
-    TextField,
     Tooltip,
     Typography,
 } from '@mui/material'
@@ -31,7 +30,7 @@ import { Add } from '@mui/icons-material'
 import ClearIcon from '@mui/icons-material/Clear'
 import SaveIcon from '@mui/icons-material/Save'
 import WarningPopup from '../../components/WarningPopup.tsx'
-import { User } from '../subjectsPage/AddChangeSubjectPage.tsx' 
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 // group interface
 export interface Group {
@@ -39,6 +38,8 @@ export interface Group {
     studenten: number[]
     project: number
 }
+
+//FIXME: groupsize should not be signed after creation of project, refactor!
 
 // Typescript typing for hashmap
 type Hashmap = Map<number, string>
@@ -57,14 +58,16 @@ export function GroupsPage() {
     )
     //state for new groups and new groupSize, don't change the old groups and groupSize until the user clicks save
     const [newGroups, setNewGroups] = useState<Group[]>([])
-    const [newGroupSize, setNewGroupSize] = useState(1)
     const [currentGroup, setCurrentGroup] = useState('')
     const [availableStudents, setAvailableStudents] = useState<number[]>([])
     const [projectName, setProjectName] = useState('')
     const [user, setUser] = useState<User>()
-
+    const [max_group_size, setMaxGroupSize] = useState(0)
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
+
+    //random groups dialog state
+    const [randomOpen, setRandomOpen] = useState(false)
 
     // state for correct loading of the page
     const [loading, setLoading] = useState(true)
@@ -104,17 +107,15 @@ export function GroupsPage() {
         } else {
             // update the old groups with the new groups
             for (const group of newGroups) {
-                if (group.studenten.length !== 0) {
-                    instance
-                        .put('/groepen/' + group.groep_id + '/', {
-                            groep_id: group.groep_id,
-                            studenten: group.studenten,
-                            project: parseInt(assignmentId),
-                        })
-                        .catch((error) => {
-                            console.log(error)
-                        })
-                }
+                instance
+                    .put('/groepen/' + group.groep_id + '/', {
+                        groep_id: group.groep_id,
+                        studenten: group.studenten,
+                        project: parseInt(assignmentId),
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
             }
         }
         navigate('/course/' + courseId + '/assignment/' + assignmentId)
@@ -134,46 +135,6 @@ export function GroupsPage() {
     // Close the dialog
     const handleCancel = () => {
         navigate('/course/' + courseId + '/assignment/' + assignmentId)
-    }
-
-    // Change max group size
-    const handleGroupSizeChange = (newValue: number) => {
-        setNewGroupSize(newValue)
-        setAvailableStudents(() => Array.from(studentNames.keys()))
-        setCurrentGroup('0')
-        setNewGroups(() => {
-            const newGroups = []
-            for (
-                let i = 0;
-                i < Math.ceil(availableStudents.length / newValue);
-                i++
-            ) {
-                newGroups.push({
-                    studenten: [],
-                    project: parseInt(assignmentId),
-                })
-            }
-            return newGroups
-        })
-        async function fetchCourse() {
-            setLoading(true)
-            instance
-                .get('/vakken/' + courseId)
-                .then((response) => {
-                    setAvailableStudents(response.data.studenten)
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
-            setLoading(false)
-        }
-        fetchCourse()
-            .catch((error) => {
-                console.error(error)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
     }
 
     //get the current groups and group size from the backend
@@ -234,7 +195,8 @@ export function GroupsPage() {
                 .get('/projecten/' + assignmentId)
                 .then((response) => {
                     setProjectName(response.data.titel)
-                    setNewGroupSize(response.data.max_groep_grootte)
+
+                    setMaxGroupSize(response.data.max_groep_grootte)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -249,21 +211,6 @@ export function GroupsPage() {
                 .get<Group[]>(`/groepen/?project=${assignmentId}`)
                 .then((response) => {
                     const newgroups: Group[] = response.data
-                    if (
-                        newgroups.length <
-                        Math.ceil(studentNames.size / newGroupSize)
-                    ) {
-                        for (
-                            let i = newgroups.length;
-                            i < Math.ceil(studentNames.size / newGroupSize);
-                            i++
-                        ) {
-                            newgroups.push({
-                                studenten: [],
-                                project: parseInt(assignmentId),
-                            })
-                        }
-                    }
                     setNewGroups(newgroups)
                 })
                 .catch((error) => {
@@ -274,14 +221,11 @@ export function GroupsPage() {
             setLoading(false)
         }
 
-        fetchData()
-            .catch((error) => {
-                console.error(error)
-            })
-            .catch((error) => {
-                console.log(error)
-            })
-    }, [assignmentId, courseId, newGroupSize, studentNames.size])
+        fetchData().catch((error) => {
+            console.error(error)
+        })
+        setCurrentGroup('0')
+    }, [assignmentId, courseId, studentNames.size])
 
     useEffect(() => {
         setAvailableStudents(() =>
@@ -294,34 +238,6 @@ export function GroupsPage() {
         )
     }, [newGroups, studentNames])
 
-    // Create new groups when the group size changes
-    useEffect(() => {
-        if (newGroups.length === 0) {
-            setAvailableStudents(() => Array.from(studentNames.keys()))
-            setCurrentGroup('0')
-            setNewGroups(() => {
-                const newGroups = []
-                for (
-                    let i = 0;
-                    i < Math.ceil(availableStudents.length / newGroupSize);
-                    i++
-                ) {
-                    newGroups.push({
-                        studenten: [],
-                        project: parseInt(assignmentId),
-                    })
-                }
-                return newGroups
-            })
-        }
-    }, [
-        assignmentId,
-        availableStudents.length,
-        newGroupSize,
-        newGroups.length,
-        studentNames,
-    ])
-
     //Handle current group change
     const handleCurrentGroupChange = (event: SelectChangeEvent) => {
         setCurrentGroup(event.target.value as string)
@@ -330,22 +246,18 @@ export function GroupsPage() {
     // Randomise groups
     const randomGroups = () => {
         const students = Array.from(studentNames.keys())
-        const newGroups: Group[] = []
-        for (let i = 0; i < Math.ceil(students.length / newGroupSize); i++) {
-            newGroups.push({
-                studenten: [],
-                project: parseInt(assignmentId),
+        const shuffledStudents = students.sort(() => Math.random() - 0.5)
+        const randomisedGroups: Group[] = []
+        for (const group of newGroups) {
+            const sliceSize = Math.min(max_group_size, shuffledStudents.length)
+            randomisedGroups.push({
+                ...group,
+                studenten: shuffledStudents.slice(0, sliceSize),
             })
+            shuffledStudents.splice(0, sliceSize)
+            if (shuffledStudents.length === 0) break
         }
-        for (let i = 0; i < students.length; i++) {
-            let randomGroup = Math.floor(Math.random() * newGroups.length)
-            while (newGroups[randomGroup].studenten.length >= newGroupSize) {
-                randomGroup = Math.floor(Math.random() * newGroups.length)
-            }
-            newGroups[randomGroup].studenten.push(students[i])
-        }
-
-        setNewGroups(newGroups)
+        setNewGroups(randomisedGroups)
     }
 
     // assign a student to a group
@@ -414,149 +326,82 @@ export function GroupsPage() {
                 <>
                     {user?.is_lesgever ? (
                         // Rendering UI for teacher
-                    <>
-                        <Box
-                            component={'form'}
-                            onSubmit={handleSave}
-                            sx={{
-                                backgroundColor: 'background.default',
-                                height: '100%',
-                                width: '100%',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                justifyContent: 'flex-start',
-                            }}
-                        >
-                            <Header
-                                variant={'default'}
-                                title={loading ? '' : `${projectName}: ${t('groups')}`}
-                            ></Header>
-                            <Stack
-                                marginTop={12}
-                                direction={'column'}
-                                spacing={4}
+                        <>
+                            <Box
+                                component={'form'}
+                                onSubmit={handleSave}
                                 sx={{
-                                    width: '100%',
-                                    height: '70 %',
                                     backgroundColor: 'background.default',
+                                    height: '100%',
+                                    width: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'flex-start',
                                 }}
                             >
-                                <Box>
-                                    <Box
-                                        sx={{
-                                            gap: 5,
-                                            padding: '20px',
-                                            backgroundColor: 'background.default',
-                                        }}
-                                    >
-                                        <Typography
-                                            variant="h5"
-                                            sx={{ fontWeight: 'bold' }}
-                                            color="text.primary"
+                                <Header
+                                    variant={'default'}
+                                    title={
+                                        loading
+                                            ? ''
+                                            : `${projectName}: ${t('groups')}`
+                                    }
+                                ></Header>
+                                <Stack
+                                    marginTop={12}
+                                    direction={'column'}
+                                    spacing={4}
+                                    sx={{
+                                        width: '100%',
+                                        height: '70 %',
+                                        backgroundColor: 'background.default',
+                                    }}
+                                >
+                                    <Box>
+                                        <Box
+                                            sx={{
+                                                gap: 5,
+                                                padding: '20px',
+                                                backgroundColor:
+                                                    'background.default',
+                                            }}
                                         >
-                                            {t('groups')}
-                                        </Typography>
-                                        <Stack direction={'row'}>
-                                            <Grid container spacing={2} alignItems="center">
-                                                <Grid item>
-                                                    <Typography
-                                                        color="text.primary"
-                                                        fontWeight={'bold'}
-                                                    >
-                                                        {t('amount')} {t('members')}/
-                                                        {t('group')}
-                                                    </Typography>
-                                                </Grid>
-                                                <Grid item minWidth={3}>
-                                                    {loading ? (
-                                                        <Skeleton
-                                                            variant={'text'}
-                                                            width={80}
-                                                            height={80}
-                                                        />
-                                                    ) : (
-                                                        <TextField
-                                                            // The teacher can specify the maximum group size
-                                                            // If a number smaller than 1 is entered, the input will be ignored
-                                                            aria-label={'maxGroupSize'}
-                                                            value={newGroupSize}
-                                                            type={'number'}
-                                                            onChange={(newValue) => {
-                                                                if (
-                                                                    parseInt(
-                                                                        newValue.target
-                                                                            .value
-                                                                    ) < 1
-                                                                )
-                                                                    return
-                                                                handleGroupSizeChange(
-                                                                    parseInt(
-                                                                        newValue.target
-                                                                            .value
-                                                                    )
-                                                                )
-                                                            }}
-                                                            variant="outlined"
-                                                            sx={{ width: 80 }}
-                                                        />
-                                                    )}
-                                                </Grid>
-                                            </Grid>
-                                        </Stack>
-                                        <Stack
-                                            direction="row"
-                                            alignItems="center"
-                                            spacing={10}
-                                            marginY={6}
-                                        >
-                                            {loading ? (
-                                                <Skeleton
-                                                    variant={'rectangular'}
-                                                    width={220}
-                                                    height={45}
-                                                    sx={{
-                                                        backgroundColor: 'secondary.main',
-                                                        borderRadius: 1,
-                                                    }}
-                                                />
-                                            ) : (
-                                                <Button
-                                                    // If a teacher doesn't want to create groups manually,
-                                                    // they can randomize the groups with a single click.variant={'contained'}
-                                                    disableElevation
-                                                    sx={{
-                                                        backgroundColor: 'secondary.main',
-                                                        padding: 1,
-                                                    }}
-                                                    onClick={randomGroups}
-                                                >
-                                                    <Typography
-                                                        color="text.primary"
-                                                        fontWeight={'bold'}
-                                                    >
-                                                        {t('random')} {t('groups')}
-                                                    </Typography>
-                                                </Button>
-                                            )}
-                                            <Box
-                                                // If the students are allowed to choose their own groups,
-                                                // the teacher can enable this feature with a switch.
-                                                display={'flex'}
-                                                flexDirection={'row'}
-                                                alignItems={'center'}
-                                                gap={2}
+                                            <Typography
+                                                variant="h5"
+                                                sx={{ fontWeight: 'bold' }}
+                                                color="text.primary"
                                             >
-                                                <Typography
-                                                    color="text.primary"
-                                                    fontWeight={'bold'}
+                                                {t('groups')}
+                                            </Typography>
+                                            <Stack direction={'row'}>
+                                                <Grid
+                                                    container
+                                                    spacing={2}
+                                                    alignItems="center"
                                                 >
-                                                    {t('students_choose')}
-                                                </Typography>
+                                                    <Grid item>
+                                                        <Typography
+                                                            color="text.primary"
+                                                            fontWeight={'bold'}
+                                                        >
+                                                            {t('amount')}{' '}
+                                                            {t('members')}/
+                                                            {t('group')}
+                                                        </Typography>
+                                                    </Grid>
+                                                </Grid>
+                                            </Stack>
+                                            <Stack
+                                                direction="row"
+                                                alignItems="center"
+                                                spacing={10}
+                                                marginY={6}
+                                            >
                                                 {loading ? (
                                                     <Skeleton
                                                         variant={'rectangular'}
-                                                        width={40}
-                                                        height={30}
+                                                        width={220}
+                                                        height={45}
                                                         sx={{
                                                             backgroundColor:
                                                                 'secondary.main',
@@ -564,212 +409,134 @@ export function GroupsPage() {
                                                         }}
                                                     />
                                                 ) : (
-                                                    <Switch />
+                                                    <Button
+                                                        // If a teacher doesn't want to create groups manually,
+                                                        // they can randomize the groups with a single click.variant={'contained'}
+                                                        disableElevation
+                                                        sx={{
+                                                            backgroundColor:
+                                                                'secondary.main',
+                                                            padding: 1,
+                                                        }}
+                                                        onClick={() =>
+                                                            setRandomOpen(true)
+                                                        }
+                                                    >
+                                                        <Typography
+                                                            color="text.primary"
+                                                            fontWeight={'bold'}
+                                                        >
+                                                            {t('random')}{' '}
+                                                            {t('groups')}
+                                                        </Typography>
+                                                    </Button>
                                                 )}
-                                            </Box>
-                                        </Stack>
-                                    </Box>
+                                                <Box
+                                                    // If the students are allowed to choose their own groups,
+                                                    // the teacher can enable this feature with a switch.
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    alignItems={'center'}
+                                                    gap={2}
+                                                >
+                                                    <Typography
+                                                        color="text.primary"
+                                                        fontWeight={'bold'}
+                                                    >
+                                                        {t('students_choose')}
+                                                    </Typography>
+                                                    {loading ? (
+                                                        <Skeleton
+                                                            variant={
+                                                                'rectangular'
+                                                            }
+                                                            width={40}
+                                                            height={30}
+                                                            sx={{
+                                                                backgroundColor:
+                                                                    'secondary.main',
+                                                                borderRadius: 1,
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <Switch />
+                                                    )}
+                                                </Box>
+                                            </Stack>
+                                        </Box>
 
-                                    <Box
-                                        sx={{
-                                            marginTop: -3,
-                                            padding: '20px',
-                                            backgroundColor: 'background.default',
-                                        }}
-                                    >
                                         <Box
-                                            aria-label={'group_assigner'}
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            maxWidth={500}
-                                            justifyContent={'space-between'}
-                                            alignItems={'flex-start'}
+                                            sx={{
+                                                marginTop: -3,
+                                                padding: '20px',
+                                                backgroundColor:
+                                                    'background.default',
+                                            }}
                                         >
-                                            <TableContainer sx={{ maxHeight: '55vh' }}>
-                                                <Table
-                                                    // The teacher can see the available students
-                                                    // on the left side of the screen.
-                                                    // They are displayed in a table with a sticky header.aria-label={'studentTable'}
-                                                    stickyHeader
+                                            <Box
+                                                aria-label={'group_assigner'}
+                                                display={'flex'}
+                                                flexDirection={'row'}
+                                                maxWidth={500}
+                                                justifyContent={'space-between'}
+                                                alignItems={'flex-start'}
+                                            >
+                                                <TableContainer
+                                                    sx={{ maxHeight: '55vh' }}
                                                 >
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            <TableCell>
-                                                                <Typography
-                                                                    fontWeight={'bold'}
-                                                                >
-                                                                    {t('students')}
-                                                                </Typography>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        {loading ? (
-                                                            [...Array(3)].map(
-                                                                (_, index) => (
-                                                                    <Skeleton
-                                                                        key={index}
-                                                                        variant="text"
-                                                                        width={'100%'}
-                                                                        height={50}
-                                                                        sx={{ margin: 0 }}
-                                                                    />
-                                                                )
-                                                            )
-                                                        ) : (
-                                                            <>
-                                                                {availableStudents.map(
-                                                                    (student) => (
-                                                                        <TableRow
-                                                                            key={student}
-                                                                        >
-                                                                            <TableCell
-                                                                                sx={{
-                                                                                    height: 20,
-                                                                                    display:
-                                                                                        'flex',
-                                                                                    flexDirection:
-                                                                                        'row',
-                                                                                    justifyContent:
-                                                                                        'space-between',
-                                                                                    alignItems:
-                                                                                        'center',
-                                                                                }}
-                                                                            >
-                                                                                {studentNames.get(
-                                                                                    student
-                                                                                ) === ''
-                                                                                    ? student
-                                                                                    : studentNames.get(
-                                                                                        student
-                                                                                    )}
-                                                                                <IconButton // people can be added to groups by clicking on the plus icon
-                                                                                    disabled={
-                                                                                        newGroups[
-                                                                                            parseInt(
-                                                                                                currentGroup
-                                                                                            )
-                                                                                        ]
-                                                                                            ? newGroups[
-                                                                                                parseInt(
-                                                                                                    currentGroup
-                                                                                                )
-                                                                                            ]
-                                                                                                .studenten
-                                                                                                .length >=
-                                                                                            newGroupSize
-                                                                                            : true
-                                                                                    }
-                                                                                    onClick={() => {
-                                                                                        assignStudent(
-                                                                                            student,
-                                                                                            parseInt(
-                                                                                                currentGroup
-                                                                                            )
-                                                                                        )
-                                                                                    }}
-                                                                                >
-                                                                                    <Add />
-                                                                                </IconButton>
-                                                                            </TableCell>
-                                                                        </TableRow>
-                                                                    )
-                                                                )}
-                                                            </>
-                                                        )}
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                            <TableContainer sx={{ maxHeight: '55vh' }}>
-                                                <Table
-                                                    // The teacher can see the students in the specified group
-                                                    // on the right side of the screen.
-                                                    aria-label={'groupTable'}
-                                                    stickyHeader
-                                                    sx={{ maxHeight: '5    0svh' }}
-                                                >
-                                                    <TableHead>
-                                                        <TableRow>
-                                                            <TableCell>
-                                                                <Typography
-                                                                    fontWeight={'bold'}
-                                                                >
-                                                                    {t('group')}
-                                                                </Typography>
-                                                                {loading ? (
-                                                                    <Skeleton
-                                                                        variant="text"
-                                                                        width={'80%'}
-                                                                        height={70}
-                                                                        sx={{ margin: 0 }}
-                                                                    />
-                                                                ) : (
-                                                                    <>
-                                                                        <Select
-                                                                            // The teacher can select a group from the dropdown menu
-                                                                            aria-label={
-                                                                                'groupSelect'
+                                                    <Table
+                                                        // The teacher can see the available students
+                                                        // on the left side of the screen.
+                                                        // They are displayed in a table with a sticky header.aria-label={'studentTable'}
+                                                        stickyHeader
+                                                    >
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>
+                                                                    <Typography
+                                                                        fontWeight={
+                                                                            'bold'
+                                                                        }
+                                                                    >
+                                                                        {t(
+                                                                            'students'
+                                                                        )}
+                                                                    </Typography>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {loading ? (
+                                                                [
+                                                                    ...Array(3),
+                                                                ].map(
+                                                                    (
+                                                                        _,
+                                                                        index
+                                                                    ) => (
+                                                                        <Skeleton
+                                                                            key={
+                                                                                index
                                                                             }
-                                                                            value={
-                                                                                currentGroup
+                                                                            variant="text"
+                                                                            width={
+                                                                                '100%'
+                                                                            }
+                                                                            height={
+                                                                                50
                                                                             }
                                                                             sx={{
-                                                                                width: 200,
+                                                                                margin: 0,
                                                                             }}
-                                                                            onChange={
-                                                                                handleCurrentGroupChange
-                                                                            }
-                                                                            label={t(
-                                                                                'group'
-                                                                            )}
-                                                                        >
-                                                                            {newGroups.map(
-                                                                                (
-                                                                                    _,
-                                                                                    index
-                                                                                ) => (
-                                                                                    <MenuItem
-                                                                                        key={index.toString()}
-                                                                                        value={index.toString()}
-                                                                                    >
-                                                                                        {t(
-                                                                                            'group'
-                                                                                        ) +
-                                                                                            (index +
-                                                                                                1)}
-                                                                                    </MenuItem>
-                                                                                )
-                                                                            )}
-                                                                        </Select>
-                                                                    </>
-                                                                )}
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    </TableHead>
-                                                    <TableBody>
-                                                        {loading ? (
-                                                            [...Array(3)].map(
-                                                                (_, index) => (
-                                                                    <Skeleton
-                                                                        key={index}
-                                                                        variant="text"
-                                                                        width={'100%'}
-                                                                        height={50}
-                                                                        sx={{ margin: 0 }}
-                                                                    />
+                                                                        />
+                                                                    )
                                                                 )
-                                                            )
-                                                        ) : (
-                                                            <>
-                                                                {newGroups[
-                                                                    parseInt(currentGroup)
-                                                                ] &&
-                                                                    newGroups[
-                                                                        parseInt(
-                                                                            currentGroup
-                                                                        )
-                                                                    ].studenten.map(
-                                                                        (student) => (
+                                                            ) : (
+                                                                <>
+                                                                    {availableStudents.map(
+                                                                        (
+                                                                            student
+                                                                        ) => (
                                                                             <TableRow
                                                                                 key={
                                                                                     student
@@ -790,10 +557,31 @@ export function GroupsPage() {
                                                                                 >
                                                                                     {studentNames.get(
                                                                                         student
-                                                                                    )}
-                                                                                    <IconButton // The teacher can remove students from the group by clicking on the cross icon
+                                                                                    ) ===
+                                                                                    ''
+                                                                                        ? student
+                                                                                        : studentNames.get(
+                                                                                              student
+                                                                                          )}
+                                                                                    <IconButton // people can be added to groups by clicking on the plus icon
+                                                                                        disabled={
+                                                                                            newGroups[
+                                                                                                parseInt(
+                                                                                                    currentGroup
+                                                                                                )
+                                                                                            ]
+                                                                                                ? newGroups[
+                                                                                                      parseInt(
+                                                                                                          currentGroup
+                                                                                                      )
+                                                                                                  ]
+                                                                                                      .studenten
+                                                                                                      .length >=
+                                                                                                  max_group_size
+                                                                                                : true
+                                                                                        }
                                                                                         onClick={() => {
-                                                                                            removeStudent(
+                                                                                            assignStudent(
                                                                                                 student,
                                                                                                 parseInt(
                                                                                                     currentGroup
@@ -801,97 +589,294 @@ export function GroupsPage() {
                                                                                             )
                                                                                         }}
                                                                                     >
-                                                                                        <CancelIcon />
+                                                                                        <Add />
                                                                                     </IconButton>
                                                                                 </TableCell>
                                                                             </TableRow>
                                                                         )
                                                                     )}
-                                                            </>
-                                                        )}
-                                                    </TableBody>
-                                                </Table>
-                                            </TableContainer>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                            </Stack>
-                            <Box
-                                aria-label={'save/cancel'}
-                                sx={{
-                                    position: 'fixed',
-                                    bottom: 0,
-                                    width: '100%',
-                                    alignItems: 'flex-end',
-                                    gap: 5,
-                                    paddingRight: 10,
-                                }}
-                            >
-                                <DialogActions>
-                                    <Box pr={5} pb={5} display={'flex'} gap={1}>
-                                        <Tooltip title={t('cancel')}>
-                                            <IconButton
-                                                // The teacher can cancel the group changes by clicking on the cross icon.
-                                                onClick={handleCancel}
-                                                sx={{
-                                                    backgroundColor: 'secondary.main',
-                                                    borderRadius: 2,
-                                                }}
-                                            >
-                                                <ClearIcon fontSize={'medium'} />
-                                            </IconButton>
-                                        </Tooltip>
-                                        <Tooltip title={t('submit')}>
-                                            {loading ? (
-                                                <Skeleton
-                                                    variant={'rectangular'}
-                                                    width={40}
-                                                    height={40}
-                                                    sx={{
-                                                        backgroundColor: 'primary.main',
-                                                        borderRadius: 2,
-                                                    }}
-                                                />
-                                            ) : (
-                                                <>
-                                                    <IconButton
-                                                        // The teacher can save the group changes by clicking on the save icon.type="submit"
-                                                        aria-label={'submit'}
-                                                        type={'submit'}
+                                                                </>
+                                                            )}
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                                <TableContainer
+                                                    sx={{ maxHeight: '55vh' }}
+                                                >
+                                                    <Table
+                                                        // The teacher can see the students in the specified group
+                                                        // on the right side of the screen.
+                                                        aria-label={
+                                                            'groupTable'
+                                                        }
+                                                        stickyHeader
                                                         sx={{
-                                                            backgroundColor: 'primary.main',
-                                                            borderRadius: 2,
-                                                            color: 'background.default',
-                                                            '&:hover': {
-                                                                backgroundColor:
-                                                                    'secondary.main',
-                                                                color: 'text.primary',
-                                                            },
+                                                            maxHeight:
+                                                                '5    0svh',
                                                         }}
                                                     >
-                                                        <SaveIcon fontSize={'medium'} />
-                                                    </IconButton>
-                                                </>
-                                            )}
-                                        </Tooltip>
+                                                        <TableHead>
+                                                            <TableRow>
+                                                                <TableCell>
+                                                                    <Typography
+                                                                        fontWeight={
+                                                                            'bold'
+                                                                        }
+                                                                    >
+                                                                        {t(
+                                                                            'group'
+                                                                        )}
+                                                                    </Typography>
+                                                                    {loading ? (
+                                                                        <Skeleton
+                                                                            variant="text"
+                                                                            width={
+                                                                                '80%'
+                                                                            }
+                                                                            height={
+                                                                                70
+                                                                            }
+                                                                            sx={{
+                                                                                margin: 0,
+                                                                            }}
+                                                                        />
+                                                                    ) : (
+                                                                        <>
+                                                                            <Select
+                                                                                // The teacher can select a group from the dropdown menu
+                                                                                aria-label={
+                                                                                    'groupSelect'
+                                                                                }
+                                                                                value={
+                                                                                    currentGroup
+                                                                                }
+                                                                                sx={{
+                                                                                    width: 200,
+                                                                                }}
+                                                                                onChange={
+                                                                                    handleCurrentGroupChange
+                                                                                }
+                                                                                label={t(
+                                                                                    'group'
+                                                                                )}
+                                                                            >
+                                                                                {newGroups.map(
+                                                                                    (
+                                                                                        _,
+                                                                                        index
+                                                                                    ) => (
+                                                                                        <MenuItem
+                                                                                            key={index.toString()}
+                                                                                            value={index.toString()}
+                                                                                        >
+                                                                                            {t(
+                                                                                                'group'
+                                                                                            ) +
+                                                                                                (index +
+                                                                                                    1)}
+                                                                                        </MenuItem>
+                                                                                    )
+                                                                                )}
+                                                                            </Select>
+                                                                        </>
+                                                                    )}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        </TableHead>
+                                                        <TableBody>
+                                                            {loading ? (
+                                                                [
+                                                                    ...Array(3),
+                                                                ].map(
+                                                                    (
+                                                                        _,
+                                                                        index
+                                                                    ) => (
+                                                                        <Skeleton
+                                                                            key={
+                                                                                index
+                                                                            }
+                                                                            variant="text"
+                                                                            width={
+                                                                                '100%'
+                                                                            }
+                                                                            height={
+                                                                                50
+                                                                            }
+                                                                            sx={{
+                                                                                margin: 0,
+                                                                            }}
+                                                                        />
+                                                                    )
+                                                                )
+                                                            ) : (
+                                                                <>
+                                                                    {newGroups[
+                                                                        parseInt(
+                                                                            currentGroup
+                                                                        )
+                                                                    ] &&
+                                                                        newGroups[
+                                                                            parseInt(
+                                                                                currentGroup
+                                                                            )
+                                                                        ].studenten.map(
+                                                                            (
+                                                                                student
+                                                                            ) => (
+                                                                                <TableRow
+                                                                                    key={
+                                                                                        student
+                                                                                    }
+                                                                                >
+                                                                                    <TableCell
+                                                                                        sx={{
+                                                                                            height: 20,
+                                                                                            display:
+                                                                                                'flex',
+                                                                                            flexDirection:
+                                                                                                'row',
+                                                                                            justifyContent:
+                                                                                                'space-between',
+                                                                                            alignItems:
+                                                                                                'center',
+                                                                                        }}
+                                                                                    >
+                                                                                        {studentNames.get(
+                                                                                            student
+                                                                                        )}
+                                                                                        <IconButton // The teacher can remove students from the group by clicking on the cross icon
+                                                                                            onClick={() => {
+                                                                                                removeStudent(
+                                                                                                    student,
+                                                                                                    parseInt(
+                                                                                                        currentGroup
+                                                                                                    )
+                                                                                                )
+                                                                                            }}
+                                                                                        >
+                                                                                            <CancelIcon />
+                                                                                        </IconButton>
+                                                                                    </TableCell>
+                                                                                </TableRow>
+                                                                            )
+                                                                        )}
+                                                                </>
+                                                            )}
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                            </Box>
+                                        </Box>
                                     </Box>
-                                </DialogActions>
+                                </Stack>
+                                <Box
+                                    aria-label={'save/cancel'}
+                                    sx={{
+                                        position: 'fixed',
+                                        bottom: 0,
+                                        width: '100%',
+                                        alignItems: 'flex-end',
+                                        gap: 5,
+                                        paddingRight: 10,
+                                    }}
+                                >
+                                    <DialogActions>
+                                        <Box
+                                            pr={5}
+                                            pb={5}
+                                            display={'flex'}
+                                            gap={1}
+                                        >
+                                            <Tooltip title={t('cancel')}>
+                                                <IconButton
+                                                    // The teacher can cancel the group changes by clicking on the cross icon.
+                                                    onClick={handleCancel}
+                                                    sx={{
+                                                        backgroundColor:
+                                                            'secondary.main',
+                                                        borderRadius: 2,
+                                                    }}
+                                                >
+                                                    <ClearIcon
+                                                        fontSize={'medium'}
+                                                    />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title={t('submit')}>
+                                                {loading ? (
+                                                    <Skeleton
+                                                        variant={'rectangular'}
+                                                        width={40}
+                                                        height={40}
+                                                        sx={{
+                                                            backgroundColor:
+                                                                'primary.main',
+                                                            borderRadius: 2,
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <>
+                                                        <IconButton
+                                                            // The teacher can save the group changes by clicking on the save icon.type="submit"
+                                                            aria-label={
+                                                                'submit'
+                                                            }
+                                                            type={'submit'}
+                                                            sx={{
+                                                                backgroundColor:
+                                                                    'primary.main',
+                                                                borderRadius: 2,
+                                                                color: 'background.default',
+                                                                '&:hover': {
+                                                                    backgroundColor:
+                                                                        'secondary.main',
+                                                                    color: 'text.primary',
+                                                                },
+                                                            }}
+                                                        >
+                                                            <SaveIcon
+                                                                fontSize={
+                                                                    'medium'
+                                                                }
+                                                            />
+                                                        </IconButton>
+                                                    </>
+                                                )}
+                                            </Tooltip>
+                                        </Box>
+                                    </DialogActions>
+                                </Box>
                             </Box>
-                        </Box>
-                        {/* Warning popup for when the user wants to confirm the group changes */}
-                        <WarningPopup
-                            title={t('change_groups')}
-                            content={t('cant_be_undone')}
-                            buttonName={t('confirm')}
-                            open={confirmOpen}
-                            handleClose={handleCloseConfirm}
-                            doAction={confirmSave}
-                        />
-                    </>
-                ):(
-                    navigate('*')
-                )}
-            </>
-        )} 
-    </>
-)}
+                            {/* Warning popup for when the user wants to confirm the group changes */}
+                            <WarningPopup
+                                title={t('change_groups')}
+                                content={t('cant_be_undone')}
+                                buttonName={t('confirm')}
+                                open={confirmOpen}
+                                handleClose={handleCloseConfirm}
+                                doAction={confirmSave}
+                            />
+                            <WarningPopup
+                                title={t('random') + ' ' + t('groups') + '?'}
+                                content={t('existing_submissions')}
+                                buttonName={t('divide_groups')}
+                                open={randomOpen}
+                                handleClose={() => setRandomOpen(false)}
+                                doAction={randomGroups}
+                            />
+                        </>
+                    ) : (
+                        navigate(
+                            '/course/' +
+                                courseId +
+                                '/assignment/' +
+                                assignmentId +
+                                '/groups/choose'
+                        )
+                    )}
+                </>
+            )}
+        </>
+    )
+}
