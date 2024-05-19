@@ -2,7 +2,7 @@ import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
 import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
-import {Card, Button, Divider, EvenlySpacedRow, SecundaryButton} from '../../components/CustomComponents.tsx'
+import {Card, Button, Divider, EvenlySpacedRow, SecondaryButton} from '../../components/CustomComponents.tsx'
 import {
     Box,
     CircularProgress, Grid,
@@ -865,13 +865,13 @@ export function AssignmentPage() {
                                 <Grid>
                                 <Box  sx={{ position: 'relative', top: '8px', ml: 2}}>
                                     <Tooltip title={t('upload')}>
-                                        <SecundaryButton
+                                        <SecondaryButton
                                             onClick={uploadIndiening}
                                         >
                                             <Typography>
                                                 {t('submit')}
                                             </Typography>
-                                        </SecundaryButton>
+                                        </SecondaryButton>
                                     </Tooltip>
                                 </Box>
                                 </Grid>

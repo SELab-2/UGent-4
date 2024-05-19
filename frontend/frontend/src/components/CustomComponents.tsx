@@ -1,4 +1,4 @@
-import { darken,lighten } from '@mui/system';
+import { darken } from '@mui/system';
 import {
     Button as BaseButton,
     Card as BaseCard,
@@ -29,7 +29,7 @@ export const Button = ({ children, ...props }: any) => {
     )
 }
 
-export const SecundaryButton = ({ children, ...props }: any) => {
+export const SecondaryButton = ({ children, ...props }: any) => {
     return (
         <BaseButton
             variant="contained"
