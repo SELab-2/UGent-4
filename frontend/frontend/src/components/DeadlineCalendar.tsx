@@ -99,10 +99,24 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
             width={'100%'}
             alignItems={'center'}
         >
-            <Typography>
+            <Typography color={'text.primary'}>
                 {t('deadlines_on')}: {selectedDay?.format('DD/MM/YYYY')}
             </Typography>
-            <List>
+            <List sx={{ width: '100%' }}>
+                {assignments.filter((assignment: project) => {
+                    return dayjs(assignment.deadline).isSame(selectedDay, 'day')
+                }).length === 0 && (
+                    <ListItem>
+                        <ListItemText>
+                            <Typography
+                                textAlign={'center'}
+                                color={'text.primary'}
+                            >
+                                {t('no_deadline') + 's'}
+                            </Typography>
+                        </ListItemText>
+                    </ListItem>
+                )}
                 {assignments
                     .filter((assignment: project) =>
                         dayjs(assignment.deadline).isSame(selectedDay, 'day')
@@ -111,7 +125,14 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
                         <ListItem>
                             <ListItemButton
                                 sx={{
-                                    border: 1,
+                                    border: 0.5,
+                                    borderColor: 'primary.main',
+                                    textAlign: 'center',
+                                    width: '100%',
+                                    borderRadius: 2,
+                                    '&:hover': {
+                                        backgroundColor: 'primary.light',
+                                    },
                                 }}
                                 onClick={() =>
                                     handleProjectClick(
@@ -120,7 +141,11 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
                                     )
                                 }
                             >
-                                <ListItemText primary={assignment.titel} />
+                                <ListItemText>
+                                    <Typography color={'text.primary'}>
+                                        {assignment.titel}
+                                    </Typography>
+                                </ListItemText>
                             </ListItemButton>
                         </ListItem>
                     ))}
