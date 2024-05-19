@@ -100,28 +100,30 @@ export function AssignmentPage() {
                     `/projecten/${assignmentId}/`
                 )
                 const newAssignment: Project = assignmentResponse.data
-                newAssignment.filename =
-                    assignmentResponse.data.opgave_bestand.replace(
-                        /^.*[\\/]/,
-                        ''
-                    )
-                newAssignment.opgave_bestand = await instance
-                    .get(`/projecten/${assignmentId}/opgave_bestand/`, {
-                        responseType: 'blob',
-                    })
-                    .then((res) => {
-                        let filename = 'indiening.zip'
-                        if (newAssignment.filename) {
-                            filename = newAssignment.filename
-                        }
-                        const blob = new Blob([res.data], {
-                            type: res.headers['content-type'],
+                if (assignmentResponse.data.opgave_bestand) {
+                    newAssignment.filename =
+                        assignmentResponse.data.opgave_bestand.replace(
+                            /^.*[\\/]/,
+                            ''
+                        )
+                    newAssignment.opgave_bestand = await instance
+                        .get(`/projecten/${assignmentId}/opgave_bestand/`, {
+                            responseType: 'blob',
                         })
-                        const file: File = new File([blob], filename, {
-                            type: res.headers['content-type'],
+                        .then((res) => {
+                            let filename = 'indiening.zip'
+                            if (newAssignment.filename) {
+                                filename = newAssignment.filename
+                            }
+                            const blob = new Blob([res.data], {
+                                type: res.headers['content-type'],
+                            })
+                            const file: File = new File([blob], filename, {
+                                type: res.headers['content-type'],
+                            })
+                            return file
                         })
-                        return file
-                    })
+                }
                 setAssignment(newAssignment)
                 if (user) {
                     if (user.is_lesgever) {
@@ -854,7 +856,7 @@ export function AssignmentPage() {
                                     <Button
                                         startIcon={<DownloadIcon />}
                                         onClick={downloadAssignment}
-                                        disabled={assignment === undefined}
+                                        disabled={assignment === undefined || assignment.filename === undefined}
                                     >
                                         {loading ? (
                                             <Skeleton
@@ -869,6 +871,8 @@ export function AssignmentPage() {
                                             <>
                                                 {assignment
                                                     ? assignment.filename
+                                                        ? assignment.filename
+                                                        : t('no_assignmentfile')
                                                     : t('no_assignmentfile')}
                                             </>
                                         )}
