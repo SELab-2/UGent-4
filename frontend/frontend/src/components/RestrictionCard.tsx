@@ -16,11 +16,16 @@ export function RestrictionCard({
     setRestrictions,
 }: RestrictionCardProps) {
 
-    const [mustPass, setMustPass] = React.useState(false)
+    const [mustPass, setMustPass] = React.useState(restriction.moet_slagen)
 
     //handle the removal of the restriction from the list
     const handleRemove = () => {
         setRestrictions(restrictions.filter((r) => r !== restriction))
+    }
+
+    const handleMustPassChange = () => {
+        setMustPass(!mustPass);
+        restriction.moet_slagen = !restriction.moet_slagen;
     }
 
     return (
@@ -34,22 +39,12 @@ export function RestrictionCard({
                 <Typography id='script' variant={'body2'}>
                     {restriction.script.replace(/^.*[\\/]/, '')}
                 </Typography>
-                {/*<Box>
-                    <Typography variant={'body2'}>
-                        {t('must_pass') + ':'}
-                    </Typography>
-                    <Switch
-                        id="mustPassSwitch"
-                        value={mustPass}
-                        onChange={() => setMustPass(!mustPass)}
-                    />
-                </Box>*/}
                 <Switch
                     id="mustPassSwitch"
                     value={mustPass}
-                    onChange={() => setMustPass(!mustPass)}
+                    onChange={() => handleMustPassChange()}
                 />
-                        
+
                 <IconButton id='closeButton' onClick={handleRemove}>
                     <CloseIcon />
                 </IconButton>
