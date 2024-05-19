@@ -1,6 +1,8 @@
 import { restriction } from '../pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx'
-import { Box, IconButton, Typography } from '@mui/material'
+import { Box, IconButton, Switch, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
+import React from 'react'
+import { t } from 'i18next'
 
 interface RestrictionCardProps {
     restriction: restriction
@@ -13,6 +15,9 @@ export function RestrictionCard({
     restrictions,
     setRestrictions,
 }: RestrictionCardProps) {
+
+    const [mustPass, setMustPass] = React.useState(false)
+
     //handle the removal of the restriction from the list
     const handleRemove = () => {
         setRestrictions(restrictions.filter((r) => r !== restriction))
@@ -29,6 +34,22 @@ export function RestrictionCard({
                 <Typography id='script' variant={'body2'}>
                     {restriction.script.replace(/^.*[\\/]/, '')}
                 </Typography>
+                {/*<Box>
+                    <Typography variant={'body2'}>
+                        {t('must_pass') + ':'}
+                    </Typography>
+                    <Switch
+                        id="mustPassSwitch"
+                        value={mustPass}
+                        onChange={() => setMustPass(!mustPass)}
+                    />
+                </Box>*/}
+                <Switch
+                    id="mustPassSwitch"
+                    value={mustPass}
+                    onChange={() => setMustPass(!mustPass)}
+                />
+                        
                 <IconButton id='closeButton' onClick={handleRemove}>
                     <CloseIcon />
                 </IconButton>
