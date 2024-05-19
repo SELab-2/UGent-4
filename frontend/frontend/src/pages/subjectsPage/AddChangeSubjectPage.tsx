@@ -4,8 +4,10 @@ import {
     SecondaryButton,
     EvenlySpacedRow,
 } from '../../components/CustomComponents.tsx'
+
 import {
     Box,
+    CircularProgress,
     IconButton,
     ListItem,
     ListItemText,
@@ -16,7 +18,6 @@ import {
     CircularProgress,
 } from '@mui/material'
 import { Header } from '../../components/Header'
-import { Button } from '../../components/CustomComponents.tsx'
 import React, { ChangeEvent, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import List from '@mui/material/List'
@@ -734,6 +735,7 @@ export function AddChangeSubjectPage() {
                                             </Stack>
                                         </Box>
                                     </Stack>
+
                                 </Stack>
                             </Stack>
                         </>

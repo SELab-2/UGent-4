@@ -3,6 +3,7 @@ import { Button, Card } from '../../components/CustomComponents.tsx'
 import {
     Autocomplete,
     Box,
+    CircularProgress,
     Grid,
     IconButton,
     MenuItem,
@@ -15,7 +16,6 @@ import {
     TableCell,
     TableContainer,
     TableRow,
-    TextField,
     Tooltip,
     Typography,
 } from '@mui/material'
@@ -40,6 +40,8 @@ export interface Group {
     project: number
 }
 
+//FIXME: groupsize should not be signed after creation of project, refactor!
+
 // Typescript typing for hashmap
 type Hashmap = Map<number, string>
 
@@ -57,13 +59,15 @@ export function GroupsPage() {
     )
     //state for new groups and new groupSize, don't change the old groups and groupSize until the user clicks save
     const [newGroups, setNewGroups] = useState<Group[]>([])
-    const [newGroupSize, setNewGroupSize] = useState(1)
     const [currentGroup, setCurrentGroup] = useState('')
     const [availableStudents, setAvailableStudents] = useState<number[]>([])
     const [projectName, setProjectName] = useState('')
 
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
+
+    //random groups dialog state
+    const [randomOpen, setRandomOpen] = useState(false)
 
     // state for correct loading of the page
     const [loading, setLoading] = useState(true)
@@ -102,17 +106,15 @@ export function GroupsPage() {
         } else {
             // update the old groups with the new groups
             for (const group of newGroups) {
-                if (group.studenten.length !== 0) {
-                    instance
-                        .put('/groepen/' + group.groep_id + '/', {
-                            groep_id: group.groep_id,
-                            studenten: group.studenten,
-                            project: parseInt(assignmentId),
-                        })
-                        .catch((error) => {
-                            console.log(error)
-                        })
-                }
+                instance
+                    .put('/groepen/' + group.groep_id + '/', {
+                        groep_id: group.groep_id,
+                        studenten: group.studenten,
+                        project: parseInt(assignmentId),
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
             }
         }
         navigate('/course/' + courseId + '/assignment/' + assignmentId)
@@ -213,7 +215,8 @@ export function GroupsPage() {
                 .get('/projecten/' + assignmentId)
                 .then((response) => {
                     setProjectName(response.data.titel)
-                    setNewGroupSize(response.data.max_groep_grootte)
+
+                    setMaxGroupSize(response.data.max_groep_grootte)
                 })
                 .catch((error) => {
                     console.log(error)
@@ -228,21 +231,6 @@ export function GroupsPage() {
                 .get<Group[]>(`/groepen/?project=${assignmentId}`)
                 .then((response) => {
                     const newgroups: Group[] = response.data
-                    if (
-                        newgroups.length <
-                        Math.ceil(studentNames.size / newGroupSize)
-                    ) {
-                        for (
-                            let i = newgroups.length;
-                            i < Math.ceil(studentNames.size / newGroupSize);
-                            i++
-                        ) {
-                            newgroups.push({
-                                studenten: [],
-                                project: parseInt(assignmentId),
-                            })
-                        }
-                    }
                     setNewGroups(newgroups)
                 })
                 .catch((error) => {
@@ -311,22 +299,18 @@ export function GroupsPage() {
     // Randomise groups
     const randomGroups = () => {
         const students = Array.from(studentNames.keys())
-        const newGroups: Group[] = []
-        for (let i = 0; i < Math.ceil(students.length / newGroupSize); i++) {
-            newGroups.push({
-                studenten: [],
-                project: parseInt(assignmentId),
+        const shuffledStudents = students.sort(() => Math.random() - 0.5)
+        const randomisedGroups: Group[] = []
+        for (const group of newGroups) {
+            const sliceSize = Math.min(max_group_size, shuffledStudents.length)
+            randomisedGroups.push({
+                ...group,
+                studenten: shuffledStudents.slice(0, sliceSize),
             })
+            shuffledStudents.splice(0, sliceSize)
+            if (shuffledStudents.length === 0) break
         }
-        for (let i = 0; i < students.length; i++) {
-            let randomGroup = Math.floor(Math.random() * newGroups.length)
-            while (newGroups[randomGroup].studenten.length >= newGroupSize) {
-                randomGroup = Math.floor(Math.random() * newGroups.length)
-            }
-            newGroups[randomGroup].studenten.push(students[i])
-        }
-
-        setNewGroups(newGroups)
+        setNewGroups(randomisedGroups)
     }
 
     // assign a student to a group
@@ -853,6 +837,7 @@ export function GroupsPage() {
                                                                                             }
                                                                                             onClick={() => {
                                                                                                 assignStudent(
+
                                                                                                     student,
                                                                                                     parseInt(
                                                                                                         currentGroup
@@ -862,6 +847,7 @@ export function GroupsPage() {
                                                                                             }}
                                                                                         >
                                                                                             <Add />
+
                                                                                         </IconButton>
                                                                                     </TableCell>
                                                                                 </TableRow>

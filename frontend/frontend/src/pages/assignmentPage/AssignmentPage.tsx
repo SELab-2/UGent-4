@@ -30,6 +30,9 @@ import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
 import dayjs from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import WarningPopup from '../../components/WarningPopup.tsx'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
+import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
+import axios, { AxiosResponse } from 'axios'
 
 // group interface
 export interface Group {
@@ -65,11 +68,15 @@ export function AssignmentPage() {
     const [assignment, setAssignment] = useState<Project>()
     const [submissions, setSubmissions] = useState<Submission[]>([])
     const [groups, setGroups] = useState<Group[]>([])
+    const [singleStudents, setSingleStudents] = useState<User[]>([])
     const [submissionFile, setSubmissionFile] = useState<File>()
     const [submit, setSubmit] = useState(false)
+    const [students, setStudents] = useState<User[]>([])
+
     //state for loading the page
     const [loading, setLoading] = useState(true)
     const [userLoading, setUserLoading] = useState(true)
+    const [studentsLoading, setStudentsLoading] = useState(true)
 
     // state for the warning popup
     const [openNoGroup, setOpenNoGroup] = useState(false)
@@ -86,51 +93,75 @@ export function AssignmentPage() {
     }
 
     useEffect(() => {
+        async function fetchUser() {
+            setUserLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            setUser(userResponse.data)
+            setUserLoading(false)
+        }
+
         async function fetchData() {
             try {
-                setUserLoading(true)
                 setLoading(true)
-                const userResponse = await instance.get('/gebruikers/me/')
-                setUser(userResponse.data)
-                setUserLoading(false)
                 const assignmentResponse = await instance.get(
                     `/projecten/${assignmentId}/`
                 )
                 const newAssignment: Project = assignmentResponse.data
-                newAssignment.filename =
-                    assignmentResponse.data.opgave_bestand.replace(
-                        /^.*[\\/]/,
-                        ''
-                    )
-                newAssignment.opgave_bestand = await instance
-                    .get(`/projecten/${assignmentId}/opgave_bestand/`, {
-                        responseType: 'blob',
-                    })
-                    .then((res) => {
-                        let filename = 'indiening.zip'
-                        if (newAssignment.filename) {
-                            filename = newAssignment.filename
-                        }
-                        const blob = new Blob([res.data], {
-                            type: res.headers['content-type'],
+                if (assignmentResponse.data.opgave_bestand) {
+                    newAssignment.filename =
+                        assignmentResponse.data.opgave_bestand.replace(
+                            /^.*[\\/]/,
+                            ''
+                        )
+                    newAssignment.opgave_bestand = await instance
+                        .get(`/projecten/${assignmentId}/opgave_bestand/`, {
+                            responseType: 'blob',
                         })
-                        const file: File = new File([blob], filename, {
-                            type: res.headers['content-type'],
+                        .then((res) => {
+                            let filename = 'indiening.zip'
+                            if (newAssignment.filename) {
+                                filename = newAssignment.filename
+                            }
+                            const blob = new Blob([res.data], {
+                                type: res.headers['content-type'],
+                            })
+                            const file: File = new File([blob], filename, {
+                                type: res.headers['content-type'],
+                            })
+                            return file
                         })
-                        return file
-                    })
+                }
                 setAssignment(newAssignment)
-                if (userResponse.data) {
+                if (user) {
                     if (user.is_lesgever) {
                         const groupsResponse = await instance.get(
                             `/groepen/?project=${assignmentId}`
                         )
                         setGroups(groupsResponse.data)
+                        if (newAssignment.max_groep_grootte == 1) {
+                            const userPromises: Promise<AxiosResponse<User>>[] =
+                                groupsResponse.data.map((group: Group) =>
+                                    instance.get(
+                                        '/gebruikers/' + group.studenten[0]
+                                    )
+                                )
+
+                            const temp_students = await axios.all(userPromises)
+
+                            setSingleStudents(
+                                temp_students.map((res) => res.data)
+                            )
+                        }
                     } else {
-                        const submissionsResponse = await instance.get(
-                            `/indieningen/?vak=${courseId}`
+                        const groupResponse = await instance.get<[Group]>(
+                            `/groepen/?student=${user.user}&project=${assignmentId}`
                         )
-                        setSubmissions(submissionsResponse.data)
+                        if (groupResponse.data.length > 0) {
+                            const submissionsResponse = await instance.get(
+                                `/indieningen/?project=${assignmentId}&groep=${groupResponse.data[0].groep_id}`
+                            )
+                            setSubmissions(submissionsResponse.data)
+                        }
                     }
                 }
             } catch (error) {
@@ -141,8 +172,40 @@ export function AssignmentPage() {
             }
         }
 
-        fetchData().catch((err) => console.error(err))
-    }, [assignmentId, courseId, user.is_lesgever, submit])
+        // Ensure fetchUser completes before fetchData starts
+        ;(async () => {
+            if (user.user === 0) {
+                await fetchUser()
+            }
+            await fetchData() // Use await here to ensure fetchData waits for fetchUser to complete
+        })()
+    }, [assignmentId, courseId, user.is_lesgever, submit, user])
+
+    useEffect(() => {
+        async function fetchStudents() {
+            setStudentsLoading(true)
+            const groupResponse = await instance.get(
+                `groepen/?student=${user.user}&project=${assignmentId}`
+            )
+            const group: Group = groupResponse.data[0]
+
+            const studentPromises: Promise<AxiosResponse<User>>[] =
+                group.studenten.map((id: number) =>
+                    instance.get('/gebruikers/' + id)
+                )
+
+            const temp_students = await axios.all(studentPromises)
+            setStudents(temp_students.map((res) => res.data))
+
+            setStudentsLoading(false)
+        }
+        // Fetch students
+        if (!user.is_lesgever && user.user !== 0) {
+            fetchStudents().catch((error) =>
+                console.error('Error fetching students data:', error)
+            )
+        }
+    }, [user, assignment, groups, assignmentId])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -242,12 +305,10 @@ export function AssignmentPage() {
                 },
             }
             const groupResponse = await instance.get(
-                `/groepen/?student=${user.user}`
+                `/groepen/?student=${user.user}&project=${assignmentId}`
             )
             if (groupResponse.data) {
-                const group = groupResponse.data.find(
-                    (group: Group) => String(group.project) === assignmentId
-                )
+                const group = groupResponse.data[0]
                 if (group) {
                     const formData = new FormData()
                     formData.append('groep', group.groep_id)
@@ -366,12 +427,20 @@ export function AssignmentPage() {
                                             }}
                                         />
                                     ) : (
-                                        <GroupAccessComponent
-                                            assignmentid={parseInt(
-                                                assignmentId
+                                        <>
+                                            {(assignment?.max_groep_grootte
+                                                ? assignment.max_groep_grootte
+                                                : 1) > 1 && (
+                                                <GroupAccessComponent
+                                                    assignmentid={parseInt(
+                                                        assignmentId
+                                                    )}
+                                                    courseid={parseInt(
+                                                        courseId
+                                                    )}
+                                                />
                                             )}
-                                            courseid={parseInt(courseId)}
-                                        />
+                                        </>
                                     )}
                                 </Box>
 
@@ -599,7 +668,10 @@ export function AssignmentPage() {
                                         backgroundColor: 'background.default',
                                     }}
                                 >
-                                    <Stack direction={'row'}>
+                                    <Stack
+                                        direction={'row'}
+                                        position="relative"
+                                    >
                                         <Box
                                             display={'flex'}
                                             flexDirection={'row'}
@@ -620,18 +692,26 @@ export function AssignmentPage() {
                                                     height={50}
                                                 />
                                             ) : (
-                                                <Typography
-                                                    variant="h6"
-                                                    color={'text.primary'}
-                                                >
-                                                    {assignment
-                                                        ? dayjs(
-                                                              assignment.deadline
-                                                          ).format(
-                                                              'DD/MM/YYYY-HH:MM'
-                                                          )
-                                                        : 'no deadline'}
-                                                </Typography>
+                                                <>
+                                                    {assignment !== undefined &&
+                                                        assignment.deadline !==
+                                                            null && (
+                                                            <Typography
+                                                                variant="h6"
+                                                                color={
+                                                                    'text.primary'
+                                                                }
+                                                            >
+                                                                {assignment
+                                                                    ? dayjs(
+                                                                          assignment.deadline
+                                                                      ).format(
+                                                                          'DD/MM/YYYY-HH:MM'
+                                                                      )
+                                                                    : 'no deadline'}
+                                                            </Typography>
+                                                        )}
+                                                </>
                                             )}
                                         </Box>
                                         <Box style={{ flexGrow: 1 }} />
@@ -647,7 +727,7 @@ export function AssignmentPage() {
                                             />
                                         ) : (
                                             <>
-                                                {assignment?.student_groep && (
+                                                {assignment?.student_groep ? (
                                                     <Button
                                                         sx={{
                                                             bgcolor:
@@ -661,11 +741,86 @@ export function AssignmentPage() {
                                                             {t('group')}
                                                         </Typography>
                                                     </Button>
+                                                ) : (
+                                                    <Box
+                                                        sx={{
+                                                            position:
+                                                                'absolute',
+                                                            top: 90,
+                                                            right: 50,
+                                                            display: 'flex',
+                                                            justifyContent:
+                                                                'flex-end',
+                                                            zIndex: 1,
+                                                            marginTop: '-40px',
+                                                        }}
+                                                    >
+                                                        {assignment?.max_groep_grootte ===
+                                                        1 ? (
+                                                            <Typography variant="body1">
+                                                                {user.first_name +
+                                                                    ' ' +
+                                                                    user.last_name}
+                                                            </Typography>
+                                                        ) : (
+                                                            <>
+                                                                {console.log(
+                                                                    students
+                                                                )}
+                                                                <StudentPopUp
+                                                                    students={
+                                                                        studentsLoading
+                                                                            ? []
+                                                                            : students
+                                                                    }
+                                                                    text="group_members"
+                                                                />
+                                                            </>
+                                                        )}
+                                                    </Box>
                                                 )}
                                             </>
                                         )}
                                     </Stack>
                                 </Box>
+                                {/*extra deadline*/}
+                                {assignment?.extra_deadline && (
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        alignItems={'center'}
+                                        gap={1}
+                                        pl={2.5}
+                                    >
+                                        <Typography
+                                            variant="h6"
+                                            color="text.primary"
+                                            fontWeight={'bold'}
+                                        >
+                                            Extra Deadline:
+                                        </Typography>
+                                        {loading ? (
+                                            <Skeleton
+                                                variant="text"
+                                                width={180}
+                                                height={50}
+                                            />
+                                        ) : (
+                                            <Typography
+                                                variant="h6"
+                                                color={'text.primary'}
+                                            >
+                                                {assignment
+                                                    ? dayjs(
+                                                          assignment.extra_deadline
+                                                      ).format(
+                                                          'DD/MM/YYYY-HH:MM'
+                                                      )
+                                                    : 'no deadline'}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                )}
                                 {/*download opgave*/}
                                 <Box
                                     aria-label={'file-box'}
@@ -693,6 +848,10 @@ export function AssignmentPage() {
                                     <Button
                                         startIcon={<DownloadIcon />}
                                         onClick={downloadAssignment}
+                                        disabled={
+                                            assignment === undefined ||
+                                            assignment.filename === undefined
+                                        }
                                     >
                                         {loading ? (
                                             <Skeleton
@@ -707,7 +866,9 @@ export function AssignmentPage() {
                                             <>
                                                 {assignment
                                                     ? assignment.filename
-                                                    : 'error'}
+                                                        ? assignment.filename
+                                                        : t('no_assignmentfile')
+                                                    : t('no_assignmentfile')}
                                             </>
                                         )}
                                     </Button>

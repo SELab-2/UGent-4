@@ -17,7 +17,7 @@ import dayjs from 'dayjs'
 import { EvenlySpacedRow } from './CustomComponents.tsx'
 
 interface SubmissionListItemTeacherPageProps {
-    relative_group_id: string
+    group_name: string
     group_id: string
     assignment_id: string
     course_id: string
@@ -34,7 +34,7 @@ export interface Score {
  * @param {SubmissionListItemTeacherPageProps} props - Props for SubmissionListItemTeacherPage component
  */
 export function SubmissionListItemTeacherPage({
-    relative_group_id,
+    group_name,
     group_id,
     assignment_id,
     course_id,
@@ -63,34 +63,40 @@ export function SubmissionListItemTeacherPage({
                     submissionsResponse.data[
                         submissionsResponse.data.length - 1
                     ]
-                const lastSubmissionResponse = await instance.get(
-                    `indieningen/${lastSubmission.indiening_id}/`
-                )
-                //Get the submission file
-                const newSubmission: Submission = lastSubmissionResponse.data
-                newSubmission.filename =
-                    lastSubmissionResponse.data.bestand.replace(/^.*[\\/]/, '')
-                newSubmission.bestand = await instance
-                    .get(
-                        `/indieningen/${lastSubmission.indiening_id}/indiening_bestand`,
-                        {
-                            responseType: 'blob',
-                        }
+                if (lastSubmission) {
+                    const lastSubmissionResponse = await instance.get(
+                        `indieningen/${lastSubmission.indiening_id}/`
                     )
-                    .then((res) => {
-                        let filename = 'indiening.zip'
-                        if (newSubmission.filename) {
-                            filename = newSubmission.filename
-                        }
-                        const blob = new Blob([res.data], {
-                            type: res.headers['content-type'],
+                    //Get the submission file
+                    const newSubmission: Submission =
+                        lastSubmissionResponse.data
+                    newSubmission.filename =
+                        lastSubmissionResponse.data.bestand.replace(
+                            /^.*[\\/]/,
+                            ''
+                        )
+                    newSubmission.bestand = await instance
+                        .get(
+                            `/indieningen/${lastSubmission.indiening_id}/indiening_bestand`,
+                            {
+                                responseType: 'blob',
+                            }
+                        )
+                        .then((res) => {
+                            let filename = 'indiening.zip'
+                            if (newSubmission.filename) {
+                                filename = newSubmission.filename
+                            }
+                            const blob = new Blob([res.data], {
+                                type: res.headers['content-type'],
+                            })
+                            const file: File = new File([blob], filename, {
+                                type: res.headers['content-type'],
+                            })
+                            return file
                         })
-                        const file: File = new File([blob], filename, {
-                            type: res.headers['content-type'],
-                        })
-                        return file
-                    })
-                setSubmitted(newSubmission)
+                    setSubmitted(newSubmission)
+                }
                 if (lastSubmission) {
                     const scoreResponse = await instance.get(
                         `/scores/?indiening=${lastSubmission.indiening_id}`

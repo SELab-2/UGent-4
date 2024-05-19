@@ -375,7 +375,7 @@ export function SubjectsPage() {
                                 }}
                             >
                                 <Header
-                                    variant={'default'}
+                                    variant={'not_main'}
                                     title={course.naam}
                                 />
                                 <Box
