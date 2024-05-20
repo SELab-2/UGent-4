@@ -33,7 +33,7 @@ interface AssignmentListItemSubjectsPageProps {
     projectName: string
     dueDate: Dayjs
     submissions: number
-    score: Score
+    score: Score | undefined
     maxScore: number
     isStudent: boolean
     archived: boolean
@@ -119,7 +119,7 @@ export function AssignmentListItemSubjectsPage({
                                         />
                                     ) : (
                                         <ListItemText
-                                            primary={`0/${maxScore} (0%)`}
+                                            primary={t('no_score_yet')}
                                         />
                                     )}
                                 </>,

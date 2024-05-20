@@ -282,12 +282,6 @@ export function ProjectsView({
                                                     }
                                                     score={
                                                         project.score
-                                                            ? project.score
-                                                            : {
-                                                                  score_id: 0,
-                                                                  score: 0,
-                                                                  indiening: 0,
-                                                              }
                                                     }
                                                     maxScore={Number(
                                                         project.assignment
