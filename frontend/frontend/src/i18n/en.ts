@@ -120,6 +120,10 @@ const english = {
     open_with_ui: 'Open with UI',
     choose_existing: 'Choose existing',
     make_new_script: 'Make new script',
+    cant_add_teachers_to_student_list: 'You cannot add teachers to the student list',
+    cant_add_students_to_teacher_list: 'You cannot add students to the teacher list',
+    cant_add_users_twice: 'You cannot add users to a subject twice',
+    this_user_doesnt_exist: 'This user does not exist',
 }
 
 export default english

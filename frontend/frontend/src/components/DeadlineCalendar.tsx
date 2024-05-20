@@ -7,13 +7,13 @@ import {
 import dayjs, { Dayjs } from 'dayjs'
 import {
     Badge,
-    SxProps,
-    Stack,
-    Typography,
     List,
     ListItem,
     ListItemButton,
     ListItemText,
+    Stack,
+    SxProps,
+    Typography,
 } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
@@ -125,7 +125,14 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
                         <ListItem>
                             <ListItemButton
                                 sx={{
-                                    border: 1,
+                                    border: 0.5,
+                                    borderColor: 'primary.main',
+                                    textAlign: 'center',
+                                    width: '100%',
+                                    borderRadius: 2,
+                                    '&:hover': {
+                                        backgroundColor: 'primary.light',
+                                    },
                                 }}
                                 onClick={() =>
                                     handleProjectClick(
@@ -134,8 +141,14 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
                                     )
                                 }
                             >
-                                <ListItemText primary={assignment.titel} />
-
+                                <ListItemText sx={{ maxWidth: '100%' }}>
+                                    <Typography
+                                        textOverflow={'ellipsis'}
+                                        color={'text.primary'}
+                                    >
+                                        {assignment.titel}
+                                    </Typography>
+                                </ListItemText>
                             </ListItemButton>
                         </ListItem>
                     ))}
@@ -202,6 +215,12 @@ export function DeadlineCalendar({
         fetchHighlightedDays(date)
     }
 
+    const handleYearChange = (date: Dayjs) => {
+        setIsLoading(true)
+        setHighlightedDays([])
+        fetchHighlightedDays(date)
+    }
+
     return (
         <>
             <Stack direction={'column'}>
@@ -211,6 +230,7 @@ export function DeadlineCalendar({
                     value={value}
                     onChange={(newValue) => setValue(newValue)}
                     onMonthChange={(newValue) => handleMonthChange(newValue)}
+                    onYearChange={(newValue) => handleYearChange(newValue)}
                     renderLoading={() => <DayCalendarSkeleton />}
                     loading={isLoading}
                     sx={dateStyle}

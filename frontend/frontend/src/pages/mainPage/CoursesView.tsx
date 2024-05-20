@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Course } from './MainPage.tsx'
 
 interface CourseCardProps {
+    userid: number
     isStudent: boolean
     activecourses: Course[]
     pinnedCourses: number[]
@@ -13,6 +14,7 @@ interface CourseCardProps {
 }
 
 export function CoursesView({
+    userid,
     isStudent,
     activecourses,
     pinnedCourses,
@@ -25,7 +27,7 @@ export function CoursesView({
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '62svw', lg: '73svw' }}
+                minWidth={{ md: '47svw', lg: '68svw' }}
             >
                 <Stack
                     direction={'column'}
@@ -46,6 +48,7 @@ export function CoursesView({
                         A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
                         {activecourses.map((course: Course) => (
                             <CourseCard
+                                userid={userid}
                                 key={course.naam}
                                 courseId={course.vak_id.toString()}
                                 archived={false}

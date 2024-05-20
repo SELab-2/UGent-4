@@ -455,6 +455,7 @@ export function SubjectsPage() {
                                             studentsLoading ? [] : students
                                         }
                                         text="students"
+                                        noGroup={false}
                                     ></StudentPopUp>
                                 </Box>
                             </Stack>

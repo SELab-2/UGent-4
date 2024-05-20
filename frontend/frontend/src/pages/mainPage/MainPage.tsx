@@ -1,6 +1,6 @@
 import { Header } from '../../components/Header.tsx'
 import { Button } from '../../components/CustomComponents.tsx'
-import { Box, Stack } from '@mui/material'
+import { Box, MenuItem, Select, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ArchivedView } from './ArchivedView.tsx'
 import { CoursesView } from './CoursesView.tsx'
@@ -17,6 +17,7 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 export interface Course {
     vak_id: number
     naam: string
+    jaartal: number
     studenten: number[]
     lesgevers: number[]
     gearchiveerd: boolean
@@ -50,15 +51,13 @@ export default function MainPage() {
     const [courseOrder, setCourseOrder] = useState<number[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [selectedYear, setSelectedYear] = useState<number>(dayjs().year())
 
     //navigator for routing
     const [assignments, setAssignments] = useState<project[]>([])
     const navigator = useNavigate()
 
     useEffect(() => {
-        console.log('requesting api')
-        //set loading to true every time the data is requested
-
         // Get the courses, their projects, and their respective deadlines + the role of the user
         async function fetchData() {
             //set loading to true every time the data is requested
@@ -203,8 +202,8 @@ export default function MainPage() {
                                               md: 'row',
                                           }}
                                           minWidth={{
-                                              md: '60svw',
-                                              lg: '69svw',
+                                              md: '40svw',
+                                              lg: '49svw',
                                           }}
                                       >
                                           {[...Array(3)].map((_, index) => (
@@ -217,8 +216,8 @@ export default function MainPage() {
                                               md: 'row',
                                           }}
                                           minWidth={{
-                                              md: '60svw',
-                                              lg: '69svw',
+                                              md: '40svw',
+                                              lg: '49svw',
                                           }}
                                       >
                                           {[...Array(3)].map((_, index) => (
@@ -228,11 +227,14 @@ export default function MainPage() {
                                   ]
                                 : [
                                       <CoursesView
+                                          userid={user}
                                           isStudent={role == 'student'}
                                           activecourses={courses
                                               .filter(
                                                   (course) =>
-                                                      !course.gearchiveerd
+                                                      !course.gearchiveerd &&
+                                                      course.jaartal ===
+                                                          selectedYear
                                               )
                                               .sort((a: Course, b: Course) => {
                                                   if (
@@ -273,6 +275,7 @@ export default function MainPage() {
                                           pinCourse={pinCourse}
                                       />,
                                       <ArchivedView
+                                          userid={user}
                                           isStudent={role == 'student'}
                                           archivedCourses={courses
                                               .filter(
@@ -319,7 +322,37 @@ export default function MainPage() {
                                   ]
                         }
                     />
-
+                    <Box
+                        height={'100%'}
+                        display={'flex'}
+                        flexDirection={'column'}
+                        justifyContent={'center'}
+                        alignItems={'flex-start'}
+                        mb={2}
+                    >
+                        <Select
+                            variant={'outlined'}
+                            color={'primary'}
+                            value={selectedYear}
+                            onChange={(e) =>
+                                setSelectedYear(e.target.value as number)
+                            }
+                            label="Select Academic Year"
+                            sx={{
+                                minWidth: 150,
+                                '& .MuiSelect-outlined': {
+                                    border: 1.5,
+                                    borderColor: 'primary.main',
+                                },
+                            }}
+                        >
+                            {[2022, 2023, 2024, 2025].map((year) => (
+                                <MenuItem key={year} value={year}>
+                                    {year}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </Box>
                     {/* Add a calendar to the right of the mainpage. */}
                     <Box
                         aria-label={'calendarView'}

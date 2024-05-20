@@ -32,6 +32,7 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
 import axios, { AxiosResponse } from 'axios'
+import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
 
 // group interface
 export interface Group {
@@ -186,15 +187,18 @@ export function AssignmentPage() {
             const groupResponse = await instance.get(
                 `groepen/?student=${user.user}&project=${assignmentId}`
             )
-            const group: Group = groupResponse.data[0]
 
-            const studentPromises: Promise<AxiosResponse<User>>[] =
-                group.studenten.map((id: number) =>
-                    instance.get('/gebruikers/' + id)
-                )
+            if (groupResponse.data.length > 0) {
+                const group: Group = groupResponse.data[0]
 
-            const temp_students = await axios.all(studentPromises)
-            setStudents(temp_students.map((res) => res.data))
+                const studentPromises: Promise<AxiosResponse<User>>[] =
+                    group.studenten.map((id: number) =>
+                        instance.get('/gebruikers/' + id)
+                    )
+
+                const temp_students = await axios.all(studentPromises)
+                setStudents(temp_students.map((res) => res.data))
+            }
 
             setStudentsLoading(false)
         }
@@ -406,26 +410,20 @@ export function AssignmentPage() {
                                                 height={50}
                                             />
                                         ) : (
-                                            <>
-                                                {assignment !== undefined &&
-                                                    assignment.deadline !==
-                                                        null && (
-                                                        <Typography
-                                                            variant="h6"
-                                                            color={
-                                                                'text.primary'
-                                                            }
-                                                        >
-                                                            {assignment
-                                                                ? dayjs(
-                                                                      assignment.deadline
-                                                                  ).format(
-                                                                      'DD/MM/YYYY-HH:MM'
-                                                                  )
-                                                                : 'no deadline'}
-                                                        </Typography>
-                                                    )}
-                                            </>
+                                            <Typography
+                                                variant="h6"
+                                                color={
+                                                    'text.primary'
+                                                }
+                                            >
+                                                {assignment && assignment.deadline
+                                                    ? dayjs(
+                                                            assignment.deadline
+                                                        ).format(
+                                                            'DD/MM/YYYY HH:mm'
+                                                        )
+                                                    : t('no_deadline')}
+                                            </Typography>
                                         )}
                                     </Box>
                                     {loading ? (
@@ -440,60 +438,59 @@ export function AssignmentPage() {
                                         />
                                     ) : (
                                         <>
-                                            <>
-                                                {assignment?.student_groep ? (
-                                                    <Button
-                                                        sx={{
-                                                            bgcolor:
-                                                                'secondary.main',
-                                                            textTransform:
-                                                                'none',
-                                                        }}
-                                                        onClick={goToGroups}
-                                                    >
-                                                        <Typography color="secondary.contrastText">
-                                                            {t('group')}
-                                                        </Typography>
-                                                    </Button>
-                                                ) : (
-                                                    <Box
-                                                        sx={{
-                                                            position:
-                                                                'absolute',
-                                                            top: 90,
-                                                            right: 50,
-                                                            display: 'flex',
-                                                            justifyContent:
-                                                                'flex-end',
-                                                            zIndex: 1,
-                                                            marginTop: '-40px',
-                                                        }}
-                                                    >
-                                                        {assignment?.max_groep_grootte ===
-                                                        1 ? (
-                                                            <Typography variant="body1">
-                                                                {user.first_name +
-                                                                    ' ' +
-                                                                    user.last_name}
-                                                            </Typography>
-                                                        ) : (
-                                                            <>
-                                                                <StudentPopUp
-                                                                    students={
-                                                                        studentsLoading
-                                                                            ? []
-                                                                            : students
-                                                                    }
-                                                                    text="group_members"
-                                                                />
-                                                            </>
-                                                        )}
-                                                    </Box>
-                                                )}
-                                            </>
+                                            {(assignment?.max_groep_grootte
+                                                ? assignment.max_groep_grootte
+                                                : 1) > 1 && (
+                                                <GroupAccessComponent
+                                                    assignmentid={parseInt(
+                                                        assignmentId
+                                                    )}
+                                                    courseid={parseInt(
+                                                        courseId
+                                                    )}
+                                                />
+                                            )}
                                         </>
                                     )}
                                 </Box>
+                                {/*extra deadline*/}
+                                {assignment?.extra_deadline && (
+                                    <Box
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        alignItems={'center'}
+                                        gap={1}
+                                        pl={2.5}
+                                    >
+                                        <Typography
+                                            variant="h6"
+                                            color="text.primary"
+                                            fontWeight={'bold'}
+                                        >
+                                            Extra Deadline:
+                                        </Typography>
+                                        {loading ? (
+                                            <Skeleton
+                                                variant="text"
+                                                width={180}
+                                                height={50}
+                                            />
+                                        ) : (
+                                            <Typography
+                                                variant="h6"
+                                                color={'text.primary'}
+                                            >
+                                                {assignment
+                                                    ? dayjs(
+                                                          assignment.extra_deadline
+                                                      ).format(
+                                                          'DD/MM/YYYY HH:mm'
+                                                      )
+                                                    : 'no deadline'}
+                                            </Typography>
+                                        )}
+                                    </Box>
+                                )}
 
                                 {/* Assignment description */}
                                 <Card sx={{ padding: '20px' }}>
@@ -758,26 +755,20 @@ export function AssignmentPage() {
                                                     height={50}
                                                 />
                                             ) : (
-                                                <>
-                                                    {assignment !== undefined &&
-                                                        assignment.deadline !==
-                                                            null && (
-                                                            <Typography
-                                                                variant="h6"
-                                                                color={
-                                                                    'text.primary'
-                                                                }
-                                                            >
-                                                                {assignment
-                                                                    ? dayjs(
-                                                                          assignment.deadline
-                                                                      ).format(
-                                                                          'DD/MM/YYYY-HH:MM'
-                                                                      )
-                                                                    : 'no deadline'}
-                                                            </Typography>
-                                                        )}
-                                                </>
+                                                <Typography
+                                                    variant="h6"
+                                                    color={
+                                                        'text.primary'
+                                                    }
+                                                >
+                                                    {assignment && assignment.deadline
+                                                        ? dayjs(
+                                                                assignment.deadline
+                                                            ).format(
+                                                                'DD/MM/YYYY HH:mm'
+                                                            )
+                                                        : t('no_deadline')}
+                                                </Typography>
                                             )}
                                         </Box>
                                         <Box style={{ flexGrow: 1 }} />
@@ -837,6 +828,7 @@ export function AssignmentPage() {
                                                                             : students
                                                                     }
                                                                     text="group_members"
+                                                                    noGroup={students.length == 0}
                                                                 />
                                                             </>
                                                         )}
@@ -877,7 +869,7 @@ export function AssignmentPage() {
                                                     ? dayjs(
                                                           assignment.extra_deadline
                                                       ).format(
-                                                          'DD/MM/YYYY-HH:MM'
+                                                          'DD/MM/YYYY HH:mm'
                                                       )
                                                     : 'no deadline'}
                                             </Typography>
@@ -1058,16 +1050,8 @@ export function AssignmentPage() {
                                                                         <SubmissionListItemStudentPage
                                                                             realId={submission.indiening_id.toString()}
                                                                             visualId={(
-                                                                                submission.indiening_id -
-                                                                                Math.min(
-                                                                                    ...submissions.map(
-                                                                                        (
-                                                                                            submission
-                                                                                        ) =>
-                                                                                            submission.indiening_id
-                                                                                    )
-                                                                                ) +
-                                                                                1
+                                                                                submissions.length -
+                                                                                index
                                                                             ).toString()}
                                                                             timestamp={dayjs(
                                                                                 submission.tijdstip

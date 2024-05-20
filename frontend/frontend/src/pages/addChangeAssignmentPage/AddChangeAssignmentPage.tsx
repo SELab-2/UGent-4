@@ -1,4 +1,4 @@
-import { Card } from '../../components/CustomComponents.tsx'
+import {Card, Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
 import {
     Box,
     CircularProgress,
@@ -95,6 +95,7 @@ export function AddChangeAssignmentPage() {
     const [description, setDescription] = useState('')
     const [dueDate, setDueDate] = useState<Dayjs | null>(null)
     const [extraDueDate, setExtraDueDate] = useState<Dayjs | null>(null)
+    const [oldRestrictions, setOldRestrictions] = useState<restriction[]>([])
     const [restrictions, setRestrictions] = useState<restriction[]>([])
     const [visible, setVisible] = useState(false)
     const [assignmentFile, setAssignmentFile] = useState<File>()
@@ -232,6 +233,7 @@ export function AddChangeAssignmentPage() {
                                 console.error(error)
                             })
                     }
+                    setOldRestrictions(restrictions)
                     setRestrictions(restrictions)
                 })
                 .catch((error) => {
@@ -332,12 +334,23 @@ export function AddChangeAssignmentPage() {
             },
         }
 
+        //delete removed restrictions
+        oldRestrictions.forEach((oldRestriction) => {
+            if (!restrictions.includes(oldRestriction)) {
+                instance
+                    .delete(
+                        '/restricties/' + oldRestriction.restrictie_id + '/'
+                    )
+                    .catch((error) => {
+                        console.error(error)
+                    })
+            }
+        })
+
         restrictions.forEach((restriction) => {
             const formData = new FormData()
             formData.append('project', projectId)
-            if (restriction.file !== undefined) {
-                formData.append('script', restriction.file)
-            }
+
             formData.append('moet_slagen', restriction.moet_slagen.toString())
             if (restriction.restrictie_id !== undefined) {
                 formData.append(
@@ -354,6 +367,9 @@ export function AddChangeAssignmentPage() {
                         console.error(error)
                     })
             } else {
+                if (restriction.file !== undefined) {
+                    formData.append('script', restriction.file)
+                }
                 instance
                     .post('/restricties/', formData, config)
                     .catch((error) => {
@@ -523,7 +539,7 @@ export function AddChangeAssignmentPage() {
                                             ) : (
                                                 <TextField
                                                     type="text"
-                                                    placeholder={'Title'}
+                                                    placeholder={t('name')}
                                                     error={
                                                         assignmentErrors.title
                                                     }
@@ -732,8 +748,8 @@ export function AddChangeAssignmentPage() {
                                     <Card aria-label={'description'}>
                                         <Box
                                             padding={2}
-                                            maxHeight={'20svh'}
-                                            minHeight={'20svh'}
+                                            maxHeight={'18svh'}
+                                            minHeight={'18svh'}
                                         >
                                             <Typography
                                                 variant={'h5'}
@@ -776,7 +792,7 @@ export function AddChangeAssignmentPage() {
                                                     }
                                                     sx={{
                                                         overflowY: 'auto',
-                                                        maxHeight: '25svh',
+                                                        maxHeight: '23svh',
                                                     }}
                                                 />
                                             )}
@@ -788,24 +804,45 @@ export function AddChangeAssignmentPage() {
                                         marginTop={3}
                                         display={'flex'}
                                         flexDirection={'row'}
+                                        alignItems={'flex-end'}
+                                        gap={1}
                                     >
                                         <Card
                                             sx={{
-                                                padding: 1,
                                                 backgroundColor:
                                                     'background.default',
                                                 width: '70%',
                                                 height: '28svh',
                                             }}
                                         >
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: 'secondary.main',
+                                                    height: 48,
+                                                    padding: 1,
+                                                }}
+                                            >
                                             <Typography
                                                 variant={'h5'}
                                                 fontWeight={'bold'}
                                             >
                                                 {t('restrictions')}
                                             </Typography>
-                                            <Box sx={{ padding: 1 }}>
-                                                {/*This list will render the restrictions that are added to the assignment.*/}
+                                            <EvenlySpacedRow items={[
+                                                    <Typography variant="body1" fontWeight={'bold'}>
+                                                        {t('name')}
+                                                    </Typography>,
+                                                    <Typography variant="body1" fontWeight={'bold'}>
+                                                        {t('must_pass')}
+                                                    </Typography>,
+                                                    <Typography variant="body1" fontWeight={'bold'}>
+                                                        {t('remove')}
+                                                    </Typography>]}
+                                            />
+                                            </Box>
+                                            <Divider/>
+                                            {/*This list will render the restrictions that are added to the assignment.*/}
+                                            <Box sx={{marginTop: -1.1}}>
                                                 <List
                                                     sx={{
                                                         maxHeight: '18vh',
@@ -824,23 +861,26 @@ export function AddChangeAssignmentPage() {
                                                                     index
                                                                 ) => {
                                                                     return (
-                                                                        <ListItem
-                                                                            key={
-                                                                                index
-                                                                            }
-                                                                        >
-                                                                            <RestrictionCard
-                                                                                restriction={
-                                                                                    restriction
+                                                                        <>
+                                                                            <Divider/>
+                                                                            <ListItem sx={{ maxHeight: '45px'}}
+                                                                                key={
+                                                                                    index
                                                                                 }
-                                                                                restrictions={
-                                                                                    restrictions
-                                                                                }
-                                                                                setRestrictions={
-                                                                                    setRestrictions
-                                                                                }
-                                                                            />
-                                                                        </ListItem>
+                                                                            >
+                                                                                <RestrictionCard
+                                                                                    restriction={
+                                                                                        restriction
+                                                                                    }
+                                                                                    restrictions={
+                                                                                        restrictions
+                                                                                    }
+                                                                                    setRestrictions={
+                                                                                        setRestrictions
+                                                                                    }
+                                                                                />
+                                                                            </ListItem>
+                                                                        </>
                                                                     )
                                                                 }
                                                             )}
@@ -848,34 +888,35 @@ export function AddChangeAssignmentPage() {
                                                     )}
                                                 </List>
                                             </Box>
-                                            <Box
-                                                width={'100%'}
-                                                display={'flex'}
-                                                justifyContent={'flex-end'}
-                                            >
-                                                <Tooltip
-                                                    title={t('add_restriction')}
-                                                >
-                                                    <AddRestrictionButton
-                                                        // When this button is clicked, a pop up will show.
-                                                        // This popup will allow you to choose to make a restriction yourself,
-                                                        // create one starting from a template,
-                                                        // or choose a file from the system.
-                                                        restrictions={
-                                                            restrictions
-                                                        }
-                                                        setRestrictions={(
-                                                            newRestrictions
-                                                        ) =>
-                                                            setRestrictions(
-                                                                newRestrictions
-                                                            )
-                                                        }
-                                                        userid={user.user}
-                                                    ></AddRestrictionButton>
-                                                </Tooltip>
-                                            </Box>
                                         </Card>
+                                        <Box
+                                            height={'fit-content'}
+                                            width={'fit-content'}
+                                            display={'flex'}
+                                            flexDirection={'column'}
+                                            justifyContent={'flex-end'}
+                                            alignItems={'flex-end'}
+                                        >
+                                            <Tooltip
+                                                title={t('add_restriction')}
+                                            >
+                                                <AddRestrictionButton
+                                                    // When this button is clicked, a pop up will show.
+                                                    // This popup will allow you to choose to make a restriction yourself,
+                                                    // create one starting from a template,
+                                                    // or choose a file from the system.
+                                                    restrictions={restrictions}
+                                                    setRestrictions={(
+                                                        newRestrictions
+                                                    ) =>
+                                                        setRestrictions(
+                                                            newRestrictions
+                                                        )
+                                                    }
+                                                    userid={user.user}
+                                                ></AddRestrictionButton>
+                                            </Tooltip>
+                                        </Box>
                                     </Box>
                                     {/* Main actions section */}
                                     <Box

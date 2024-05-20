@@ -17,9 +17,10 @@ import { t } from 'i18next'
 interface StudentPopUpProps {
     students: User[]
     text: string
+    noGroup: boolean
 }
 
-export default function StudentPopUp({ students, text }: StudentPopUpProps) {
+export default function StudentPopUp({ students, text, noGroup }: StudentPopUpProps) {
     const [open, setOpen] = React.useState(false)
 
     const handleClose = () => {
@@ -59,22 +60,35 @@ export default function StudentPopUp({ students, text }: StudentPopUpProps) {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent dividers>
-                    {/* List of Students */}
-                    {students.length > 0 ? (
-                        <List>
-                            {students.map((student) => (
-                                <ListItem key={student.user}>
-                                    <ListItemText
-                                        primary={`${student.first_name} ${student.last_name}`}
-                                    />
-                                </ListItem>
-                            ))}
-                        </List>
-                    ) : (
-                        <Typography variant="body1">
-                            {t('loading') + ' ' + t('students') + '...'}
-                        </Typography>
-                    )}
+                    {noGroup ?
+                        <>
+                            <Typography variant="body1">
+                                {t('noGroup')}
+                            </Typography>
+                            <Typography variant="body1">
+                                {t('contactTeacher')}
+                            </Typography>
+                        </>
+                    :
+                        <>
+                            {/* List of Students */}
+                            {students.length > 0 ? (
+                                <List>
+                                    {students.map((student) => (
+                                        <ListItem key={student.user}>
+                                            <ListItemText
+                                                primary={`${student.first_name} ${student.last_name}`}
+                                            />
+                                        </ListItem>
+                                    ))}
+                                </List>
+                            ) : (
+                                <Typography variant="body1">
+                                    {t('loading') + ' ' + t('students') + '...'}
+                                </Typography>
+                            )}
+                        </>
+                    }
                 </DialogContent>
             </Dialog>
         </>

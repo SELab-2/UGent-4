@@ -271,10 +271,14 @@ export function ProjectsView({
                                                     projectName={
                                                         project.assignment.titel
                                                     }
-                                                    dueDate={dayjs(
-                                                        project.assignment
-                                                            .deadline
-                                                    )}
+                                                    dueDate={
+                                                        project.assignment.deadline
+                                                            ? dayjs(
+                                                              project.assignment
+                                                                .deadline
+                                                              )
+                                                            : undefined
+                                                    }
                                                     submissions={
                                                         project.submissions
                                                             ? project.submissions
@@ -282,12 +286,6 @@ export function ProjectsView({
                                                     }
                                                     score={
                                                         project.score
-                                                            ? project.score
-                                                            : {
-                                                                  score_id: 0,
-                                                                  score: 0,
-                                                                  indiening: 0,
-                                                              }
                                                     }
                                                     maxScore={Number(
                                                         project.assignment

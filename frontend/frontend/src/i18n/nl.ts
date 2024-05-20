@@ -116,10 +116,14 @@ const dutch = {
     noGroup: 'Je lijkt nog geen groep te hebben.',
     chooseGroup: 'Kies een groep voor je indient',
     contactTeacher: 'Gelieve contact op te nemen met je lesgever.',
-    group_number: 'GroepsNummer',
+    group_number: 'Groepnummer',
     open_with_ui: 'Open met UI',
     choose_existing: 'Kies een bestaand script',
     make_new_script: 'Maak nieuw script aan',
+    cant_add_teachers_to_student_list: 'Je kan geen leerkrachten aan de studenten lijst toevoegen',
+    cant_add_students_to_teacher_list: 'Je kan geen studenten aan de leerkrachten lijst toevoegen',
+    cant_add_users_twice: 'Je kan gebruikers geen twee keer toevoegen',
+    this_user_doesnt_exist: 'Deze gebruiker bestaat niet',
 }
 
 export default dutch

@@ -298,6 +298,7 @@ export function SubmissionPage() {
                             <StudentPopUp
                                 students={studentsLoading ? [] : students}
                                 text="group_members"
+                                noGroup={false}
                             />
                         )}
                     </Box>

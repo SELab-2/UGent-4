@@ -18,7 +18,7 @@ import {
     Typography,
 } from '@mui/material'
 import { Header } from '../../components/Header'
-import React, { ChangeEvent, useEffect, useState } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
@@ -43,7 +43,8 @@ function UserList(
     loading: boolean,
     users: User[],
     setSelected: React.Dispatch<React.SetStateAction<number>>,
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    handleRemove: () => void
 ) {
     return (
         <Box marginTop={3}>
@@ -70,7 +71,12 @@ function UserList(
                         {users.map((user) => {
                             const handleClickOpen = () => {
                                 setSelected(user.user)
-                                setOpen(true)
+
+                                if (user.is_lesgever) {
+                                    setOpen(true)
+                                } else {
+                                    handleRemove()
+                                }
                             }
                             {
                                 /* The list of users is mapped onto buttons
@@ -79,7 +85,12 @@ function UserList(
                             return (
                                 <>
                                     <Divider />
-                                    <ListItem>
+                                    <ListItem
+                                        disabled={
+                                            users.length == 1 &&
+                                            users[0].is_lesgever
+                                        }
+                                    >
                                         <EvenlySpacedRow
                                             items={[
                                                 <ListItemText
@@ -127,7 +138,6 @@ function UserList(
                                             ]}
                                         />
                                     </ListItem>
-
                                 </>
                             )
                         })}
@@ -145,7 +155,8 @@ function UploadPart(
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
     handleAdd: () => void,
-    str: string
+    str: string,
+    textFieldRef: React.RefObject<HTMLInputElement>
 ) {
     return (
         <>
@@ -160,6 +171,7 @@ function UploadPart(
                                 onChange={(event) =>
                                     setEmail(event.target.value)
                                 }
+                                inputRef={textFieldRef}
                             />
                         </Box>
                         <Box>
@@ -227,6 +239,8 @@ export function AddChangeSubjectPage() {
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
     const [user, setUser] = useState<User>()
+    const studentRef = useRef<HTMLInputElement>(null)
+    const teacherRef = useRef<HTMLInputElement>(null)
 
     const [vakID, setVakID] = useState(params.courseId)
 
@@ -239,15 +253,12 @@ export function AddChangeSubjectPage() {
     }
 
     const handleRemoveStudent = (): void => {
-        setStudents((oldstudents: User[]): User[] => {
-            for (let i = 0; i < oldstudents.length; i++) {
-                if (oldstudents[i].user == selectedStudent) {
-                    oldstudents.splice(i, 1)
-                    return oldstudents
-                }
-            }
-            return oldstudents
-        })
+        const newstudents = students.filter(
+            (student) => student.user != selectedStudent
+        )
+
+        setStudents(newstudents)
+
         setOpenStudent(false)
     }
 
@@ -257,6 +268,7 @@ export function AddChangeSubjectPage() {
             .then((res) => {
                 setStudents((oldstudents) => {
                     if (res.data.length == 0) {
+                        alert(t('this_user_doesnt_exist'))
                         return oldstudents
                     }
                     return addUser(false, res.data[0], oldstudents)
@@ -267,6 +279,11 @@ export function AddChangeSubjectPage() {
             })
 
         handleUploadStudent()
+
+        if (studentRef.current) {
+            studentRef.current.value = '';
+            setEmailStudent('')
+        }
     }
 
     const handleStudentFileChange = (
@@ -328,15 +345,10 @@ export function AddChangeSubjectPage() {
     // This function will remove a teacher from the list.
     // It does so by looping through the list and removing the teacher with the correct ID.
     const handleRemoveTeacher = () => {
-        setTeachers((oldteacher) => {
-            for (let i = 0; i < oldteacher.length; i++) {
-                if (oldteacher[i].user == selectedTeacher) {
-                    oldteacher.splice(i, 1)
-                    return oldteacher
-                }
-            }
-            return oldteacher
-        })
+        const newTeachers = teachers.filter(
+            (teacher) => teacher.user != selectedTeacher
+        )
+        setTeachers(newTeachers)
         setOpenTeacher(false)
     }
 
@@ -348,6 +360,7 @@ export function AddChangeSubjectPage() {
                     //This is like this to prevent the same user being in the list twice
 
                     if (res.data.length == 0) {
+                        alert(t('this_user_doesnt_exist'))
                         return oldteachers
                     }
 
@@ -358,6 +371,11 @@ export function AddChangeSubjectPage() {
                 console.log(err)
             })
         handleUploadTeacher()
+
+        if (teacherRef.current) {
+            teacherRef.current.value = '';
+            setEmailTeacher('')
+        }
     }
 
     const handleTeacherFileChange = (
@@ -422,6 +440,11 @@ export function AddChangeSubjectPage() {
         let found = false
         const id = userData.user
         if (userData.is_lesgever != isLesgever) {
+            if (userData.is_lesgever){
+                alert(t('cant_add_teachers_to_student_list'))
+            } else {
+                alert(t('cant_add_students_to_teacher_list'))
+            }
             return olduser
         }
         for (const teacher of olduser) {
@@ -430,6 +453,7 @@ export function AddChangeSubjectPage() {
             }
         }
         if (found) {
+            alert(t('cant_add_users_twice'))
             return olduser
         } else {
             return [...olduser, userData]
@@ -461,6 +485,7 @@ export function AddChangeSubjectPage() {
                 })
                 .catch((err) => {
                     console.log(err)
+                    alert(err.response.data)
                 })
         }
     }
@@ -469,6 +494,9 @@ export function AddChangeSubjectPage() {
         async function fetchUser() {
             setUserLoading(true)
             const userResponse = await instance.get('/gebruikers/me/')
+            if (vakID == undefined) {
+                setTeachers([userResponse.data])
+            }
             setUser(userResponse.data)
             setUserLoading(false)
         }
@@ -564,7 +592,7 @@ export function AddChangeSubjectPage() {
                         <>
                             <Stack direction={'column'}>
                                 <Header
-                                    variant={loading ? 'default' : 'not_main'}
+                                    variant={'default'}
                                     title={loading ? '' : title}
                                 />
                                 <Stack
@@ -622,13 +650,27 @@ export function AddChangeSubjectPage() {
                                                 />
                                             )}
                                         </Box>
-                                        <Box padding={'20px'}>
+                                        <Box
+                                            padding={'20px'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                        >
                                             <SecondaryButton
+                                                /* This is the large save button on the top of the page */
+                                                onClick={() =>
+                                                    navigate(`/course/${vakID}`)
+                                                }
+                                            >
+                                                {t('cancel')}
+                                            </SecondaryButton>
+
+                                            <Button
                                                 /* This is the large save button on the top of the page */
                                                 onClick={handleSave}
                                             >
                                                 {t('save')}
-                                            </SecondaryButton>
+                                            </Button>
                                         </Box>
                                     </Box>
                                     <Stack direction={'row'} gap={10}>
@@ -660,7 +702,8 @@ export function AddChangeSubjectPage() {
                                                             loading,
                                                             students,
                                                             setSelectedStudent,
-                                                            setOpenStudent
+                                                            setOpenStudent,
+                                                            handleRemoveStudent
                                                         )}
                                                     </Box>
                                                 </Card>
@@ -670,14 +713,15 @@ export function AddChangeSubjectPage() {
                                                         handleStudentFileChange,
                                                         setEmailStudent,
                                                         handleAddStudent,
-                                                        t('upload_students')
+                                                        t('upload_students'),
+                                                        studentRef,
                                                     )}
                                                 </Box>
                                                 {DialogWindow(
                                                     handleCloseStudent,
                                                     openStudent,
                                                     handleRemoveStudent,
-                                                    t('delete_student')
+                                                    t('delete_student'),
                                                 )}
                                             </Stack>
                                         </Box>
@@ -709,7 +753,8 @@ export function AddChangeSubjectPage() {
                                                             loading,
                                                             teachers,
                                                             setSelectedTeacher,
-                                                            setOpenTeacher
+                                                            setOpenTeacher,
+                                                            handleRemoveTeacher
                                                         )}
                                                     </Box>
                                                 </Card>
@@ -719,7 +764,8 @@ export function AddChangeSubjectPage() {
                                                         handleTeacherFileChange,
                                                         setEmailTeacher,
                                                         handleAddTeacher,
-                                                        t('upload_teachers')
+                                                        t('upload_teachers'),
+                                                        teacherRef,
                                                     )}
                                                 </Box>
                                                 {DialogWindow(
