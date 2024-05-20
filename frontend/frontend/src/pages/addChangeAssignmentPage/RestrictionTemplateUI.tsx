@@ -1,13 +1,13 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import {
     Box,
-    Button,
+    TextField,
     Checkbox,
-    IconButton,
     List,
     ListItem,
     ListItemText,
-    TextField,
+    IconButton,
+    Button,
 } from '@mui/material'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -17,9 +17,12 @@ import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 
+// Define a type for the parameters
+type ParamValue = string | number | boolean | string[]
+
 const saveRestrictionTemplate = (
     restrictionCode: string,
-    params: { [key: string]: any },
+    params: { [key: string]: ParamValue },
     templateFileName: string
 ) => {
     // This function will save the restriction template with the given parameters.
@@ -103,11 +106,16 @@ export default function RestrictionTemplateUI({
 
     const params = parseParams(restrictionCode)
 
-    const [paramsState, setParamsState] = useState<{ [key: string]: any }>({})
+    // change this paramsState to be an array of the following type of objects:
+    // {name: string, value: string | number | boolean | string[]}
+    // it mus have a [Symbol.iterator] method
+    const [paramsState, setParamsState] = useState<{
+        [key: string]: number | string | boolean | string[]
+    }>({})
 
     // Initialize paramsState with default values
     useState(() => {
-        const initialState: { [key: string]: any } = {}
+        const initialState: { [key: string]: ParamValue } = {}
         params.forEach((param) => {
             initialState[param.variable] = param.value
         })
@@ -126,6 +134,8 @@ export default function RestrictionTemplateUI({
             file: new File([code], templateFileName, { type: 'text/plain' }),
             moet_slagen: false,
         }
+        console.log('code:')
+        console.log(code)
         setRestrictions([...restrictions, newRestriction])
         handleCloseTemplateInterface()
     }
@@ -145,31 +155,58 @@ export default function RestrictionTemplateUI({
     // It will change the row at the given index to the new value.
     const handleChangeRow = (
         variable: string,
-        newValue: any,
+        newValue: string,
         index: number
     ) => {
-        const newArrayValues = [...paramsState[variable]]
-        newArrayValues[index] = newValue
-        setParamsState((prevState) => ({
-            ...prevState,
-            [variable]: newArrayValues,
-        }))
+        const currentValue = paramsState[variable]
+        if (Array.isArray(currentValue)) {
+            const newArrayValues = [...currentValue] // TypeScript now knows currentValue is a string[]
+            newArrayValues[index] = newValue
+            setParamsState((prevState) => ({
+                ...prevState,
+                [variable]: newArrayValues,
+            }))
+        } else {
+            console.error(
+                `Expected an array for variable ${variable}, but got:`,
+                currentValue
+            )
+        }
     }
 
     const handleDeleteRow = (variable: string, index: number) => {
-        const newArrayValues = [...paramsState[variable]]
-        newArrayValues.splice(index, 1)
-        setParamsState((prevState) => ({
-            ...prevState,
-            [variable]: newArrayValues,
-        }))
+        const currentValue = paramsState[variable]
+        if (Array.isArray(currentValue)) {
+            const newArrayValues = [...currentValue] // TypeScript now knows currentValue is a string[]
+            newArrayValues.splice(index, 1)
+            setParamsState((prevState) => ({
+                ...prevState,
+                [variable]: newArrayValues,
+            }))
+        } else {
+            console.error(
+                `Expected an array for variable ${variable}, but got:`,
+                currentValue
+            )
+        }
     }
 
     const handleAddRow = (variable: string) => {
-        setParamsState((prevState) => ({
-            ...prevState,
-            [variable]: [...(prevState[variable] || []), ''], // Initialize with an empty string
-        }))
+        setParamsState((prevState) => {
+            const currentArray = prevState[variable]
+            if (Array.isArray(currentArray)) {
+                return {
+                    ...prevState,
+                    [variable]: [...currentArray, ''], // Initialize with an empty string
+                }
+            } else {
+                console.error(
+                    `Expected an array for variable ${variable}, but got:`,
+                    currentArray
+                )
+                return prevState // Return previous state without modification
+            }
+        })
     }
 
     return (
@@ -255,7 +292,9 @@ export default function RestrictionTemplateUI({
                                     {param.description}
                                 </Typography>
                                 <Checkbox
-                                    checked={paramsState[param.variable]}
+                                    checked={Boolean(
+                                        paramsState[param.variable]
+                                    )}
                                     color="primary"
                                     onChange={(e) =>
                                         handleArrayChange(
@@ -275,38 +314,48 @@ export default function RestrictionTemplateUI({
                                     {param.description}
                                 </Typography>
                                 <List>
-                                    {(paramsState[param.variable] || []).map(
-                                        (item: string, idx: number) => (
-                                            <ListItem key={idx}>
-                                                <ListItemText>
-                                                    <TextField
-                                                        type="text"
-                                                        value={item}
-                                                        onChange={(e) =>
-                                                            handleChangeRow(
-                                                                param.variable,
-                                                                e.target.value,
-                                                                idx
-                                                            )
-                                                        }
-                                                    />
-                                                </ListItemText>
-                                                <IconButton
-                                                    edge="end"
-                                                    aria-label="delete"
-                                                    onClick={() =>
-                                                        handleDeleteRow(
-                                                            param.variable,
-                                                            idx
-                                                        )
-                                                    }
-                                                >
-                                                    <DeleteOutlineIcon />
-                                                </IconButton>
-                                            </ListItem>
+                                    {(() => {
+                                        const paramArray = paramsState[
+                                            param.variable
+                                        ] as string[] | undefined
+                                        return (
+                                            Array.isArray(paramArray) &&
+                                            paramArray.map(
+                                                (item: string, idx: number) => (
+                                                    <ListItem key={idx}>
+                                                        <ListItemText>
+                                                            <TextField
+                                                                type="text"
+                                                                value={item}
+                                                                onChange={(e) =>
+                                                                    handleChangeRow(
+                                                                        param.variable,
+                                                                        e.target
+                                                                            .value,
+                                                                        idx
+                                                                    )
+                                                                }
+                                                            />
+                                                        </ListItemText>
+                                                        <IconButton
+                                                            edge="end"
+                                                            aria-label="delete"
+                                                            onClick={() =>
+                                                                handleDeleteRow(
+                                                                    param.variable,
+                                                                    idx
+                                                                )
+                                                            }
+                                                        >
+                                                            <DeleteOutlineIcon />
+                                                        </IconButton>
+                                                    </ListItem>
+                                                )
+                                            )
                                         )
-                                    )}
+                                    })()}
                                 </List>
+
                                 <Button
                                     variant="outlined"
                                     onClick={() => handleAddRow(param.variable)}
@@ -324,7 +373,7 @@ export default function RestrictionTemplateUI({
 }
 
 // Helper function for parsing a value in either python or bash code.
-function parseValue(value: string): string | number | boolean | any[] {
+function parseValue(value: string): string | number | boolean | string[] {
     if (value.startsWith('"') && value.endsWith('"')) {
         return value.slice(1, -1)
     } else if (value === 'True' || value === 'true') {
@@ -341,14 +390,14 @@ function parseValue(value: string): string | number | boolean | any[] {
         return value
             .slice(1, -1)
             .split(',')
-            .map((item) => parseValue(item.trim())) // in python the values are separated by commas
+            .map((item) => String(parseValue(item.trim()))) // in python the values are separated by commas
     } else if (value.startsWith('(') && value.endsWith(')')) {
         // round brackets for bash lists
         // Bash-style list
         return value
             .slice(1, -1)
             .split(' ')
-            .map((item) => parseValue(item.trim())) // in bash the values are separated by whitespace
+            .map((item) => String(parseValue(item.trim()))) // in bash the values are separated by whitespace
     } else {
         return value
     }
