@@ -78,6 +78,7 @@ function UserList(
                             }
                             return (
                                 <>
+                                    <Divider />
                                     <ListItem>
                                         <EvenlySpacedRow
                                             items={[
@@ -126,7 +127,7 @@ function UserList(
                                             ]}
                                         />
                                     </ListItem>
-                                    <Divider />
+
                                 </>
                             )
                         })}
@@ -650,10 +651,9 @@ export function AddChangeSubjectPage() {
                                                             {t('students')}
                                                         </Typography>
                                                     </Box>
-                                                    <Divider />
                                                     <Box
                                                         sx={{
-                                                            marginTop: -2.5,
+                                                            marginTop: -3.1,
                                                         }}
                                                     >
                                                         {UserList(
@@ -700,10 +700,9 @@ export function AddChangeSubjectPage() {
                                                             {t('teachers')}
                                                         </Typography>
                                                     </Box>
-                                                    <Divider />
                                                     <Box
                                                         sx={{
-                                                            marginTop: -2.5,
+                                                            marginTop: -3.1,
                                                         }}
                                                     >
                                                         {UserList(
