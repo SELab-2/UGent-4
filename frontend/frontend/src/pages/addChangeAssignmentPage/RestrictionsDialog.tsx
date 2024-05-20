@@ -81,7 +81,6 @@ export default function RestrictionsDialog({
 }: RestrictionsDialogProps) {
     const [openTextEditor, setOpenTextEditor] = useState(false)
     const [openTemplateInterface, setOpenTemplateInterface] = useState(false)
-    const [mustPass, setMustPass] = useState(false)
     const [openTemplateInUI, setOpenTemplateInUI] = useState(false)
     const [textFieldContent, setTextFieldContent] = useState('')
     const [restrictionName, setRestrictionName] = useState('')
@@ -103,7 +102,7 @@ export default function RestrictionsDialog({
                 const newRestriction: restriction = {
                     script: file.name,
                     file: file,
-                    moet_slagen: mustPass,
+                    moet_slagen: false,
                 }
                 newRestrictions.push(newRestriction)
             }
@@ -126,7 +125,7 @@ export default function RestrictionsDialog({
                 restrictionName + restrictionType,
                 { type: 'text/plain' }
             ),
-            moet_slagen: mustPass,
+            moet_slagen: false,
         }
         setRestrictions([...restrictions, newRestriction])
         handleCloseTextEditor()
@@ -238,21 +237,6 @@ export default function RestrictionsDialog({
                 alignItems={'center'}
             >
                 {buttons}
-            </Box>
-            <Box
-                paddingTop="5px"
-                display={'flex'}
-                flexDirection={'row'}
-                alignItems={'center'}
-            >
-                <Typography variant={'body2'}>
-                    {t('must_pass') + ':'}
-                </Typography>
-                <Switch
-                    id="mustPassSwitch"
-                    value={mustPass}
-                    onChange={() => setMustPass(!mustPass)}
-                />
             </Box>
             <Box padding="20px" />
             <Typography variant={'h6'} color={'secondary.contrastText'}>
