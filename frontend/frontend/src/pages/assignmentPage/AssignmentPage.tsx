@@ -421,7 +421,7 @@ export function AssignmentPage() {
                                                                 ? dayjs(
                                                                       assignment.deadline
                                                                   ).format(
-                                                                      'DD/MM/YYYY-HH:MM'
+                                                                      'DD/MM/YYYY HH:mm'
                                                                   )
                                                                 : 'no deadline'}
                                                         </Typography>
@@ -487,7 +487,7 @@ export function AssignmentPage() {
                                                     ? dayjs(
                                                           assignment.extra_deadline
                                                       ).format(
-                                                          'DD/MM/YYYY-HH:MM'
+                                                          'DD/MM/YYYY HH:mm'
                                                       )
                                                     : 'no deadline'}
                                             </Typography>
@@ -772,7 +772,7 @@ export function AssignmentPage() {
                                                                     ? dayjs(
                                                                           assignment.deadline
                                                                       ).format(
-                                                                          'DD/MM/YYYY-HH:MM'
+                                                                          'DD/MM/YYYY HH:mm'
                                                                       )
                                                                     : 'no deadline'}
                                                             </Typography>
@@ -877,7 +877,7 @@ export function AssignmentPage() {
                                                     ? dayjs(
                                                           assignment.extra_deadline
                                                       ).format(
-                                                          'DD/MM/YYYY-HH:MM'
+                                                          'DD/MM/YYYY HH:mm'
                                                       )
                                                     : 'no deadline'}
                                             </Typography>
