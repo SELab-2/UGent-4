@@ -232,10 +232,6 @@ export function CourseCard({
                                 </Box>
                                 {/* Number of students enrolled */}
                                 <Box>
-                                    <Typography variant={'subtitle1'}>
-                                        {t('students') + ': '}
-                                        {course.studenten.length || 0}
-                                    </Typography>
                                     <Box
                                         display={'flex'}
                                         flexDirection={'column'}
@@ -261,6 +257,10 @@ export function CourseCard({
                                             )}
                                         </IconButton>
                                     </Box>
+                                    <Typography variant={'subtitle1'}>
+                                        {t('students') + ': '}
+                                        {course.studenten.length || 0}
+                                    </Typography>
                                 </Box>
                             </Box>
                         </CardActionArea>
