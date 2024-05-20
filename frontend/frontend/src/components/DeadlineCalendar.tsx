@@ -215,6 +215,12 @@ export function DeadlineCalendar({
         fetchHighlightedDays(date)
     }
 
+    const handleYearChange = (date: Dayjs) => {
+        setIsLoading(true)
+        setHighlightedDays([])
+        fetchHighlightedDays(date)
+    }
+
     return (
         <>
             <Stack direction={'column'}>
@@ -224,6 +230,7 @@ export function DeadlineCalendar({
                     value={value}
                     onChange={(newValue) => setValue(newValue)}
                     onMonthChange={(newValue) => handleMonthChange(newValue)}
+                    onYearChange={(newValue) => handleYearChange(newValue)}
                     renderLoading={() => <DayCalendarSkeleton />}
                     loading={isLoading}
                     sx={dateStyle}
