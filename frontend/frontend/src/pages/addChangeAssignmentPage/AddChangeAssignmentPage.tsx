@@ -805,6 +805,22 @@ export function AddChangeAssignmentPage() {
                                                 {t('restrictions')}
                                             </Typography>
                                             <Box sx={{ padding: 1 }}>
+                                                <Box
+                                                    display="flex"
+                                                    flexDirection="row"
+                                                    justifyContent="space-between"
+                                                    sx={{ padding: 1 }}
+                                                >
+                                                    <Typography variant="body1">
+                                                        {t('name')}
+                                                    </Typography>
+                                                    <Typography variant="body1">
+                                                        {t('must_pass')}
+                                                    </Typography>
+                                                    <Typography variant="body1">
+                                                        {t('remove')}
+                                                    </Typography>
+                                                </Box>
                                                 {/*This list will render the restrictions that are added to the assignment.*/}
                                                 <List
                                                     sx={{
