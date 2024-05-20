@@ -81,7 +81,7 @@ export function LoginPage() {
                         alignSelf={'center'}
                     >
                         <Box
-                            id='logo'
+                            id="logo"
                             component="img"
                             src={t('logo_blue')}
                             alt="logo"
@@ -93,7 +93,7 @@ export function LoginPage() {
                         />
                         <Box
                             component="img"
-                            src={'assets/logo_duif.png'}
+                            src={'/assets/logo_duif.png'}
                             alt="logo_app"
                             sx={{
                                 padding: 0,
