@@ -26,7 +26,6 @@ import { useNavigate, useParams } from 'react-router-dom'
 import JSZip from 'jszip'
 import { Submission } from '../submissionPage/SubmissionPage.tsx'
 import { Project } from '../scoresPage/ProjectScoresPage.tsx'
-import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
 import dayjs from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import WarningPopup from '../../components/WarningPopup.tsx'
@@ -407,18 +406,26 @@ export function AssignmentPage() {
                                                 height={50}
                                             />
                                         ) : (
-                                            <Typography
-                                                variant={'h6'}
-                                                color={'text.primary'}
-                                            >
-                                                {assignment
-                                                    ? dayjs(
-                                                          assignment.deadline
-                                                      ).format(
-                                                          'DD/MM/YYYY HH:mm'
-                                                      )
-                                                    : t('no_deadline')}
-                                            </Typography>
+                                            <>
+                                                {assignment !== undefined &&
+                                                    assignment.deadline !==
+                                                        null && (
+                                                        <Typography
+                                                            variant="h6"
+                                                            color={
+                                                                'text.primary'
+                                                            }
+                                                        >
+                                                            {assignment
+                                                                ? dayjs(
+                                                                      assignment.deadline
+                                                                  ).format(
+                                                                      'DD/MM/YYYY-HH:MM'
+                                                                  )
+                                                                : 'no deadline'}
+                                                        </Typography>
+                                                    )}
+                                            </>
                                         )}
                                     </Box>
                                     {loading ? (
@@ -433,18 +440,57 @@ export function AssignmentPage() {
                                         />
                                     ) : (
                                         <>
-                                            {(assignment?.max_groep_grootte
-                                                ? assignment.max_groep_grootte
-                                                : 1) > 1 && (
-                                                <GroupAccessComponent
-                                                    assignmentid={parseInt(
-                                                        assignmentId
-                                                    )}
-                                                    courseid={parseInt(
-                                                        courseId
-                                                    )}
-                                                />
-                                            )}
+                                            <>
+                                                {assignment?.student_groep ? (
+                                                    <Button
+                                                        sx={{
+                                                            bgcolor:
+                                                                'secondary.main',
+                                                            textTransform:
+                                                                'none',
+                                                        }}
+                                                        onClick={goToGroups}
+                                                    >
+                                                        <Typography color="secondary.contrastText">
+                                                            {t('group')}
+                                                        </Typography>
+                                                    </Button>
+                                                ) : (
+                                                    <Box
+                                                        sx={{
+                                                            position:
+                                                                'absolute',
+                                                            top: 90,
+                                                            right: 50,
+                                                            display: 'flex',
+                                                            justifyContent:
+                                                                'flex-end',
+                                                            zIndex: 1,
+                                                            marginTop: '-40px',
+                                                        }}
+                                                    >
+                                                        {assignment?.max_groep_grootte ===
+                                                        1 ? (
+                                                            <Typography variant="body1">
+                                                                {user.first_name +
+                                                                    ' ' +
+                                                                    user.last_name}
+                                                            </Typography>
+                                                        ) : (
+                                                            <>
+                                                                <StudentPopUp
+                                                                    students={
+                                                                        studentsLoading
+                                                                            ? []
+                                                                            : students
+                                                                    }
+                                                                    text="group_members"
+                                                                />
+                                                            </>
+                                                        )}
+                                                    </Box>
+                                                )}
+                                            </>
                                         </>
                                     )}
                                 </Box>

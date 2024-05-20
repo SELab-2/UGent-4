@@ -1,9 +1,9 @@
 import {
+    Box,
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
-    Box,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import DownloadIcon from '@mui/icons-material/Download'
@@ -140,6 +140,7 @@ export function SubmissionListItemTeacherPage({
                 <ListItemButton
                     sx={{ maxHeight: '40px' }}
                     onClick={handleSubmissionClick}
+                    disabled={!submitted}
                 >
                     <EvenlySpacedRow
                         items={[
