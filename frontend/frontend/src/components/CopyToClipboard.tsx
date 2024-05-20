@@ -54,6 +54,7 @@ export const CopyToClipboard = ({ invitationLink }: CopyToClipboardProps) => {
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
+                                justifyContent: 'flex-start',
                                 padding: 0,
                                 gap: 1,
                                 '&:hover': {
