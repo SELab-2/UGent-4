@@ -3,6 +3,7 @@ import { CourseCard } from '../../components/CourseCard.tsx'
 import { Course } from './MainPage.tsx'
 
 interface CourseCardProps {
+    userid: number
     isStudent: boolean
     archivedCourses: Course[]
     pinnedCourses: number[]
@@ -10,6 +11,7 @@ interface CourseCardProps {
 }
 
 export function ArchivedView({
+    userid,
     isStudent,
     archivedCourses,
     pinnedCourses,
@@ -40,6 +42,7 @@ export function ArchivedView({
                         {archivedCourses.map((course) => {
                             return (
                                 <CourseCard
+                                    userid={userid}
                                     courseId={course.vak_id.toString()}
                                     archived={true}
                                     isStudent={isStudent}

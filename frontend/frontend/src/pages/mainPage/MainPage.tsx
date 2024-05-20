@@ -228,6 +228,7 @@ export default function MainPage() {
                                   ]
                                 : [
                                       <CoursesView
+                                          userid={user}
                                           isStudent={role == 'student'}
                                           activecourses={courses
                                               .filter(
@@ -273,6 +274,7 @@ export default function MainPage() {
                                           pinCourse={pinCourse}
                                       />,
                                       <ArchivedView
+                                          userid={user}
                                           isStudent={role == 'student'}
                                           archivedCourses={courses
                                               .filter(

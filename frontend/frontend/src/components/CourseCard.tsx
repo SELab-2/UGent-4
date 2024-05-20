@@ -19,6 +19,9 @@ import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
 
 import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
+import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
+import { Group } from '../pages/groupsPage/GroupsPage.tsx'
+import axios from 'axios'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -29,6 +32,7 @@ import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
 //TODO: fix archived with state so that the card moves to ArchivedView when archived
 
 interface CourseCardProps {
+    userid: number
     courseId: string
     archived: boolean
     isStudent: boolean
@@ -38,6 +42,7 @@ interface CourseCardProps {
 }
 
 export function CourseCard({
+    userid,
     courseId,
     archived,
     isStudent,
@@ -54,6 +59,9 @@ export function CourseCard({
         gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
+    const [groupsWithSubmissions, setGroupsWithSubmissions] = useState<Group[]>(
+        []
+    )
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
@@ -76,6 +84,32 @@ export function CourseCard({
 
                 setCourse(courseResponse.data)
                 setAssignments(assignmentsResponse.data)
+
+                //fetch submissions as well if user is student
+                if (isStudent) {
+                    const groups: Group[] = await instance
+                        .get(`/groepen/?student=${userid}`)
+                        .then((response) => response.data)
+                    const submissionPromises = groups.map(async (group) => {
+                        const response = await instance.get<Submission>(
+                            `/indieningen/?project=${group.project}`
+                        )
+                        return response.data
+                    })
+                    const submissions = await axios.all(submissionPromises)
+
+                    console.log(groups)
+                    const validGroups = groups.filter((group) =>
+                        submissions
+                            .flat(Infinity)
+                            .some(
+                                (submission) =>
+                                    submission.groep === group.groep_id
+                            )
+                    )
+
+                    setGroupsWithSubmissions(validGroups)
+                }
 
                 if (courseResponse.data && courseResponse.data.lesgevers) {
                     const lesgevers = []
@@ -346,10 +380,11 @@ export function CourseCard({
                                                                 'DD/MM/YYYY HH:mm'
                                                             ) || undefined
                                                         }
-                                                        status={
-                                                            assignment.project_id ===
-                                                            1
-                                                        } //TODO dit moet nog aangepast worden
+                                                        status={groupsWithSubmissions.some(
+                                                            (group) =>
+                                                                group.project ===
+                                                                assignment.project_id
+                                                        )}
                                                         isStudent={isStudent}
                                                     />
                                                 ))}
@@ -386,8 +421,13 @@ export function CourseCard({
                                                                     undefined
                                                                 }
                                                                 status={
-                                                                    assignment.project_id ===
-                                                                    1
+                                                                    groupsWithSubmissions.some(
+                                                                        (
+                                                                            group
+                                                                        ) =>
+                                                                            group.project ===
+                                                                            assignment.project_id
+                                                                    )
                                                                     //TODO: status has to check if there is already a submission
                                                                 }
                                                                 isStudent={
@@ -429,10 +469,11 @@ export function CourseCard({
                                                                     ) ||
                                                                     undefined
                                                                 }
-                                                                status={
-                                                                    assignment.project_id ===
-                                                                    1
-                                                                }
+                                                                status={groupsWithSubmissions.some(
+                                                                    (group) =>
+                                                                        group.project ===
+                                                                        assignment.project_id
+                                                                )}
                                                                 isStudent={
                                                                     isStudent
                                                                 }
