@@ -187,15 +187,18 @@ export function AssignmentPage() {
             const groupResponse = await instance.get(
                 `groepen/?student=${user.user}&project=${assignmentId}`
             )
-            const group: Group = groupResponse.data[0]
 
-            const studentPromises: Promise<AxiosResponse<User>>[] =
-                group.studenten.map((id: number) =>
-                    instance.get('/gebruikers/' + id)
-                )
+            if (groupResponse.data.length > 0) {
+                const group: Group = groupResponse.data[0]
 
-            const temp_students = await axios.all(studentPromises)
-            setStudents(temp_students.map((res) => res.data))
+                const studentPromises: Promise<AxiosResponse<User>>[] =
+                    group.studenten.map((id: number) =>
+                        instance.get('/gebruikers/' + id)
+                    )
+
+                const temp_students = await axios.all(studentPromises)
+                setStudents(temp_students.map((res) => res.data))
+            }
 
             setStudentsLoading(false)
         }
@@ -837,6 +840,7 @@ export function AssignmentPage() {
                                                                             : students
                                                                     }
                                                                     text="group_members"
+                                                                    noGroup={students.length == 0}
                                                                 />
                                                             </>
                                                         )}
