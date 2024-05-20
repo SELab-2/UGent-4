@@ -1,4 +1,4 @@
-import { Card } from '../../components/CustomComponents.tsx'
+import {Card, Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
 import {
     Box,
     CircularProgress,
@@ -538,7 +538,7 @@ export function AddChangeAssignmentPage() {
                                             ) : (
                                                 <TextField
                                                     type="text"
-                                                    placeholder={'Title'}
+                                                    placeholder={t('name')}
                                                     error={
                                                         assignmentErrors.title
                                                     }
@@ -808,37 +808,40 @@ export function AddChangeAssignmentPage() {
                                     >
                                         <Card
                                             sx={{
-                                                padding: 1,
                                                 backgroundColor:
                                                     'background.default',
                                                 width: '70%',
                                                 height: '28svh',
                                             }}
                                         >
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: 'secondary.main',
+                                                    height: 48,
+                                                    padding: 1,
+                                                }}
+                                            >
                                             <Typography
                                                 variant={'h5'}
                                                 fontWeight={'bold'}
                                             >
                                                 {t('restrictions')}
                                             </Typography>
-                                            <Box sx={{ padding: 1 }}>
-                                                <Box
-                                                    display="flex"
-                                                    flexDirection="row"
-                                                    justifyContent="space-between"
-                                                    sx={{ padding: 1 }}
-                                                >
-                                                    <Typography variant="body1">
+                                            <EvenlySpacedRow items={[
+                                                    <Typography variant="body1" fontWeight={'bold'}>
                                                         {t('name')}
-                                                    </Typography>
-                                                    <Typography variant="body1">
+                                                    </Typography>,
+                                                    <Typography variant="body1" fontWeight={'bold'}>
                                                         {t('must_pass')}
-                                                    </Typography>
-                                                    <Typography variant="body1">
+                                                    </Typography>,
+                                                    <Typography variant="body1" fontWeight={'bold'}>
                                                         {t('remove')}
-                                                    </Typography>
-                                                </Box>
-                                                {/*This list will render the restrictions that are added to the assignment.*/}
+                                                    </Typography>]}
+                                            />
+                                            </Box>
+                                            <Divider/>
+                                            {/*This list will render the restrictions that are added to the assignment.*/}
+                                            <Box sx={{marginTop: -1.1}}>
                                                 <List
                                                     sx={{
                                                         maxHeight: '18vh',
@@ -857,23 +860,26 @@ export function AddChangeAssignmentPage() {
                                                                     index
                                                                 ) => {
                                                                     return (
-                                                                        <ListItem
-                                                                            key={
-                                                                                index
-                                                                            }
-                                                                        >
-                                                                            <RestrictionCard
-                                                                                restriction={
-                                                                                    restriction
+                                                                        <>
+                                                                            <Divider/>
+                                                                            <ListItem sx={{ maxHeight: '45px'}}
+                                                                                key={
+                                                                                    index
                                                                                 }
-                                                                                restrictions={
-                                                                                    restrictions
-                                                                                }
-                                                                                setRestrictions={
-                                                                                    setRestrictions
-                                                                                }
-                                                                            />
-                                                                        </ListItem>
+                                                                            >
+                                                                                <RestrictionCard
+                                                                                    restriction={
+                                                                                        restriction
+                                                                                    }
+                                                                                    restrictions={
+                                                                                        restrictions
+                                                                                    }
+                                                                                    setRestrictions={
+                                                                                        setRestrictions
+                                                                                    }
+                                                                                />
+                                                                            </ListItem>
+                                                                        </>
                                                                     )
                                                                 }
                                                             )}
