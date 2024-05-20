@@ -54,6 +54,7 @@ export function CourseCard({
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
         naam: '',
+        jaartal: 0,
         studenten: [],
         lesgevers: [],
         gearchiveerd: false,
