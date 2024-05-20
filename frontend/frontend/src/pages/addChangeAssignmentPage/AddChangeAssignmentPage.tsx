@@ -350,9 +350,7 @@ export function AddChangeAssignmentPage() {
         restrictions.forEach((restriction) => {
             const formData = new FormData()
             formData.append('project', projectId)
-            if (restriction.file !== undefined) {
-                formData.append('script', restriction.file)
-            }
+
             formData.append('moet_slagen', restriction.moet_slagen.toString())
             if (restriction.restrictie_id !== undefined) {
                 formData.append(
@@ -369,6 +367,9 @@ export function AddChangeAssignmentPage() {
                         console.error(error)
                     })
             } else {
+                if (restriction.file !== undefined) {
+                    formData.append('script', restriction.file)
+                }
                 instance
                     .post('/restricties/', formData, config)
                     .catch((error) => {
