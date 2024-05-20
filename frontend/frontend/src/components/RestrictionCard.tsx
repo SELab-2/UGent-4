@@ -2,6 +2,7 @@ import { restriction } from '../pages/addChangeAssignmentPage/AddChangeAssignmen
 import { Box, IconButton, Switch, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import React from 'react'
+import {EvenlySpacedRow} from "./CustomComponents.tsx";
 
 interface RestrictionCardProps {
     restriction: restriction
@@ -28,26 +29,20 @@ export function RestrictionCard({
 
     return (
         <>
-            <Box
-                display={'flex'}
-                flexDirection={'row'}
-                width={'100%'}
-                justifyContent={'space-between'}
-            >
+            <EvenlySpacedRow items={[
                 <Typography id="script" variant={'body2'}>
                     {restriction.script.replace(/^.*[\\/]/, '')}
-                </Typography>
+                </Typography>,
                 <Switch
                     id="mustPassSwitch"
                     value={mustPass}
                     checked={mustPass}
                     onChange={() => handleMustPassChange()}
-                />
-
+                />,
                 <IconButton id="closeButton" onClick={handleRemove}>
                     <CloseIcon />
-                </IconButton>
-            </Box>
+                </IconButton>]}
+            />
         </>
     )
 }
