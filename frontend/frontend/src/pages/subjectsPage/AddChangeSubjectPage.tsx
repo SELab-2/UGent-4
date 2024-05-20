@@ -127,7 +127,6 @@ function UserList(
                                             ]}
                                         />
                                     </ListItem>
-
                                 </>
                             )
                         })}
@@ -461,6 +460,7 @@ export function AddChangeSubjectPage() {
                 })
                 .catch((err) => {
                     console.log(err)
+                    alert(err.response.data)
                 })
         }
     }
@@ -564,7 +564,7 @@ export function AddChangeSubjectPage() {
                         <>
                             <Stack direction={'column'}>
                                 <Header
-                                    variant={loading ? 'default' : 'not_main'}
+                                    variant={'default'}
                                     title={loading ? '' : title}
                                 />
                                 <Stack
@@ -622,13 +622,27 @@ export function AddChangeSubjectPage() {
                                                 />
                                             )}
                                         </Box>
-                                        <Box padding={'20px'}>
+                                        <Box
+                                            padding={'20px'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                        >
                                             <SecondaryButton
+                                                /* This is the large save button on the top of the page */
+                                                onClick={() =>
+                                                    navigate(`/course/${vakID}`)
+                                                }
+                                            >
+                                                {t('cancel')}
+                                            </SecondaryButton>
+
+                                            <Button
                                                 /* This is the large save button on the top of the page */
                                                 onClick={handleSave}
                                             >
                                                 {t('save')}
-                                            </SecondaryButton>
+                                            </Button>
                                         </Box>
                                     </Box>
                                     <Stack direction={'row'} gap={10}>
