@@ -76,10 +76,10 @@ export function AssignmentListItemSubjectsPage({
                 id={projectName.replace(/\s/g, '')}
                 key={projectName}
                 disablePadding
-                sx={{ maxHeight: '30px' }}
+                sx={{ maxHeight: '40px' }}
             >
                 <ListItemButton
-                    sx={{ maxHeight: '30px' }}
+                    sx={{ maxHeight: '40px' }}
                     onClick={handleProjectClick}
                 >
                     {isStudent ? (

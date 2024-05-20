@@ -51,9 +51,9 @@ export function SubmissionListItemStudentPage({
 
     return (
         <>
-            <ListItem key={realId} sx={{ maxHeight: '30px' }} disablePadding>
+            <ListItem key={realId} sx={{ maxHeight: '40px' }} disablePadding>
                 <ListItemButton
-                    sx={{ maxHeight: '30px' }}
+                    sx={{ maxHeight: '40px' }}
                     onClick={handleSubmissionClick}
                 >
                     <EvenlySpacedRow
