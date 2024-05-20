@@ -47,7 +47,8 @@ def template_list(request, format=None):
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_403_FORBIDDEN)
+
+    return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 @api_view(["GET", "PUT", "PATCH", "DELETE"])
@@ -112,10 +113,10 @@ def template_detail_bestand(request, id, format=None):
     if has_permissions(request.user):
         if request.method == "GET":
             bestand = template.bestand.open()
-            if "content" in request.GET and request.GET.get("content").lower() in [
-                "true",
-                "false",
-            ]:
+            if (
+                "content" in request.GET
+                and request.GET.get("content").lower() == "true"
+            ):
                 return Response({"content": bestand.read()})
             return FileResponse(bestand, as_attachment=True)
     return Response(status=status.HTTP_403_FORBIDDEN)
