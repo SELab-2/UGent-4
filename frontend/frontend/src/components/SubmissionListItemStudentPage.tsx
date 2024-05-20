@@ -1,8 +1,10 @@
+import { EvenlySpacedRow } from './CustomComponents.tsx'
 import {
     ListItem,
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Box,
 } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -49,48 +51,40 @@ export function SubmissionListItemStudentPage({
 
     return (
         <>
-            <ListItem key={realId} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem key={realId} sx={{ maxHeight: '40px' }} disablePadding>
                 <ListItemButton
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 5,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
+                    sx={{ maxHeight: '40px' }}
                     onClick={handleSubmissionClick}
                 >
-                    {/* Display submission id */}
-                    <ListItemText
-                        id='submissionId'
-                        sx={{
-                            maxWidth: 110,
-                            color: 'primary.main',
-                            '&:hover': {
-                                color: 'primary.light',
-                            },
-                        }}
-                        primary={visualId}
+                    <EvenlySpacedRow
+                        items={[
+                            <ListItemText
+                                sx={{
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        color: 'primary.light',
+                                    },
+                                }}
+                                primary={visualId}
+                            />,
+                            <ListItemText
+                                primary={timestamp ? timestamp : t('time')}
+                            />,
+                            <Box sx={{ maxWidth: '24px' }}>
+                                <ListItemIcon sx={{ minWidth: 35 }}>
+                                    {status ? (
+                                        <CheckCircleOutlineIcon
+                                            sx={{ color: 'success.main' }}
+                                        />
+                                    ) : (
+                                        <HighlightOffIcon
+                                            sx={{ color: 'error.main' }}
+                                        />
+                                    )}
+                                </ListItemIcon>
+                            </Box>,
+                        ]}
                     />
-                    {/* Display submission timestamp */}
-                    <ListItemText
-                        id='submissionTimestamp'
-                        sx={{ maxWidth: 150 }}
-                        primary={timestamp ? timestamp : t('time')}
-                    />
-                    {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        {status ? (
-                            <CheckCircleOutlineIcon id='check'
-                                sx={{ color: 'success.main' }}
-                            />
-                        ) : (
-                            <HighlightOffIcon id='cross' sx={{ color: 'error.main' }} />
-                        )}
-                    </ListItemIcon>
                 </ListItemButton>
             </ListItem>
         </>

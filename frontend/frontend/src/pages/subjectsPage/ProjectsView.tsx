@@ -1,4 +1,8 @@
-import { Divider } from '../../components/CustomComponents.tsx'
+import {
+    Card,
+    Divider,
+    EvenlySpacedRow,
+} from '../../components/CustomComponents.tsx'
 import { Box, Skeleton, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { t } from 'i18next'
@@ -150,65 +154,85 @@ export function ProjectsView({
 
     return (
         <>
-            <Box
-                aria-label={'courseHeader'}
-                sx={{
-                    backgroundColor: 'secondary.main',
-                    margin: 0,
-                    height: 50,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    padding: 3,
-                }}
-            >
-                {!gebruiker.is_lesgever ? (
-                    <>
-                        {/* Show the UI from the perspective of a student. */}
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                            Project
-                        </Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                            Deadline
-                        </Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                            {t('submissions')}
-                        </Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                            Score
-                        </Typography>
-                    </>
-                ) : (
-                    <>
-                        {/* Show the UI from the perspective of a teacher. */}
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                            Project
-                        </Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                            Deadline
-                        </Typography>
-                        <Typography variant={'h5'} sx={{ fontWeight: 'bold' }}>
-                            {t('edit')}
-                        </Typography>
-                    </>
-                )}
-            </Box>
-            <Box
-                aria-label={'assignmentList'}
-                sx={{
-                    backgroundColor: 'background.default',
-                    height: 340,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    padding: 1,
-                    borderRadius: 2,
-                    paddingBottom: 0,
-                }}
-            >
-                <Box display={'flex'} flexDirection={'row'}>
+            <Card>
+                <Box
+                    aria-label={'courseHeader'}
+                    sx={{
+                        backgroundColor: 'secondary.main',
+                        height: 20,
+                        padding: 3,
+                    }}
+                >
+                    {!gebruiker.is_lesgever ? (
+                        <>
+                            {/* Show the UI from the perspective of a student. */}
+                            <EvenlySpacedRow
+                                items={[
+                                    <Typography
+                                        variant={'h5'}
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Project
+                                    </Typography>,
+                                    <Typography
+                                        variant={'h5'}
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Deadline
+                                    </Typography>,
+                                    <Typography
+                                        variant={'h5'}
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        {t('submissions')}
+                                    </Typography>,
+                                    <Typography
+                                        variant={'h5'}
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Score
+                                    </Typography>,
+                                ]}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            {/* Show the UI from the perspective of a teacher. */}
+                            <EvenlySpacedRow
+                                items={[
+                                    <Typography
+                                        variant={'h5'}
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Project
+                                    </Typography>,
+                                    <Typography
+                                        variant={'h5'}
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        Deadline
+                                    </Typography>,
+                                    <Typography
+                                        variant={'h5'}
+                                        sx={{ fontWeight: 'bold' }}
+                                    >
+                                        {t('edit')}
+                                    </Typography>,
+                                ]}
+                            />
+                        </>
+                    )}
+                </Box>
+                <Box
+                    aria-label={'assignmentList'}
+                    sx={{
+                        backgroundColor: 'background.default',
+                        height: 340,
+                    }}
+                >
                     <Box sx={{ width: '100%', height: 320, overflow: 'auto' }}>
                         {/* The list below will display the projects with their information */}
-                        <List disablePadding={true}>
+                        <List disablePadding>
                             {loading ? (
                                 [...Array(3).keys()].map((index) => (
                                     <Skeleton
@@ -238,6 +262,7 @@ export function ProjectsView({
                                         )
                                         .map((project) => (
                                             <>
+                                                <Divider />
                                                 <AssignmentListItemSubjectsPage
                                                     key={
                                                         project.assignment
@@ -294,9 +319,6 @@ export function ProjectsView({
                                                     courseId={courseId}
                                                     assignmentId={project.assignment.project_id.toString()}
                                                 />
-                                                <Divider
-                                                    color={'text.main'}
-                                                ></Divider>
                                             </>
                                         ))}
                                 </>
@@ -304,7 +326,7 @@ export function ProjectsView({
                         </List>
                     </Box>
                 </Box>
-            </Box>
+            </Card>
         </>
     )
 }

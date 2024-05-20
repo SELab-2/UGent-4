@@ -1,27 +1,9 @@
-import { Button } from '../../components/CustomComponents.tsx'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { t } from 'i18next'
-import { useMsal } from '@azure/msal-react'
-import { loginRequest } from '../../authConfig/authConfig.ts'
 
-/*
-LoginPage component is a simple page with a logo and a login button.
-the button uses handleLogin function to handle authentication trough backend with Microsoft
-The page is styled with mui components
- */
-
-export function LoginPage() {
-    const { instance } = useMsal()
-
-    const handleLogin = () => {
-        instance.loginRedirect(loginRequest).catch((e) => {
-            console.log(e)
-        })
-    }
-
+export default function FourOFourPage() {
     return (
         <>
-            {/* Background container */}
             <Box
                 position="fixed"
                 top={0}
@@ -37,7 +19,6 @@ export function LoginPage() {
                     backgroundSize: 'cover',
                 }}
             >
-                {/* Background image */}
                 <Box
                     className="background-image"
                     component="div"
@@ -47,7 +28,7 @@ export function LoginPage() {
                     left={0}
                     sx={{
                         backgroundImage: `url(/assets/ufo-logo-3375276369.png)`,
-                        opacity: 0.25,
+                        opacity: 0.2,
                         position: 'fixed',
                         backgroundSize: 'cover',
                         display: 'flex',
@@ -59,7 +40,6 @@ export function LoginPage() {
                         zIndex: -1,
                     }}
                 />
-                {/* Content container */}
                 <Box
                     component="div"
                     className="contentContainer"
@@ -69,6 +49,8 @@ export function LoginPage() {
                     alignItems="center"
                     justifyContent={'center'}
                     alignSelf={'center'}
+                    maxWidth="60%"
+                    maxHeight="60%"
                 >
                     <Box
                         component="div"
@@ -77,44 +59,45 @@ export function LoginPage() {
                         flexDirection="row"
                         alignItems="center"
                         justifyContent={'center'}
-                        gap={0}
                         alignSelf={'center'}
                     >
                         <Box
-                            id='logo'
                             component="img"
                             src={t('logo_blue')}
                             alt="logo"
                             sx={{
-                                padding: 0,
                                 maxHeight: '20%',
-                                maxWidth: '20%',
+                                maxWidth: '30%',
                             }}
                         />
                         <Box
-                            component="img"
-                            src={'assets/logo_duif.png'}
-                            alt="logo_app"
-                            sx={{
-                                padding: 0,
-                                ml: -2,
-                                maxHeight: '10%',
-                                maxWidth: '10%',
-                            }}
-                        />
-                    </Box>
-                    {/* Lower container with login button */}
-                    <Box
-                        component={'div'}
-                        className="lowerContainer"
-                        display="flex"
-                        flexDirection="row"
-                        alignItems="center"
-                        justifyContent={'center'}
-                        alignSelf={'stretch'}
-                        ml={4}
-                    >
-                        <Button onClick={handleLogin}>{t('login')}</Button>
+                            component="div"
+                            display="flex"
+                            flexDirection="column"
+                            maxWidth={'40%'}
+                            maxHeight={'30%'}
+                        >
+                            <Typography
+                                variant="h4"
+                                sx={{
+                                    color: 'error.main',
+                                    maxWidth: '100%',
+                                    maxHeight: '50%',
+                                }}
+                            >
+                                {"404"}
+                            </Typography>
+                            <Typography
+                                variant={'h5'}
+                                sx={{
+                                    color: 'error.main',
+                                    maxWidth: '100%',
+                                    maxHeight: '50%',
+                                }}
+                            >
+                                {"Error: Page not found"}
+                            </Typography>
+                        </Box>
                     </Box>
                 </Box>
             </Box>

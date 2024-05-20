@@ -3,7 +3,7 @@ import { ChangeEvent, useState } from 'react'
 import {
     Button,
     Card,
-    SecundaryButton,
+    SecondaryButton,
 } from '../../components/CustomComponents.tsx'
 import Dialog from '@mui/material/Dialog'
 import AppBar from '@mui/material/AppBar'
@@ -205,7 +205,6 @@ export default function RestrictionsDialog({
         })
     }, [userid])
 
-
     const handleCloseTextEditor = () => {
         setOpenTextEditor(false)
         closeParentDialog()
@@ -272,14 +271,6 @@ export default function RestrictionsDialog({
                         overflowY: 'auto',
                     }}
                 >
-                    <ButtonGroup
-                        orientation="vertical"
-                        aria-label="Vertical button group"
-                        variant={'outlined'}
-                        color={'primary'}
-                    >
-                        {templateButtons}
-                    </ButtonGroup>
                     {/* This button groups shows the templates the teacher has made */}
                     <ButtonGroup
                         orientation="vertical"
@@ -450,7 +441,7 @@ export default function RestrictionsDialog({
                                     justifyContent="space-between"
                                     alignItems="center"
                                 >
-                                    <SecundaryButton
+                                    <SecondaryButton
                                         autoFocus
                                         color="inherit"
                                         onClick={() =>
@@ -462,15 +453,15 @@ export default function RestrictionsDialog({
                                         } // bestand if maakt niet uit, wordt toch niet gebruikt
                                     >
                                         save as template
-                                    </SecundaryButton>
+                                    </SecondaryButton>
                                     <Box paddingRight="10px" />
-                                    <SecundaryButton
+                                    <SecondaryButton
                                         autoFocus
                                         color="inherit"
                                         onClick={() => setPopupOpen(true)}
                                     >
                                         save
-                                    </SecundaryButton>
+                                    </SecondaryButton>
                                 </Box>
                             </Box>
                         </Toolbar>

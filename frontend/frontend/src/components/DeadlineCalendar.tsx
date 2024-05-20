@@ -5,7 +5,16 @@ import {
     PickersDayProps,
 } from '@mui/x-date-pickers'
 import dayjs, { Dayjs } from 'dayjs'
-import { Badge, SxProps, Stack, Typography, List, ListItem, ListItemButton, ListItemText } from '@mui/material'
+import {
+    Badge,
+    SxProps,
+    Stack,
+    Typography,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText,
+} from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
 import AssignmentIcon from '@mui/icons-material/Assignment'
 import { useNavigate } from 'react-router-dom'
@@ -90,27 +99,46 @@ function DeadlineMenu({ assignments, selectedDay }: DeadlineMenuProps) {
             width={'100%'}
             alignItems={'center'}
         >
-            <Typography>
+            <Typography color={'text.primary'}>
                 {t('deadlines_on')}: {selectedDay?.format('DD/MM/YYYY')}
             </Typography>
-            <List>
-                {assignments
-                .filter((assignment: project) =>
-                    dayjs(assignment.deadline).isSame(selectedDay, 'day')
-                ).map((assignment: project) => 
+            <List sx={{ width: '100%' }}>
+                {assignments.filter((assignment: project) => {
+                    return dayjs(assignment.deadline).isSame(selectedDay, 'day')
+                }).length === 0 && (
                     <ListItem>
-                        <ListItemButton
-                            sx={{
-                                border: 1
-                            }}
-                            onClick={() => handleProjectClick(assignment.vak, assignment.project_id)}
-                        >
-                            <ListItemText
-                                primary={assignment.titel}
-                            />
-                        </ListItemButton>
+                        <ListItemText>
+                            <Typography
+                                textAlign={'center'}
+                                color={'text.primary'}
+                            >
+                                {t('no_deadline') + 's'}
+                            </Typography>
+                        </ListItemText>
                     </ListItem>
                 )}
+                {assignments
+                    .filter((assignment: project) =>
+                        dayjs(assignment.deadline).isSame(selectedDay, 'day')
+                    )
+                    .map((assignment: project) => (
+                        <ListItem>
+                            <ListItemButton
+                                sx={{
+                                    border: 1,
+                                }}
+                                onClick={() =>
+                                    handleProjectClick(
+                                        assignment.vak,
+                                        assignment.project_id
+                                    )
+                                }
+                            >
+                                <ListItemText primary={assignment.titel} />
+
+                            </ListItemButton>
+                        </ListItem>
+                    ))}
             </List>
         </Stack>
     )
@@ -121,7 +149,10 @@ interface DeadlineCalendarProps {
     assignments: project[]
 }
 
-export function DeadlineCalendar({ deadlines, assignments }: DeadlineCalendarProps) {
+export function DeadlineCalendar({
+    deadlines,
+    assignments,
+}: DeadlineCalendarProps) {
     const requestAbortController = useRef<AbortController | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [highlightedDays, setHighlightedDays] = useState<number[]>([])
@@ -173,9 +204,7 @@ export function DeadlineCalendar({ deadlines, assignments }: DeadlineCalendarPro
 
     return (
         <>
-            <Stack
-                direction={"column"}
-            >
+            <Stack direction={'column'}>
                 {/*Calendar*/}
                 <DateCalendar
                     readOnly={false}
@@ -194,10 +223,7 @@ export function DeadlineCalendar({ deadlines, assignments }: DeadlineCalendarPro
                         } as never,
                     }}
                 />
-                <DeadlineMenu
-                    assignments={assignments}
-                    selectedDay={value}
-                />
+                <DeadlineMenu assignments={assignments} selectedDay={value} />
             </Stack>
         </>
     )
