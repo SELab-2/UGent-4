@@ -43,7 +43,8 @@ function UserList(
     loading: boolean,
     users: User[],
     setSelected: React.Dispatch<React.SetStateAction<number>>,
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    handleRemove: () => void
 ) {
     return (
         <Box marginTop={3}>
@@ -70,7 +71,12 @@ function UserList(
                         {users.map((user) => {
                             const handleClickOpen = () => {
                                 setSelected(user.user)
-                                setOpen(true)
+
+                                if (user.is_lesgever) {
+                                    setOpen(true)
+                                } else {
+                                    handleRemove()
+                                }
                             }
                             {
                                 /* The list of users is mapped onto buttons
@@ -247,15 +253,12 @@ export function AddChangeSubjectPage() {
     }
 
     const handleRemoveStudent = (): void => {
-        setStudents((oldstudents: User[]): User[] => {
-            for (let i = 0; i < oldstudents.length; i++) {
-                if (oldstudents[i].user == selectedStudent) {
-                    oldstudents.splice(i, 1)
-                    return oldstudents
-                }
-            }
-            return oldstudents
-        })
+        const newstudents = students.filter(
+            (student) => student.user != selectedStudent
+        )
+
+        setStudents(newstudents)
+
         setOpenStudent(false)
     }
 
@@ -342,15 +345,10 @@ export function AddChangeSubjectPage() {
     // This function will remove a teacher from the list.
     // It does so by looping through the list and removing the teacher with the correct ID.
     const handleRemoveTeacher = () => {
-        setTeachers((oldteacher) => {
-            for (let i = 0; i < oldteacher.length; i++) {
-                if (oldteacher[i].user == selectedTeacher) {
-                    oldteacher.splice(i, 1)
-                    return oldteacher
-                }
-            }
-            return oldteacher
-        })
+        const newTeachers = teachers.filter(
+            (teacher) => teacher.user != selectedTeacher
+        )
+        setTeachers(newTeachers)
         setOpenTeacher(false)
     }
 
@@ -704,7 +702,8 @@ export function AddChangeSubjectPage() {
                                                             loading,
                                                             students,
                                                             setSelectedStudent,
-                                                            setOpenStudent
+                                                            setOpenStudent,
+                                                            handleRemoveStudent
                                                         )}
                                                     </Box>
                                                 </Card>
@@ -754,7 +753,8 @@ export function AddChangeSubjectPage() {
                                                             loading,
                                                             teachers,
                                                             setSelectedTeacher,
-                                                            setOpenTeacher
+                                                            setOpenTeacher,
+                                                            handleRemoveTeacher
                                                         )}
                                                     </Box>
                                                 </Card>
