@@ -21,7 +21,7 @@ export function ArchivedView({
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '47svw', lg: '68svw' }}
+                minWidth={{ md: '57svw', lg: '78svw' }}
             >
                 <Stack
                     direction={'column'}
