@@ -1057,7 +1057,10 @@ export function AssignmentPage() {
                                                                         )}
                                                                         <SubmissionListItemStudentPage
                                                                             realId={submission.indiening_id.toString()}
-                                                                            visualId={index.toString()}
+                                                                            visualId={(
+                                                                                submissions.length -
+                                                                                index
+                                                                            ).toString()}
                                                                             timestamp={dayjs(
                                                                                 submission.tijdstip
                                                                             ).format(
