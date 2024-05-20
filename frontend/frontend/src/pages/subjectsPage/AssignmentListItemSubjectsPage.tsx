@@ -13,6 +13,7 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import React, { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
+import { EvenlySpacedRow } from '../../components/CustomComponents.tsx'
 
 /**
  * This component is used to display a single assignment in the list of assignments.
@@ -74,94 +75,79 @@ export function AssignmentListItemSubjectsPage({
             <ListItem
                 id={projectName.replace(/\s/g, '')}
                 key={projectName}
-                sx={{ margin: 0 }}
-                disablePadding={true}
+                disablePadding
+                sx={{ maxHeight: '40px' }}
             >
                 <ListItemButton
+                    sx={{ maxHeight: '40px' }}
                     onClick={handleProjectClick}
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 3,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
                 >
                     {isStudent ? (
-                        <>
-                            <ListItemText
-                                sx={{ maxWidth: 120 }}
-                                primary={projectName}
-                            />
-                            <ListItemText
-                                id='deadline'
-                                sx={{ maxWidth: 150 }}
-                                primary={
-                                    dueDate
-                                        ? dayjs(dueDate).format(
-                                              'DD/MM/YYYY HH:mm'
-                                          )
-                                        : t('no_deadline')
-                                }
-                            />
-                            <ListItemText
-                                sx={{ maxWidth: 170 }}
-                                primary={
-                                    submissions > 0
-                                        ? submissions > 1
-                                            ? submissions +
-                                              ' ' +
-                                              t('submissions')
-                                            : submissions +
-                                              ' ' +
-                                              t('submission')
-                                        : t('no_submissions')
-                                }
-                            />
-                            {submissions > 0 ? (
+                        <EvenlySpacedRow
+                            items={[
+                                <ListItemText primary={projectName} />,
                                 <ListItemText
-                                    sx={{ maxWidth: 80 }}
                                     primary={
-                                        score
-                                            ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
-                                            : t('no_score_yet')
+                                        dueDate
+                                            ? dayjs(dueDate).format(
+                                                  'DD/MM/YYYY HH:mm'
+                                              )
+                                            : t('no_deadline')
                                     }
-                                />
-                            ) : (
+                                />,
                                 <ListItemText
-                                    sx={{ maxWidth: 80 }}
-                                    primary={`0/${maxScore} (0%)`}
-                                />
-                            )}
-                        </>
+                                    primary={
+                                        submissions > 0
+                                            ? submissions > 1
+                                                ? submissions +
+                                                  ' ' +
+                                                  t('submissions')
+                                                : submissions +
+                                                  ' ' +
+                                                  t('submission')
+                                            : t('no_submissions')
+                                    }
+                                />,
+                                <>
+                                    {submissions > 0 ? (
+                                        <ListItemText
+                                            primary={
+                                                score
+                                                    ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
+                                                    : t('no_score_yet')
+                                            }
+                                        />
+                                    ) : (
+                                        <ListItemText
+                                            primary={`0/${maxScore} (0%)`}
+                                        />
+                                    )}
+                                </>,
+                            ]}
+                        />
                     ) : (
                         <>
                             {/* In case of the user being the teacher: */}
-                            <ListItemText
-                                id="projectName"
-                                sx={{ maxWidth: 100 }}
-                                primary={projectName}
-                            />
-                            <ListItemText
-                                id='deadline'
-                                sx={{ maxWidth: 150 }}
-                                primary={
-                                    dueDate
-                                        ? dayjs(dueDate).format(
-                                              'DD/MM/YYYY HH:mm'
-                                          )
-                                        : t('no_deadline')
-                                }
-                            />
-                            <ButtonActions
-                                archived={archived}
-                                startVisible={visible}
-                                deleteEvent={deleteEvent}
-                                archiveEvent={archiveEvent}
-                                visibilityEvent={visibilityEvent}
+                            <EvenlySpacedRow
+                                items={[
+                                    <ListItemText primary={projectName} />,
+                                    <ListItemText
+                                        primary={
+                                            dueDate
+                                                ? dayjs(dueDate).format(
+                                                      'DD/MM/YYYY HH:mm'
+                                                  )
+                                                : t('no_deadline')
+                                        }
+                                    />,
+                                    <ButtonActions
+                                        archived={archived}
+                                        startVisible={visible}
+                                        deleteEvent={deleteEvent}
+                                        archiveEvent={archiveEvent}
+                                        visibilityEvent={visibilityEvent}
+                                    />,
+                                ]}
                             />
                         </>
                     )}

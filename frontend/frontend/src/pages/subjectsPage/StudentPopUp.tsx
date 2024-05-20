@@ -1,7 +1,13 @@
 import { User } from './AddChangeSubjectPage'
 import * as React from 'react'
-import { IconButton, List, ListItem, ListItemText, Typography } from '@mui/material'
-import { Button } from '../../components/CustomComponents'
+import {
+    IconButton,
+    List,
+    ListItem,
+    ListItemText,
+    Typography,
+} from '@mui/material'
+import { SecondaryButton } from '../../components/CustomComponents'
 import Dialog from '@mui/material/Dialog'
 import DialogTitle from '@mui/material/DialogTitle'
 import CloseIcon from '@mui/icons-material/Close'
@@ -23,15 +29,13 @@ export default function StudentPopUp({ students, text }: StudentPopUpProps) {
     return (
         <>
             {/* Students Button */}
-            <Button
-                variant="contained"
-                color="secondary"
+            <SecondaryButton
                 onClick={() => {
                     setOpen(true)
                 }}
             >
                 {t(text)}
-            </Button>
+            </SecondaryButton>
             {/* Students Dialog */}
             <Dialog
                 open={open}
@@ -57,17 +61,19 @@ export default function StudentPopUp({ students, text }: StudentPopUpProps) {
                 <DialogContent dividers>
                     {/* List of Students */}
                     {students.length > 0 ? (
-                    <List>
-                        {students.map((student) => (
-                            <ListItem key={student.user}>
-                                <ListItemText
-                                    primary={`${student.first_name} ${student.last_name}`}
-                                />
-                            </ListItem>
-                        ))}
-                    </List>
+                        <List>
+                            {students.map((student) => (
+                                <ListItem key={student.user}>
+                                    <ListItemText
+                                        primary={`${student.first_name} ${student.last_name}`}
+                                    />
+                                </ListItem>
+                            ))}
+                        </List>
                     ) : (
-                        <Typography variant="body1">{t('loading') + ' ' + t('students') + '...'}</Typography>
+                        <Typography variant="body1">
+                            {t('loading') + ' ' + t('students') + '...'}
+                        </Typography>
                     )}
                 </DialogContent>
             </Dialog>

@@ -1,10 +1,12 @@
 from django.test import TestCase
 from api.tests.factories.score import ScoreFactory
 from api.tests.factories.indiening import IndieningFactory
+from unittest.mock import patch
 
 
 class ScoreModelTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.indiening = IndieningFactory.create()
         self.score = ScoreFactory.create(indiening=self.indiening)
 

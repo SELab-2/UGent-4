@@ -103,7 +103,9 @@ def create_groepen(instance):
             except Exception:
                 pass
     else:
-        for _ in range(len(instance.vak.studenten.all())//instance.max_groep_grootte + 1):
+        for _ in range(
+            len(instance.vak.studenten.all()) // instance.max_groep_grootte + 1
+        ):
             try:
                 serializer = GroepSerializer(
                     data={"studenten": [], "project": instance.project_id}

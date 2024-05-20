@@ -24,7 +24,7 @@ class Vak(models.Model):
 
     vak_id = models.AutoField(primary_key=True)
     naam = models.CharField(max_length=100)
-    jaartal = models.IntegerField(default=date.today().year)
+    jaartal = models.PositiveSmallIntegerField(default=date.today().year)
     gearchiveerd = models.BooleanField(default=False, blank=True)
     studenten = models.ManyToManyField(
         "Gebruiker", related_name="vak_gebruikers", blank=True

@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { darken } from '@mui/system'
 import { Box, Collapse, Tooltip, Typography } from '@mui/material'
-import Button from '@mui/material/Button'
+import { Button } from './CustomComponents.tsx'
 import { AssignmentTurnedIn, ContentPaste } from '@mui/icons-material'
 import { t } from 'i18next'
+import theme from '../Theme.ts'
 
 interface CopyToClipboardProps {
     invitationLink: string
@@ -42,21 +44,24 @@ export const CopyToClipboard = ({ invitationLink }: CopyToClipboardProps) => {
                     >
                         <Button
                             onClick={copyToClipboard}
-                            variant={'contained'}
                             sx={{
-                                height: 40,
                                 maxWidth: 500,
                                 minWidth: 200,
-                                backgroundColor: 'background.default',
+                                backgroundColor: 'secondary.main',
                                 color: 'text.primary',
+                                textTransform: 'none',
                                 borderRadius: 2,
                                 display: 'flex',
                                 flexDirection: 'row',
                                 alignItems: 'center',
+                                justifyContent: 'flex-start',
                                 padding: 0,
                                 gap: 1,
                                 '&:hover': {
-                                    backgroundColor: 'secondary.main',
+                                    backgroundColor: darken(
+                                        theme.palette.secondary.main,
+                                        0.2
+                                    ),
                                 },
                             }}
                         >
@@ -89,7 +94,7 @@ export const CopyToClipboard = ({ invitationLink }: CopyToClipboardProps) => {
                                     textOverflow: 'ellipsis',
                                 }}
                             >
-                                {invitationLink}
+                                {t('copy_invite')}
                             </Typography>
                         </Button>
                     </Collapse>
