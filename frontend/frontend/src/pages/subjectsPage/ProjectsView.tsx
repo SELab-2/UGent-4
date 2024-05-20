@@ -271,10 +271,14 @@ export function ProjectsView({
                                                     projectName={
                                                         project.assignment.titel
                                                     }
-                                                    dueDate={dayjs(
-                                                        project.assignment
-                                                            .deadline
-                                                    )}
+                                                    dueDate={
+                                                        project.assignment.deadline
+                                                            ? dayjs(
+                                                              project.assignment
+                                                                .deadline
+                                                              )
+                                                            : undefined
+                                                    }
                                                     submissions={
                                                         project.submissions
                                                             ? project.submissions

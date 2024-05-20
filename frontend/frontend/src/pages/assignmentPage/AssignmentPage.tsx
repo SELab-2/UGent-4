@@ -410,26 +410,20 @@ export function AssignmentPage() {
                                                 height={50}
                                             />
                                         ) : (
-                                            <>
-                                                {assignment !== undefined &&
-                                                    assignment.deadline !==
-                                                        null && (
-                                                        <Typography
-                                                            variant="h6"
-                                                            color={
-                                                                'text.primary'
-                                                            }
-                                                        >
-                                                            {assignment
-                                                                ? dayjs(
-                                                                      assignment.deadline
-                                                                  ).format(
-                                                                      'DD/MM/YYYY HH:mm'
-                                                                  )
-                                                                : 'no deadline'}
-                                                        </Typography>
-                                                    )}
-                                            </>
+                                            <Typography
+                                                variant="h6"
+                                                color={
+                                                    'text.primary'
+                                                }
+                                            >
+                                                {assignment && assignment.deadline
+                                                    ? dayjs(
+                                                            assignment.deadline
+                                                        ).format(
+                                                            'DD/MM/YYYY HH:mm'
+                                                        )
+                                                    : t('no_deadline')}
+                                            </Typography>
                                         )}
                                     </Box>
                                     {loading ? (
@@ -761,26 +755,20 @@ export function AssignmentPage() {
                                                     height={50}
                                                 />
                                             ) : (
-                                                <>
-                                                    {assignment !== undefined &&
-                                                        assignment.deadline !==
-                                                            null && (
-                                                            <Typography
-                                                                variant="h6"
-                                                                color={
-                                                                    'text.primary'
-                                                                }
-                                                            >
-                                                                {assignment
-                                                                    ? dayjs(
-                                                                          assignment.deadline
-                                                                      ).format(
-                                                                          'DD/MM/YYYY HH:mm'
-                                                                      )
-                                                                    : 'no deadline'}
-                                                            </Typography>
-                                                        )}
-                                                </>
+                                                <Typography
+                                                    variant="h6"
+                                                    color={
+                                                        'text.primary'
+                                                    }
+                                                >
+                                                    {assignment && assignment.deadline
+                                                        ? dayjs(
+                                                                assignment.deadline
+                                                            ).format(
+                                                                'DD/MM/YYYY HH:mm'
+                                                            )
+                                                        : t('no_deadline')}
+                                                </Typography>
                                             )}
                                         </Box>
                                         <Box style={{ flexGrow: 1 }} />
