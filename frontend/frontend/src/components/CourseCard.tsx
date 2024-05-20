@@ -375,11 +375,13 @@ export function CourseCard({
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            dayjs(
-                                                                assignment.deadline
-                                                            ).format(
-                                                                'DD/MM/YYYY HH:mm'
-                                                            ) || undefined
+                                                            assignment.deadline
+                                                                ? dayjs(
+                                                                    assignment.deadline
+                                                                  ).format(
+                                                                    'DD/MM/YYYY HH:mm'
+                                                                  )
+                                                                : undefined
                                                         }
                                                         status={groupsWithSubmissions.some(
                                                             (group) =>
@@ -414,12 +416,13 @@ export function CourseCard({
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    dayjs(
-                                                                        assignment.deadline
-                                                                    ).format(
-                                                                        'DD/MM/YYYY HH:mm'
-                                                                    ) ||
-                                                                    undefined
+                                                                    assignment.deadline
+                                                                        ? dayjs(
+                                                                            assignment.deadline
+                                                                          ).format(
+                                                                            'DD/MM/YYYY HH:mm'
+                                                                          )
+                                                                        : undefined
                                                                 }
                                                                 status={
                                                                     groupsWithSubmissions.some(

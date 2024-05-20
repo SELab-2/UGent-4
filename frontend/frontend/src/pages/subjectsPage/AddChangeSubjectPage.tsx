@@ -79,7 +79,12 @@ function UserList(
                             return (
                                 <>
                                     <Divider />
-                                    <ListItem>
+                                    <ListItem
+                                        disabled={
+                                            users.length == 1 &&
+                                            users[0].is_lesgever
+                                        }
+                                    >
                                         <EvenlySpacedRow
                                             items={[
                                                 <ListItemText
@@ -469,6 +474,9 @@ export function AddChangeSubjectPage() {
         async function fetchUser() {
             setUserLoading(true)
             const userResponse = await instance.get('/gebruikers/me/')
+            if (vakID == undefined) {
+                setTeachers([userResponse.data])
+            }
             setUser(userResponse.data)
             setUserLoading(false)
         }

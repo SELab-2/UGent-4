@@ -31,7 +31,7 @@ import { EvenlySpacedRow } from '../../components/CustomComponents.tsx'
 
 interface AssignmentListItemSubjectsPageProps {
     projectName: string
-    dueDate: Dayjs
+    dueDate: Dayjs | undefined
     submissions: number
     score: Score | undefined
     maxScore: number
