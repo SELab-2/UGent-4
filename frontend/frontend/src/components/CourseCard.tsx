@@ -369,10 +369,8 @@ export function CourseCard({
                                                     {assignments.map(
                                                         (assignment) => (
                                                             <AssignmentListItem
-                                                                key={
-                                                                    assignment.project_id
-                                                                }
-                                                                id={`project${assignment.project_id}`}
+                                                                key={`project${assignment.project_id}`}
+                                                                id={assignment.project_id.toString()}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -415,10 +413,8 @@ export function CourseCard({
                                                         )
                                                         .map((assignment) => (
                                                             <AssignmentListItem
-                                                                key={
-                                                                    assignment.project_id
-                                                                }
-                                                                id={`project${assignment.project_id}`}
+                                                                key={`project${assignment.project_id}`}
+                                                                id={assignment.project_id.toString()}
                                                                 courseId={
                                                                     courseId
                                                                 }
