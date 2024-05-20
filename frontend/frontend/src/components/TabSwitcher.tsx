@@ -11,7 +11,7 @@ import { grey } from '@mui/material/colors'
 import { Box, MenuItem, Select } from '@mui/material'
 
 interface TabSwitcherProps {
-    selectedYear: number
+    selectedYear?: number
     setSelectedYear: (year: number) => void
     titles: string[]
     nodes: ReactNode[]
@@ -49,37 +49,39 @@ export default function TabSwitcher({
                             </Tab>
                         ))}
                     </TabsList>
-                    <Box
-                        height={'100%'}
-                        display={'flex'}
-                        flexDirection={'column'}
-                        justifyContent={'center'}
-                        alignItems={'flex-start'}
-                        mb={2}
-                    >
-                        <Select
-                            variant={'outlined'}
-                            color={'primary'}
-                            value={selectedYear}
-                            onChange={(e) =>
-                                setSelectedYear(e.target.value as number)
-                            }
-                            label="Select Academic Year"
-                            sx={{
-                                minWidth: 150,
-                                '& .MuiSelect-outlined': {
-                                    border: 1.5,
-                                    borderColor: 'primary.main',
-                                },
-                            }}
+                    {selectedYear && (
+                        <Box
+                            height={'100%'}
+                            display={'flex'}
+                            flexDirection={'column'}
+                            justifyContent={'center'}
+                            alignItems={'flex-start'}
+                            mb={2}
                         >
-                            {[2022, 2023, 2024, 2025].map((year) => (
-                                <MenuItem key={year} value={year}>
-                                    {year}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </Box>
+                            <Select
+                                variant={'outlined'}
+                                color={'primary'}
+                                value={selectedYear}
+                                onChange={(e) =>
+                                    setSelectedYear(e.target.value as number)
+                                }
+                                label="Select Academic Year"
+                                sx={{
+                                    minWidth: 150,
+                                    '& .MuiSelect-outlined': {
+                                        border: 1.5,
+                                        borderColor: 'primary.main',
+                                    },
+                                }}
+                            >
+                                {[2022, 2023, 2024, 2025].map((year) => (
+                                    <MenuItem key={year} value={year}>
+                                        {year}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </Box>
+                    )}
                 </Box>
                 {nodes.map((node, index) => (
                     <TabPanel id={`node${index}`} key={index} value={index}>

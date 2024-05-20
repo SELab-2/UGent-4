@@ -271,6 +271,8 @@ export function SubjectsPage() {
                                         />
                                     ) : (
                                         <TabSwitcher
+                                            selectedYear={undefined}
+                                            setSelectedYear={() => undefined}
                                             titles={[
                                                 'current_projects',
                                                 'archived',
@@ -400,6 +402,8 @@ export function SubjectsPage() {
                                         />
                                     ) : (
                                         <TabSwitcher
+                                            selectedYear={undefined}
+                                            setSelectedYear={() => undefined}
                                             titles={[
                                                 'current_projects',
                                                 'archived',
