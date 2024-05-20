@@ -1,6 +1,6 @@
 import { Header } from '../../components/Header.tsx'
 import { Button } from '../../components/CustomComponents.tsx'
-import { Box, MenuItem, Select, Stack } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ArchivedView } from './ArchivedView.tsx'
 import { CoursesView } from './CoursesView.tsx'
@@ -192,6 +192,8 @@ export default function MainPage() {
                     CoursesView is a scroll-box with the current courses, 
                     ArchivedView is the same but for the archived courses.  */}
                     <TabSwitcher
+                        selectedYear={selectedYear}
+                        setSelectedYear={setSelectedYear}
                         titles={['current_courses', 'archived']}
                         nodes={
                             loading
@@ -202,8 +204,8 @@ export default function MainPage() {
                                               md: 'row',
                                           }}
                                           minWidth={{
-                                              md: '40svw',
-                                              lg: '49svw',
+                                              md: '57svw',
+                                              lg: '78svw',
                                           }}
                                       >
                                           {[...Array(3)].map((_, index) => (
@@ -216,8 +218,8 @@ export default function MainPage() {
                                               md: 'row',
                                           }}
                                           minWidth={{
-                                              md: '40svw',
-                                              lg: '49svw',
+                                              md: '57svw',
+                                              lg: '78svw',
                                           }}
                                       >
                                           {[...Array(3)].map((_, index) => (
@@ -322,37 +324,7 @@ export default function MainPage() {
                                   ]
                         }
                     />
-                    <Box
-                        height={'100%'}
-                        display={'flex'}
-                        flexDirection={'column'}
-                        justifyContent={'center'}
-                        alignItems={'flex-start'}
-                        mb={2}
-                    >
-                        <Select
-                            variant={'outlined'}
-                            color={'primary'}
-                            value={selectedYear}
-                            onChange={(e) =>
-                                setSelectedYear(e.target.value as number)
-                            }
-                            label="Select Academic Year"
-                            sx={{
-                                minWidth: 150,
-                                '& .MuiSelect-outlined': {
-                                    border: 1.5,
-                                    borderColor: 'primary.main',
-                                },
-                            }}
-                        >
-                            {[2022, 2023, 2024, 2025].map((year) => (
-                                <MenuItem key={year} value={year}>
-                                    {year}
-                                </MenuItem>
-                            ))}
-                        </Select>
-                    </Box>
+
                     {/* Add a calendar to the right of the mainpage. */}
                     <Box
                         aria-label={'calendarView'}
