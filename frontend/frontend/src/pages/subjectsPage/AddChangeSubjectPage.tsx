@@ -476,6 +476,7 @@ export function AddChangeSubjectPage() {
                 .catch((err) => {
                     console.log(err)
                 })
+            navigate(`/course/${vakID}`)
         } else {
             instance
                 .put('vakken/' + vakID + '/', {
@@ -487,6 +488,7 @@ export function AddChangeSubjectPage() {
                     console.log(err)
                     alert(err.response.data)
                 })
+            navigate(`/course/${vakID}`)
         }
     }
 
@@ -659,7 +661,7 @@ export function AddChangeSubjectPage() {
                                             <SecondaryButton
                                                 /* This is the large save button on the top of the page */
                                                 onClick={() =>
-                                                    navigate(`/course/${vakID}`)
+                                                    navigate(`/`)
                                                 }
                                             >
                                                 {t('cancel')}
