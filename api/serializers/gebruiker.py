@@ -7,12 +7,12 @@ class GebruikerSerializer(serializers.ModelSerializer):
     """
     Serializer voor het serialiseren en deserialiseren van Gebruiker objecten.
 
-    Fields:
+    Velden:
         Meta.model (Gebruiker): Het model waarop de serializer is gebaseerd.
-        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer.
+        Meta.fields (list): De velden die moeten worden opgenomen in de serializer.
         Hier wordt '__all__' gebruikt om alle velden op te nemen.
 
-    Methods:
+    Methoden:
         create(self, validated_data): Maakt een nieuwe gebruiker aan en voegt deze toe aan de database.
         update(self, instance, validated_data): Werkt een bestaande gebruiker bij in de database.
     """
@@ -34,6 +34,8 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
+        Maakt een nieuwe gebruiker aan.
+
         Args:
             validated_data (dict): Gevalideerde gegevens over de gebruiker.
 
@@ -50,6 +52,8 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
+        Werkt een bestaande gebruiker bij.
+
         Args:
             instance (Gebruiker): De gebruiker die moet worden bijgewerkt.
             validated_data (dict): Gevalideerde gegevens over de gebruiker.

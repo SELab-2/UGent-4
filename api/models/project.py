@@ -4,7 +4,7 @@ from .vak import Vak
 
 def upload_to(instance, filename):
     """
-    Functie om het pad te genereren waar het opgavebestand wordt opgeslagen.
+    Genereert het pad waar het opgavebestand wordt opgeslagen.
 
     Args:
         instance: De huidige instantie van het model.
@@ -26,28 +26,26 @@ class Project(models.Model):
         titel (CharField): Titel van het project.
         beschrijving (TextField): Beschrijving van het project.
         opgave_bestand (FileField): Een veld voor het uploaden van het opgavebestand voor het project.
-        (eventueel uit te breiden tot meerdere bestanden mogelijk)
         vak (ForeignKey): Een ForeignKey relatie met het 'Vak' model,
-        waarmee wordt aangegeven tot welk vak dit project behoort.
+            waarmee wordt aangegeven tot welk vak dit project behoort.
         Als het bijbehorende vak wordt verwijderd, worden ook de bijbehorende projecten verwijderd.
         deadline (DateTimeField): Een veld voor het instellen van de deadline voor het project.
-        Kan optioneel zijn (null=True).
+            Kan optioneel zijn (null=True, blank=True).
         extra_deadline (DateTimeField): Een extra veld voor het instellen van een extra deadline voor het project.
-        Kan optioneel zijn (null=True).
+            Kan optioneel zijn (null=True, blank=True).
         max_score (IntegerField): Een veld voor het instellen van de maximale score voor het project.
-        Standaard ingesteld op 20.
-        max_groep_grootte (IntegerField): Een veld voor het instellen van de max grootte van de groep voor het project.
-        Standaard ingesteld op 1.
+            Standaard ingesteld op 20.
+        max_groep_grootte (IntegerField): Een veld voor het instellen van de maximale grootte van de groep
+            voor het project. Standaard ingesteld op 1.
         student_groep (BooleanField): Een veld om aan te geven of het een individueel project is of niet.
-        Standaard ingesteld of False.
+            Standaard ingesteld op False.
         zichtbaar (BooleanField): Een veld om aan te geven of het project zichtbaar is of niet.
-        Standaard ingesteld op True.
+            Standaard ingesteld op True.
         gearchiveerd (BooleanField): Een veld om aan te geven of het project gearchiveerd is of niet.
-        Standaard ingesteld op False.
+            Standaard ingesteld op False.
 
     Methoden:
-        __str__(): Geeft een representatie van het model als een string terug,
-        die de titel van het project bevat.
+        __str__(): Geeft een representatie van het model als een string terug, die de titel van het project bevat.
     """
 
     project_id = models.AutoField(primary_key=True)

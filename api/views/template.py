@@ -93,7 +93,7 @@ def template_detail(request, id, format=None):
 @api_view(["GET"])
 def template_detail_bestand(request, id, format=None):
     """
-    Een view om het bestand van een specifieke tempalte te downloaden of de content in JSON-formaat te krijgen.
+    Een view om het bestand van een specifieke template te downloaden of de content in JSON-formaat te krijgen.
 
     Args:
         id (int): De primaire sleutel van de template.

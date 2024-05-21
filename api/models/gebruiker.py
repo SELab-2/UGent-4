@@ -12,6 +12,9 @@ class Gebruiker(models.Model):
         met een één-op-één-relatie. Dit veld fungeert als het primaire sleutelveld.
         is_lesgever (BooleanField): Een boolean veld dat aangeeft of de gebruiker een lesgever is of niet.
         Standaard ingesteld op False.
+        gepinde_vakken (ManyToManyField): Een veld dat verwijst naar het Vak model met een
+        veel-op-veel-relatie, om de vakken die de gebruiker heeft gepind op te slaan.
+        Dit veld is optioneel (mag leeg zijn).
 
     Methods:
         __str__(): Geeft een representatie van het model als een string terug,
