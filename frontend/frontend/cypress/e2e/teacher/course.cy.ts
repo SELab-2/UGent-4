@@ -12,7 +12,10 @@ describe('create and change a course', () => {
       cy.get('#uploadStudent').get('#add').click()
       cy.get('#save').click()
 
-      // TODO check if course was added
+      // check if course was added
+      cy.get('#logo').click();
+      cy.contains('test course').should('exist')
+      cy.contains('Students: 1').should('exist')
     })
 
     it('alter course', () => {
@@ -25,6 +28,8 @@ describe('create and change a course', () => {
       // save course
       cy.get('#save').click()
 
-      // TODO check if the student was added
+      // check if the student was added
+      cy.get('#logo').click();
+      cy.contains('Students: 2').should('exist')
     }) 
 })

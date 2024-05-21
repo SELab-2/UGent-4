@@ -11,14 +11,16 @@ describe('archive projects and courses', () => {
         cy.get('#confirm').click()
         // check if the project is archived
         cy.contains('Archived').click()
-        cy.get('#test project').should('exist')
+        cy.contains('test project').should('exist')
     }) 
 
     it('archive course', () => {
 
-        cy.contains('test course').click()
-        
-        // TODO 
+        cy.get('#archiveButton').first().click()
+        cy.get('#confirm').click()
+        // check if the course is archived
+        cy.contains('Archived').click()
+        cy.contains('test course').should('exist')
       }) 
   
 

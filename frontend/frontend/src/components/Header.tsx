@@ -102,6 +102,7 @@ export const Header = ({ variant, title }: Props) => {
                         <Box>
                             <Tooltip title={t('home')}>
                                 <IconButton
+                                    id='logo'
                                     onClick={() => navigate('/')}
                                     sx={{ padding: 0, borderRadius: 5 }}
                                 >

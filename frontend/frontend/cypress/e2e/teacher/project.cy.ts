@@ -33,6 +33,9 @@ describe('add and change projects', () => {
         cy.get('#confirm').click()
         
         // TODO check if project was added
+        cy.contains('test project').should('exist')
+        cy.contains('22/08/2024 23:59').should('exist').click()
+        cy.contains('This is a test project set up by the e2e tests.').should('exist')
     }) 
   
     it('change existing project', () => {
@@ -49,6 +52,10 @@ describe('add and change projects', () => {
       cy.get('#confirm').click()
 
       // TODO check if project was altered
+      cy.contains('test project').should('exist').click()
+      cy.contains('This is a test project set up by the e2e tests. This project has been altered.').should('exist')
+      cy.contains('22/08/2024 23:59')
+      cy.contains('27/08/2024 23:59')
     }) 
     
 })
