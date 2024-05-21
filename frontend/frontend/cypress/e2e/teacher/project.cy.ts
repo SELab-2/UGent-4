@@ -1,4 +1,4 @@
-describe('add a project', () => {
+describe('add and change projects', () => {
     beforeEach(() => {
       cy.visit('http://localhost:5173')
     })
@@ -32,6 +32,15 @@ describe('add a project', () => {
         // confirm in popup
         cy.get('#confirm').click()
         
-        // check if project was added
+        // TODO check if project was added
     }) 
+  
+    it('change existing project', () => {
+
+      cy.contains('test course').click()
+      cy.get('#test project').click()
+
+      // TODO change the project
+    }) 
+    
 })

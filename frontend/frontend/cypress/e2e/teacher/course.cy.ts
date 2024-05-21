@@ -1,4 +1,4 @@
-describe('create a course', () => {
+describe('create and change a course', () => {
     beforeEach(() => {
       cy.visit('http://localhost:5173')
     })
@@ -12,6 +12,13 @@ describe('create a course', () => {
       cy.get('#uploadStudent').get('#add').click()
       cy.get('#save').click()
 
-      // check if course was added
+      // TODO check if course was added
+    })
+
+    it('alter course', () => {
+
+      cy.get('test course').click()
+
+      // TODO 
     }) 
 })

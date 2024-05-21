@@ -691,6 +691,7 @@ export function AssignmentPage() {
                                             />
                                         ) : (
                                             <SecondaryButton
+                                                id='adjustScores'
                                                 onClick={adjustScores}
                                             >
                                                 {t('adjust_scores')}
