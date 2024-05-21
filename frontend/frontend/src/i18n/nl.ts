@@ -121,12 +121,20 @@ const dutch = {
     open_with_ui: 'Open met UI',
     choose_existing: 'Kies een bestaand script',
     make_new_script: 'Maak nieuw script aan',
-    cant_add_teachers_to_student_list: 'Je kan geen leerkrachten aan de studenten lijst toevoegen',
-    cant_add_students_to_teacher_list: 'Je kan geen studenten aan de leerkrachten lijst toevoegen',
+    cant_add_teachers_to_student_list:
+        'Je kan geen leerkrachten aan de studenten lijst toevoegen',
+    cant_add_students_to_teacher_list:
+        'Je kan geen studenten aan de leerkrachten lijst toevoegen',
     cant_add_users_twice: 'Je kan gebruikers geen twee keer toevoegen',
     this_user_doesnt_exist: 'Deze gebruiker bestaat niet',
     status: 'Status',
+    visibility: 'Verander Zichtbaarheid',
+    template_saved_successfully: 'Template succesvol opgeslagen',
     save_course_warning: 'Vak Opslaan?',
+    try_again: 'Probeer opnieuw',
+    openinUi: 'Open in UI',
+    openInEditor: 'Open in editor',
+    no_params: 'Geen parameters gevonden in de template.',
 }
 
 export default dutch

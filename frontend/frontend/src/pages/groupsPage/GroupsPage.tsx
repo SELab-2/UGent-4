@@ -948,30 +948,38 @@ export function GroupsPage() {
                                                     />
                                                 ) : (
                                                     <>
-                                                        <IconButton
-                                                            // The teacher can save the group changes by clicking on the save icon.type="submit"
-                                                            aria-label={
-                                                                'submit'
+                                                        <Tooltip
+                                                            title={
+                                                                t('save') +
+                                                                ' ' +
+                                                                t('groups')
                                                             }
-                                                            type={'submit'}
-                                                            sx={{
-                                                                backgroundColor:
-                                                                    'primary.main',
-                                                                borderRadius: 2,
-                                                                color: 'background.default',
-                                                                '&:hover': {
-                                                                    backgroundColor:
-                                                                        'secondary.main',
-                                                                    color: 'text.primary',
-                                                                },
-                                                            }}
                                                         >
-                                                            <SaveIcon
-                                                                fontSize={
-                                                                    'medium'
+                                                            <IconButton
+                                                                // The teacher can save the group changes by clicking on the save icon.type="submit"
+                                                                aria-label={
+                                                                    'submit'
                                                                 }
-                                                            />
-                                                        </IconButton>
+                                                                type={'submit'}
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        'primary.main',
+                                                                    borderRadius: 2,
+                                                                    color: 'background.default',
+                                                                    '&:hover': {
+                                                                        backgroundColor:
+                                                                            'secondary.main',
+                                                                        color: 'text.primary',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                <SaveIcon
+                                                                    fontSize={
+                                                                        'medium'
+                                                                    }
+                                                                />
+                                                            </IconButton>
+                                                        </Tooltip>
                                                     </>
                                                 )}
                                             </Tooltip>
