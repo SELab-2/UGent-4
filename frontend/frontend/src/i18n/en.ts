@@ -80,7 +80,7 @@ const english = {
     edit_scores_warning: 'Edit Scores?',
     undo_changes_warning: 'Undo Changes?',
     optional: 'Optional',
-    deadlineCheck: 'extra deadline must be after the first deadline',
+    deadlineCheck: 'Extra deadline must be after the first deadline',
     not_before_now: 'Deadline must be in the future',
     noStudentsYet: 'No students yet',
     change_groups: 'Change groups?',
@@ -108,7 +108,7 @@ const english = {
     copy_invite: 'Copy invitation link',
     deadlines_on: 'Deadlines on',
     no_assignmentfile: 'No assignment file',
-    email: 'email',
+    email: 'Email',
     n_of_members: 'Max Amount Of Members',
     existing_submissions:
         'This could impact existing submissions. Are you sure?',
@@ -124,7 +124,7 @@ const english = {
     cant_add_students_to_teacher_list: 'You cannot add students to the teacher list',
     cant_add_users_twice: 'You cannot add users to a subject twice',
     this_user_doesnt_exist: 'This user does not exist',
-    status: 'Status'
+    status: 'Status',
 }
 
 export default english

@@ -84,7 +84,11 @@ urlpatterns = [
     ),
     path("api/templates/", template_list, name="template_list"),
     path("api/templates/<int:id>/", template_detail, name="template_detail"),
-    path("api/templates/<int:id>/template/", template_detail_bestand, name="template_detail_bestand")
+    path(
+        "api/templates/<int:id>/template/",
+        template_detail_bestand,
+        name="template_detail_bestand",
+    ),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

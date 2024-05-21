@@ -5,10 +5,12 @@ from api.tests.factories.gebruiker import GebruikerFactory
 from rest_framework.test import APIClient
 from django.urls import reverse
 from rest_framework import status
+from unittest.mock import patch
 
 
 class ScoreListViewTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.client = APIClient()
         self.teacher = GebruikerFactory.create(is_lesgever=True)
         self.student = GebruikerFactory.create(is_lesgever=False)
@@ -39,7 +41,8 @@ class ScoreListViewTest(TestCase):
         response = self.client.get(self.url, {"indiening": "indiening"})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    def test_score_list_post(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def test_score_list_post(self, mock_send_mail):
         indiening = IndieningFactory.create()
         data = {
             "score_id": self.score1.score_id,
@@ -49,7 +52,8 @@ class ScoreListViewTest(TestCase):
         response = self.client.post(self.url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_score_list_post_unauthorized(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def test_score_list_post_unauthorized(self, mock_send_mail):
         self.client.force_login(self.student.user)
         indiening = IndieningFactory.create()
         data = {
@@ -71,7 +75,8 @@ class ScoreListViewTest(TestCase):
 
 
 class ScoreDetailViewTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.client = APIClient()
         self.teacher = GebruikerFactory.create(is_lesgever=True)
         self.student = GebruikerFactory.create(is_lesgever=False)

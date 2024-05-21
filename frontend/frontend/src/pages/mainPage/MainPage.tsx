@@ -137,6 +137,10 @@ export default function MainPage() {
     }
     const doArchive = async () => {
         console.log('Archive clicked')
+        const newCourses = courses.map((course) =>
+            course.vak_id == archiveCourseId ? archiveSingleCourse(course) : course
+        )
+        setCourses(newCourses)
         try {
             await instance.patch(`/vakken/${archiveCourseId}/`, {
                 gearchiveerd: true,
@@ -369,4 +373,11 @@ export default function MainPage() {
             </Stack>
         </>
     )
+}
+
+function archiveSingleCourse(course: Course): Course {
+    return {
+        ...course,
+        gearchiveerd: true,
+    }
 }
