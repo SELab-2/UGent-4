@@ -38,6 +38,10 @@ export interface User {
     email: string
 }
 
+interface errorChecks {
+    title: boolean
+}
+
 // This function takes a list of users and will render it.
 // It can be used for both the teachers and the students.
 function UserList(
@@ -251,6 +255,20 @@ export function AddChangeSubjectPage() {
 
     const [saveConfirmation, setSaveConfirmation] = useState(false)
     const [cancelConfirmation, setCancelConfirmation] = useState(false)
+
+    const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
+        title: false,
+    })
+
+    const handleSubmit = () => {
+        setAssignmentErrors({
+            title: title === '',
+        })
+        if (title === '') {
+            return
+        }
+        setSaveConfirmation(true)
+    }
 
     const closeSaveConfirmation = () => {
         setSaveConfirmation(false)
@@ -484,11 +502,11 @@ export function AddChangeSubjectPage() {
                 })
                 .then((res) => {
                     setVakID(res.data.vak_id)
+                    navigate(`/course/${res.data.vak_id}`)
                 })
                 .catch((err) => {
                     console.log(err)
                 })
-            navigate(`/course/${vakID}`)
         } else {
             instance
                 .put('vakken/' + vakID + '/', {
@@ -658,7 +676,17 @@ export function AddChangeSubjectPage() {
                                                 <TextField
                                                     type="text"
                                                     value={title}
+                                                    error={
+                                                        assignmentErrors.title
+                                                    }
                                                     placeholder={t('name')}
+                                                    helperText={
+                                                        assignmentErrors.title
+                                                            ? t('name') +
+                                                              ' ' +
+                                                              t('is_required')
+                                                            : ''
+                                                    }
                                                     onChange={(event) =>
                                                         setTitle(
                                                             event.target.value
@@ -685,9 +713,7 @@ export function AddChangeSubjectPage() {
 
                                             <Button
                                                 /* This is the large save button on the top of the page */
-                                                onClick={() =>
-                                                    setSaveConfirmation(true)
-                                                }
+                                                onClick={handleSubmit}
                                             >
                                                 {t('save')}
                                             </Button>
