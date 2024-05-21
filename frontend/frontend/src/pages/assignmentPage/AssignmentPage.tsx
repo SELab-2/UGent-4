@@ -950,14 +950,22 @@ export function AssignmentPage() {
                                 </Box>
                                 <Box
                                     display={'flex'}
-                                    justifyContent={'flex-end'}
+                                    flexDirection={'row'}
                                     alignItems={'center'}
+                                    gap={1}
+                                    sx={{
+                                        padding: 1,
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        backgroundColor: 'background.default',
+                                        gap: 2,
+                                    }}
                                 >
                                     <Typography
-                                        variant={'h6'}
+                                        variant="h6"
+                                        color="text.primary"
                                         fontWeight={'bold'}
-                                        aria-label={'title'}
-                                        margin={0}
                                     >
                                         {'Score:  '}
                                     </Typography>
