@@ -1,5 +1,5 @@
 import factory
-from api.models.indiening import Indiening, IndieningBestand
+from api.models.indiening import Indiening
 from factory.django import DjangoModelFactory
 from factory import SubFactory
 from .groep import GroepFactory
@@ -23,16 +23,5 @@ class IndieningFactory(DjangoModelFactory):
     )
     status = factory.Faker("boolean")
     result = factory.Faker("paragraph")
-    artefacten = None
-
-    indiening_bestanden = factory.RelatedFactory(
-        "api.tests.factories.indiening.IndieningBestandFactory", "indiening"
-    )
-
-
-class IndieningBestandFactory(DjangoModelFactory):
-    class Meta:
-        model = IndieningBestand
-
-    indiening = SubFactory(IndieningFactory)
     bestand = FileField(filename="test.txt", data=b"file content")
+    artefacten = None

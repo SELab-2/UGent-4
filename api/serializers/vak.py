@@ -89,7 +89,11 @@ def add_students_to_group(instance):
 
         else:
             groepen = Groep.objects.filter(project=project.project_id)
-            nieuwe_groepen = len(instance.studenten.all())//project.max_groep_grootte + 1 - len(groepen)
+            nieuwe_groepen = (
+                len(instance.studenten.all()) // project.max_groep_grootte
+                + 1
+                - len(groepen)
+            )
             for _ in range(nieuwe_groepen):
                 try:
                     serializer = GroepSerializer(

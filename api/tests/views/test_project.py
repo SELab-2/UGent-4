@@ -120,7 +120,7 @@ class ProjectDetailViewTest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_invalid_project_detail_get(self):
-        response = self.client.get(reverse("project_detail", kwargs={"id": 69}))
+        response = self.client.get(reverse("project_detail", kwargs={"id": 6969}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_project_detail_put(self):

@@ -1,4 +1,4 @@
-import { Divider } from '../../components/CustomComponents.tsx'
+import { Divider, EvenlySpacedRow } from '../../components/CustomComponents.tsx'
 import { Box, Skeleton, Typography } from '@mui/material'
 import List from '@mui/material/List'
 import { StudentScoreListItem } from './StudentScoreListItem.tsx'
@@ -116,29 +116,27 @@ export function StudentsView({
             <Box
                 aria-label={'scoresHeader'}
                 sx={{
-                    backgroundColor: 'primary.light',
-                    margin: 0,
+                    backgroundColor: 'secondary.main',
                     height: 20,
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    padding: '30px',
+                    padding: 3,
                 }}
             >
-                <>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        {t('group')}
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        {t('time')}
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        Score
-                    </Typography>
-                    <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                        Download
-                    </Typography>
-                </>
+                <EvenlySpacedRow
+                    items={[
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            {t('group')}
+                        </Typography>,
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            {t('time')}
+                        </Typography>,
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            Score
+                        </Typography>,
+                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                            Download
+                        </Typography>,
+                    ]}
+                />
             </Box>
             <Divider color={'text.main'}></Divider>
             <Box
@@ -148,9 +146,6 @@ export function StudentsView({
                     height: 450,
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: 1,
-                    borderRadius: 2,
-                    paddingBottom: 0,
                 }}
             >
                 {/* Scrollable list of students */}
