@@ -953,6 +953,7 @@ export function GroupsPage() {
                                                             aria-label={
                                                                 'submit'
                                                             }
+                                                            type={'submit'}
                                                             sx={{
                                                                 backgroundColor:
                                                                     'primary.main',
