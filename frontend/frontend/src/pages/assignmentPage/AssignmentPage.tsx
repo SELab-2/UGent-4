@@ -1,7 +1,7 @@
 import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
-import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
+import { Score, SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
 import {
     Button,
     Card,
@@ -18,6 +18,7 @@ import {
     Stack,
     Tooltip,
     Typography,
+    ListItemText
 } from '@mui/material'
 import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
@@ -72,6 +73,8 @@ export function AssignmentPage() {
     const [submissionFile, setSubmissionFile] = useState<File>()
     const [submit, setSubmit] = useState(false)
     const [students, setStudents] = useState<User[]>([])
+    const [lastSubmission, setLastSubmission] = useState<Submission>()
+    const [score, setScore] = useState<Score>()
 
     //state for loading the page
     const [loading, setLoading] = useState(true)
@@ -209,6 +212,23 @@ export function AssignmentPage() {
             )
         }
     }, [user, assignment, groups, assignmentId])
+
+    useEffect(() => {
+        async function fetchScore() {
+            if (submissions){
+                setLastSubmission(submissions[submissions.length-1])
+                if (lastSubmission) {
+                    const scoreResponse = await instance.get(
+                        `/scores/?indiening=${lastSubmission.indiening_id}`
+                    )
+                    setScore(scoreResponse.data[scoreResponse.data.length - 1])
+                    console.log('scoreresponse', scoreResponse.data)
+                    console.log('score', score?.score)
+                }
+            }
+        }
+        fetchScore().catch((error) => console.error('Error fetching score', error))
+    }, [submissions])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -927,6 +947,33 @@ export function AssignmentPage() {
                                             </>
                                         )}
                                     </Button>
+                                </Box>
+                                <Box
+                                    display={'flex'}
+                                    justifyContent={'flex-end'}
+                                    alignItems={'center'}
+                                >
+                                    <Typography
+                                        variant={'h6'}
+                                        fontWeight={'bold'}
+                                        aria-label={'title'}
+                                        margin={0}
+                                    >
+                                        {'Score:  '}
+                                    </Typography>
+                                    {submissions.length > 0 ? (
+                                        <ListItemText
+                                            primary={
+                                                score
+                                                    ? `${score.score}/${assignment?.max_score} (${(100 * score.score) / Number(assignment?.max_score)}%)`
+                                                    : ' ' + t('no_score_yet')
+                                            }
+                                        />
+                                    ) : (
+                                        <ListItemText
+                                            primary={' ' + t('no_score_yet')}
+                                        />
+                                    )}
                                 </Box>
 
                                 {/* Assignment */}
