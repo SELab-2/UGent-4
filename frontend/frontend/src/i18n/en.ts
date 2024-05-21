@@ -125,6 +125,7 @@ const english = {
     cant_add_users_twice: 'You cannot add users to a subject twice',
     this_user_doesnt_exist: 'This user does not exist',
     status: 'Status',
+    save_course_warning: 'Save Course?',
 }
 
 export default english

@@ -28,6 +28,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import Dialog from '@mui/material/Dialog'
 import instance from '../../axiosConfig.ts'
 import Papa, { ParseResult } from 'papaparse'
+import WarningPopup from '../../components/WarningPopup.tsx'
 
 export interface User {
     user: number
@@ -247,6 +248,17 @@ export function AddChangeSubjectPage() {
     // state for spinners
     const [loading, setLoading] = useState(false)
     const [userLoading, setUserLoading] = useState(true)
+
+    const [saveConfirmation, setSaveConfirmation] = useState(false)
+    const [cancelConfirmation, setCancelConfirmation] = useState(false)
+
+    const closeSaveConfirmation = () => {
+        setSaveConfirmation(false)
+    }
+
+    const closeCancel = () => {
+        setCancelConfirmation(false)
+    }
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
@@ -492,6 +504,10 @@ export function AddChangeSubjectPage() {
         }
     }
 
+    const handleCancel = (): void => {
+        navigate('/')
+    }
+
     useEffect(() => {
         async function fetchUser() {
             setUserLoading(true)
@@ -661,7 +677,7 @@ export function AddChangeSubjectPage() {
                                             <SecondaryButton
                                                 /* This is the large save button on the top of the page */
                                                 onClick={() =>
-                                                    navigate(`/`)
+                                                    setCancelConfirmation(true)
                                                 }
                                             >
                                                 {t('cancel')}
@@ -669,7 +685,9 @@ export function AddChangeSubjectPage() {
 
                                             <Button
                                                 /* This is the large save button on the top of the page */
-                                                onClick={handleSave}
+                                                onClick={() =>
+                                                    setSaveConfirmation(true)
+                                                }
                                             >
                                                 {t('save')}
                                             </Button>
@@ -780,6 +798,24 @@ export function AddChangeSubjectPage() {
                                         </Box>
                                     </Stack>
                                 </Stack>
+                                {/* Confirmation popup for saving course */}
+                                <WarningPopup
+                                    title={t('save_course_warning')}
+                                    content={t('visible_for_everyone')}
+                                    buttonName={t('confirm')}
+                                    open={saveConfirmation}
+                                    handleClose={closeSaveConfirmation}
+                                    doAction={handleSave}
+                                />
+                                {/* Confirmation popup for canceling changes*/}
+                                <WarningPopup
+                                    title={t('undo_changes_warning')}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('confirm')}
+                                    open={cancelConfirmation}
+                                    handleClose={closeCancel}
+                                    doAction={handleCancel}
+                                />
                             </Stack>
                         </>
                     ) : (
