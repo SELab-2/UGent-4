@@ -125,6 +125,7 @@ const dutch = {
     cant_add_users_twice: 'Je kan gebruikers geen twee keer toevoegen',
     this_user_doesnt_exist: 'Deze gebruiker bestaat niet',
     status: 'Status',
+    save_course_warning: 'Vak Opslaan?',
 }
 
 export default dutch
