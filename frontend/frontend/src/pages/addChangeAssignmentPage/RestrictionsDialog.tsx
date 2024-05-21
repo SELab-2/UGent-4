@@ -44,7 +44,7 @@ export interface Template {
     bestand: string
 }
 
-const code = `
+/*const code = `
 
 #@param
 # Schrijf in dit veld je voornaam.
@@ -65,7 +65,7 @@ bestanden=["main.py", "test.py"]
 # de constante pi, nodig voor wanneer we de omtrek berekenen van het object dat de student indient.
 pi=3.14159
 
-#code...`
+#code...`*/
 
 /**
  * Dialog component for managing restrictions related to file uploads.
@@ -82,6 +82,7 @@ export default function RestrictionsDialog({
     const [openTextEditor, setOpenTextEditor] = useState(false)
     const [openTemplateInterface, setOpenTemplateInterface] = useState(false)
     const [openTemplateInUI, setOpenTemplateInUI] = useState(false)
+    const [code, setCode] = useState('' /*code*/) // code is currently not used
     const [textFieldContent, setTextFieldContent] = useState('')
     const [restrictionName, setRestrictionName] = useState('')
     const [restrictionType, setRestrictionType] =
@@ -269,7 +270,11 @@ export default function RestrictionsDialog({
                                     const response = await instance.get(
                                         `/templates/${template.template_id}/template/?content=true`
                                     )
+                                    // This textFieldContent will be used when a template is opened in textmode
                                     setTextFieldContent(response.data.content)
+
+                                    // The code will be used when a template is opened in the UI
+                                    setCode(response.data.content)
                                     if (openTemplateInUI) {
                                         handleClickOpenTemplateInterface()
                                     } else {
