@@ -37,52 +37,6 @@ if (
     )
 }
 
-// Function to acquire access token
-const acquireAccessToken = async () => {
-    const accounts = msalInstance.getAllAccounts()
-    if (accounts.length === 0) {
-        // User is not signed in. Redirect to login page or throw an error.
-        throw new Error('User is not signed in')
-    }
-
-    const request = {
-        scopes: ['user.read'],
-        account: accounts[0],
-    }
-
-    try {
-        const response = await msalInstance.acquireTokenSilent(request)
-        return response.accessToken
-    } catch (error) {
-        if (error instanceof InteractionRequiredAuthError) {
-            // Fallback to interaction when silent call fails
-            // This could be a redirect or a popup, depending on your application's flow
-            await msalInstance.acquireTokenRedirect(request)
-        } else {
-            console.error(error)
-        }
-    }
-}
-
-// Acquire token on app load
-instance.interceptors.request.use(
-    async (config) => {
-        try {
-            const token = await acquireAccessToken()
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`
-                console.log('auth token set')
-            }
-            return config
-        } catch (error) {
-            console.error(error)
-            throw error
-        }
-    },
-    (error) => {
-        return Promise.reject(error)
-    }
-)
 
 // Listen for sign-in event and set active account
 msalInstance.addEventCallback((event: EventMessage) => {
