@@ -166,6 +166,7 @@ function UploadPart(
                         <Box>
                             {/* This box allows you to add extra people by their email. */}
                             <TextField
+                                id='email'
                                 type="text"
                                 placeholder={t('email')}
                                 onChange={(event) =>
@@ -175,7 +176,7 @@ function UploadPart(
                             />
                         </Box>
                         <Box>
-                            <SecondaryButton size={'small'} onClick={handleAdd}>
+                            <SecondaryButton id='add' size={'small'} onClick={handleAdd}>
                                 {t('add')}
                             </SecondaryButton>
                         </Box>
@@ -638,6 +639,7 @@ export function AddChangeSubjectPage() {
                                                 />
                                             ) : (
                                                 <TextField
+                                                    id='courseName'
                                                     type="text"
                                                     value={title}
                                                     placeholder={t('name')}
@@ -665,7 +667,7 @@ export function AddChangeSubjectPage() {
                                                 {t('cancel')}
                                             </SecondaryButton>
 
-                                            <Button
+                                            <Button id='save'
                                                 /* This is the large save button on the top of the page */
                                                 onClick={handleSave}
                                             >
@@ -707,7 +709,7 @@ export function AddChangeSubjectPage() {
                                                         )}
                                                     </Box>
                                                 </Card>
-                                                <Box marginTop={2}>
+                                                <Box id='uploadStudent' marginTop={2}>
                                                     {UploadPart(
                                                         studentFile,
                                                         handleStudentFileChange,

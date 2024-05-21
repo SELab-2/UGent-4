@@ -347,6 +347,7 @@ export default function RestrictionsDialog({
                                     >
                                         <TextField
                                             // Specify the name of the test script.
+                                            id='scriptName'
                                             label={t('name')}
                                             value={restrictionName}
                                             required
@@ -378,6 +379,7 @@ export default function RestrictionsDialog({
                                             <Select
                                                 // Select the file extension of the test script.
                                                 // This can be for instance .py or .sh.
+                                                id='extension'
                                                 label={t('restrictionType')}
                                                 labelId={t('restrictionType')}
                                                 value={restrictionType}
@@ -426,6 +428,7 @@ export default function RestrictionsDialog({
                                     alignItems="center"
                                 >
                                     <SecondaryButton
+                                        id='saveTemplate'
                                         autoFocus
                                         color="inherit"
                                         onClick={() =>
@@ -440,6 +443,7 @@ export default function RestrictionsDialog({
                                     </SecondaryButton>
                                     <Box paddingRight="10px" />
                                     <SecondaryButton
+                                        id='saveScript'
                                         autoFocus
                                         color="inherit"
                                         onClick={() => setPopupOpen(true)}
@@ -455,12 +459,12 @@ export default function RestrictionsDialog({
                         <Card>
                             <Box aria-label={'Content'} padding={1}>
                                 <TextField
+                                    id='scriptContent'
                                     fullWidth
                                     value={textFieldContent}
                                     onChange={(e) =>
                                         setTextFieldContent(e.target.value)
                                     }
-                                    id="filled-textarea"
                                     multiline
                                     label={'Test-Content'}
                                     variant="standard"

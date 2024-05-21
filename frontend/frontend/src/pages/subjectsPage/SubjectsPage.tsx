@@ -328,6 +328,7 @@ export function SubjectsPage() {
                                         }
                                     />
                                     <IconButton
+                                        id='addProject'
                                         onClick={addProject}
                                         color="primary"
                                         edge="end"

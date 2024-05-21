@@ -538,6 +538,7 @@ export function AddChangeAssignmentPage() {
                                                 />
                                             ) : (
                                                 <TextField
+                                                    id='projectName'
                                                     type="text"
                                                     placeholder={t('name')}
                                                     error={
@@ -766,6 +767,7 @@ export function AddChangeAssignmentPage() {
                                                 />
                                             ) : (
                                                 <TextField
+                                                    id='description'
                                                     type="text"
                                                     placeholder={'Description'}
                                                     variant={'standard'}
@@ -943,6 +945,7 @@ export function AddChangeAssignmentPage() {
                                             >
                                                 {visible ? (
                                                     <IconButton
+                                                        id='setInvisible'
                                                         // Allows the teacher to select whether
                                                         // the assignment is visible to students or not.
                                                         color={'info'}
@@ -956,6 +959,7 @@ export function AddChangeAssignmentPage() {
                                                     </IconButton>
                                                 ) : (
                                                     <IconButton
+                                                        id='setVisible'
                                                         color={'info'}
                                                         onClick={() =>
                                                             setVisible(!visible)
@@ -1003,6 +1007,7 @@ export function AddChangeAssignmentPage() {
                                                         />
                                                     ) : (
                                                         <TextField
+                                                            id='groupSize'
                                                             sx={{ width: 80 }}
                                                             label={'Group Size'}
                                                             type={'number'}
@@ -1044,6 +1049,7 @@ export function AddChangeAssignmentPage() {
                                                     />
                                                 ) : (
                                                     <TextField
+                                                        id='maxScore'
                                                         sx={{ width: 80 }}
                                                         required
                                                         label={'Max Score'}
@@ -1113,6 +1119,7 @@ export function AddChangeAssignmentPage() {
                                             </Tooltip>
                                             <Tooltip title={t('submit')}>
                                                 <IconButton
+                                                    id='save'
                                                     type="submit"
                                                     aria-label={'submit'}
                                                     sx={{
