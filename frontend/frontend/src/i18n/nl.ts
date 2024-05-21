@@ -33,7 +33,7 @@ const dutch = {
     assignmentName: 'Naam opdracht',
     upload_assignment: 'Upload opgavebestand',
     description: 'Beschrijving opgave',
-    uploadToolTip: 'upload een .zip of .pdf bestand',
+    uploadToolTip: 'Upload een .zip of .pdf bestand',
     noFile: 'Geen bestand gekozen',
     remove: 'Verwijder',
     submit: 'Bevestig',
@@ -80,7 +80,7 @@ const dutch = {
     edit_scores_warning: 'Scores Aanpassen?',
     undo_changes_warning: 'Aanpassingen Verwijderen?',
     optional: 'Optioneel',
-    deadlineCheck: 'extra deadline moet na de eerste deadline liggen',
+    deadlineCheck: 'Extra deadline moet na de eerste deadline liggen',
     not_before_now: 'Datum moet in de toekomst liggen',
     noStudentsYet: 'Nog geen studenten',
     change_groups: 'Groepen aanpassen?',
@@ -108,7 +108,7 @@ const dutch = {
     copy_invite: 'Kopieer uitnodigingslink',
     no_assignmentfile: 'Geen opdrachtbestand',
     deadlines_on: 'Deadlines op',
-    email: 'email',
+    email: 'Email',
     n_of_members: 'Max Aantal Leden',
     existing_submissions:
         'Dit kan invloed hebben op bestaande indieningen. Weet je het zeker?',
@@ -124,6 +124,7 @@ const dutch = {
     cant_add_students_to_teacher_list: 'Je kan geen studenten aan de leerkrachten lijst toevoegen',
     cant_add_users_twice: 'Je kan gebruikers geen twee keer toevoegen',
     this_user_doesnt_exist: 'Deze gebruiker bestaat niet',
+    status: 'Status',
 }
 
 export default dutch

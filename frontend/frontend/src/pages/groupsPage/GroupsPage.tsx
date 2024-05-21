@@ -703,7 +703,7 @@ export function GroupsPage() {
                                                                         }}
                                                                     >
                                                                         {t(
-                                                                            'studenten'
+                                                                            'students'
                                                                         )}
                                                                     </Typography>
                                                                 </Grid>
