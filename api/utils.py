@@ -118,6 +118,12 @@ def get_gebruiker(user):
 
 
 def send_indiening_confirmation_mail(indiening):
+    """
+    Verstuurt een bevestigingsmail naar alle studenten in de groep voor een specifieke indiening.
+
+    Args:
+        indiening (Indiening): De indiening waarvoor de bevestigingsmail verstuurd moet worden.
+    """
     project = indiening.groep.project
 
     project_url = f"https://sel2-4.ugent.be/course/{project.vak.vak_id}/assignment/{project.project_id}"

@@ -20,7 +20,7 @@ STATUS_CHOICES = (
 
 def upload_to(instance, filename):
     """
-    Functie om het pad te genereren waar het bestand wordt opgeslagen.
+    Genereert het pad waar het bestand wordt opgeslagen.
 
     Args:
         instance: De huidige instantie van het model.
@@ -48,11 +48,16 @@ class Indiening(models.Model):
         indieningen verwijderd.
         tijdstip (DateTimeField): Een veld dat automatisch het tijdstip
         registreert waarop de indiening is aangemaakt.
+        bestand (FileField): Een veld voor het uploaden van het bestand,
+        met een dynamisch gegenereerd pad.
         status (IntegerField): Een veld dat de status van de testen zal bijhouden.
         result (TextField): Een veld dat het resultaat van de uitgevoerde testen zal bijhouden.
+        artefacten (FileField): Een optioneel veld voor het uploaden van extra artefacten.
 
     Methods:
-        __str__(): Geeft een representatie van het model als een string terug, die de ID van de indiening bevat.
+        __str__(): Geeft een representatie van het model als een string terug,
+        die de ID van de indiening bevat.
+        save(*args, **kwargs): Overschrijft de standaard opslaanmethode om het pad van het bestand bij te werken.
     """
 
     indiening_id = models.AutoField(primary_key=True)
@@ -82,7 +87,7 @@ class Indiening(models.Model):
 
 def run_tests_async(instance):
     """
-    Voert tests uit op een asynchrone manier en werkt de status en resultaat van de indiening bij.
+    Voert tests uit op een asynchrone manier en werkt de status en het resultaat van de indiening bij.
 
     Args:
         instance: Het instantie-object van de indiening.
@@ -105,7 +110,7 @@ def run_tests_async(instance):
 def indiening_post_init(sender, instance, created, **kwargs):
     """
     Een signaalhandler die wordt geactiveerd na het maken van een nieuwe indiening.
-    Start een asynchrone thread om de tests uit te voeren.
+    Start een asynchrone thread om de tests uit te voeren of werkt de status bij indien er geen restricties zijn.
 
     Args:
         sender: De verzender van het signaal.

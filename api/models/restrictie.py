@@ -4,7 +4,7 @@ from api.models.project import Project
 
 def upload_to(instance, filename):
     """
-    Functie om het pad te genereren waar het opgavebestand wordt opgeslagen.
+    Genereert het pad waar het opgavebestand wordt opgeslagen.
 
     Args:
         instance: De huidige instantie van het model.
@@ -24,15 +24,15 @@ class Restrictie(models.Model):
     Velden:
         restrictie_id (AutoField): Automatisch gegenereerd veld dat fungeert als primaire sleutel voor de restrictie.
         project (ForeignKey): Een ForeignKey relatie met het 'Project' model,
-        waarmee wordt aangegeven welk project deze restrictie betreft.
+            waarmee wordt aangegeven welk project deze restrictie betreft.
         Als het bijbehorende project wordt verwijderd, worden ook de bijbehorende restricties verwijderd.
         script (FileField): Een veld voor het uploaden van het script van de restrictie/test.
         moet_slagen (BooleanField): Een veld om aan te geven of de inzending aan de restrictie/test moet voldoen.
-        Standaard ingesteld op False.
+            Standaard ingesteld op False.
 
     Methoden:
         __str__(): Geeft een representatie van het model als een string terug,
-        die het titel van het bijbehorende project en de beschrijving van de restrictie bevat.
+            die de titel van het bijbehorende project en de beschrijving van de restrictie bevat.
     """
 
     restrictie_id = models.AutoField(primary_key=True)

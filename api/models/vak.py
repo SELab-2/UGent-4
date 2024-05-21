@@ -10,13 +10,11 @@ class Vak(models.Model):
         vak_id (AutoField): Een automatisch gegenereerd veld dat fungeert als de primaire sleutel voor het vak.
         naam (CharField): Een veld om de naam van het vak op te slaan.
         jaartal (IntegerField): Een veld om het jaartal van het vak op te slaan. (voor 2024-2025 zou je 2025 opslaan)
-        gearchiveerd (BooleanField): Een veld om aan te geven als het vak gearchiveerd is.
+        gearchiveerd (BooleanField): Een veld om aan te geven of het vak gearchiveerd is. Standaard ingesteld op False.
         studenten (ManyToManyField): Een Many-to-Many relatie met het 'Gebruiker' model,
-        waarmee meerdere gebruikers aan het vak kunnen worden gekoppeld als studenten.
+            waarmee meerdere gebruikers aan het vak kunnen worden gekoppeld als studenten.
         lesgevers (ManyToManyField): Een Many-to-Many relatie met het 'Gebruiker' model,
-        waarmee meerdere gebruikers aan het vak kunnen worden gekoppeld als lesgevers.
-        invited (ManyToManyField): Een Many-To-Many relatie met het 'Gebruiker' model,
-        waarmee meerdere gebruikers aan het vak kunenn worden gekoppeld als geinviteerde.
+            waarmee meerdere gebruikers aan het vak kunnen worden gekoppeld als lesgevers.
 
     Methods:
         __str__(): Geeft een representatie van het model als een string terug, die de naam van het vak bevat.
