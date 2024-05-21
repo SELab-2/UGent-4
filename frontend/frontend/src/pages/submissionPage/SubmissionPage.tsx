@@ -9,13 +9,13 @@ import {
     CircularProgress,
     ListItem,
     Skeleton,
-    Typography,
     Stack,
+    Typography,
 } from '@mui/material'
 import dayjs, { Dayjs } from 'dayjs'
 import DownloadIcon from '@mui/icons-material/Download'
 import List from '@mui/material/List'
-import Grid2 from '@mui/material/Unstable_Grid2'
+import Grid2 from '@mui/material/Unstable_Grid2/Grid2'
 import instance from '../../axiosConfig.ts'
 import { getAssignment } from '../addChangeAssignmentPage/AddChangeAssignmentPage.tsx'
 import ErrorPage from '../ErrorPage.tsx'
@@ -39,14 +39,11 @@ enum SubmissionStatus {
 export interface Submission {
     indiening_id: number
     groep: number
+    bestand: File
     tijdstip: Dayjs
     status: SubmissionStatus
     result: string
-    indiening_bestanden: {
-        indiening_bestand_id: number
-        bestand: string
-        indiening: number
-    }[]
+    filename?: string
 }
 
 // Define the structure of a restriction
@@ -102,37 +99,17 @@ export function SubmissionPage() {
 
     // Function to download the submission
     const downloadSubmission = () => {
-        instance
-            .get(`/indieningen/${submissionId}/indiening_bestanden/`, {
-                responseType: 'blob',
-            })
-            .then((res) => {
-                let filename = 'indiening.zip'
-                if (submission) {
-                    filename =
-                        submission.indiening_bestanden[0].bestand.replace(
-                            /^.*[\\/]/,
-                            ''
-                        )
-                }
-                const blob = new Blob([res.data], {
-                    type: res.headers['content-type'],
-                })
-                const file: File = new File([blob], filename, {
-                    type: res.headers['content-type'],
-                })
-                const url = window.URL.createObjectURL(file)
-                const a = document.createElement('a')
-                a.href = url
-                a.download = filename
-                document.body.appendChild(a)
-                a.click()
-                a.remove()
-            })
-            .catch((err) => {
-                console.error(err)
-                setFetchError(true)
-            })
+        if (submission?.bestand) {
+            const url = window.URL.createObjectURL(submission?.bestand)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = submission.filename
+                ? submission.filename
+                : 'opgave.zip'
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
+        }
     }
 
     useEffect(() => {
@@ -152,11 +129,42 @@ export function SubmissionPage() {
                 )
                 setRestrictions(restrictions.data)
 
-                //Get the submission file
-                const submission = await instance.get(
-                    '/indieningen/' + submissionId + '/'
+                const submissionResponse = await instance.get(
+                    `indieningen/${submissionId}/`
                 )
-                setSubmission(submission.data)
+                //Get the submission file
+                const newSubmission: Submission = submissionResponse.data
+
+                if (newSubmission.result !== 'No tests: OK') {
+                    const regex = /Testing (.*):/g
+                    const matches = newSubmission.result.match(regex)
+                    if (matches !== null) {
+                        matches.map((match) => {
+                            match.replace(':', '\n')
+                            return match
+                        })
+                    }
+                }
+                newSubmission.filename =
+                    submissionResponse.data.bestand.replace(/^.*[\\/]/, '')
+                newSubmission.bestand = await instance
+                    .get(`/indieningen/${submissionId}/indiening_bestand`, {
+                        responseType: 'blob',
+                    })
+                    .then((res) => {
+                        let filename = 'indiening.zip'
+                        if (newSubmission.filename) {
+                            filename = newSubmission.filename
+                        }
+                        const blob = new Blob([res.data], {
+                            type: res.headers['content-type'],
+                        })
+                        const file: File = new File([blob], filename, {
+                            type: res.headers['content-type'],
+                        })
+                        return file
+                    })
+                setSubmission(newSubmission)
                 // Get the current user
                 const userResponse = await instance.get('/gebruikers/me/')
                 setUser(userResponse.data)
@@ -198,29 +206,29 @@ export function SubmissionPage() {
 
     useEffect(() => {
         async function fetchStudents() {
-            setStudentsLoading(true);
+            setStudentsLoading(true)
             const groupId = submission?.groep
             const groupResponse = await instance.get(`groepen/${groupId}`)
-            const temp_students = [];
+            const temp_students = []
             for (const s of groupResponse.data.studenten || []) {
                 try {
-                    const userResponse = await instance.get(`/gebruikers/${s}/`);
-                    temp_students.push(userResponse.data);
+                    const userResponse = await instance.get(`/gebruikers/${s}/`)
+                    temp_students.push(userResponse.data)
                 } catch (error) {
-                    console.error('Error fetching student data:', error);
-                    setFetchError(true);
+                    console.error('Error fetching student data:', error)
+                    setFetchError(true)
                 }
             }
             // Update the state with the fetched data
-            setStudents(temp_students);
-            setStudentsLoading(false);
+            setStudents(temp_students)
+            setStudentsLoading(false)
         }
-    
+
         // Fetch students
         fetchStudents().catch((error) =>
             console.error('Error fetching students data:', error)
-        );
-    }, [submission]);
+        )
+    }, [submission])
 
     if (fetchError) {
         return <ErrorPage />
@@ -246,7 +254,7 @@ export function SubmissionPage() {
                         gap: 2,
                         overflowY: 'auto',
                         padding: 2,
-                        position: 'relative'
+                        position: 'relative',
                     }}
                 >
                     <Box
@@ -283,29 +291,51 @@ export function SubmissionPage() {
                         }}
                     >
                         {project?.max_groep_grootte === 1 ? (
-                            <Typography variant="body1">{user.first_name + ' ' + user.last_name}</Typography>
+                            <Typography variant="body1">
+                                {user.first_name + ' ' + user.last_name}
+                            </Typography>
                         ) : (
                             <StudentPopUp
                                 students={studentsLoading ? [] : students}
                                 text="group_members"
+                                noGroup={false}
                             />
                         )}
                     </Box>
-                    <Box
-                        aria-label={'deadline'}
-                        sx={{
-                            padding: '20px',
-                        }}
-                    >
-                        <Typography variant={'h5'} color="text.primary">
-                            <strong>Deadline </strong>
-                            {project?.deadline
-                                ? dayjs(project.deadline).format(
-                                      'DD/MM/YYYY HH:mm'
-                                  )
-                                : 'error'}
-                        </Typography>
-                    </Box>
+                    {project?.deadline && (
+                        <Box
+                            aria-label={'deadline'}
+                            sx={{
+                                padding: '20px',
+                            }}
+                        >
+                            <Typography variant={'h5'} color="text.primary">
+                                <strong>Deadline </strong>
+                                {project?.deadline
+                                    ? dayjs(project.deadline).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
+                                    : 'error'}
+                            </Typography>
+                        </Box>
+                    )}
+                    {project?.extra_deadline && (
+                        <Box
+                            aria-label={'extradeadline'}
+                            sx={{
+                                padding: '20px',
+                            }}
+                        >
+                            <Typography variant={'h5'} color="text.primary">
+                                <strong>Extra Deadline </strong>
+                                {project?.extra_deadline
+                                    ? dayjs(project.extra_deadline).format(
+                                          'DD/MM/YYYY HH:mm'
+                                      )
+                                    : 'error'}
+                            </Typography>
+                        </Box>
+                    )}
                     <Box
                         // This box shows the filename of the submission and
                         // allows the user to download the submission.
@@ -341,12 +371,7 @@ export function SubmissionPage() {
                                 />
                             ) : (
                                 <>
-                                    {submission
-                                        ? submission.indiening_bestanden[0].bestand.replace(
-                                              /^.*[\\/]/,
-                                              ''
-                                          )
-                                        : 'error'}
+                                    {submission ? submission.filename : 'error'}
                                 </>
                             )}
                         </Button>
@@ -487,7 +512,15 @@ export function SubmissionPage() {
                                     height={40}
                                 />
                             ) : (
-                                <Typography variant={'body1'}>
+                                <Typography
+                                    variant={'body1'}
+                                    color={
+                                        submission?.status ===
+                                        SubmissionStatus.PASSED
+                                            ? 'green'
+                                            : 'red'
+                                    }
+                                >
                                     {submission?.status ===
                                     SubmissionStatus.PENDING
                                         ? t('pending')

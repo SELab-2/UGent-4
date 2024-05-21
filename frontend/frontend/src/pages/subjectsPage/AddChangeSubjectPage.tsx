@@ -1,29 +1,32 @@
-import { Divider, Card } from '../../components/CustomComponents.tsx'
+import {
+    Button,
+    Card,
+    Divider,
+    EvenlySpacedRow,
+    SecondaryButton,
+} from '../../components/CustomComponents.tsx'
+
 import {
     Box,
+    CircularProgress,
     IconButton,
     ListItem,
-    ListItemButton,
     ListItemText,
     Skeleton,
     Stack,
     TextField,
     Typography,
 } from '@mui/material'
-import { Header } from '../../components/Header.tsx'
-import { Button } from '../../components/CustomComponents.tsx'
-import React, { ChangeEvent, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Header } from '../../components/Header'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
 import 'dayjs/locale/nl'
 import FileUploadButton from '../../components/FileUploadButton'
 import ClearIcon from '@mui/icons-material/Clear'
-
 import Dialog from '@mui/material/Dialog'
-
 import instance from '../../axiosConfig.ts'
-
 import Papa, { ParseResult } from 'papaparse'
 
 export interface User {
@@ -40,18 +43,15 @@ function UserList(
     loading: boolean,
     users: User[],
     setSelected: React.Dispatch<React.SetStateAction<number>>,
-    setOpen: React.Dispatch<React.SetStateAction<boolean>>
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    handleRemove: () => void
 ) {
     return (
         <Box marginTop={3}>
             <List
                 disablePadding={true}
                 sx={{
-                    '& > :not(style)': {
-                        marginBottom: '8px',
-                        width: '99vw',
-                    },
-                    minHeight: '20vh',
+                    minHeight: '30vh',
                     maxHeight: '30vh',
                     overflowY: 'auto',
                 }}
@@ -71,7 +71,12 @@ function UserList(
                         {users.map((user) => {
                             const handleClickOpen = () => {
                                 setSelected(user.user)
-                                setOpen(true)
+
+                                if (user.is_lesgever) {
+                                    setOpen(true)
+                                } else {
+                                    handleRemove()
+                                }
                             }
                             {
                                 /* The list of users is mapped onto buttons
@@ -79,66 +84,60 @@ function UserList(
                             }
                             return (
                                 <>
-                                    <ListItemButton
-                                        sx={{
-                                            width: '100%',
-                                            height: 30,
-                                            display: 'flex',
-                                            flexDirection: 'row',
-                                            justifyContent: 'space-between',
-                                            paddingX: 1,
-                                            paddingY: 2,
-                                            borderRadius: 2,
-                                        }}
+                                    <Divider />
+                                    <ListItem
+                                        disabled={
+                                            users.length == 1 &&
+                                            users[0].is_lesgever
+                                        }
                                     >
-                                        <Box
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            gap={1}
-                                            alignItems={'center'}
-                                        >
-                                            <ListItemText
-                                                sx={{ maxWidth: 100 }}
-                                                primary={
-                                                    user.first_name +
-                                                    ' ' +
-                                                    user.last_name
-                                                }
-                                            />
-                                        </Box>
-                                        <Box
-                                            display={'flex'}
-                                            flexDirection={'row'}
-                                            gap={1}
-                                            alignItems={'center'}
-                                        >
-                                            <ListItemText
-                                                sx={{
-                                                    maxWidth: 300,
-                                                    textOverflow: 'ellipsis',
-                                                }}
-                                                primary={user.email}
-                                            />
-                                            <IconButton
-                                                disabled={
-                                                    users.length == 1 &&
-                                                    users[0].is_lesgever
-                                                }
-                                                aria-label={'delete_file'}
-                                                size={'small'}
-                                                onClick={handleClickOpen}
-                                                sx={{
-                                                    '&:disabled': {
-                                                        color: 'text.primary',
-                                                    },
-                                                    color: 'error.main',
-                                                }}
-                                            >
-                                                <ClearIcon />
-                                            </IconButton>
-                                        </Box>
-                                    </ListItemButton>
-                                    <Divider color={'text.main'}></Divider>
+                                        <EvenlySpacedRow
+                                            items={[
+                                                <ListItemText
+                                                    primary={
+                                                        user.first_name +
+                                                        ' ' +
+                                                        user.last_name
+                                                    }
+                                                />,
+                                                <Box
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    gap={1}
+                                                    alignItems={'center'}
+                                                >
+                                                    <ListItemText
+                                                        sx={{
+                                                            textOverflow:
+                                                                'ellipsis',
+                                                        }}
+                                                        primary={user.email}
+                                                    />
+                                                    <IconButton
+                                                        disabled={
+                                                            users.length == 1 &&
+                                                            users[0].is_lesgever
+                                                        }
+                                                        aria-label={
+                                                            'delete_file'
+                                                        }
+                                                        size={'small'}
+                                                        onClick={
+                                                            handleClickOpen
+                                                        }
+                                                        sx={{
+                                                            '&:disabled': {
+                                                                color: 'text.primary',
+                                                            },
+                                                            color: 'error.main',
+                                                        }}
+                                                    >
+                                                        <ClearIcon />
+                                                    </IconButton>
+                                                </Box>,
+                                            ]}
+                                        />
+                                    </ListItem>
                                 </>
                             )
                         })}
@@ -156,7 +155,8 @@ function UploadPart(
     handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
     setEmail: React.Dispatch<React.SetStateAction<string>>,
     handleAdd: () => void,
-    str: string
+    str: string,
+    textFieldRef: React.RefObject<HTMLInputElement>
 ) {
     return (
         <>
@@ -171,12 +171,13 @@ function UploadPart(
                                 onChange={(event) =>
                                     setEmail(event.target.value)
                                 }
+                                inputRef={textFieldRef}
                             />
                         </Box>
                         <Box>
-                            <Button size={'small'} onClick={handleAdd}>
+                            <SecondaryButton size={'small'} onClick={handleAdd}>
                                 {t('add')}
-                            </Button>
+                            </SecondaryButton>
                         </Box>
                     </Stack>
                     <FileUploadButton
@@ -207,9 +208,10 @@ function DialogWindow(
                 <Box padding={2} alignItems={'center'} gap={1}>
                     <Typography> {str + '?'} </Typography>
                     <Box display={'flex'} flexDirection={'row'}>
-                        <Button size={'small'} onClick={handleClose}>
+                        <SecondaryButton size={'small'} onClick={handleClose}>
                             {t('cancel')}
-                        </Button>
+                        </SecondaryButton>
+                        <Box padding={'7px'} />
                         <Button size={'small'} onClick={handleRemove}>
                             {t('delete')}
                         </Button>
@@ -222,6 +224,8 @@ function DialogWindow(
 
 export function AddChangeSubjectPage() {
     const params = useParams()
+    const navigate = useNavigate()
+
     // State for the different fields of the subject
     const [title, setTitle] = useState<string>('')
     const [emailStudent, setEmailStudent] = useState<string>('')
@@ -234,26 +238,27 @@ export function AddChangeSubjectPage() {
     const [openTeacher, setOpenTeacher] = useState<boolean>(false)
     const [studentFile, setStudentFile] = useState<File>()
     const [teacherFile, setTeacherFile] = useState<File>()
+    const [user, setUser] = useState<User>()
+    const studentRef = useRef<HTMLInputElement>(null)
+    const teacherRef = useRef<HTMLInputElement>(null)
 
     const [vakID, setVakID] = useState(params.courseId)
 
     // state for spinners
     const [loading, setLoading] = useState(false)
+    const [userLoading, setUserLoading] = useState(true)
 
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
     }
 
     const handleRemoveStudent = (): void => {
-        setStudents((oldstudents: User[]): User[] => {
-            for (let i = 0; i < oldstudents.length; i++) {
-                if (oldstudents[i].user == selectedStudent) {
-                    oldstudents.splice(i, 1)
-                    return oldstudents
-                }
-            }
-            return oldstudents
-        })
+        const newstudents = students.filter(
+            (student) => student.user != selectedStudent
+        )
+
+        setStudents(newstudents)
+
         setOpenStudent(false)
     }
 
@@ -263,6 +268,7 @@ export function AddChangeSubjectPage() {
             .then((res) => {
                 setStudents((oldstudents) => {
                     if (res.data.length == 0) {
+                        alert(t('this_user_doesnt_exist'))
                         return oldstudents
                     }
                     return addUser(false, res.data[0], oldstudents)
@@ -273,6 +279,11 @@ export function AddChangeSubjectPage() {
             })
 
         handleUploadStudent()
+
+        if (studentRef.current) {
+            studentRef.current.value = '';
+            setEmailStudent('')
+        }
     }
 
     const handleStudentFileChange = (
@@ -334,15 +345,10 @@ export function AddChangeSubjectPage() {
     // This function will remove a teacher from the list.
     // It does so by looping through the list and removing the teacher with the correct ID.
     const handleRemoveTeacher = () => {
-        setTeachers((oldteacher) => {
-            for (let i = 0; i < oldteacher.length; i++) {
-                if (oldteacher[i].user == selectedTeacher) {
-                    oldteacher.splice(i, 1)
-                    return oldteacher
-                }
-            }
-            return oldteacher
-        })
+        const newTeachers = teachers.filter(
+            (teacher) => teacher.user != selectedTeacher
+        )
+        setTeachers(newTeachers)
         setOpenTeacher(false)
     }
 
@@ -354,6 +360,7 @@ export function AddChangeSubjectPage() {
                     //This is like this to prevent the same user being in the list twice
 
                     if (res.data.length == 0) {
+                        alert(t('this_user_doesnt_exist'))
                         return oldteachers
                     }
 
@@ -364,6 +371,11 @@ export function AddChangeSubjectPage() {
                 console.log(err)
             })
         handleUploadTeacher()
+
+        if (teacherRef.current) {
+            teacherRef.current.value = '';
+            setEmailTeacher('')
+        }
     }
 
     const handleTeacherFileChange = (
@@ -428,6 +440,11 @@ export function AddChangeSubjectPage() {
         let found = false
         const id = userData.user
         if (userData.is_lesgever != isLesgever) {
+            if (userData.is_lesgever){
+                alert(t('cant_add_teachers_to_student_list'))
+            } else {
+                alert(t('cant_add_students_to_teacher_list'))
+            }
             return olduser
         }
         for (const teacher of olduser) {
@@ -436,6 +453,7 @@ export function AddChangeSubjectPage() {
             }
         }
         if (found) {
+            alert(t('cant_add_users_twice'))
             return olduser
         } else {
             return [...olduser, userData]
@@ -467,11 +485,21 @@ export function AddChangeSubjectPage() {
                 })
                 .catch((err) => {
                     console.log(err)
+                    alert(err.response.data)
                 })
         }
     }
 
     useEffect(() => {
+        async function fetchUser() {
+            setUserLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            if (vakID == undefined) {
+                setTeachers([userResponse.data])
+            }
+            setUser(userResponse.data)
+            setUserLoading(false)
+        }
         async function fetchData() {
             setLoading(true)
             await instance
@@ -532,6 +560,9 @@ export function AddChangeSubjectPage() {
                 })
             setLoading(false)
         }
+        fetchUser().catch((err) => {
+            console.log(err)
+        })
         if (vakID != undefined) {
             fetchData().catch((err) => {
                 console.log(err)
@@ -541,151 +572,219 @@ export function AddChangeSubjectPage() {
 
     return (
         <>
-            <Stack direction={'column'}>
-                <Header variant={'default'} title={loading ? '' : title} />
-                <Stack
-                    direction={'column'}
-                    spacing={5}
-                    marginTop={11}
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
                     sx={{
-                        width: '100%',
-                        height: '70%',
-                        backgroundColor: 'background.default',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
                     }}
                 >
-                    <Box
-                        sx={{
-                            backgroundColor: 'background.default',
-                            display: 'flex',
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            width: '100%',
-                        }}
-                    >
-                        <Box
-                            // This box contains the title of the subject.
-                            // This title can be changed if necessary.
-                            aria-label={'title'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={2}
-                            alignItems={'center'}
-                        >
-                            <Typography
-                                variant={'h5'}
-                                color={'text.primary'}
-                                fontWeight={'bold'}
-                            >
-                                {t('subject_name') + ':'}
-                            </Typography>
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={200}
-                                    height={60}
+                    <CircularProgress color={'primary'} />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                        <>
+                            <Stack direction={'column'}>
+                                <Header
+                                    variant={'default'}
+                                    title={loading ? '' : title}
                                 />
-                            ) : (
-                                <TextField
-                                    type="text"
-                                    placeholder={t('title')}
-                                    onChange={(event) =>
-                                        setTitle(event.target.value)
-                                    }
-                                    sx={{ height: 60 }}
-                                />
-                            )}
-                        </Box>
-                        <Box padding={'20px'}>
-                            <Button
-                                /* This is the large save button on the top of the page */
-                                onClick={handleSave}
-                            >
-                                {t('save')}
-                            </Button>
-                        </Box>
-                    </Box>
-                    <Card>
-                        <Box bgcolor={'primary.light'} padding={'20px'}>
-                            <Typography
-                                variant="h5"
-                                sx={{ fontWeight: 'bold' }}
-                            >
-                                {t('students')}
-                            </Typography>
-                        </Box>
-                        <Box
-                            display={'flex'}
-                            flexDirection={'row'}
-                            alignItems={'center'}
-                            gap={1}
-                            style={{ maxHeight: 300, overflow: 'auto' }}
-                        >
-                            {UserList(
-                                loading,
-                                students,
-                                setSelectedStudent,
-                                setOpenStudent
-                            )}
-                        </Box>
-                    </Card>
-                    <Box marginTop={-30}>
-                        {UploadPart(
-                            studentFile,
-                            handleStudentFileChange,
-                            setEmailStudent,
-                            handleAddStudent,
-                            t('upload_students')
-                        )}
-                    </Box>
+                                <Stack
+                                    direction={'column'}
+                                    spacing={5}
+                                    marginTop={11}
+                                    sx={{
+                                        width: '100%',
+                                        backgroundColor: 'background.default',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            backgroundColor:
+                                                'background.default',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            width: '100%',
+                                        }}
+                                    >
+                                        <Box
+                                            // This box contains the title of the subject.
+                                            // This title can be changed if necessary.
+                                            aria-label={'title'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                            alignItems={'center'}
+                                        >
+                                            <Typography
+                                                variant={'h5'}
+                                                color={'text.primary'}
+                                                fontWeight={'bold'}
+                                            >
+                                                {t('subject_name') + ':'}
+                                            </Typography>
+                                            {loading ? (
+                                                <Skeleton
+                                                    variant={'text'}
+                                                    width={200}
+                                                    height={60}
+                                                />
+                                            ) : (
+                                                <TextField
+                                                    type="text"
+                                                    value={title}
+                                                    placeholder={t('name')}
+                                                    onChange={(event) =>
+                                                        setTitle(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    sx={{ height: 60 }}
+                                                />
+                                            )}
+                                        </Box>
+                                        <Box
+                                            padding={'20px'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                        >
+                                            <SecondaryButton
+                                                /* This is the large save button on the top of the page */
+                                                onClick={() =>
+                                                    navigate(`/course/${vakID}`)
+                                                }
+                                            >
+                                                {t('cancel')}
+                                            </SecondaryButton>
 
-                    {DialogWindow(
-                        handleCloseStudent,
-                        openStudent,
-                        handleRemoveStudent,
-                        t('delete_student')
+                                            <Button
+                                                /* This is the large save button on the top of the page */
+                                                onClick={handleSave}
+                                            >
+                                                {t('save')}
+                                            </Button>
+                                        </Box>
+                                    </Box>
+                                    <Stack direction={'row'} gap={10}>
+                                        <Box width={'50%'}>
+                                            <Stack direction={'column'}>
+                                                <Card>
+                                                    <Box
+                                                        bgcolor={
+                                                            'primary.light'
+                                                        }
+                                                        padding={'20px'}
+                                                    >
+                                                        <Typography
+                                                            variant="h5"
+                                                            sx={{
+                                                                fontWeight:
+                                                                    'bold',
+                                                            }}
+                                                        >
+                                                            {t('students')}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Box
+                                                        sx={{
+                                                            marginTop: -3.1,
+                                                        }}
+                                                    >
+                                                        {UserList(
+                                                            loading,
+                                                            students,
+                                                            setSelectedStudent,
+                                                            setOpenStudent,
+                                                            handleRemoveStudent
+                                                        )}
+                                                    </Box>
+                                                </Card>
+                                                <Box marginTop={2}>
+                                                    {UploadPart(
+                                                        studentFile,
+                                                        handleStudentFileChange,
+                                                        setEmailStudent,
+                                                        handleAddStudent,
+                                                        t('upload_students'),
+                                                        studentRef,
+                                                    )}
+                                                </Box>
+                                                {DialogWindow(
+                                                    handleCloseStudent,
+                                                    openStudent,
+                                                    handleRemoveStudent,
+                                                    t('delete_student'),
+                                                )}
+                                            </Stack>
+                                        </Box>
+                                        <Box width={'50%'}>
+                                            <Stack direction={'column'}>
+                                                <Card>
+                                                    <Box
+                                                        bgcolor={
+                                                            'primary.light'
+                                                        }
+                                                        padding={'20px'}
+                                                    >
+                                                        <Typography
+                                                            variant="h5"
+                                                            sx={{
+                                                                fontWeight:
+                                                                    'bold',
+                                                            }}
+                                                        >
+                                                            {t('teachers')}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Box
+                                                        sx={{
+                                                            marginTop: -3.1,
+                                                        }}
+                                                    >
+                                                        {UserList(
+                                                            loading,
+                                                            teachers,
+                                                            setSelectedTeacher,
+                                                            setOpenTeacher,
+                                                            handleRemoveTeacher
+                                                        )}
+                                                    </Box>
+                                                </Card>
+                                                <Box marginTop={1}>
+                                                    {UploadPart(
+                                                        teacherFile,
+                                                        handleTeacherFileChange,
+                                                        setEmailTeacher,
+                                                        handleAddTeacher,
+                                                        t('upload_teachers'),
+                                                        teacherRef,
+                                                    )}
+                                                </Box>
+                                                {DialogWindow(
+                                                    handleCloseTeacher,
+                                                    openTeacher,
+                                                    handleRemoveTeacher,
+                                                    t('delete_teacher')
+                                                )}
+                                            </Stack>
+                                        </Box>
+                                    </Stack>
+                                </Stack>
+                            </Stack>
+                        </>
+                    ) : (
+                        navigate('*')
                     )}
-
-                    <Card>
-                        <Box bgcolor={'primary.light'} padding={'20px'}>
-                            <Typography
-                                variant="h5"
-                                sx={{ fontWeight: 'bold' }}
-                            >
-                                {t('teachers')}
-                            </Typography>
-                        </Box>
-                        <Box
-                            display={'flex'}
-                            flexDirection={'row'}
-                            alignItems={'center'}
-                            style={{ maxHeight: 300, overflow: 'auto' }}
-                        >
-                            {UserList(
-                                loading,
-                                teachers,
-                                setSelectedTeacher,
-                                setOpenTeacher
-                            )}
-                        </Box>
-                    </Card>
-                    <Box marginTop={1}>
-                        {UploadPart(
-                            teacherFile,
-                            handleTeacherFileChange,
-                            setEmailTeacher,
-                            handleAddTeacher,
-                            t('upload_teachers')
-                        )}
-                    </Box>
-
-                    {DialogWindow(
-                        handleCloseTeacher,
-                        openTeacher,
-                        handleRemoveTeacher,
-                        t('delete_teacher')
-                    )}
-                </Stack>
-            </Stack>
+                </>
+            )}
         </>
     )
 }

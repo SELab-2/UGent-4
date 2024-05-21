@@ -17,6 +17,7 @@ import WarningPopup from '../../components/WarningPopup.tsx'
 export interface Course {
     vak_id: number
     naam: string
+    jaartal: number
     studenten: number[]
     lesgevers: number[]
     gearchiveerd: boolean
@@ -50,15 +51,13 @@ export default function MainPage() {
     const [courseOrder, setCourseOrder] = useState<number[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
     const [loading, setLoading] = useState<boolean>(true)
+    const [selectedYear, setSelectedYear] = useState<number>(dayjs().year())
 
     //navigator for routing
     const [assignments, setAssignments] = useState<project[]>([])
     const navigator = useNavigate()
 
     useEffect(() => {
-        console.log('requesting api')
-        //set loading to true every time the data is requested
-
         // Get the courses, their projects, and their respective deadlines + the role of the user
         async function fetchData() {
             //set loading to true every time the data is requested
@@ -87,18 +86,14 @@ export default function MainPage() {
 
             const deadlines: Dayjs[] = []
             const assignments: project[] = []
-            for(const course of courses){
+            for (const course of courses) {
                 await instance
                     .get(`/projecten/?vak=${course.vak_id}`)
                     .then((response: AxiosResponse) => {
                         response.data.forEach((project: project) => {
                             if (project.zichtbaar && !project.gearchiveerd) {
-                                deadlines.push(
-                                    dayjs(project.deadline)
-                                )
-                                assignments.push(
-                                    project
-                                )
+                                deadlines.push(dayjs(project.deadline))
+                                assignments.push(project)
                             }
                         })
                     })
@@ -152,7 +147,7 @@ export default function MainPage() {
     }
 
     const pinCourse = async (courseId: number) => {
-        let newPinnedCourses = []
+        let newPinnedCourses: number[]
         if (pinnedCourses.includes(courseId)) {
             newPinnedCourses = pinnedCourses.filter(
                 (pinnedId) => pinnedId !== courseId
@@ -182,7 +177,7 @@ export default function MainPage() {
                     paddingTop: 5,
                 }}
             >
-                <Header variant={'default'} title={'Pigeonhole'} />
+                <Header variant={'main'} title={'Pigeonhole'} />
                 <Box
                     sx={{
                         width: '100%',
@@ -197,6 +192,8 @@ export default function MainPage() {
                     CoursesView is a scroll-box with the current courses, 
                     ArchivedView is the same but for the archived courses.  */}
                     <TabSwitcher
+                        selectedYear={selectedYear}
+                        setSelectedYear={setSelectedYear}
                         titles={['current_courses', 'archived']}
                         nodes={
                             loading
@@ -207,8 +204,8 @@ export default function MainPage() {
                                               md: 'row',
                                           }}
                                           minWidth={{
-                                              md: '60svw',
-                                              lg: '69svw',
+                                              md: '57svw',
+                                              lg: '78svw',
                                           }}
                                       >
                                           {[...Array(3)].map((_, index) => (
@@ -221,8 +218,8 @@ export default function MainPage() {
                                               md: 'row',
                                           }}
                                           minWidth={{
-                                              md: '60svw',
-                                              lg: '69svw',
+                                              md: '57svw',
+                                              lg: '78svw',
                                           }}
                                       >
                                           {[...Array(3)].map((_, index) => (
@@ -232,11 +229,14 @@ export default function MainPage() {
                                   ]
                                 : [
                                       <CoursesView
+                                          userid={user}
                                           isStudent={role == 'student'}
                                           activecourses={courses
                                               .filter(
                                                   (course) =>
-                                                      !course.gearchiveerd
+                                                      !course.gearchiveerd &&
+                                                      course.jaartal ===
+                                                          selectedYear
                                               )
                                               .sort((a: Course, b: Course) => {
                                                   if (
@@ -277,6 +277,7 @@ export default function MainPage() {
                                           pinCourse={pinCourse}
                                       />,
                                       <ArchivedView
+                                          userid={user}
                                           isStudent={role == 'student'}
                                           archivedCourses={courses
                                               .filter(
@@ -332,7 +333,10 @@ export default function MainPage() {
                         alignContent={'center'}
                         height={'50%'}
                     >
-                        <DeadlineCalendar deadlines={deadlines} assignments={assignments} />
+                        <DeadlineCalendar
+                            deadlines={deadlines}
+                            assignments={assignments}
+                        />
                     </Box>
                 </Box>
                 {role === 'admin' && (

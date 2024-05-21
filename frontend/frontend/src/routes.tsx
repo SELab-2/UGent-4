@@ -5,9 +5,11 @@ import { ProjectScoresPage } from './pages/scoresPage/ProjectScoresPage.tsx'
 import { AddChangeAssignmentPage } from './pages/addChangeAssignmentPage/AddChangeAssignmentPage.tsx'
 import { AddChangeSubjectPage } from './pages/subjectsPage/AddChangeSubjectPage.tsx'
 import ErrorPage from './pages/ErrorPage.tsx'
+import FourOFourPage from "./pages/FourOFourPage.tsx";
 import MainPage from './pages/mainPage/MainPage.tsx'
 import { GroupsPage } from './pages/groupsPage/GroupsPage.tsx'
 import { AssignmentPage } from './pages/assignmentPage/AssignmentPage.tsx'
+import { ChooseGroup } from './pages/groupsPage/ChooseGroup.tsx'
 
 //TODO: add change/add course page when implemented
 const router = createBrowserRouter([
@@ -52,13 +54,22 @@ const router = createBrowserRouter([
         errorElement: <ErrorPage />,
     },
     {
+        path: '/course/:courseId/assignment/:assignmentId/groups/choose',
+        element: <ChooseGroup />,
+        errorElement: <ErrorPage />,
+    },
+    {
         path: '/course/new',
         element: <AddChangeSubjectPage />,
         errorElement: <ErrorPage />,
     },
     {
-        path: '*',
+        path: '/error',
         element: <ErrorPage />,
+    },
+    {
+        path: '*',
+        element: <FourOFourPage />,
     },
 ])
 

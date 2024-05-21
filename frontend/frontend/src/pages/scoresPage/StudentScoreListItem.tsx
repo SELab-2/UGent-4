@@ -1,7 +1,7 @@
-import { Divider } from '../../components/CustomComponents.tsx'
+import { Divider, EvenlySpacedRow } from '../../components/CustomComponents.tsx'
 import {
     CircularProgress,
-    IconButton,
+    ListItemIcon,
     ListItem,
     ListItemText,
     TextField,
@@ -59,37 +59,35 @@ export function StudentScoreListItem({
     }, [studenten])
 
     // Function to download a single submission
-    const downloadSubmission = () => {
+    const downloadSubmission = async () => {
         try {
-            instance
-                .get(
-                    `/indieningen/${lastSubmission?.indiening_id}/indiening_bestanden/`,
-                    { responseType: 'blob' }
-                )
-                .then((res) => {
-                    let filename = 'lege_indiening.zip'
-                    if (lastSubmission === undefined) return
-                    if (lastSubmission.indiening_bestanden.length > 0) {
-                        filename =
-                            lastSubmission.indiening_bestanden[0].bestand.replace(
-                                /^.*[\\/]/,
-                                ''
-                            )
-                    }
-                    const blob = new Blob([res.data], {
-                        type: res.headers['content-type'],
-                    })
-                    const file: File = new File([blob], filename, {
-                        type: res.headers['content-type'],
-                    })
-                    const url = window.URL.createObjectURL(file)
-                    const a = document.createElement('a')
-                    a.href = url
-                    a.download = filename
-                    document.body.appendChild(a)
-                    a.click()
-                    a.remove()
-                })
+            let filename = 'lege_indiening.zip'
+            // Get the submission details
+            const submissionResponse = await instance.get(
+                `/indieningen/${lastSubmission?.indiening_id}/`
+            )
+            const newSubmission = submissionResponse.data
+            // Get the submission file
+            const fileResponse = await instance.get(
+                `/indieningen/${lastSubmission?.indiening_id}/indiening_bestand/`,
+                { responseType: 'blob' }
+            )
+            if (newSubmission.bestand) {
+                filename = newSubmission.bestand.replace(/^.*[\\/]/, '')
+            }
+            const blob = new Blob([fileResponse.data], {
+                type: fileResponse.headers['content-type'],
+            })
+            const file = new File([blob], filename, {
+                type: fileResponse.headers['content-type'],
+            })
+            const url = window.URL.createObjectURL(file)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = filename
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
         } catch (error) {
             console.error(error)
         }
@@ -97,77 +95,86 @@ export function StudentScoreListItem({
 
     return (
         <>
-            <ListItem id={`group${groupNumber}`} key={key} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem key={key} sx={{ maxHeight: '35px' }} disablePadding>
                 {/* Inner list item for displaying submission details */}
-                <ListItem
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 1,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
-                >
+                <ListItem>
                     {/* Content section */}
                     <>
                         {loading ? (
                             <CircularProgress size={20} color={'primary'} />
                         ) : (
-                            <ListItemText
-                                sx={{ maxWidth: 200 }}
-                                primary={name}
+                            <EvenlySpacedRow
+                                items={[
+                                    <ListItemText
+                                        sx={{ maxWidth: 200 }}
+                                        primary={name}
+                                    />,
+                                    <ListItemText
+                                        primary={
+                                            lastSubmission
+                                                ? t('last_submission') +
+                                                  ' ' +
+                                                  dayjs(
+                                                      lastSubmission.tijdstip
+                                                  ).format('DD/MM/YYYY HH:mm')
+                                                : t('no_submissions')
+                                        }
+                                    />,
+                                    <ListItem>
+                                        {lastSubmission ? (
+                                            <>
+                                                <Box
+                                                    width={'24px'}
+                                                    height={'25px'}
+                                                >
+                                                    <TextField
+                                                        hiddenLabel
+                                                        defaultValue={score}
+                                                        onChange={(event) =>
+                                                            changeScore(
+                                                                parseInt(
+                                                                    event.target
+                                                                        .value
+                                                                )
+                                                            )
+                                                        }
+                                                        variant="standard"
+                                                        size="small"
+                                                    />
+                                                </Box>
+                                                <ListItemText
+                                                    primary={'/' + maxScore}
+                                                />
+                                            </>
+                                        ) : (
+                                            <ListItemText
+                                                primary={'0/' + maxScore}
+                                            />
+                                        )}
+                                    </ListItem>,
+                                    <ListItemText>
+                                        <ListItemIcon>
+                                            <div onClick={downloadSubmission}>
+                                                {lastSubmission ? (
+                                                    <DownloadIcon
+                                                        sx={{
+                                                            color: 'primary.main',
+                                                            '&:hover': {
+                                                                color: 'primary.light',
+                                                            },
+                                                        }}
+                                                    />
+                                                ) : (
+                                                    <DownloadIcon
+                                                        sx={{ color: 'gray' }}
+                                                    />
+                                                )}
+                                            </div>
+                                        </ListItemIcon>
+                                    </ListItemText>,
+                                ]}
                             />
                         )}
-                        <ListItemText
-                            sx={{ maxWidth: '30%' }}
-                            primary={
-                                lastSubmission
-                                    ? t('last_submission') +
-                                      ' ' +
-                                      dayjs(lastSubmission.tijdstip).format(
-                                          'DD/MM/YYYY HH:mm'
-                                      )
-                                    : t('no_submissions')
-                            }
-                        />
-                        {/* Score section */}
-                        <ListItem sx={{ maxWidth: '30%' }}>
-                            {lastSubmission ? (
-                                <>
-                                    <Box width={'50px'}>
-                                        <TextField
-                                            hiddenLabel
-                                            defaultValue={score}
-                                            onChange={(event) =>
-                                                changeScore(
-                                                    parseInt(event.target.value)
-                                                )
-                                            }
-                                            variant="outlined"
-                                            size="small"
-                                        />
-                                    </Box>
-                                    <ListItemText primary={'/' + maxScore} />
-                                </>
-                            ) : (
-                                <ListItemText primary={'0/' + maxScore} />
-                            )}
-                        </ListItem>
-                        {/* Button to download submission */}
-                        <ListItem sx={{ maxWidth: '4%' }}>
-                            <IconButton
-                                id='downloadSubmissionButton'
-                                onClick={downloadSubmission}
-                                edge="end"
-                                aria-label="download"
-                                disabled={lastSubmission == undefined}
-                            >
-                                <DownloadIcon />
-                            </IconButton>
-                        </ListItem>
                     </>
                 </ListItem>
             </ListItem>

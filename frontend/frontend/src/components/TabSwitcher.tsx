@@ -8,8 +8,11 @@ import { ReactNode } from 'react'
 import { t } from 'i18next'
 import theme from '../Theme.ts'
 import { grey } from '@mui/material/colors'
+import { Box, MenuItem, Select } from '@mui/material'
 
 interface TabSwitcherProps {
+    selectedYear?: number
+    setSelectedYear: (year: number) => void
     titles: string[]
     nodes: ReactNode[]
 }
@@ -22,25 +25,71 @@ interface TabSwitcherProps {
  * the number of titles and nodes should be the same
  */
 
-export default function TabSwitcher({ titles, nodes }: TabSwitcherProps) {
+export default function TabSwitcher({
+    selectedYear,
+    setSelectedYear,
+    titles,
+    nodes,
+}: TabSwitcherProps) {
     titles.length !== nodes.length &&
         console.error('The number of titles and nodes should be the same')
 
     return (
-        <Tabs defaultValue={0} color={'background.default'}>
-            <TabsList>
-                {titles.map((title, index) => (
-                    <Tab id={`tab${index}`} key={index} value={index}>
-                        {t(title)}
-                    </Tab>
+        <>
+            <Tabs defaultValue={0} color={'background.default'}>
+                <Box
+                    display={'flex'}
+                    flexDirection={'row'}
+                    justifyContent={'space-between'}
+                >
+                    <TabsList>
+                        {titles.map((title, index) => (
+                            <Tab id={`tab${index}`} key={index} value={index}>
+                                {t(title)}
+                            </Tab>
+                        ))}
+                    </TabsList>
+                    {selectedYear && (
+                        <Box
+                            height={'100%'}
+                            display={'flex'}
+                            flexDirection={'column'}
+                            justifyContent={'center'}
+                            alignItems={'flex-start'}
+                            mb={2}
+                        >
+                            <Select
+                                variant={'outlined'}
+                                color={'primary'}
+                                value={selectedYear}
+                                onChange={(e) =>
+                                    setSelectedYear(e.target.value as number)
+                                }
+                                label="Select Academic Year"
+                                sx={{
+                                    minWidth: 150,
+                                    '& .MuiSelect-outlined': {
+                                        border: 1.5,
+                                        borderColor: 'primary.main',
+                                    },
+                                }}
+                            >
+                                {[2022, 2023, 2024, 2025].map((year) => (
+                                    <MenuItem key={year} value={year}>
+                                        {year}
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </Box>
+                    )}
+                </Box>
+                {nodes.map((node, index) => (
+                    <TabPanel id={`node${index}`} key={index} value={index}>
+                        {node}
+                    </TabPanel>
                 ))}
-            </TabsList>
-            {nodes.map((node, index) => (
-                <TabPanel id={`node${index}`} key={index} value={index}>
-                    {node}
-                </TabPanel>
-            ))}
-        </Tabs>
+            </Tabs>
+        </>
     )
 }
 
