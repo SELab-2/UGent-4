@@ -103,6 +103,7 @@ const dutch = {
     join_course: 'Voeg vak toe?',
     join: 'Voeg toe',
     join_group: 'Wordt lid',
+    group_full: 'Groep zit vol',
     leave: 'Verlaat',
     acces: 'Dit geeft je toegang tot het vak.',
     copy_invite: 'Kopieer uitnodigingslink',

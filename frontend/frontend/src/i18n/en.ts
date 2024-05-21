@@ -103,6 +103,7 @@ const english = {
     join_course: 'Join course?',
     join: 'Join',
     join_group: 'Join',
+    group_full: 'Group is full',
     leave: 'Leave',
     acces: 'This gives you access to the course.',
     copy_invite: 'Copy invitation link',
