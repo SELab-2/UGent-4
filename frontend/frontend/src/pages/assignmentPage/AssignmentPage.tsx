@@ -17,8 +17,7 @@ import {
     Skeleton,
     Stack,
     Tooltip,
-    Typography,
-    ListItemText
+    Typography
 } from '@mui/material'
 import { t } from 'i18next'
 import instance from '../../axiosConfig.ts'
@@ -959,7 +958,7 @@ export function AssignmentPage() {
                                         flexDirection: 'row',
                                         alignItems: 'center',
                                         backgroundColor: 'background.default',
-                                        gap: 2,
+                                        gap: 1,
                                     }}
                                 >
                                     <Typography
@@ -967,20 +966,28 @@ export function AssignmentPage() {
                                         color="text.primary"
                                         fontWeight={'bold'}
                                     >
-                                        {'Score:  '}
+                                        Score:
                                     </Typography>
                                     {submissions.length > 0 ? (
-                                        <ListItemText
-                                            primary={
-                                                score
-                                                    ? `${score.score}/${assignment?.max_score} (${(100 * score.score) / Number(assignment?.max_score)}%)`
-                                                    : ' ' + t('no_score_yet')
+                                        <Typography
+                                            variant="h6"
+                                            color={
+                                                'text.primary'
                                             }
-                                        />
+                                        >
+                                            {score
+                                                ? `${score.score}/${assignment?.max_score} (${(100 * score.score) / Number(assignment?.max_score)}%)`
+                                                : t('no_score_yet')}
+                                        </Typography>
                                     ) : (
-                                        <ListItemText
-                                            primary={' ' + t('no_score_yet')}
-                                        />
+                                        <Typography
+                                            variant="h6"
+                                            color={
+                                                'text.primary'
+                                            }
+                                        >
+                                            {t('no_score_yet')}
+                                        </Typography>
                                     )}
                                 </Box>
 
