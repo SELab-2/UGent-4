@@ -14,6 +14,5 @@ class ScoreFactory(DjangoModelFactory):
     @classmethod
     def _create(cls, model_class, *args, **kwargs):
         indiening = kwargs.pop("indiening")
-        max_score = indiening.groep.project.max_score
-        kwargs["score"] = random.randint(0, max_score)
+        kwargs["score"] = random.randint(0, indiening.groep.project.max_score)
         return super()._create(model_class, indiening=indiening, *args, **kwargs)
