@@ -275,6 +275,16 @@ export default function RestrictionsDialog({
 
                                     // The code will be used when a template is opened in the UI
                                     setCode(response.data.content)
+
+                                    const templatename = template.bestand
+                                        .replace(/^.*[\\/]/, '')
+                                        .split('.')[0]
+                                    const templateextension =
+                                        '.' + template.bestand.split('.')[1]
+                                    setRestrictionName(templatename)
+                                    setRestrictionType(
+                                        templateextension as restrictionExtension
+                                    )
                                     if (openTemplateInUI) {
                                         handleClickOpenTemplateInterface()
                                     } else {
@@ -307,7 +317,7 @@ export default function RestrictionsDialog({
                 <RestrictionsTemplateUI
                     restrictionCode={code}
                     handleCloseTemplateInterface={handleCloseTemplateInterface}
-                    templateFileName="template_example.sh"
+                    templateFileName={restrictionName + restrictionType}
                     restrictions={restrictions}
                     setRestrictions={setRestrictions}
                 />
