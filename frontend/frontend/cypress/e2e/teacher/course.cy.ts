@@ -11,7 +11,6 @@ describe('create and change a course', () => {
       cy.get('#uploadStudent').get('#email').type('student@testing.com')
       cy.get('#uploadStudent').get('#add').click()
       cy.get('#save').click()
-
       // check if course was added
       cy.get('#logo').click();
       cy.contains('test course').should('exist')
@@ -27,7 +26,6 @@ describe('create and change a course', () => {
       cy.get('#uploadStudent').get('#add').click()
       // save course
       cy.get('#save').click()
-
       // check if the student was added
       cy.get('#logo').click();
       cy.contains('Students: 2').should('exist')

@@ -31,8 +31,7 @@ describe('add and change projects', () => {
         cy.get('#save').click()
         // confirm in popup
         cy.get('#confirm').click()
-        
-        // TODO check if project was added
+        // check if project was added
         cy.contains('test project').should('exist')
         cy.contains('22/08/2024 23:59').should('exist').click()
         cy.contains('This is a test project set up by the e2e tests.').should('exist')
@@ -50,8 +49,7 @@ describe('add and change projects', () => {
       cy.get('#save').click()
       // confirm in popup
       cy.get('#confirm').click()
-
-      // TODO check if project was altered
+      // check if project was altered
       cy.contains('test project').should('exist').click()
       cy.contains('This is a test project set up by the e2e tests. This project has been altered.').should('exist')
       cy.contains('22/08/2024 23:59')
