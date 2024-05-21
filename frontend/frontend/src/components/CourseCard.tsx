@@ -318,7 +318,7 @@ export function CourseCard({
                                             </Typography>
                                             <Typography
                                                 id="deadline"
-                                                minWidth={50}
+                                                minWidth={80}
                                             >
                                                 Deadline
                                             </Typography>
@@ -341,7 +341,7 @@ export function CourseCard({
                                             </Typography>
                                             <Typography
                                                 id="deadline"
-                                                minWidth={50}
+                                                minWidth={90}
                                             >
                                                 Deadline
                                             </Typography>
@@ -361,6 +361,20 @@ export function CourseCard({
                                         }}
                                     >
                                         <List disablePadding={true}>
+                                            {assignments.length === 0 && (
+                                                <Box
+                                                    display={'flex'}
+                                                    alignItems={'center'}
+                                                    justifyContent={'center'}
+                                                    py={6}
+                                                    flexGrow={1}
+                                                    height={'100%'}
+                                                >
+                                                    <Typography>
+                                                        {t('no_projects')}
+                                                    </Typography>
+                                                </Box>
+                                            )}
                                             {assignments
                                                 .filter(
                                                     (assignment) =>
@@ -377,9 +391,9 @@ export function CourseCard({
                                                         dueDate={
                                                             assignment.deadline
                                                                 ? dayjs(
-                                                                    assignment.deadline
+                                                                      assignment.deadline
                                                                   ).format(
-                                                                    'DD/MM/YYYY HH:mm'
+                                                                      'DD/MM/YYYY HH:mm'
                                                                   )
                                                                 : undefined
                                                         }
@@ -418,9 +432,9 @@ export function CourseCard({
                                                                 dueDate={
                                                                     assignment.deadline
                                                                         ? dayjs(
-                                                                            assignment.deadline
+                                                                              assignment.deadline
                                                                           ).format(
-                                                                            'DD/MM/YYYY HH:mm'
+                                                                              'DD/MM/YYYY HH:mm'
                                                                           )
                                                                         : undefined
                                                                 }

@@ -3,6 +3,7 @@ import {
     ListItem,
     ListItemButton,
     ListItemText,
+    Tooltip,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
@@ -198,43 +199,50 @@ function ButtonActions({
 
     return (
         <ListItem sx={{ maxWidth: 110 }}>
-            {visible ? (
-                <IconButton
-                    id='visible'
-                    onClick={(e) => handleIconClick(e, 'visible')}
-                    edge="end"
-                    aria-label="visible"
-                >
-                    <VisibilityOutlinedIcon />
-                </IconButton>
-            ) : (
-                <IconButton
-                    id='notVisible'
-                    onClick={(e) => handleIconClick(e, 'visible')}
-                    edge="end"
-                    aria-label="not-visible"
-                >
-                    <VisibilityOffOutlinedIcon />
-                </IconButton>
-            )}
+            <Tooltip title={t('visibility')}>
+                {visible ? (
+                    <IconButton
+                        id="visible"
+                        onClick={(e) => handleIconClick(e, 'visible')}
+                        edge="end"
+                        aria-label="visible"
+                    >
+                        <VisibilityOutlinedIcon />
+                    </IconButton>
+                ) : (
+                    <IconButton
+                        id="notVisible"
+                        onClick={(e) => handleIconClick(e, 'visible')}
+                        edge="end"
+                        aria-label="not-visible"
+                    >
+                        <VisibilityOffOutlinedIcon />
+                    </IconButton>
+                )}
+            </Tooltip>
+
             {!archived && (
-                <IconButton
-                    id='archive'
-                    onClick={(e) => handleIconClick(e, 'archive')}
-                    edge="end"
-                    aria-label="archive"
-                >
-                    <ArchiveOutlinedIcon />
-                </IconButton>
+                <Tooltip title={t('archive')}>
+                    <IconButton
+                        id="archive"
+                        onClick={(e) => handleIconClick(e, 'archive')}
+                        edge="end"
+                        aria-label="archive"
+                    >
+                        <ArchiveOutlinedIcon />
+                    </IconButton>
+                </Tooltip>
             )}
-            <IconButton
-                id='delete'
-                onClick={(e) => handleIconClick(e, 'delete')}
-                edge="end"
-                aria-label="delete"
-            >
-                <DeleteOutlinedIcon />
-            </IconButton>
+            <Tooltip title={t('delete')}>
+                <IconButton
+                    id="delete"
+                    onClick={(e) => handleIconClick(e, 'delete')}
+                    edge="end"
+                    aria-label="delete"
+                >
+                    <DeleteOutlinedIcon />
+                </IconButton>
+            </Tooltip>
         </ListItem>
     )
 }
