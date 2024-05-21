@@ -282,7 +282,7 @@ export default function MainPage() {
                                           archivedCourses={courses
                                               .filter(
                                                   (course) =>
-                                                      course.gearchiveerd
+                                                      course.gearchiveerd && course.jaartal === selectedYear
                                               )
                                               .sort((a: Course, b: Course) => {
                                                   if (
