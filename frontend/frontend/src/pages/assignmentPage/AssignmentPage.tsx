@@ -432,7 +432,9 @@ export function AssignmentPage() {
                                             <Typography
                                                 variant="h6"
                                                 color={
-                                                    'text.primary'
+                                                    assignment && assignment.deadline && dayjs().isAfter(dayjs(assignment.deadline)) && !assignment.extra_deadline
+                                                        ? 'red'
+                                                        : 'text.primary'
                                                 }
                                             >
                                                 {assignment && assignment.deadline
@@ -497,7 +499,11 @@ export function AssignmentPage() {
                                         ) : (
                                             <Typography
                                                 variant="h6"
-                                                color={'text.primary'}
+                                                color={
+                                                    assignment && assignment.deadline && dayjs().isAfter(dayjs(assignment.deadline)) && assignment.extra_deadline && dayjs().isAfter(dayjs(assignment.extra_deadline))
+                                                        ? 'red'
+                                                        : 'text.primary'
+                                                }
                                             >
                                                 {assignment
                                                     ? dayjs(
@@ -777,7 +783,9 @@ export function AssignmentPage() {
                                                 <Typography
                                                     variant="h6"
                                                     color={
-                                                        'text.primary'
+                                                        assignment && assignment.deadline && dayjs().isAfter(dayjs(assignment.deadline)) && !assignment.extra_deadline
+                                                            ? 'red'
+                                                            : 'text.primary'
                                                     }
                                                 >
                                                     {assignment && assignment.deadline
@@ -882,7 +890,11 @@ export function AssignmentPage() {
                                         ) : (
                                             <Typography
                                                 variant="h6"
-                                                color={'text.primary'}
+                                                color={
+                                                    assignment && assignment.deadline && dayjs().isAfter(dayjs(assignment.deadline)) && assignment.extra_deadline && dayjs().isAfter(dayjs(assignment.extra_deadline))
+                                                        ? 'red'
+                                                        : 'text.primary'
+                                                }
                                             >
                                                 {assignment
                                                     ? dayjs(
@@ -1169,41 +1181,43 @@ export function AssignmentPage() {
 
                                 {/*Upload button, this is what the student will see. */}
                                 <Grid container spacing={2}>
-                                    <Grid>
-                                        <FileUploadButton
-                                            name={t('upload')}
-                                            path={
-                                                loading
-                                                    ? new File(
-                                                          [],
-                                                          t('loading') + '...'
-                                                      )
-                                                    : submissionFile
-                                            }
-                                            onFileChange={handleFileChange}
-                                            fileTypes={['.zip', '.pdf', '.txt']}
-                                            tooltip={t('uploadToolTip')}
-                                        />
-                                    </Grid>
-                                    <Grid>
-                                        <Box
-                                            sx={{
-                                                position: 'relative',
-                                                top: '8px',
-                                                ml: 2,
-                                            }}
-                                        >
-                                            <Tooltip title={t('upload')}>
-                                                <SecondaryButton
-                                                    onClick={uploadIndiening}
-                                                >
-                                                    <Typography>
-                                                        {t('submit')}
-                                                    </Typography>
-                                                </SecondaryButton>
-                                            </Tooltip>
-                                        </Box>
-                                    </Grid>
+                                {loading || !assignment?.deadline || (!dayjs().isAfter(dayjs(assignment.deadline)) && !assignment.extra_deadline) 
+                                || (assignment.extra_deadline && !dayjs().isAfter(dayjs(assignment.extra_deadline)))? (
+                                    <>
+                                        <Grid item>
+                                            <FileUploadButton
+                                                name={t('upload')}
+                                                path={
+                                                    loading
+                                                        ? new File([], t('loading') + '...')
+                                                        : submissionFile
+                                                }
+                                                onFileChange={handleFileChange}
+                                                fileTypes={['.zip', '.pdf', '.txt']}
+                                                tooltip={t('uploadToolTip')}
+                                            />
+                                        </Grid>
+                                        <Grid item>
+                                            <Box
+                                                sx={{
+                                                    position: 'relative',
+                                                    top: '8px',
+                                                    ml: 2,
+                                                }}
+                                            >
+                                                <Tooltip title={t('upload')}>
+                                                    <SecondaryButton
+                                                        onClick={uploadIndiening}
+                                                    >
+                                                        <Typography>
+                                                            {t('submit')}
+                                                        </Typography>
+                                                    </SecondaryButton>
+                                                </Tooltip>
+                                            </Box>
+                                        </Grid>
+                                    </>
+                                ) : null}
                                 </Grid>
                             </Stack>
                             <WarningPopup
