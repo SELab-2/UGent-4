@@ -74,7 +74,7 @@ export function CoursesView({
                                 aria-label={'add-button'}
                                 onClick={() => navigate('/course/new')}
                             >
-                                <AddIcon fontSize={'large'} />
+                                <AddIcon id='addCourse' fontSize={'large'} />
                             </IconButton>
                         </Stack>
                     )}
