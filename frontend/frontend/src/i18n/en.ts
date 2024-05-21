@@ -124,6 +124,7 @@ const english = {
     cant_add_students_to_teacher_list: 'You cannot add students to the teacher list',
     cant_add_users_twice: 'You cannot add users to a subject twice',
     this_user_doesnt_exist: 'This user does not exist',
+    status: 'Status'
 }
 
 export default english

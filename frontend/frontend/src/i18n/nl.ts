@@ -124,6 +124,7 @@ const dutch = {
     cant_add_students_to_teacher_list: 'Je kan geen studenten aan de leerkrachten lijst toevoegen',
     cant_add_users_twice: 'Je kan gebruikers geen twee keer toevoegen',
     this_user_doesnt_exist: 'Deze gebruiker bestaat niet',
+    status: 'Status'
 }
 
 export default dutch
