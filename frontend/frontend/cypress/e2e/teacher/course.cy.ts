@@ -17,8 +17,14 @@ describe('create and change a course', () => {
 
     it('alter course', () => {
 
-      cy.get('test course').click()
+      cy.contains('test course').click()
+      cy.get('#editButton').click()
+      // add a student
+      cy.get('#uploadStudent').get('#email').type('student1@testing.com') // make sure there is a student 1 in the db
+      cy.get('#uploadStudent').get('#add').click()
+      // save course
+      cy.get('#save').click()
 
-      // TODO 
+      // TODO check if the student was added
     }) 
 })

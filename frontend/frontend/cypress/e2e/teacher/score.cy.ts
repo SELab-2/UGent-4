@@ -4,11 +4,10 @@ describe('assign scores to submissions', () => {
     })
   
     it('assign scores', () => {
+        cy.contains('test course').click()
+        cy.contains('test project').click()
+        cy.get('#adjustScores').click()
 
-      cy.get('#test course').click()
-      cy.get('#test project').click()
-      cy.get('#adjustScores').click()
-
-      // TODO adjust the scores
+        // TODO adjust the scores
     }) 
 })

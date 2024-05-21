@@ -38,9 +38,17 @@ describe('add and change projects', () => {
     it('change existing project', () => {
 
       cy.contains('test course').click()
-      cy.get('#test project').click()
+      cy.contains('test project').click()
+      cy.get('#editButton').click()
+      // change some fields
+      cy.get('.MuiInputBase-input').eq(2).type('270820242359')
+      cy.get('#description').type(' This project has been altered.')
+      // save assignment
+      cy.get('#save').click()
+      // confirm in popup
+      cy.get('#confirm').click()
 
-      // TODO change the project
+      // TODO check if project was altered
     }) 
     
 })

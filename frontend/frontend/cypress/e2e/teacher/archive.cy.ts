@@ -5,18 +5,20 @@ describe('archive projects and courses', () => {
   
     it('archive project', () => {
 
-      cy.get('#test course').click()
-      cy.get('#test project').click()
-
-
-      // TODO submit files
+        cy.contains('test course').click()
+        // how to select the project from the list, but don't click on it?
+        cy.get('#archive').click()
+        cy.get('#confirm').click()
+        // check if the project is archived
+        cy.contains('Archived').click()
+        cy.get('#test project').should('exist')
     }) 
 
     it('archive course', () => {
 
-        cy.get('#test course').click()
-  
-        // TODO submit files
+        cy.contains('test course').click()
+        
+        // TODO 
       }) 
   
 

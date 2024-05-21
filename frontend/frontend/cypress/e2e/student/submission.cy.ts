@@ -4,9 +4,8 @@ describe('submit files for an assignment', () => {
     })
   
     it('submit', () => {
-
-        cy.get('#test course').click()
-        cy.get('#test project').click()
+        cy.contains('test course').click()
+        cy.contains('test project').click()
 
         // TODO submit files
     }) 

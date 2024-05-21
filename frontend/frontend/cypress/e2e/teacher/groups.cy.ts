@@ -4,18 +4,16 @@ escribe('add students to groups or let them choose', () => {
     })
   
     it('add', () => {
-
-        cy.get('#test course').click()
-        cy.get('#test project').click()
+        cy.contains('test course').click()
+        cy.contains('test project').click()
 
 
         // TODO add students to group
     })
 
     it('choose', () => {
-
-        cy.get('#test course').click()
-        cy.get('#test project').click()
+        cy.contains('test course').click()
+        cy.contains('test project').click()
   
   
         // TODO let students choose a group

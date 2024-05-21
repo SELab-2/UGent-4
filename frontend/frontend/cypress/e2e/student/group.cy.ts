@@ -4,15 +4,15 @@ describe('student chooses a group and leaves', () => {
     })
   
     it('choose', () => {
-        cy.get('#test course').click()
-        cy.get('#test project').click()
+        cy.contains('test course').click()
+        cy.contains('test project').click()
         
         // TODO 
     }) 
 
     it('leave', () => {
-        cy.get('#test course').click()
-        cy.get('#test project').click()
+        cy.contains('test course').click()
+        cy.contains('test project').click()
   
         // TODO 
     })

@@ -168,6 +168,7 @@ export const Header = ({ variant, title }: Props) => {
                             </Typography>
                             {variant === 'editable' && (
                                 <IconButton
+                                    id='editButton'
                                     onClick={handleEdit}
                                     disableRipple={true}
                                     sx={{
