@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import {
     Box,
-    TextField,
+    Button,
     Checkbox,
+    IconButton,
     List,
     ListItem,
     ListItemText,
-    IconButton,
-    Button,
+    TextField,
 } from '@mui/material'
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline'
@@ -16,6 +16,7 @@ import AppBar from '@mui/material/AppBar'
 import Toolbar from '@mui/material/Toolbar'
 import CloseIcon from '@mui/icons-material/Close'
 import { restriction } from './AddChangeAssignmentPage.tsx'
+import { t } from 'i18next'
 
 // Define a type for the parameters
 type ParamValue = string | number | boolean | string[]
@@ -242,6 +243,18 @@ export default function RestrictionTemplateUI({
                 </Toolbar>
             </AppBar>
             <Box aria-label={'Content'} padding={1}>
+                {params.length === 0 && (
+                    <Box
+                        height={'100%'}
+                        alignItems={'center'}
+                        display={'flex'}
+                        justifyContent={'center'}
+                        width={'100%'}
+                        flexGrow={1}
+                    >
+                        <Typography variant={'h6'}>{t('no_params')}</Typography>
+                    </Box>
+                )}
                 {params.map((param, index) => (
                     <div key={index} style={{ marginBottom: '20px' }}>
                         {param.type === 'number' && (

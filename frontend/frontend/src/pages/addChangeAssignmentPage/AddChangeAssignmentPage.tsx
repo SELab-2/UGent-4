@@ -1,4 +1,8 @@
-import {Card, Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
+import {
+    Card,
+    Divider,
+    EvenlySpacedRow,
+} from '../../components/CustomComponents.tsx'
 import {
     Box,
     CircularProgress,
@@ -97,7 +101,7 @@ export function AddChangeAssignmentPage() {
     const [extraDueDate, setExtraDueDate] = useState<Dayjs | null>(null)
     const [oldRestrictions, setOldRestrictions] = useState<restriction[]>([])
     const [restrictions, setRestrictions] = useState<restriction[]>([])
-    const [visible, setVisible] = useState(false)
+    const [visible, setVisible] = useState(true)
     const [assignmentFile, setAssignmentFile] = useState<File>()
     const [maxScore, SetMaxScore] = useState<number>(20)
     const [cleared, setCleared] = useState<boolean>(false)
@@ -806,6 +810,7 @@ export function AddChangeAssignmentPage() {
                                         flexDirection={'row'}
                                         alignItems={'flex-end'}
                                         gap={1}
+                                        width={{ s: '70%', md: '60%' }}
                                     >
                                         <Card
                                             sx={{
@@ -817,32 +822,44 @@ export function AddChangeAssignmentPage() {
                                         >
                                             <Box
                                                 sx={{
-                                                    backgroundColor: 'secondary.main',
+                                                    backgroundColor:
+                                                        'secondary.main',
                                                     height: 48,
                                                     padding: 1,
                                                 }}
                                             >
-                                            <Typography
-                                                variant={'h5'}
-                                                fontWeight={'bold'}
-                                            >
-                                                {t('restrictions')}
-                                            </Typography>
-                                            <EvenlySpacedRow items={[
-                                                    <Typography variant="body1" fontWeight={'bold'}>
-                                                        {t('name')}
-                                                    </Typography>,
-                                                    <Typography variant="body1" fontWeight={'bold'}>
-                                                        {t('must_pass')}
-                                                    </Typography>,
-                                                    <Typography variant="body1" fontWeight={'bold'}>
-                                                        {t('remove')}
-                                                    </Typography>]}
-                                            />
+                                                <Typography
+                                                    variant={'h5'}
+                                                    fontWeight={'bold'}
+                                                >
+                                                    {t('restrictions')}
+                                                </Typography>
+                                                <EvenlySpacedRow
+                                                    items={[
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontWeight={'bold'}
+                                                        >
+                                                            {t('name')}
+                                                        </Typography>,
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontWeight={'bold'}
+                                                        >
+                                                            {t('must_pass')}
+                                                        </Typography>,
+                                                        <Typography
+                                                            variant="body1"
+                                                            fontWeight={'bold'}
+                                                        >
+                                                            {t('remove')}
+                                                        </Typography>,
+                                                    ]}
+                                                />
                                             </Box>
-                                            <Divider/>
+                                            <Divider />
                                             {/*This list will render the restrictions that are added to the assignment.*/}
-                                            <Box sx={{marginTop: -1.1}}>
+                                            <Box sx={{ marginTop: -1.1 }}>
                                                 <List
                                                     sx={{
                                                         maxHeight: '18vh',
@@ -862,8 +879,12 @@ export function AddChangeAssignmentPage() {
                                                                 ) => {
                                                                     return (
                                                                         <>
-                                                                            <Divider/>
-                                                                            <ListItem sx={{ maxHeight: '45px'}}
+                                                                            <Divider />
+                                                                            <ListItem
+                                                                                sx={{
+                                                                                    maxHeight:
+                                                                                        '45px',
+                                                                                }}
                                                                                 key={
                                                                                     index
                                                                                 }
@@ -897,25 +918,21 @@ export function AddChangeAssignmentPage() {
                                             justifyContent={'flex-end'}
                                             alignItems={'flex-end'}
                                         >
-                                            <Tooltip
-                                                title={t('add_restriction')}
-                                            >
-                                                <AddRestrictionButton
-                                                    // When this button is clicked, a pop up will show.
-                                                    // This popup will allow you to choose to make a restriction yourself,
-                                                    // create one starting from a template,
-                                                    // or choose a file from the system.
-                                                    restrictions={restrictions}
-                                                    setRestrictions={(
+                                            <AddRestrictionButton
+                                                // When this button is clicked, a pop up will show.
+                                                // This popup will allow you to choose to make a restriction yourself,
+                                                // create one starting from a template,
+                                                // or choose a file from the system.
+                                                restrictions={restrictions}
+                                                setRestrictions={(
+                                                    newRestrictions
+                                                ) =>
+                                                    setRestrictions(
                                                         newRestrictions
-                                                    ) =>
-                                                        setRestrictions(
-                                                            newRestrictions
-                                                        )
-                                                    }
-                                                    userid={user.user}
-                                                ></AddRestrictionButton>
-                                            </Tooltip>
+                                                    )
+                                                }
+                                                userid={user.user}
+                                            ></AddRestrictionButton>
                                         </Box>
                                     </Box>
                                     {/* Main actions section */}
@@ -925,6 +942,7 @@ export function AddChangeAssignmentPage() {
                                         display={'flex'}
                                         flexDirection={'row'}
                                         width={'100%'}
+                                        flexWrap={'wrap'}
                                         justifyContent={'space-between'}
                                     >
                                         <Box
@@ -932,6 +950,7 @@ export function AddChangeAssignmentPage() {
                                             display={'flex'}
                                             flexDirection={'row'}
                                             gap={10}
+                                            flexWrap={'wrap'}
                                             alignItems={'center'}
                                             padding={2}
                                         >
@@ -941,43 +960,61 @@ export function AddChangeAssignmentPage() {
                                                 flexDirection={'row'}
                                                 alignItems={'center'}
                                             >
-                                                {visible ? (
-                                                    <IconButton
-                                                        // Allows the teacher to select whether
-                                                        // the assignment is visible to students or not.
-                                                        color={'info'}
-                                                        onClick={() =>
-                                                            setVisible(!visible)
-                                                        }
-                                                    >
-                                                        <VisibilityIcon
-                                                            fontSize={'medium'}
-                                                        />
-                                                    </IconButton>
-                                                ) : (
-                                                    <IconButton
-                                                        color={'info'}
-                                                        onClick={() =>
-                                                            setVisible(!visible)
-                                                        }
-                                                    >
-                                                        <VisibilityOffIcon
-                                                            fontSize={'medium'}
-                                                        />
-                                                    </IconButton>
-                                                )}
-                                                <Tooltip title={t('remove')}>
-                                                    <IconButton
-                                                        color={'warning'}
-                                                        onClick={
-                                                            openDeleteConfirmation
-                                                        }
-                                                    >
-                                                        <DeleteForeverIcon
-                                                            fontSize={'medium'}
-                                                        />
-                                                    </IconButton>
+                                                <Tooltip
+                                                    title={t('visibility')}
+                                                >
+                                                    {visible ? (
+                                                        <IconButton
+                                                            // Allows the teacher to select whether
+                                                            // the assignment is visible to students or not.
+                                                            color={'info'}
+                                                            onClick={() =>
+                                                                setVisible(
+                                                                    !visible
+                                                                )
+                                                            }
+                                                        >
+                                                            <VisibilityIcon
+                                                                fontSize={
+                                                                    'medium'
+                                                                }
+                                                            />
+                                                        </IconButton>
+                                                    ) : (
+                                                        <IconButton
+                                                            color={'info'}
+                                                            onClick={() =>
+                                                                setVisible(
+                                                                    !visible
+                                                                )
+                                                            }
+                                                        >
+                                                            <VisibilityOffIcon
+                                                                fontSize={
+                                                                    'medium'
+                                                                }
+                                                            />
+                                                        </IconButton>
+                                                    )}
                                                 </Tooltip>
+                                                {assignmentId && !loading && (
+                                                    <Tooltip
+                                                        title={t('remove')}
+                                                    >
+                                                        <IconButton
+                                                            color={'warning'}
+                                                            onClick={
+                                                                openDeleteConfirmation
+                                                            }
+                                                        >
+                                                            <DeleteForeverIcon
+                                                                fontSize={
+                                                                    'medium'
+                                                                }
+                                                            />
+                                                        </IconButton>
+                                                    </Tooltip>
+                                                )}
                                             </Box>
                                             {/* change group size allowed, no need for extra group switch*/}
                                             {!assignmentId && (
