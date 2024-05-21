@@ -1147,7 +1147,7 @@ export function AssignmentPage() {
                             <WarningPopup
                                 title={t('error')}
                                 content={
-                                    t('noGroup') +
+                                    t('noGroup') + ' ' +
                                     (assignment?.student_groep
                                         ? t('chooseGroup')
                                         : t('contactTeacher'))
