@@ -44,6 +44,7 @@ export interface Assignment {
 
 function joinLeaveButton(
     isin: boolean,
+    disabled: boolean,
     handleJoin: () => void,
     handleLeave: () => void
 ) {
@@ -53,6 +54,13 @@ function joinLeaveButton(
                 <Button size={'small'} onClick={handleLeave}>
                     <Typography>{t('leave')}</Typography>
                 </Button>
+            </>
+        )
+    }
+    if (disabled){
+        return (
+            <>
+                <Typography>{t('group_full')}</Typography>
             </>
         )
     }
@@ -658,6 +666,13 @@ export function ChooseGroup() {
                                                                                       user.user
                                                                                   )
                                                                                 : false,
+                                                                                group.studenten.length === assignment?.max_groep_grootte
+                                                                                && !(user !=
+                                                                                undefined
+                                                                                ? group.studenten.includes(
+                                                                                      user.user
+                                                                                  )
+                                                                                : false),
                                                                             handleJoin,
                                                                             handleLeave
                                                                         )}

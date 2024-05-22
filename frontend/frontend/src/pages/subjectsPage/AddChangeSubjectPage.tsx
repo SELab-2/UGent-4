@@ -15,6 +15,7 @@ import {
     Skeleton,
     Stack,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material'
 import { Header } from '../../components/Header'
@@ -28,6 +29,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import Dialog from '@mui/material/Dialog'
 import instance from '../../axiosConfig.ts'
 import Papa, { ParseResult } from 'papaparse'
+import WarningPopup from '../../components/WarningPopup.tsx'
 
 export interface User {
     user: number
@@ -35,6 +37,10 @@ export interface User {
     first_name: string
     last_name: string
     email: string
+}
+
+interface errorChecks {
+    title: boolean
 }
 
 // This function takes a list of users and will render it.
@@ -248,6 +254,31 @@ export function AddChangeSubjectPage() {
     const [loading, setLoading] = useState(false)
     const [userLoading, setUserLoading] = useState(true)
 
+    const [saveConfirmation, setSaveConfirmation] = useState(false)
+    const [cancelConfirmation, setCancelConfirmation] = useState(false)
+
+    const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
+        title: false,
+    })
+
+    const handleSubmit = () => {
+        setAssignmentErrors({
+            title: title === '',
+        })
+        if (title === '') {
+            return
+        }
+        setSaveConfirmation(true)
+    }
+
+    const closeSaveConfirmation = () => {
+        setSaveConfirmation(false)
+    }
+
+    const closeCancel = () => {
+        setCancelConfirmation(false)
+    }
+
     const handleCloseStudent = (): void => {
         setOpenStudent(false)
     }
@@ -281,7 +312,7 @@ export function AddChangeSubjectPage() {
         handleUploadStudent()
 
         if (studentRef.current) {
-            studentRef.current.value = '';
+            studentRef.current.value = ''
             setEmailStudent('')
         }
     }
@@ -373,7 +404,7 @@ export function AddChangeSubjectPage() {
         handleUploadTeacher()
 
         if (teacherRef.current) {
-            teacherRef.current.value = '';
+            teacherRef.current.value = ''
             setEmailTeacher('')
         }
     }
@@ -440,7 +471,7 @@ export function AddChangeSubjectPage() {
         let found = false
         const id = userData.user
         if (userData.is_lesgever != isLesgever) {
-            if (userData.is_lesgever){
+            if (userData.is_lesgever) {
                 alert(t('cant_add_teachers_to_student_list'))
             } else {
                 alert(t('cant_add_students_to_teacher_list'))
@@ -472,6 +503,7 @@ export function AddChangeSubjectPage() {
                 })
                 .then((res) => {
                     setVakID(res.data.vak_id)
+                    navigate(`/course/${res.data.vak_id}`)
                 })
                 .catch((err) => {
                     console.log(err)
@@ -487,7 +519,12 @@ export function AddChangeSubjectPage() {
                     console.log(err)
                     alert(err.response.data)
                 })
+            navigate(`/course/${vakID}`)
         }
+    }
+
+    const handleCancel = (): void => {
+        navigate('/')
     }
 
     useEffect(() => {
@@ -640,7 +677,17 @@ export function AddChangeSubjectPage() {
                                                 <TextField
                                                     type="text"
                                                     value={title}
+                                                    error={
+                                                        assignmentErrors.title
+                                                    }
                                                     placeholder={t('name')}
+                                                    helperText={
+                                                        assignmentErrors.title
+                                                            ? t('name') +
+                                                              ' ' +
+                                                              t('is_required')
+                                                            : ''
+                                                    }
                                                     onChange={(event) =>
                                                         setTitle(
                                                             event.target.value
@@ -656,21 +703,27 @@ export function AddChangeSubjectPage() {
                                             flexDirection={'row'}
                                             gap={2}
                                         >
-                                            <SecondaryButton
-                                                /* This is the large save button on the top of the page */
-                                                onClick={() =>
-                                                    navigate(`/course/${vakID}`)
-                                                }
-                                            >
-                                                {t('cancel')}
-                                            </SecondaryButton>
+                                            <Tooltip title={t('cancel')}>
+                                                <SecondaryButton
+                                                    /* This is the cancel button on the top of the page */
+                                                    onClick={() =>
+                                                        setCancelConfirmation(
+                                                            true
+                                                        )
+                                                    }
+                                                >
+                                                    {t('cancel')}
+                                                </SecondaryButton>
+                                            </Tooltip>
 
-                                            <Button
-                                                /* This is the large save button on the top of the page */
-                                                onClick={handleSave}
-                                            >
-                                                {t('save')}
-                                            </Button>
+                                            <Tooltip title={t('save')}>
+                                                <Button
+                                                    /* This is the large save button on the top of the page */
+                                                    onClick={handleSubmit}
+                                                >
+                                                    {t('save')}
+                                                </Button>
+                                            </Tooltip>
                                         </Box>
                                     </Box>
                                     <Stack direction={'row'} gap={10}>
@@ -714,14 +767,14 @@ export function AddChangeSubjectPage() {
                                                         setEmailStudent,
                                                         handleAddStudent,
                                                         t('upload_students'),
-                                                        studentRef,
+                                                        studentRef
                                                     )}
                                                 </Box>
                                                 {DialogWindow(
                                                     handleCloseStudent,
                                                     openStudent,
                                                     handleRemoveStudent,
-                                                    t('delete_student'),
+                                                    t('delete_student')
                                                 )}
                                             </Stack>
                                         </Box>
@@ -765,7 +818,7 @@ export function AddChangeSubjectPage() {
                                                         setEmailTeacher,
                                                         handleAddTeacher,
                                                         t('upload_teachers'),
-                                                        teacherRef,
+                                                        teacherRef
                                                     )}
                                                 </Box>
                                                 {DialogWindow(
@@ -778,6 +831,24 @@ export function AddChangeSubjectPage() {
                                         </Box>
                                     </Stack>
                                 </Stack>
+                                {/* Confirmation popup for saving course */}
+                                <WarningPopup
+                                    title={t('save_course_warning')}
+                                    content={t('visible_for_everyone')}
+                                    buttonName={t('confirm')}
+                                    open={saveConfirmation}
+                                    handleClose={closeSaveConfirmation}
+                                    doAction={handleSave}
+                                />
+                                {/* Confirmation popup for canceling changes*/}
+                                <WarningPopup
+                                    title={t('undo_changes_warning')}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('confirm')}
+                                    open={cancelConfirmation}
+                                    handleClose={closeCancel}
+                                    doAction={handleCancel}
+                                />
                             </Stack>
                         </>
                     ) : (

@@ -7,7 +7,7 @@ import DialogTitle from '@mui/material/DialogTitle'
 import AddIcon from '@mui/icons-material/Add'
 import RestrictionsDialog from './RestrictionsDialog'
 import { t } from 'i18next'
-import { IconButton } from '@mui/material'
+import { IconButton, Tooltip } from '@mui/material'
 import { restriction } from './AddChangeAssignmentPage.tsx'
 
 /**
@@ -36,19 +36,21 @@ export default function AddRestrictionButton({
     return (
         <>
             {/* Add Restriction Button */}
-            <IconButton
-                id="addRestrictionButton"
-                sx={{
-                    bgcolor: 'secondary.main',
-                    marginRight: 1,
-                }}
-                onClick={() => {
-                    setOpen(true)
-                    setScroll('paper')
-                }}
-            >
-                <AddIcon sx={{ color: 'secondary.contrastText' }}></AddIcon>
-            </IconButton>
+            <Tooltip title={t('add_restriction')}>
+                <IconButton
+                    id="addRestrictionButton"
+                    sx={{
+                        bgcolor: 'secondary.main',
+                        marginRight: 1,
+                    }}
+                    onClick={() => {
+                        setOpen(true)
+                        setScroll('paper')
+                    }}
+                >
+                    <AddIcon sx={{ color: 'secondary.contrastText' }}></AddIcon>
+                </IconButton>
+            </Tooltip>
             {/* Add Restriction Dialog */}
             <Dialog
                 open={open}

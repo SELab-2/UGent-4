@@ -38,6 +38,7 @@ export default function TabSwitcher({
         <>
             <Tabs defaultValue={0} color={'background.default'}>
                 <Box
+                    width={'100%'}
                     display={'flex'}
                     flexDirection={'row'}
                     justifyContent={'space-between'}
@@ -84,7 +85,12 @@ export default function TabSwitcher({
                     )}
                 </Box>
                 {nodes.map((node, index) => (
-                    <TabPanel id={`node${index}`} key={index} value={index}>
+                    <TabPanel
+                        id={`node${index}`}
+                        key={index}
+                        value={index}
+                        sx={{ width: '100%' }}
+                    >
                         {node}
                     </TabPanel>
                 ))}
@@ -131,7 +137,7 @@ const Tab = styled(BaseTab)`
 
 const TabPanel = styled(BaseTabPanel)(
     ({ theme }) => `
-  width: "15%";
+  width: "100%";
   font-family: 'IBM Plex Sans', sans-serif;
   font-size: 0.875rem;
   padding: 20px 12px;
