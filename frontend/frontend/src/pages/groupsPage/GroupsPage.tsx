@@ -22,7 +22,7 @@ import {
 } from '@mui/material'
 import Switch from '@mui/material/Switch'
 import { t } from 'i18next'
-import { FormEvent, useEffect, useState } from 'react'
+import { FormEvent, useEffect, useState, ChangeEvent } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import instance from '../../axiosConfig.ts'
 import CancelIcon from '@mui/icons-material/Cancel'
@@ -65,6 +65,7 @@ export function GroupsPage() {
     const [projectName, setProjectName] = useState('')
     const [user, setUser] = useState<User>()
     const [max_group_size, setMaxGroupSize] = useState(0)
+    const [studentChoose, setStudentChoose] = useState(false)
 
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
@@ -176,13 +177,14 @@ export function GroupsPage() {
                     console.error(error)
                 })
 
-            // Get the max group size and project name
+            // Get the max group size, project name and students can choose
             await instance
                 .get('/projecten/' + assignmentId)
                 .then((response) => {
                     setProjectName(response.data.titel)
 
                     setMaxGroupSize(response.data.max_groep_grootte)
+                    setStudentChoose(response.data.student_groep)
                 })
                 .catch((error) => {
                     console.log(error)
