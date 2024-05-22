@@ -578,7 +578,7 @@ export function AssignmentPage() {
                         It shows metadata about the submissions and allows the teacher to download them.
                         The metadata includes group number, submission time, score, and status.
                         */}
-                                <Card sx={{ width: '97%' }}>
+                                <Card sx={{ width: '95%' }}>
                                     <Box
                                         aria-label={'courseHeader'}
                                         sx={{
@@ -1256,11 +1256,7 @@ export function AssignmentPage() {
                                                     onFileChange={
                                                         handleFileChange
                                                     }
-                                                    fileTypes={[
-                                                        '.zip',
-                                                        '.pdf',
-                                                        '.txt',
-                                                    ]}
+                                                    fileTypes={['*']}
                                                     tooltip={t('uploadToolTip')}
                                                 />
                                             </Grid>

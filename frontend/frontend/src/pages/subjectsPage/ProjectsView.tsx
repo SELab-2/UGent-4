@@ -179,7 +179,7 @@ export function ProjectsView({
 
     return (
         <>
-            <Card>
+            <Card sx={{ width: '95%' }}>
                 <Box
                     aria-label={'courseHeader'}
                     sx={{
