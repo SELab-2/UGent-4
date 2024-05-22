@@ -65,7 +65,7 @@ export function GroupsPage() {
     const [projectName, setProjectName] = useState('')
     const [user, setUser] = useState<User>()
     const [max_group_size, setMaxGroupSize] = useState(0)
-
+    const [studentsCanChoose, setStudentsCanChoose] = useState(false)
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
 
@@ -78,6 +78,10 @@ export function GroupsPage() {
 
     // handle confirmation dialog
     const confirmSave = async () => {
+        await instance.patch('/projecten/' + assignmentId + '/', {
+            student_groep: studentsCanChoose,
+        })
+
         if (newGroups[0].groep_id === undefined) {
             // delete the old groups and replace them with the new groups
             await instance
@@ -181,6 +185,7 @@ export function GroupsPage() {
                 .get('/projecten/' + assignmentId)
                 .then((response) => {
                     setProjectName(response.data.titel)
+                    setStudentsCanChoose(response.data.student_groep)
 
                     setMaxGroupSize(response.data.max_groep_grootte)
                 })
@@ -470,7 +475,19 @@ export function GroupsPage() {
                                                             }}
                                                         />
                                                     ) : (
-                                                        <Switch />
+                                                        <Switch
+                                                            checked={
+                                                                studentsCanChoose
+                                                            }
+                                                            value={
+                                                                studentsCanChoose
+                                                            }
+                                                            onChange={() =>
+                                                                setStudentsCanChoose(
+                                                                    !studentsCanChoose
+                                                                )
+                                                            }
+                                                        />
                                                     )}
                                                 </Box>
                                             </Stack>
