@@ -1,4 +1,4 @@
-import { IconButton, Stack } from '@mui/material'
+import { IconButton, Stack, Tooltip } from '@mui/material'
 import { CourseCard } from '../../components/CourseCard.tsx'
 import AddIcon from '@mui/icons-material/Add'
 import { useNavigate } from 'react-router-dom'
@@ -27,7 +27,7 @@ export function CoursesView({
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '57svw', lg: '78svw' }}
+                width={'100%'}
             >
                 <Stack
                     direction={'column'}
@@ -69,13 +69,15 @@ export function CoursesView({
                             padding={0}
                         >
                             {/* Teachers get an extra button to add courses. */}
-                            <IconButton
-                                color={'primary'}
-                                aria-label={'add-button'}
-                                onClick={() => navigate('/course/new')}
-                            >
-                                <AddIcon fontSize={'large'} />
-                            </IconButton>
+                            <Tooltip title={'Add course'} placement={'top'}>
+                                <IconButton
+                                    color={'primary'}
+                                    aria-label={'add-button'}
+                                    onClick={() => navigate('/course/new')}
+                                >
+                                    <AddIcon fontSize={'large'} />
+                                </IconButton>
+                            </Tooltip>
                         </Stack>
                     )}
                 </Stack>

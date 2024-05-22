@@ -135,6 +135,10 @@ const dutch = {
     openinUi: 'Open in UI',
     openInEditor: 'Open in editor',
     no_params: 'Geen parameters gevonden in de template.',
+    save_scores: 'Scores Opslaan',
+    add_course: 'Voeg vak toe',
+    add_project: 'Voeg project toe',
+    no_projects: 'Geen projecten',
 }
 
 export default dutch

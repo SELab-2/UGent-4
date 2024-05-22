@@ -7,6 +7,7 @@ import {
     Skeleton,
     Stack,
     styled,
+    Tooltip,
 } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { StudentsView } from './StudentsView.tsx'
@@ -412,39 +413,47 @@ export function ProjectScoresPage() {
                                             />
                                         ) : (
                                             <>
-                                                <IconButton
-                                                    onClick={() =>
-                                                        setOpenSaveScoresPopup(
-                                                            true
-                                                        )
-                                                    }
-                                                    sx={{
-                                                        color: 'background.default',
-                                                        '&:hover': {
-                                                            color: 'text.primary',
-                                                        },
-                                                        backgroundColor:
-                                                            'primary.main',
-                                                        borderRadius: 2,
-                                                    }}
+                                                <Tooltip
+                                                    title={t('save_scores')}
                                                 >
-                                                    <SaveIcon />
-                                                </IconButton>
+                                                    <IconButton
+                                                        onClick={() =>
+                                                            setOpenSaveScoresPopup(
+                                                                true
+                                                            )
+                                                        }
+                                                        sx={{
+                                                            color: 'background.default',
+                                                            '&:hover': {
+                                                                color: 'text.primary',
+                                                            },
+                                                            backgroundColor:
+                                                                'primary.main',
+                                                            borderRadius: 2,
+                                                        }}
+                                                    >
+                                                        <SaveIcon />
+                                                    </IconButton>
+                                                </Tooltip>
                                             </>
                                         )}
                                         <Box paddingLeft={'10px'} />
-                                        <IconButton
-                                            onClick={() =>
-                                                setOpenDeleteScoresPopup(true)
-                                            }
-                                            sx={{
-                                                backgroundColor:
-                                                    'secondary.main',
-                                                borderRadius: 2,
-                                            }}
-                                        >
-                                            <CloseIcon />
-                                        </IconButton>
+                                        <Tooltip title={t('cancel')}>
+                                            <IconButton
+                                                onClick={() =>
+                                                    setOpenDeleteScoresPopup(
+                                                        true
+                                                    )
+                                                }
+                                                sx={{
+                                                    backgroundColor:
+                                                        'secondary.main',
+                                                    borderRadius: 2,
+                                                }}
+                                            >
+                                                <CloseIcon />
+                                            </IconButton>
+                                        </Tooltip>
                                     </Box>
                                 </Box>
                                 {/* Popup for confirming saving scores */}

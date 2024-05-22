@@ -1,5 +1,12 @@
 import { Header } from '../../components/Header'
-import { Box, CircularProgress, Grid, IconButton, Stack } from '@mui/material'
+import {
+    Box,
+    CircularProgress,
+    Grid,
+    IconButton,
+    Stack,
+    Tooltip,
+} from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ProjectsView } from './ProjectsView.tsx'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -334,19 +341,29 @@ export function SubjectsPage() {
                                     </Box>
                                 <Box>
                                 </Box>
+                                  <Tooltip
+                                        title={t('add_project')}
+                                        placement={'top'}>
                                     <IconButton
                                         onClick={addProject}
                                         color="primary"
                                         edge="end"
                                         aria-label="add-project"
                                     >
-                                        <AddCircleIcon
-                                            sx={{
-                                                fontSize: 60,
-                                                height: '100%',
-                                            }}
-                                        />
-                                    </IconButton>
+                                        <IconButton
+                                            onClick={addProject}
+                                            color="primary"
+                                            edge="end"
+                                            aria-label="add-project"
+                                        >
+                                            <AddCircleIcon
+                                                sx={{
+                                                    fontSize: 60,
+                                                    height: '100%',
+                                                }}
+                                            />
+                                        </IconButton>
+                                    </Tooltip>
                                 </Box>
                                 <WarningPopup
                                     title={t('delete_project_warning')}

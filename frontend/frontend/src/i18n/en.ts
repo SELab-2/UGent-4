@@ -135,6 +135,10 @@ const english = {
     openinUi: 'Open in UI',
     openInEditor: 'Open in editor',
     no_params: 'No parameters where found in the template.',
+    save_scores: 'Save Scores',
+    add_course: 'Add course',
+    add_project: 'Add project',
+    no_projects: 'No projects',
 }
 
 export default english

@@ -138,7 +138,9 @@ export default function MainPage() {
     const doArchive = async () => {
         console.log('Archive clicked')
         const newCourses = courses.map((course) =>
-            course.vak_id == archiveCourseId ? archiveSingleCourse(course) : course
+            course.vak_id == archiveCourseId
+                ? archiveSingleCourse(course)
+                : course
         )
         setCourses(newCourses)
         try {
@@ -195,139 +197,151 @@ export default function MainPage() {
                     {/* Two tabs to select either the current or archived courses,
                     CoursesView is a scroll-box with the current courses, 
                     ArchivedView is the same but for the archived courses.  */}
-                    <TabSwitcher
-                        selectedYear={selectedYear}
-                        setSelectedYear={setSelectedYear}
-                        titles={['current_courses', 'archived']}
-                        nodes={
-                            loading
-                                ? [
-                                      <Stack
-                                          flexDirection={{
-                                              xs: 'column-reverse',
-                                              md: 'row',
-                                          }}
-                                          minWidth={{
-                                              md: '57svw',
-                                              lg: '78svw',
-                                          }}
-                                      >
-                                          {[...Array(3)].map((_, index) => (
-                                              <CourseCardSkeleton key={index} />
-                                          ))}
-                                      </Stack>,
-                                      <Stack
-                                          flexDirection={{
-                                              xs: 'column-reverse',
-                                              md: 'row',
-                                          }}
-                                          minWidth={{
-                                              md: '57svw',
-                                              lg: '78svw',
-                                          }}
-                                      >
-                                          {[...Array(3)].map((_, index) => (
-                                              <CourseCardSkeleton key={index} />
-                                          ))}
-                                      </Stack>,
-                                  ]
-                                : [
-                                      <CoursesView
-                                          userid={user}
-                                          isStudent={role == 'student'}
-                                          activecourses={courses
-                                              .filter(
-                                                  (course) =>
-                                                      !course.gearchiveerd &&
-                                                      course.jaartal ===
-                                                          selectedYear
-                                              )
-                                              .sort((a: Course, b: Course) => {
-                                                  if (
-                                                      courseOrder.includes(
-                                                          a.vak_id
-                                                      )
-                                                  ) {
-                                                      if (
-                                                          courseOrder.includes(
-                                                              b.vak_id
-                                                          )
-                                                      ) {
-                                                          return (
-                                                              courseOrder.indexOf(
+                    <Box display={'flex'} flexDirection={'column'} flexGrow={1}>
+                        <TabSwitcher
+                            selectedYear={selectedYear}
+                            setSelectedYear={setSelectedYear}
+                            titles={['current_courses', 'archived']}
+                            nodes={
+                                loading
+                                    ? [
+                                          <Stack
+                                              flexDirection={{
+                                                  xs: 'column-reverse',
+                                                  md: 'row',
+                                              }}
+                                              width={'95%'}
+                                          >
+                                              {[...Array(3)].map((_, index) => (
+                                                  <CourseCardSkeleton
+                                                      key={index}
+                                                  />
+                                              ))}
+                                          </Stack>,
+                                          <Stack
+                                              flexDirection={{
+                                                  xs: 'column-reverse',
+                                                  md: 'row',
+                                              }}
+                                              width={'95%'}
+                                          >
+                                              {[...Array(3)].map((_, index) => (
+                                                  <CourseCardSkeleton
+                                                      key={index}
+                                                  />
+                                              ))}
+                                          </Stack>,
+                                      ]
+                                    : [
+                                          <CoursesView
+                                              userid={user}
+                                              isStudent={role == 'student'}
+                                              activecourses={courses
+                                                  .filter(
+                                                      (course) =>
+                                                          !course.gearchiveerd &&
+                                                          course.jaartal ===
+                                                              selectedYear
+                                                  )
+                                                  .sort(
+                                                      (
+                                                          a: Course,
+                                                          b: Course
+                                                      ) => {
+                                                          if (
+                                                              courseOrder.includes(
                                                                   a.vak_id
-                                                              ) -
-                                                              courseOrder.indexOf(
-                                                                  b.vak_id
                                                               )
-                                                          )
-                                                      } else {
-                                                          return -1
+                                                          ) {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return (
+                                                                      courseOrder.indexOf(
+                                                                          a.vak_id
+                                                                      ) -
+                                                                      courseOrder.indexOf(
+                                                                          b.vak_id
+                                                                      )
+                                                                  )
+                                                              } else {
+                                                                  return -1
+                                                              }
+                                                          } else {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return 1
+                                                              } else {
+                                                                  return 0
+                                                              }
+                                                          }
                                                       }
-                                                  } else {
-                                                      if (
-                                                          courseOrder.includes(
-                                                              b.vak_id
-                                                          )
-                                                      ) {
-                                                          return 1
-                                                      } else {
-                                                          return 0
-                                                      }
-                                                  }
-                                              })}
-                                          pinnedCourses={pinnedCourses}
-                                          archiveCourse={archiveCourse}
-                                          pinCourse={pinCourse}
-                                      />,
-                                      <ArchivedView
-                                          userid={user}
-                                          isStudent={role == 'student'}
-                                          archivedCourses={courses
-                                              .filter(
-                                                  (course) =>
-                                                      course.gearchiveerd && course.jaartal === selectedYear
-                                              )
-                                              .sort((a: Course, b: Course) => {
-                                                  if (
-                                                      courseOrder.includes(
-                                                          a.vak_id
-                                                      )
-                                                  ) {
-                                                      if (
-                                                          courseOrder.includes(
-                                                              b.vak_id
-                                                          )
-                                                      ) {
-                                                          return (
-                                                              courseOrder.indexOf(
+                                                  )}
+                                              pinnedCourses={pinnedCourses}
+                                              archiveCourse={archiveCourse}
+                                              pinCourse={pinCourse}
+                                          />,
+                                          <ArchivedView
+                                              userid={user}
+                                              isStudent={role == 'student'}
+                                              archivedCourses={courses
+                                                  .filter(
+                                                      (course) =>
+                                                          course.gearchiveerd &&
+                                                          course.jaartal ===
+                                                              selectedYear
+                                                  )
+                                                  .sort(
+                                                      (
+                                                          a: Course,
+                                                          b: Course
+                                                      ) => {
+                                                          if (
+                                                              courseOrder.includes(
                                                                   a.vak_id
-                                                              ) -
-                                                              courseOrder.indexOf(
-                                                                  b.vak_id
                                                               )
-                                                          )
-                                                      } else {
-                                                          return -1
+                                                          ) {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return (
+                                                                      courseOrder.indexOf(
+                                                                          a.vak_id
+                                                                      ) -
+                                                                      courseOrder.indexOf(
+                                                                          b.vak_id
+                                                                      )
+                                                                  )
+                                                              } else {
+                                                                  return -1
+                                                              }
+                                                          } else {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return 1
+                                                              } else {
+                                                                  return 0
+                                                              }
+                                                          }
                                                       }
-                                                  } else {
-                                                      if (
-                                                          courseOrder.includes(
-                                                              b.vak_id
-                                                          )
-                                                      ) {
-                                                          return 1
-                                                      } else {
-                                                          return 0
-                                                      }
-                                                  }
-                                              })}
-                                          pinnedCourses={pinnedCourses}
-                                          pinCourse={pinCourse}
-                                      />,
-                                  ]
-                        }
-                    />
+                                                  )}
+                                              pinnedCourses={pinnedCourses}
+                                              pinCourse={pinCourse}
+                                          />,
+                                      ]
+                            }
+                        />
+                    </Box>
 
                     {/* Add a calendar to the right of the mainpage. */}
                     <Box
@@ -336,6 +350,7 @@ export default function MainPage() {
                         flexDirection={'row'}
                         alignContent={'center'}
                         height={'50%'}
+                        width={'fit-content'}
                     >
                         <DeadlineCalendar
                             deadlines={deadlines}
