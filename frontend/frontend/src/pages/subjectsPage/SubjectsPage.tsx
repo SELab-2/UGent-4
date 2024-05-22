@@ -315,18 +315,25 @@ export function SubjectsPage() {
                                     )}
                                 </Box>
                                 <Box
-                                    paddingLeft={'10px'}
+                                    paddingLeft="10px"
                                     display="flex"
                                     flexDirection="row"
                                     justifyContent="space-between"
+                                    alignItems="center"
                                     sx={{ width: '100%', height: '30%' }}
                                 >
-                                    <CopyToClipboard
-                                        invitationLink={
-                                            window.location.href +
-                                            '/accept_invitation'
-                                        }
-                                    />
+                                    <Box sx={{ paddingLeft: '20px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                                        <StudentPopUp
+                                            students={studentsLoading ? [] : students}
+                                            text="students"
+                                            noGroup={false}
+                                        />
+                                        <CopyToClipboard
+                                            invitationLink={`${window.location.href}/accept_invitation`}
+                                        />
+                                    </Box>
+                                <Box>
+                                </Box>
                                     <IconButton
                                         onClick={addProject}
                                         color="primary"
