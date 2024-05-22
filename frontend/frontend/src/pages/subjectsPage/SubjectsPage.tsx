@@ -344,12 +344,6 @@ export function SubjectsPage() {
                                   <Tooltip
                                         title={t('add_project')}
                                         placement={'top'}>
-                                    <IconButton
-                                        onClick={addProject}
-                                        color="primary"
-                                        edge="end"
-                                        aria-label="add-project"
-                                    >
                                         <IconButton
                                             onClick={addProject}
                                             color="primary"

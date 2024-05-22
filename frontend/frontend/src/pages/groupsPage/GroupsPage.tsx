@@ -22,7 +22,7 @@ import {
 } from '@mui/material'
 import Switch from '@mui/material/Switch'
 import { t } from 'i18next'
-import { FormEvent, useEffect, useState, ChangeEvent } from 'react'
+import { FormEvent, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import instance from '../../axiosConfig.ts'
 import CancelIcon from '@mui/icons-material/Cancel'
@@ -189,7 +189,6 @@ export function GroupsPage() {
                     setStudentsCanChoose(response.data.student_groep)
 
                     setMaxGroupSize(response.data.max_groep_grootte)
-                    setStudentChoose(response.data.student_groep)
                 })
                 .catch((error) => {
                     console.log(error)
