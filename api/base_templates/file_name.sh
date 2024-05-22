@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #@param
-# Vul hieronder de namen van de bestanden in die je in de gezipte folder wilt vinden.
+# Vul hieronder de naam in dat het ingediende bestand moet hebben
 file_name="verslag.pdf"
 
 
