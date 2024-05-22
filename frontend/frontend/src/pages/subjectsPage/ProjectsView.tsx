@@ -51,6 +51,7 @@ export function ProjectsView({
     courseId,
 }: ProjectsViewProps) {
     const [projects, setProjects] = useState<ProjectStudent[]>([])
+    const [lastSubmission, setLastSubmission] = useState<Submission>()
 
     // state to keep track of the loading state
     const [loading, setLoading] = useState(true)
@@ -90,10 +91,11 @@ export function ProjectsView({
                 const submissionsResponse = await instance.get(
                     `/indieningen/?groep=${projectstudent.group.groep_id?.toString()}&project=${projectstudent.assignment.project_id.toString()}`
                 )
-                const lastSubmission =
-                    submissionsResponse.data[
-                        submissionsResponse.data.length - 1
-                    ]
+                const lastSubmission = submissionsResponse.data.sort(
+                    (a: Submission, b: Submission) =>
+                        dayjs(a.tijdstip).isAfter(dayjs(b.tijdstip)) ? 1 : -1
+                )[0]
+                setLastSubmission(lastSubmission)
                 return {
                     ...projectstudent,
                     lastSubmission: lastSubmission,
@@ -142,7 +144,30 @@ export function ProjectsView({
                 )
                 const scoreArray = await Promise.all(scorePromises)
 
-                setProjects(scoreArray)
+                scoreArray.sort((a, b) => {
+                    return dayjs(a.assignment.deadline).isAfter(
+                        dayjs(b.assignment.deadline)
+                    )
+                        ? 1
+                        : -1
+                })
+
+                const pastAndTodayDeadlines: ProjectStudent[] = []
+                const futureDeadlines: ProjectStudent[] = []
+                const today = dayjs()
+                // Separate the items based on their deadline
+                scoreArray.forEach((item) => {
+                    if (
+                        dayjs(item.assignment.deadline).isBefore() ||
+                        dayjs(item.assignment.deadline).isSame(today)
+                    ) {
+                        pastAndTodayDeadlines.push(item)
+                    } else {
+                        futureDeadlines.push(item)
+                    }
+                })
+
+                setProjects(futureDeadlines.concat(pastAndTodayDeadlines))
             } catch (e) {
                 console.error('Error fetching all data:', e)
             } finally {
@@ -264,6 +289,9 @@ export function ProjectsView({
                                             <>
                                                 <Divider />
                                                 <AssignmentListItemSubjectsPage
+                                                    lastSubmission={
+                                                        lastSubmission
+                                                    }
                                                     key={
                                                         project.assignment
                                                             .project_id
@@ -272,10 +300,12 @@ export function ProjectsView({
                                                         project.assignment.titel
                                                     }
                                                     dueDate={
-                                                        project.assignment.deadline
+                                                        project.assignment
+                                                            .deadline
                                                             ? dayjs(
-                                                              project.assignment
-                                                                .deadline
+                                                                  project
+                                                                      .assignment
+                                                                      .deadline
                                                               )
                                                             : undefined
                                                     }
@@ -284,9 +314,7 @@ export function ProjectsView({
                                                             ? project.submissions
                                                             : 0
                                                     }
-                                                    score={
-                                                        project.score
-                                                    }
+                                                    score={project.score}
                                                     maxScore={Number(
                                                         project.assignment
                                                             .max_score

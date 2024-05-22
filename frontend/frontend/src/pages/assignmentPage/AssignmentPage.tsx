@@ -450,7 +450,7 @@ export function AssignmentPage() {
                                                         )
                                                     ) &&
                                                     !assignment.extra_deadline
-                                                        ? 'red'
+                                                        ? 'error.main'
                                                         : 'text.primary'
                                                 }
                                             >
@@ -531,7 +531,7 @@ export function AssignmentPage() {
                                                             assignment.extra_deadline
                                                         )
                                                     )
-                                                        ? 'red'
+                                                        ? 'error.main'
                                                         : 'text.primary'
                                                 }
                                             >
@@ -821,7 +821,7 @@ export function AssignmentPage() {
                                                             )
                                                         ) &&
                                                         !assignment.extra_deadline
-                                                            ? 'red'
+                                                            ? 'error.main'
                                                             : 'text.primary'
                                                     }
                                                 >
@@ -945,7 +945,7 @@ export function AssignmentPage() {
                                                             assignment.extra_deadline
                                                         )
                                                     )
-                                                        ? 'red'
+                                                        ? 'error.main'
                                                         : 'text.primary'
                                                 }
                                             >
