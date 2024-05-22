@@ -163,7 +163,7 @@ export function CourseCard({
                     sx={{
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
-                        maxWidth: 420,
+                        maxWidth: 460,
                         padding: 0,
                         margin: 1,
                     }}
@@ -290,7 +290,11 @@ export function CourseCard({
                                     <Typography id="project" width={30}>
                                         Project
                                     </Typography>
-                                    <Typography id="deadline" width={30}>
+                                    <Typography
+                                        id="deadline"
+                                        pl={20}
+                                        width={30}
+                                    >
                                         Deadline
                                     </Typography>
                                     <Typography id="status" width={30}>
@@ -357,10 +361,16 @@ export function CourseCard({
                                         sx={{
                                             width: '100%',
                                             height: 130,
-                                            overflow: 'auto',
+                                            overflowY: 'auto',
                                         }}
                                     >
-                                        <List disablePadding={true}>
+                                        <List
+                                            disablePadding={true}
+                                            sx={{
+                                                overflowY: 'auto',
+                                                maxHeight: 130,
+                                            }}
+                                        >
                                             {assignments.length === 0 && (
                                                 <Box
                                                     display={'flex'}
@@ -417,7 +427,13 @@ export function CourseCard({
                                                     height: 130,
                                                 }}
                                             >
-                                                <List disablePadding={true}>
+                                                <List
+                                                    disablePadding={true}
+                                                    sx={{
+                                                        overflowY: 'auto',
+                                                        maxHeight: 130,
+                                                    }}
+                                                >
                                                     {assignments.map(
                                                         (assignment) => (
                                                             <AssignmentListItem

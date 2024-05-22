@@ -136,7 +136,7 @@ export function SubmissionPage() {
                 const newSubmission: Submission = submissionResponse.data
 
                 if (newSubmission.result !== 'No tests: OK') {
-                    const regex = /Testing (.*):/g
+                    const regex = /Testing (.*)$/
                     const matches = newSubmission.result.match(regex)
                     if (matches !== null) {
                         matches.map((match) => {
@@ -359,7 +359,7 @@ export function SubmissionPage() {
                             {t('filename')}
                         </Typography>
                         <Button
-                            id='downloadButton'
+                            id="downloadButton"
                             startIcon={<DownloadIcon />}
                             onClick={downloadSubmission}
                         >

@@ -3,6 +3,7 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Typography,
 } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -65,11 +66,15 @@ export function AssignmentListItem({
                     }}
                 >
                     {/* Project Name */}
-                    <ListItemText
-                        id="projectName"
-                        sx={{ maxWidth: 100 }}
-                        primary={projectName}
-                    />
+                    <ListItemText>
+                        <Typography
+                            maxWidth={170}
+                            noWrap
+                            textOverflow={'ellipsis'}
+                        >
+                            {projectName}
+                        </Typography>
+                    </ListItemText>
                     {/* Due Date */}
                     <ListItemText
                         id="dueDate"

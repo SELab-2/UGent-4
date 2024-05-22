@@ -15,6 +15,9 @@ import {
 import {
     Box,
     CircularProgress,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Grid,
     List,
     Skeleton,
@@ -36,6 +39,8 @@ import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
 import axios, { AxiosResponse } from 'axios'
 import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
 
 // group interface
 export interface Group {
@@ -767,10 +772,10 @@ export function AssignmentPage() {
                                 alignContent={'center'}
                                 marginTop={15}
                                 direction={'column'}
-                                spacing={4}
+                                spacing={3}
                                 sx={{
-                                    width: '100%',
-                                    height: '100%',
+                                    width: '99%',
+                                    height: '99%',
                                     backgroundColor: 'background.default',
                                 }}
                             >
@@ -1048,7 +1053,7 @@ export function AssignmentPage() {
                                 </Box>
 
                                 {/* Assignment */}
-                                <Card sx={{ padding: '20px' }}>
+                                <Card sx={{ padding: '20px', width: '95%' }}>
                                     <Stack direction={'column'}>
                                         <Typography
                                             sx={{
@@ -1077,7 +1082,7 @@ export function AssignmentPage() {
                                 </Card>
 
                                 {/* Submissions */}
-                                <Card>
+                                <Card sx={{ width: '97%' }}>
                                     <Box
                                         aria-label={'courseHeader'}
                                         sx={{
@@ -1286,24 +1291,41 @@ export function AssignmentPage() {
                                     ) : null}
                                 </Grid>
                             </Stack>
-                            <WarningPopup
-                                title={t('error')}
-                                content={
-                                    t('noGroup') +
-                                    ' ' +
-                                    (assignment?.student_groep
-                                        ? t('chooseGroup')
-                                        : t('contactTeacher'))
-                                }
-                                buttonName={
-                                    assignment?.student_groep
-                                        ? t('join')
-                                        : t('ok')
-                                }
-                                open={openNoGroup}
-                                handleClose={() => setOpenNoGroup(false)}
-                                doAction={handleNoGroupError}
-                            />
+                            {assignment?.student_groep ? (
+                                <WarningPopup
+                                    title={t('error')}
+                                    content={t('noGroup')}
+                                    buttonName={t('join')}
+                                    open={openNoGroup}
+                                    handleClose={() => setOpenNoGroup(false)}
+                                    doAction={handleNoGroupError}
+                                />
+                            ) : (
+                                <Dialog
+                                    open={openNoGroup}
+                                    onClose={() => setOpenNoGroup(false)}
+                                >
+                                    <DialogTitle>{t('error')}</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                            {t('noGroup') +
+                                                ' ' +
+                                                t('contactTeacher')}
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button
+                                            onClick={() =>
+                                                setOpenNoGroup(false)
+                                            }
+                                            color="primary"
+                                            autoFocus
+                                        >
+                                            {t('ok')}
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            )}
                         </>
                     )}
                 </>
