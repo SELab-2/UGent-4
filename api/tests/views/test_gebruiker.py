@@ -4,7 +4,6 @@ from django.urls import reverse
 from rest_framework import status
 from api.tests.factories.vak import VakFactory
 from api.models.gebruiker import Gebruiker
-from django.db import transaction
 
 
 class GebruikerListViewTest(APITestCase):
