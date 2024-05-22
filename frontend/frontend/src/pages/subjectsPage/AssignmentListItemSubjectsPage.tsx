@@ -4,6 +4,7 @@ import {
     ListItemButton,
     ListItemText,
     Tooltip,
+    Typography,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
@@ -15,12 +16,14 @@ import React, { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
 import { EvenlySpacedRow } from '../../components/CustomComponents.tsx'
+import { Submission } from '../submissionPage/SubmissionPage.tsx'
 
 /**
  * This component is used to display a single assignment in the list of assignments.
  * @param projectName: string - the name of the project
  * @param dueDate: Date - the due date of the project
  * @param submissions: number - number of submissions for the project
+ * @param lastSubmission: Submission - last submission for the project
  * @param score: number - assigned score on the project
  * @param isStudent: boolean - wether the user is a student or a teacher
  * @param archived: boolean - wether the assignment is archived
@@ -34,6 +37,7 @@ interface AssignmentListItemSubjectsPageProps {
     projectName: string
     dueDate: Dayjs | undefined
     submissions: number
+    lastSubmission?: Submission
     score: Score | undefined
     maxScore: number
     isStudent: boolean
@@ -50,6 +54,7 @@ export function AssignmentListItemSubjectsPage({
     projectName,
     dueDate,
     submissions,
+    lastSubmission,
     score,
     maxScore,
     isStudent,
@@ -87,15 +92,33 @@ export function AssignmentListItemSubjectsPage({
                         <EvenlySpacedRow
                             items={[
                                 <ListItemText primary={projectName} />,
-                                <ListItemText
-                                    primary={
-                                        dueDate
+                                <ListItemText>
+                                    <Typography
+                                        color={
+                                            dueDate
+                                                ? dayjs(dueDate).isBefore(
+                                                      dayjs()
+                                                  )
+                                                    ? lastSubmission
+                                                        ? dayjs(
+                                                              lastSubmission.tijdstip
+                                                          ).isBefore(
+                                                              dayjs(dueDate)
+                                                          )
+                                                            ? 'success.main'
+                                                            : 'error.main'
+                                                        : 'error.main'
+                                                    : 'text.primary'
+                                                : 'text.primary'
+                                        }
+                                    >
+                                        {dueDate
                                             ? dayjs(dueDate).format(
                                                   'DD/MM/YYYY HH:mm'
                                               )
-                                            : t('no_deadline')
-                                    }
-                                />,
+                                            : t('no_deadline')}
+                                    </Typography>
+                                </ListItemText>,
                                 <ListItemText
                                     primary={
                                         submissions > 0
@@ -132,15 +155,25 @@ export function AssignmentListItemSubjectsPage({
                             <EvenlySpacedRow
                                 items={[
                                     <ListItemText primary={projectName} />,
-                                    <ListItemText
-                                        primary={
-                                            dueDate
+                                    <ListItemText>
+                                        <Typography
+                                            color={
+                                                dueDate
+                                                    ? dayjs(dueDate).isBefore(
+                                                          dayjs()
+                                                      )
+                                                        ? 'error'
+                                                        : 'text.primary'
+                                                    : 'text.primary'
+                                            }
+                                        >
+                                            {dueDate
                                                 ? dayjs(dueDate).format(
                                                       'DD/MM/YYYY HH:mm'
                                                   )
-                                                : t('no_deadline')
-                                        }
-                                    />,
+                                                : t('no_deadline')}
+                                        </Typography>
+                                    </ListItemText>,
                                     <ButtonActions
                                         archived={archived}
                                         startVisible={visible}

@@ -329,9 +329,18 @@ export function SubjectsPage() {
                                     alignItems="center"
                                     sx={{ width: '100%', height: '30%' }}
                                 >
-                                    <Box sx={{ paddingLeft: '20px', display: 'flex', alignItems: 'center', gap: 2 }}>
+                                    <Box
+                                        sx={{
+                                            paddingLeft: '20px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: 2,
+                                        }}
+                                    >
                                         <StudentPopUp
-                                            students={studentsLoading ? [] : students}
+                                            students={
+                                                studentsLoading ? [] : students
+                                            }
                                             text="students"
                                             noGroup={false}
                                         />
@@ -339,11 +348,11 @@ export function SubjectsPage() {
                                             invitationLink={`${window.location.href}/accept_invitation`}
                                         />
                                     </Box>
-                                <Box>
-                                </Box>
-                                  <Tooltip
+                                    <Box></Box>
+                                    <Tooltip
                                         title={t('add_project')}
-                                        placement={'top'}>
+                                        placement={'top'}
+                                    >
                                         <IconButton
                                             onClick={addProject}
                                             color="primary"
