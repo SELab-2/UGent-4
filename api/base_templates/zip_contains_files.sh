@@ -2,7 +2,7 @@
 
 #@param
 # Vul hieronder de namen van de bestanden in die je in de gezipte folder wilt vinden.
-file_names=( "testfile1.txt" "testfile2.txt" )
+file_names=("testfile1.txt" "testfile2.txt")
 
 #@param
 # Vul hieronder de naam van het zip bestand waarin je de files wil vinden
