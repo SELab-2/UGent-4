@@ -22,36 +22,38 @@ def restrictie_list(request, format=None):
     Returns:
         Response: Een http-respons met de opgevraagde of gemaakte restricties.
     """
+ 
+    if request.method == "GET":
+        restricties = Restrictie.objects.all()
+
+        if "project" in request.GET:
+            try:
+                project = eval(request.GET.get("project"))
+                restricties = restricties.filter(project=project)
+            except NameError:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        if "moet_slagen" in request.GET and request.GET.get(
+            "moet_slagen"
+        ).lower() in [
+            "true",
+            "false",
+        ]:
+            restricties = restricties.filter(
+                moet_slagen=(request.GET.get("moet_slagen").lower() == "true")
+            )
+
+        serializer = RestrictieSerializer(restricties, many=True)
+        return Response(serializer.data)
+    
     if has_permissions(request.user):
-        if request.method == "GET":
-            restricties = Restrictie.objects.all()
-
-            if "project" in request.GET:
-                try:
-                    project = eval(request.GET.get("project"))
-                    restricties = restricties.filter(project=project)
-                except NameError:
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
-
-            if "moet_slagen" in request.GET and request.GET.get(
-                "moet_slagen"
-            ).lower() in [
-                "true",
-                "false",
-            ]:
-                restricties = restricties.filter(
-                    moet_slagen=(request.GET.get("moet_slagen").lower() == "true")
-                )
-
-            serializer = RestrictieSerializer(restricties, many=True)
-            return Response(serializer.data)
-
-        elif request.method == "POST":
+        if request.method == "POST":
             serializer = RestrictieSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     return Response(status=status.HTTP_403_FORBIDDEN)
 
 
