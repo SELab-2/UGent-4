@@ -19,6 +19,9 @@ import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
 
 import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
+import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
+import { Group } from '../pages/groupsPage/GroupsPage.tsx'
+import axios from 'axios'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -29,6 +32,7 @@ import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
 //TODO: fix archived with state so that the card moves to ArchivedView when archived
 
 interface CourseCardProps {
+    userid: number
     courseId: string
     archived: boolean
     isStudent: boolean
@@ -38,6 +42,7 @@ interface CourseCardProps {
 }
 
 export function CourseCard({
+    userid,
     courseId,
     archived,
     isStudent,
@@ -49,11 +54,15 @@ export function CourseCard({
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
         naam: '',
+        jaartal: 0,
         studenten: [],
         lesgevers: [],
         gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
+    const [groupsWithSubmissions, setGroupsWithSubmissions] = useState<Group[]>(
+        []
+    )
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
@@ -76,6 +85,32 @@ export function CourseCard({
 
                 setCourse(courseResponse.data)
                 setAssignments(assignmentsResponse.data)
+
+                //fetch submissions as well if user is student
+                if (isStudent) {
+                    const groups: Group[] = await instance
+                        .get(`/groepen/?student=${userid}`)
+                        .then((response) => response.data)
+                    const submissionPromises = groups.map(async (group) => {
+                        const response = await instance.get<Submission>(
+                            `/indieningen/?project=${group.project}`
+                        )
+                        return response.data
+                    })
+                    const submissions = await axios.all(submissionPromises)
+
+                    console.log(groups)
+                    const validGroups = groups.filter((group) =>
+                        submissions
+                            .flat(Infinity)
+                            .some(
+                                (submission) =>
+                                    submission.groep === group.groep_id
+                            )
+                    )
+
+                    setGroupsWithSubmissions(validGroups)
+                }
 
                 if (courseResponse.data && courseResponse.data.lesgevers) {
                     const lesgevers = []
@@ -137,7 +172,7 @@ export function CourseCard({
                         {/* Clickable area for the card */}
                         <CardActionArea onClick={handleCardClick}>
                             <Box
-                                id='courseInfo'
+                                id="courseInfo"
                                 aria-label={'courseHeader'}
                                 sx={{
                                     backgroundColor: 'secondary.main',
@@ -151,7 +186,6 @@ export function CourseCard({
                             >
                                 {/* Course name and teachers */}
                                 <Box
-                                
                                     width={'70%'}
                                     height={'100%'}
                                     display={'flex'}
@@ -199,10 +233,6 @@ export function CourseCard({
                                 </Box>
                                 {/* Number of students enrolled */}
                                 <Box>
-                                    <Typography variant={'subtitle1'}>
-                                        {t('students') + ': '}
-                                        {course.studenten.length || 0}
-                                    </Typography>
                                     <Box
                                         display={'flex'}
                                         flexDirection={'column'}
@@ -228,6 +258,10 @@ export function CourseCard({
                                             )}
                                         </IconButton>
                                     </Box>
+                                    <Typography variant={'subtitle1'}>
+                                        {t('students') + ': '}
+                                        {course.studenten.length || 0}
+                                    </Typography>
                                 </Box>
                             </Box>
                         </CardActionArea>
@@ -246,23 +280,29 @@ export function CourseCard({
                             {isStudent ? (
                                 // Display assignments for students
                                 <Box
-                                    id='student'
+                                    id="student"
                                     display={'flex'}
                                     flexDirection={'row'}
                                     justifyContent={'space-between'}
                                     pl={3}
                                     pr={3}
                                 >
-                                    <Typography id='project' width={30}>Project</Typography>
-                                    <Typography id='deadline' width={30}>Deadline</Typography>
-                                    <Typography id='status' width={30}>Status</Typography>
+                                    <Typography id="project" width={30}>
+                                        Project
+                                    </Typography>
+                                    <Typography id="deadline" width={30}>
+                                        Deadline
+                                    </Typography>
+                                    <Typography id="status" width={30}>
+                                        Status
+                                    </Typography>
                                 </Box>
                             ) : (
                                 // Display assignments for teachers
                                 <>
                                     {archived ? (
                                         <Box
-                                            id='teacherArchived'
+                                            id="teacherArchived"
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -270,16 +310,22 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '81%', sm: '85%' }}
                                         >
-                                            <Typography id='project' maxWidth={100}>
+                                            <Typography
+                                                id="project"
+                                                maxWidth={100}
+                                            >
                                                 Project
                                             </Typography>
-                                            <Typography id='deadline' minWidth={50}>
+                                            <Typography
+                                                id="deadline"
+                                                minWidth={50}
+                                            >
                                                 Deadline
                                             </Typography>
                                         </Box>
                                     ) : (
                                         <Box
-                                            id='teacherNonArchived'
+                                            id="teacherNonArchived"
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -287,10 +333,16 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '71%', sm: '75%' }}
                                         >
-                                            <Typography id='project' maxWidth={100}>
+                                            <Typography
+                                                id="project"
+                                                maxWidth={100}
+                                            >
                                                 Project
                                             </Typography>
-                                            <Typography id='deadline' minWidth={50}>
+                                            <Typography
+                                                id="deadline"
+                                                minWidth={50}
+                                            >
                                                 Deadline
                                             </Typography>
                                         </Box>
@@ -316,25 +368,26 @@ export function CourseCard({
                                                 )
                                                 .map((assignment) => (
                                                     <AssignmentListItem
-                                                        key={
-                                                            assignment.project_id
-                                                        }
-                                                        id={`project${assignment.project_id}`}
+                                                        key={`project${assignment.project_id}`}
+                                                        id={assignment.project_id.toString()}
                                                         courseId={courseId}
                                                         projectName={
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            dayjs(
-                                                                assignment.deadline
-                                                            ).format(
-                                                                'DD/MM/YYYY HH:mm'
-                                                            ) || undefined
+                                                            assignment.deadline
+                                                                ? dayjs(
+                                                                    assignment.deadline
+                                                                  ).format(
+                                                                    'DD/MM/YYYY HH:mm'
+                                                                  )
+                                                                : undefined
                                                         }
-                                                        status={
-                                                            assignment.project_id ===
-                                                            1
-                                                        } //TODO dit moet nog aangepast worden
+                                                        status={groupsWithSubmissions.some(
+                                                            (group) =>
+                                                                group.project ===
+                                                                assignment.project_id
+                                                        )}
                                                         isStudent={isStudent}
                                                     />
                                                 ))}
@@ -354,10 +407,8 @@ export function CourseCard({
                                                     {assignments.map(
                                                         (assignment) => (
                                                             <AssignmentListItem
-                                                                key={
-                                                                    assignment.project_id
-                                                                }
-                                                                id={`project${assignment.project_id}`}
+                                                                key={`project${assignment.project_id}`}
+                                                                id={assignment.project_id.toString()}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -365,16 +416,22 @@ export function CourseCard({
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    dayjs(
-                                                                        assignment.deadline
-                                                                    ).format(
-                                                                        'DD/MM/YYYY HH:mm'
-                                                                    ) ||
-                                                                    undefined
+                                                                    assignment.deadline
+                                                                        ? dayjs(
+                                                                            assignment.deadline
+                                                                          ).format(
+                                                                            'DD/MM/YYYY HH:mm'
+                                                                          )
+                                                                        : undefined
                                                                 }
                                                                 status={
-                                                                    assignment.project_id ===
-                                                                    1
+                                                                    groupsWithSubmissions.some(
+                                                                        (
+                                                                            group
+                                                                        ) =>
+                                                                            group.project ===
+                                                                            assignment.project_id
+                                                                    )
                                                                     //TODO: status has to check if there is already a submission
                                                                 }
                                                                 isStudent={
@@ -400,10 +457,8 @@ export function CourseCard({
                                                         )
                                                         .map((assignment) => (
                                                             <AssignmentListItem
-                                                                key={
-                                                                    assignment.project_id
-                                                                }
-                                                                id={`project${assignment.project_id}`}
+                                                                key={`project${assignment.project_id}`}
+                                                                id={assignment.project_id.toString()}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -418,10 +473,11 @@ export function CourseCard({
                                                                     ) ||
                                                                     undefined
                                                                 }
-                                                                status={
-                                                                    assignment.project_id ===
-                                                                    1
-                                                                }
+                                                                status={groupsWithSubmissions.some(
+                                                                    (group) =>
+                                                                        group.project ===
+                                                                        assignment.project_id
+                                                                )}
                                                                 isStudent={
                                                                     isStudent
                                                                 }
@@ -442,7 +498,7 @@ export function CourseCard({
                                                 }}
                                             >
                                                 <IconButton
-                                                    id='archiveButton'
+                                                    id="archiveButton"
                                                     onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:

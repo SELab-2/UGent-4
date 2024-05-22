@@ -72,10 +72,6 @@ class Indiening(models.Model):
         return str(self.indiening_id)
 
     def save(self, *args, **kwargs):
-        # First save to generate the indiening_id if it doesn't exist
-        if not self.indiening_id:
-            super(Indiening, self).save(*args, **kwargs)
-
         # Update the bestand path if it's still using the temporary path
         if "temp" in self.bestand.name:
             old_file = self.bestand

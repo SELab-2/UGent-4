@@ -1,4 +1,5 @@
 import {
+    Box,
     ListItem,
     ListItemButton,
     ListItemIcon,
@@ -13,9 +14,10 @@ import instance from '../axiosConfig'
 import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
 import { t } from 'i18next'
 import dayjs from 'dayjs'
+import { EvenlySpacedRow } from './CustomComponents.tsx'
 
 interface SubmissionListItemTeacherPageProps {
-    relative_group_id: string
+    group_name: string
     group_id: string
     assignment_id: string
     course_id: string
@@ -32,7 +34,7 @@ export interface Score {
  * @param {SubmissionListItemTeacherPageProps} props - Props for SubmissionListItemTeacherPage component
  */
 export function SubmissionListItemTeacherPage({
-    relative_group_id,
+    group_name,
     group_id,
     assignment_id,
     course_id,
@@ -61,7 +63,40 @@ export function SubmissionListItemTeacherPage({
                     submissionsResponse.data[
                         submissionsResponse.data.length - 1
                     ]
-                setSubmitted(lastSubmission)
+                if (lastSubmission) {
+                    const lastSubmissionResponse = await instance.get(
+                        `indieningen/${lastSubmission.indiening_id}/`
+                    )
+                    //Get the submission file
+                    const newSubmission: Submission =
+                        lastSubmissionResponse.data
+                    newSubmission.filename =
+                        lastSubmissionResponse.data.bestand.replace(
+                            /^.*[\\/]/,
+                            ''
+                        )
+                    newSubmission.bestand = await instance
+                        .get(
+                            `/indieningen/${lastSubmission.indiening_id}/indiening_bestand`,
+                            {
+                                responseType: 'blob',
+                            }
+                        )
+                        .then((res) => {
+                            let filename = 'indiening.zip'
+                            if (newSubmission.filename) {
+                                filename = newSubmission.filename
+                            }
+                            const blob = new Blob([res.data], {
+                                type: res.headers['content-type'],
+                            })
+                            const file: File = new File([blob], filename, {
+                                type: res.headers['content-type'],
+                            })
+                            return file
+                        })
+                    setSubmitted(newSubmission)
+                }
                 if (lastSubmission) {
                     const scoreResponse = await instance.get(
                         `/scores/?indiening=${lastSubmission.indiening_id}`
@@ -78,38 +113,14 @@ export function SubmissionListItemTeacherPage({
 
     // Function to download the submission
     const downloadSubmission = () => {
-        if (submitted) {
-            instance
-                .get(
-                    `/indieningen/${submitted.indiening_id}/indiening_bestanden/`,
-                    { responseType: 'blob' }
-                )
-                .then((res) => {
-                    let filename = 'lege_indiening.zip'
-                    if (submitted.indiening_bestanden.length > 0) {
-                        filename =
-                            submitted.indiening_bestanden[0].bestand.replace(
-                                /^.*[\\/]/,
-                                ''
-                            )
-                    }
-                    const blob = new Blob([res.data], {
-                        type: res.headers['content-type'],
-                    })
-                    const file: File = new File([blob], filename, {
-                        type: res.headers['content-type'],
-                    })
-                    const url = window.URL.createObjectURL(file)
-                    const a = document.createElement('a')
-                    a.href = url
-                    a.download = filename
-                    document.body.appendChild(a)
-                    a.click()
-                    a.remove()
-                })
-                .catch((err) => {
-                    console.error(err)
-                })
+        if (submitted?.bestand) {
+            const url = window.URL.createObjectURL(submitted?.bestand)
+            const a = document.createElement('a')
+            a.href = url
+            a.download = submitted.filename ? submitted.filename : 'opgave.zip'
+            document.body.appendChild(a)
+            a.click()
+            a.remove()
         }
     }
 
@@ -125,102 +136,76 @@ export function SubmissionListItemTeacherPage({
 
     return (
         <>
-            <ListItem id={`submission${group_id}`} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem id={group_id} sx={{ maxHeight: '40px' }} disablePadding>
                 <ListItemButton
-                    sx={{
-                        width: '100%',
-                        height: 40,
-                        paddingX: 4,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
+                    sx={{ maxHeight: '40px' }}
                     onClick={handleSubmissionClick}
+                    disabled={!submitted}
                 >
-                    {/* Display group id */}
-                    <ListItemText
-                        id='submissionId'
-                        sx={{
-                            maxWidth: '24%',
-                            color: 'primary.main',
-                            '&:hover': {
-                                color: 'primary.light',
-                            },
-                        }}
-                        primary={relative_group_id}
-                    />
-                    {/* Display submission timestamp */}
-                    <ListItemText
-                        sx={{ minWidth: '24%' }}
-                        primary={
-                            submitted
-                                ? dayjs(submitted.tijdstip).format(
-                                      'DD/MM/YYYY HH:mm'
-                                  )
-                                : '-'
-                        }
-                    />
-                    {/* Display score */}
-                    <ListItemText
-                        sx={{ minWidth: '24%' }}
-                        primary={
-                            score
-                                ? `${Number(score.score)}` + '/20'
-                                : t('no_score_yet')
-                        }
-                    />
-                    {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        {!submitted?.status ? (
-                            <HighlightOffIcon sx={{ color: 'error.main' }} />
-                        ) : (
-                            submitted !== undefined && (
-                                <CheckCircleOutlineIcon
-                                    id='check'
-                                    sx={{ color: 'success.main' }}
-                                />
-                            )
-                        )}
-                    </ListItemIcon>
-                    {/* Display download icon */}
-                    <ListItemText>
-                        <ListItemIcon sx={{ minWidth: 35 }}>
-                            <div onClick={handleDownloadClick} />
-                            {submitted ? (
-                                <DownloadIcon
-                                    id='downloadIconColor'
-                                    sx={{
-                                        color: 'primary.main',
-                                        '&:hover': { color: 'primary.light' },
-                                    }}
-                                />
-                            ) : (
-                                submitted !== undefined && (
-                                    <CheckCircleOutlineIcon
-                                        sx={{ color: 'success.main' }}
-                                    />
-                                )
-                            )}
-                        </ListItemIcon>
-                    </ListItemText>
-                    {/* Display download icon */}
-                    <ListItemText sx={{ maxWidth: '4%' }}>
-                        <ListItemIcon>
-                            <div onClick={handleDownloadClick}>
-                                {submitted ? (
-                                    <DownloadIcon
-                                        sx={{
-                                            color: 'primary.main',
-                                            '&:hover': {
-                                                color: 'primary.light',
-                                            },
-                                        }}
-                                    />
-                                ) : (
-                                    <DownloadIcon sx={{ color: 'gray' }} />
-                                )}
-                            </div>
-                        </ListItemIcon>
-                    </ListItemText>
+                    <EvenlySpacedRow
+                        items={[
+                            <ListItemText
+                                sx={{
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        color: 'primary.light',
+                                    },
+                                }}
+                                primary={group_name}
+                            />,
+                            <ListItemText
+                                primary={
+                                    submitted
+                                        ? dayjs(submitted.tijdstip).format(
+                                              'DD/MM/YYYY HH:mm'
+                                          )
+                                        : '-'
+                                }
+                            />,
+                            <ListItemText
+                                primary={
+                                    score
+                                        ? `${Number(score.score)}` + '/20'
+                                        : t('no_score_yet')
+                                }
+                            />,
+                            <Box sx={{ maxWidth: '24px' }}>
+                                <ListItemIcon>
+                                    {!submitted?.status ? (
+                                        <HighlightOffIcon
+                                            sx={{ color: 'error.main' }}
+                                        />
+                                    ) : (
+                                        submitted !== undefined && (
+                                            <CheckCircleOutlineIcon
+                                                sx={{ color: 'success.main' }}
+                                            />
+                                        )
+                                    )}
+                                </ListItemIcon>
+                            </Box>,
+                            <Box sx={{ maxWidth: '24px' }}>
+                                <ListItemIcon>
+                                    <div onClick={handleDownloadClick}>
+                                        {submitted ? (
+                                            <DownloadIcon
+                                                sx={{
+                                                    color: 'primary.main',
+                                                    '&:hover': {
+                                                        color: 'primary.light',
+                                                    },
+                                                }}
+                                            />
+                                        ) : (
+                                            <DownloadIcon
+                                                sx={{ color: 'gray' }}
+                                            />
+                                        )}
+                                    </div>
+                                </ListItemIcon>
+                            </Box>,
+                        ]}
+                    ></EvenlySpacedRow>
                 </ListItemButton>
             </ListItem>
         </>

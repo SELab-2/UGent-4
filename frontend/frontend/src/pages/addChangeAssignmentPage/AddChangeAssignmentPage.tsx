@@ -1,4 +1,4 @@
-import { Card } from '../../components/CustomComponents.tsx'
+import {Card, Divider, EvenlySpacedRow} from '../../components/CustomComponents.tsx'
 import {
     Box,
     CircularProgress,
@@ -34,6 +34,7 @@ import instance from '../../axiosConfig.ts'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import AddRestrictionButton from './AddRestrictionButton.tsx'
 import { RestrictionCard } from '../../components/RestrictionCard.tsx'
+import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 
 /**
  * This page is used to add or change an assignment.
@@ -87,19 +88,23 @@ export function AddChangeAssignmentPage() {
 
     //State for loading the data or showing skeletons
     const [loading, setLoading] = useState(false)
+    const [userLoading, setUserLoading] = useState(true)
 
     // State for the different fields of the assignment
     const [title, setTitle] = useState('')
     const [description, setDescription] = useState('')
     const [dueDate, setDueDate] = useState<Dayjs | null>(null)
     const [extraDueDate, setExtraDueDate] = useState<Dayjs | null>(null)
+    const [oldRestrictions, setOldRestrictions] = useState<restriction[]>([])
     const [restrictions, setRestrictions] = useState<restriction[]>([])
     const [visible, setVisible] = useState(false)
     const [assignmentFile, setAssignmentFile] = useState<File>()
     const [maxScore, SetMaxScore] = useState<number>(20)
     const [cleared, setCleared] = useState<boolean>(false)
     const [filename, setFilename] = useState<string>('indiening.zip')
+    const [groupSize, setGroupSize] = useState<number>(1)
 
+    const [user, setUser] = useState<User>()
     // State for the error checks of the assignment
     const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
         title: false,
@@ -158,10 +163,15 @@ export function AddChangeAssignmentPage() {
     //set the initial values of the assignment if it is an edit
     useEffect(() => {
         //get the data
+        const fetchUser = async () => {
+            setUserLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            setUser(userResponse.data)
+            setUserLoading(false)
+        }
         const fetchData = async () => {
             //begin loading -> set loading to true
             setLoading(true)
-
             //get the assignment
             await instance
                 .get<getAssignment>(`/projecten/${assignmentId}`)
@@ -183,15 +193,11 @@ export function AddChangeAssignmentPage() {
 
                     setVisible(assignment.zichtbaar)
                     if (assignment.deadline !== null) {
-                        setDueDate(
-                            dayjs(assignment.deadline)
-                        )
+                        setDueDate(dayjs(assignment.deadline))
                         console.log('deadline' + assignment.deadline)
                     }
                     if (assignment.extra_deadline !== null) {
-                        setExtraDueDate(
-                            dayjs(assignment.extra_deadline)
-                        )
+                        setExtraDueDate(dayjs(assignment.extra_deadline))
                         console.log(
                             'extra deadline' + assignment.extra_deadline
                         )
@@ -227,6 +233,7 @@ export function AddChangeAssignmentPage() {
                                 console.error(error)
                             })
                     }
+                    setOldRestrictions(restrictions)
                     setRestrictions(restrictions)
                 })
                 .catch((error) => {
@@ -257,6 +264,9 @@ export function AddChangeAssignmentPage() {
         }
 
         //if there is an assignmentId, get the data else use the default values
+        fetchUser().catch((error) => {
+            console.error(error)
+        })
         if (assignmentId !== undefined) {
             fetchData().catch((error) => {
                 console.error(error)
@@ -324,12 +334,23 @@ export function AddChangeAssignmentPage() {
             },
         }
 
+        //delete removed restrictions
+        oldRestrictions.forEach((oldRestriction) => {
+            if (!restrictions.includes(oldRestriction)) {
+                instance
+                    .delete(
+                        '/restricties/' + oldRestriction.restrictie_id + '/'
+                    )
+                    .catch((error) => {
+                        console.error(error)
+                    })
+            }
+        })
+
         restrictions.forEach((restriction) => {
             const formData = new FormData()
             formData.append('project', projectId)
-            if (restriction.file !== undefined) {
-                formData.append('script', restriction.file)
-            }
+
             formData.append('moet_slagen', restriction.moet_slagen.toString())
             if (restriction.restrictie_id !== undefined) {
                 formData.append(
@@ -346,6 +367,9 @@ export function AddChangeAssignmentPage() {
                         console.error(error)
                     })
             } else {
+                if (restriction.file !== undefined) {
+                    formData.append('script', restriction.file)
+                }
                 instance
                     .post('/restricties/', formData, config)
                     .catch((error) => {
@@ -380,6 +404,7 @@ export function AddChangeAssignmentPage() {
         if (extraDueDate !== null) {
             formData.append('extra_deadline', extraDueDate.format())
         }
+        formData.append('max_groep_grootte', groupSize.toString())
 
         const config = {
             headers: {
@@ -447,530 +472,707 @@ export function AddChangeAssignmentPage() {
 
     return (
         <>
-            {/* Stack container for layout */}
-            <Stack direction={'column'} paddingX={2}>
-                {/*very ugly but it works functionally*/}
-                {loading ? (
-                    <Header variant={'default'} title={''} />
-                ) : (
-                    <Header variant={'default'} title={title} />
-                )}
-                {/* Form for submitting assignment */}
-                <Stack
-                    direction={'column'}
-                    marginTop={11}
-                    component={'form'}
-                    onSubmit={handleSubmit}
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
+                    }}
                 >
-                    <Box
-                        aria-label={'title_and_upload'}
-                        padding={2}
-                        paddingRight={0}
-                        gap={1}
-                        display={'flex'}
-                        flexDirection={'row'}
-                        width={'98%'}
-                        justifyContent={'space-between'}
-                    >
-                        <Box
-                            aria-label={'title'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={2}
-                            alignItems={'center'}
-                        >
-                            {/* Here the user gets to specify the assignment name */}
-                            <Typography
-                                variant={'h5'}
-                                color={'text.primary'}
-                                fontWeight={'bold'}
-                            >
-                                {t('assignmentName')}
-                            </Typography>
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={200}
-                                    height={60}
-                                />
-                            ) : (
-                                <TextField
-                                    type="text"
-                                    placeholder={'Title'}
-                                    error={assignmentErrors.title}
-                                    value={title}
-                                    helperText={
-                                        assignmentErrors.title
-                                            ? t('name') + ' ' + t('is_required')
-                                            : ''
-                                    }
-                                    onChange={(event) =>
-                                        setTitle(event.target.value)
-                                    }
-                                />
-                            )}
-                        </Box>
-                        {/* File Upload button */}
-                        <Box
-                            id='uploadButton'
-                            padding={0}
-                            marginRight={3}
-                            display={'flex'}
-                            flexDirection={'column'}
-                            alignItems={'flex-start'}
-                        >
-                            {loading ? (
-                                <FileUploadButton
-                                    name={t('upload_assignment')}
-                                    tooltip={t('uploadToolTip')}
-                                    onFileChange={() => {
-                                        console.log('loading')
-                                    }}
-                                    fileTypes={['.pdf', '.zip']}
-                                    path={new File([], 'loading...')}
-                                />
-                            ) : (
-                                <FileUploadButton
-                                    name={t('upload_assignment')}
-                                    path={assignmentFile}
-                                    onFileChange={handleFileChange}
-                                    fileTypes={['.pdf', '.zip']}
-                                    tooltip={t('uploadToolTip')}
-                                />
-                            )}
-                        </Box>
-                    </Box>
-                    {/* Deadline section.
+                    <CircularProgress color={'primary'} />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                        <>
+                            {/* Stack container for layout */}
+                            <Stack direction={'column'} paddingX={2}>
+                                {/*very ugly but it works functionally*/}
+                                {loading ? (
+                                    <Header variant={'default'} title={''} />
+                                ) : (
+                                    <Header variant={'default'} title={title} />
+                                )}
+                                {/* Form for submitting assignment */}
+                                <Stack
+                                    direction={'column'}
+                                    marginTop={11}
+                                    component={'form'}
+                                    onSubmit={handleSubmit}
+                                >
+                                    <Box
+                                        aria-label={'title_and_upload'}
+                                        padding={2}
+                                        paddingRight={0}
+                                        gap={1}
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        width={'98%'}
+                                        justifyContent={'space-between'}
+                                    >
+                                        <Box
+                                            aria-label={'title'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                            alignItems={'center'}
+                                        >
+                                            {/* Here the user gets to specify the assignment name */}
+                                            <Typography
+                                                variant={'h5'}
+                                                color={'text.primary'}
+                                                fontWeight={'bold'}
+                                            >
+                                                {t('assignmentName')}
+                                            </Typography>
+                                            {loading ? (
+                                                <Skeleton
+                                                    variant={'text'}
+                                                    width={200}
+                                                    height={60}
+                                                />
+                                            ) : (
+                                                <TextField
+                                                    type="text"
+                                                    placeholder={t('name')}
+                                                    error={
+                                                        assignmentErrors.title
+                                                    }
+                                                    value={title}
+                                                    helperText={
+                                                        assignmentErrors.title
+                                                            ? t('name') +
+                                                              ' ' +
+                                                              t('is_required')
+                                                            : ''
+                                                    }
+                                                    onChange={(event) =>
+                                                        setTitle(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                />
+                                            )}
+                                        </Box>
+                                        {/* File Upload button */}
+                                        <Box
+                                            padding={0}
+                                            marginRight={3}
+                                            display={'flex'}
+                                            flexDirection={'column'}
+                                            alignItems={'flex-start'}
+                                        >
+                                            {loading ? (
+                                                <FileUploadButton
+                                                    name={t(
+                                                        'upload_assignment'
+                                                    )}
+                                                    tooltip={t('uploadToolTip')}
+                                                    onFileChange={() => {
+                                                        console.log('loading')
+                                                    }}
+                                                    fileTypes={['.pdf', '.zip']}
+                                                    path={
+                                                        new File(
+                                                            [],
+                                                            'loading...'
+                                                        )
+                                                    }
+                                                />
+                                            ) : (
+                                                <FileUploadButton
+                                                    name={t(
+                                                        'upload_assignment'
+                                                    )}
+                                                    path={assignmentFile}
+                                                    onFileChange={
+                                                        handleFileChange
+                                                    }
+                                                    fileTypes={['.pdf', '.zip']}
+                                                    tooltip={t('uploadToolTip')}
+                                                />
+                                            )}
+                                        </Box>
+                                    </Box>
+                                    {/* Deadline section.
                     There is both the normal deadline, 
                     and an extra deadline in case people need more time. */}
-                    <Box
-                        data-test-id="deadline-id"
-                        aria-label={'deadline'}
-                        padding={2}
-                        display={'flex'}
-                        flexDirection={{
-                            xs: 'column',
-                            sm: 'column',
-                            md: 'row',
-                        }}
-                        gap={5}
-                    >
-                        <Box
-                            aria-label={'initial_deadline'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={2}
-                            alignItems={'center'}
-                        >
-                            {/* This section renders the normal deadline. */}
-                            <Typography
-                                variant={'h5'}
-                                color={'text.primary'}
-                                fontWeight={'bold'}
-                            >
-                                Deadline:
-                            </Typography>
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={200}
-                                    height={60}
-                                />
-                            ) : (
-                                <LocalizationProvider
-                                    dateAdapter={AdapterDayjs}
-                                    adapterLocale="nl"
-                                >
-                                    <DateTimePicker
-                                        format="DD/MM/YYYY HH:mm"
-                                        value={dueDate}
-                                        disablePast
-                                        label={t('optional')}
-                                        sx={{ width: 250 }}
-                                        viewRenderers={{
-                                            hours: renderTimeViewClock,
-                                            minutes: renderTimeViewClock,
-                                            seconds: renderTimeViewClock,
+                                    <Box
+                                        aria-label={'deadline'}
+                                        padding={2}
+                                        display={'flex'}
+                                        flexDirection={{
+                                            xs: 'column',
+                                            sm: 'column',
+                                            md: 'row',
                                         }}
-                                        onError={(newError) =>
-                                            SetDeadlineError(newError)
-                                        }
-                                        slotProps={{
-                                            field: {
-                                                clearable: true,
-                                                onClear: () => setCleared(true),
-                                            },
-                                            textField: {
-                                                helperText: errorMessage,
-                                            },
-                                        }}
-                                        onChange={(newValue) =>
-                                            setDueDate(newValue)
-                                        }
-                                    />
-                                </LocalizationProvider>
-                            )}
-                        </Box>
-                        <Box
-                            aria-label={'secondary_deadline'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={2}
-                            alignItems={'center'}
-                        >
-                            {/* This section renders the extra deadline. */}
-                            <Typography
-                                variant={'h5'}
-                                color={'text.primary'}
-                                fontWeight={'bold'}
-                            >
-                                Extra Deadline:
-                            </Typography>
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={200}
-                                    height={60}
-                                />
-                            ) : (
-                                <LocalizationProvider
-                                    dateAdapter={AdapterDayjs}
-                                    adapterLocale="nl"
-                                >
-                                    <DateTimePicker
-                                        format="DD/MM/YYYY HH:mm"
-                                        value={extraDueDate}
-                                        disablePast
-                                        label={t('optional')}
-                                        sx={{ width: 250 }}
-                                        viewRenderers={{
-                                            hours: renderTimeViewClock,
-                                            minutes: renderTimeViewClock,
-                                            seconds: renderTimeViewClock,
-                                        }}
-                                        slotProps={{
-                                            field: {
-                                                clearable: true,
-                                                onClear: () => setCleared(true),
-                                            },
-                                            textField: {
-                                                error: deadlineCheckError,
-                                                helperText: deadlineCheckError
-                                                    ? t('deadlineCheck')
-                                                    : '',
-                                            },
-                                        }}
-                                        onChange={(newValue) =>
-                                            setExtraDueDate(newValue)
-                                        }
-                                    />
-                                </LocalizationProvider>
-                            )}
-                        </Box>
-                    </Box>
-                    {/* Description section */}
-                    <Card aria-label={'description'}>
-                        <Box
-                            padding={2}
-                            maxHeight={'20svh'}
-                            minHeight={'20svh'}
-                        >
-                            <Typography
-                                variant={'h5'}
-                                color={'text.primary'}
-                                fontWeight={'bold'}
-                            >
-                                {t('description')}
-                            </Typography>
-                            {loading ? (
-                                <Skeleton
-                                    variant={'text'}
-                                    width={'100%'}
-                                    height={60}
-                                />
-                            ) : (
-                                <TextField
-                                    type="text"
-                                    placeholder={'Description'}
-                                    variant={'standard'}
-                                    multiline
-                                    value={description}
-                                    onChange={(event) =>
-                                        setDescription(event.target.value)
-                                    }
-                                    fullWidth
-                                    error={assignmentErrors.description}
-                                    // Show an error message if the description is not filled in.
-                                    helperText={
-                                        assignmentErrors.description
-                                            ? t('descriptionName') +
-                                              ' ' +
-                                              t('is_required')
-                                            : ''
-                                    }
-                                    sx={{
-                                        overflowY: 'auto',
-                                        maxHeight: '25svh',
-                                    }}
-                                />
-                            )}
-                        </Box>
-                    </Card>
-                    {/* Restrictions section */}
-                    <Box
-                        aria-label={'restrictions'}
-                        marginTop={3}
-                        display={'flex'}
-                        flexDirection={'row'}
-                    >
-                        <Card
-                            sx={{
-                                padding: 1,
-                                backgroundColor: 'background.default',
-                                width: '70%',
-                                height: '28svh',
-                            }}
-                        >
-                            <Typography variant={'h5'} fontWeight={'bold'}>
-                                {t('restrictions')}
-                            </Typography>
-                            <Box sx={{ padding: 1 }}>
-                                {/*This list will render the restrictions that are added to the assignment.*/}
-                                <List
-                                    sx={{
-                                        maxHeight: '18vh',
-                                        overflowY: 'auto',
-                                    }}
-                                >
-                                    {loading ? (
-                                        <CircularProgress color={'primary'} />
-                                    ) : (
-                                        <>
-                                            {restrictions.map(
-                                                (restriction, index) => {
-                                                    return (
-                                                        <ListItem key={index}>
-                                                            <RestrictionCard
-                                                                restriction={
-                                                                    restriction
-                                                                }
-                                                                restrictions={
-                                                                    restrictions
-                                                                }
-                                                                setRestrictions={
-                                                                    setRestrictions
-                                                                }
-                                                            />
-                                                        </ListItem>
-                                                    )
-                                                }
+                                        gap={5}
+                                    >
+                                        <Box
+                                            aria-label={'initial_deadline'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                            alignItems={'center'}
+                                        >
+                                            {/* This section renders the normal deadline. */}
+                                            <Typography
+                                                variant={'h5'}
+                                                color={'text.primary'}
+                                                fontWeight={'bold'}
+                                            >
+                                                Deadline:
+                                            </Typography>
+                                            {loading ? (
+                                                <Skeleton
+                                                    variant={'text'}
+                                                    width={200}
+                                                    height={60}
+                                                />
+                                            ) : (
+                                                <LocalizationProvider
+                                                    dateAdapter={AdapterDayjs}
+                                                    adapterLocale="nl"
+                                                >
+                                                    <DateTimePicker
+                                                        format="DD/MM/YYYY HH:mm"
+                                                        value={dueDate}
+                                                        disablePast
+                                                        label={t('optional')}
+                                                        sx={{ width: 250 }}
+                                                        viewRenderers={{
+                                                            hours: renderTimeViewClock,
+                                                            minutes:
+                                                                renderTimeViewClock,
+                                                            seconds:
+                                                                renderTimeViewClock,
+                                                        }}
+                                                        onError={(newError) =>
+                                                            SetDeadlineError(
+                                                                newError
+                                                            )
+                                                        }
+                                                        slotProps={{
+                                                            field: {
+                                                                clearable: true,
+                                                                onClear: () =>
+                                                                    setCleared(
+                                                                        true
+                                                                    ),
+                                                            },
+                                                            textField: {
+                                                                helperText:
+                                                                    errorMessage,
+                                                            },
+                                                        }}
+                                                        onChange={(newValue) =>
+                                                            setDueDate(newValue)
+                                                        }
+                                                    />
+                                                </LocalizationProvider>
                                             )}
-                                        </>
-                                    )}
-                                </List>
-                            </Box>
-                            <Box
-                                width={'100%'}
-                                display={'flex'}
-                                justifyContent={'flex-end'}
-                            >
-                                <Tooltip title={t('add_restriction')}>
-                                    <AddRestrictionButton
-                                        // When this button is clicked, a pop up will show.
-                                        // This popup will allow you to choose to make a restriction yourself,
-                                        // create one starting from a template,
-                                        // or choose a file from the system.
-                                        restrictions={restrictions}
-                                        setRestrictions={(newRestrictions) =>
-                                            setRestrictions(newRestrictions)
-                                        }
-                                    ></AddRestrictionButton>
-                                </Tooltip>
-                            </Box>
-                        </Card>
-                    </Box>
-                    {/* Main actions section */}
-                    <Box
-                        aria-label={'main actions'}
-                        marginTop={3}
-                        display={'flex'}
-                        flexDirection={'row'}
-                        width={'100%'}
-                        justifyContent={'space-between'}
-                    >
-                        <Box
-                            aria-label={'visibility_and_groups'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={10}
-                            alignItems={'center'}
-                            padding={2}
-                        >
-                            <Box
-                                aria-label={'main actions'}
-                                display={'flex'}
-                                flexDirection={'row'}
-                                alignItems={'center'}
-                            >
-                                {visible ? (
-                                    <IconButton
-                                        // Allows the teacher to select whether
-                                        // the assignment is visible to students or not.
-                                        id='visibilityOn'
-                                        color={'info'}
-                                        onClick={() => setVisible(!visible)}
+                                        </Box>
+                                        <Box
+                                            aria-label={'secondary_deadline'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                            alignItems={'center'}
+                                        >
+                                            {/* This section renders the extra deadline. */}
+                                            <Typography
+                                                variant={'h5'}
+                                                color={'text.primary'}
+                                                fontWeight={'bold'}
+                                            >
+                                                Extra Deadline:
+                                            </Typography>
+                                            {loading ? (
+                                                <Skeleton
+                                                    variant={'text'}
+                                                    width={200}
+                                                    height={60}
+                                                />
+                                            ) : (
+                                                <LocalizationProvider
+                                                    dateAdapter={AdapterDayjs}
+                                                    adapterLocale="nl"
+                                                >
+                                                    <DateTimePicker
+                                                        format="DD/MM/YYYY HH:mm"
+                                                        value={extraDueDate}
+                                                        disablePast
+                                                        label={t('optional')}
+                                                        sx={{ width: 250 }}
+                                                        viewRenderers={{
+                                                            hours: renderTimeViewClock,
+                                                            minutes:
+                                                                renderTimeViewClock,
+                                                            seconds:
+                                                                renderTimeViewClock,
+                                                        }}
+                                                        slotProps={{
+                                                            field: {
+                                                                clearable: true,
+                                                                onClear: () =>
+                                                                    setCleared(
+                                                                        true
+                                                                    ),
+                                                            },
+                                                            textField: {
+                                                                error: deadlineCheckError,
+                                                                helperText:
+                                                                    deadlineCheckError
+                                                                        ? t(
+                                                                              'deadlineCheck'
+                                                                          )
+                                                                        : '',
+                                                            },
+                                                        }}
+                                                        onChange={(newValue) =>
+                                                            setExtraDueDate(
+                                                                newValue
+                                                            )
+                                                        }
+                                                    />
+                                                </LocalizationProvider>
+                                            )}
+                                        </Box>
+                                    </Box>
+                                    {/* Description section */}
+                                    <Card aria-label={'description'}>
+                                        <Box
+                                            padding={2}
+                                            maxHeight={'18svh'}
+                                            minHeight={'18svh'}
+                                        >
+                                            <Typography
+                                                variant={'h5'}
+                                                color={'text.primary'}
+                                                fontWeight={'bold'}
+                                            >
+                                                {t('description')}
+                                            </Typography>
+                                            {loading ? (
+                                                <Skeleton
+                                                    variant={'text'}
+                                                    width={'100%'}
+                                                    height={60}
+                                                />
+                                            ) : (
+                                                <TextField
+                                                    type="text"
+                                                    placeholder={'Description'}
+                                                    variant={'standard'}
+                                                    multiline
+                                                    value={description}
+                                                    onChange={(event) =>
+                                                        setDescription(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    fullWidth
+                                                    error={
+                                                        assignmentErrors.description
+                                                    }
+                                                    // Show an error message if the description is not filled in.
+                                                    helperText={
+                                                        assignmentErrors.description
+                                                            ? t(
+                                                                  'descriptionName'
+                                                              ) +
+                                                              ' ' +
+                                                              t('is_required')
+                                                            : ''
+                                                    }
+                                                    sx={{
+                                                        overflowY: 'auto',
+                                                        maxHeight: '23svh',
+                                                    }}
+                                                />
+                                            )}
+                                        </Box>
+                                    </Card>
+                                    {/* Restrictions section */}
+                                    <Box
+                                        aria-label={'restrictions'}
+                                        marginTop={3}
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        alignItems={'flex-end'}
+                                        gap={1}
                                     >
-                                        <VisibilityIcon fontSize={'medium'} />
-                                    </IconButton>
-                                ) : (
-                                    <IconButton
-                                        id='visibilityOff'
-                                        color={'info'}
-                                        onClick={() => setVisible(!visible)}
+                                        <Card
+                                            sx={{
+                                                backgroundColor:
+                                                    'background.default',
+                                                width: '70%',
+                                                height: '28svh',
+                                            }}
+                                        >
+                                            <Box
+                                                sx={{
+                                                    backgroundColor: 'secondary.main',
+                                                    height: 48,
+                                                    padding: 1,
+                                                }}
+                                            >
+                                            <Typography
+                                                variant={'h5'}
+                                                fontWeight={'bold'}
+                                            >
+                                                {t('restrictions')}
+                                            </Typography>
+                                            <EvenlySpacedRow items={[
+                                                    <Typography variant="body1" fontWeight={'bold'}>
+                                                        {t('name')}
+                                                    </Typography>,
+                                                    <Typography variant="body1" fontWeight={'bold'}>
+                                                        {t('must_pass')}
+                                                    </Typography>,
+                                                    <Typography variant="body1" fontWeight={'bold'}>
+                                                        {t('remove')}
+                                                    </Typography>]}
+                                            />
+                                            </Box>
+                                            <Divider/>
+                                            {/*This list will render the restrictions that are added to the assignment.*/}
+                                            <Box sx={{marginTop: -1.1}}>
+                                                <List
+                                                    sx={{
+                                                        maxHeight: '18vh',
+                                                        overflowY: 'auto',
+                                                    }}
+                                                >
+                                                    {loading ? (
+                                                        <CircularProgress
+                                                            color={'primary'}
+                                                        />
+                                                    ) : (
+                                                        <>
+                                                            {restrictions.map(
+                                                                (
+                                                                    restriction,
+                                                                    index
+                                                                ) => {
+                                                                    return (
+                                                                        <>
+                                                                            <Divider/>
+                                                                            <ListItem sx={{ maxHeight: '45px'}}
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                            >
+                                                                                <RestrictionCard
+                                                                                    restriction={
+                                                                                        restriction
+                                                                                    }
+                                                                                    restrictions={
+                                                                                        restrictions
+                                                                                    }
+                                                                                    setRestrictions={
+                                                                                        setRestrictions
+                                                                                    }
+                                                                                />
+                                                                            </ListItem>
+                                                                        </>
+                                                                    )
+                                                                }
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </List>
+                                            </Box>
+                                        </Card>
+                                        <Box
+                                            height={'fit-content'}
+                                            width={'fit-content'}
+                                            display={'flex'}
+                                            flexDirection={'column'}
+                                            justifyContent={'flex-end'}
+                                            alignItems={'flex-end'}
+                                        >
+                                            <Tooltip
+                                                title={t('add_restriction')}
+                                            >
+                                                <AddRestrictionButton
+                                                    // When this button is clicked, a pop up will show.
+                                                    // This popup will allow you to choose to make a restriction yourself,
+                                                    // create one starting from a template,
+                                                    // or choose a file from the system.
+                                                    restrictions={restrictions}
+                                                    setRestrictions={(
+                                                        newRestrictions
+                                                    ) =>
+                                                        setRestrictions(
+                                                            newRestrictions
+                                                        )
+                                                    }
+                                                    userid={user.user}
+                                                ></AddRestrictionButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
+                                    {/* Main actions section */}
+                                    <Box
+                                        aria-label={'main actions'}
+                                        marginTop={3}
+                                        display={'flex'}
+                                        flexDirection={'row'}
+                                        width={'100%'}
+                                        justifyContent={'space-between'}
                                     >
-                                        <VisibilityOffIcon
-                                            fontSize={'medium'}
-                                        />
-                                    </IconButton>
-                                )}
-                                <Tooltip title={t('remove')}>
-                                    <IconButton
-                                        id='delete'
-                                        color={'warning'}
-                                        onClick={openDeleteConfirmation}
-                                    >
-                                        <DeleteForeverIcon
-                                            fontSize={'medium'}
-                                        />
-                                    </IconButton>
-                                </Tooltip>
-                            </Box>
-                            {/* This section allows the teacher to set the maximum score for the assignment.*/}
-                            <Box
-                                aria-label={'maxScore'}
-                                display={'flex'}
-                                flexDirection={'row'}
-                                gap={1}
-                                height={40}
-                                alignItems={'center'}
-                            >
-                                <Typography
-                                    id='maxScore'
-                                    fontWeight={'bold'}
-                                    color={'text.primary'}
-                                >
-                                    Max Score
-                                </Typography>
-                                {loading ? (
-                                    <Skeleton
-                                        variant={'text'}
-                                        width={60}
-                                        height={60}
-                                    />
-                                ) : (
-                                    <TextField
-                                        sx={{ width: 80 }}
-                                        required
-                                        label={'Max Score'}
-                                        type={'number'}
-                                        value={maxScore}
-                                        onChange={(event) => {
-                                            if (event.target.value !== '') {
-                                                const newScore = Math.max(
-                                                    parseInt(
-                                                        event.target.value
-                                                    ),
-                                                    0
-                                                )
-                                                SetMaxScore
-                                                    ? SetMaxScore(newScore)
-                                                    : undefined
-                                            } else {
-                                                SetMaxScore
-                                                    ? SetMaxScore(
-                                                          parseInt(
-                                                              event.target.value
-                                                          )
-                                                      )
-                                                    : undefined
-                                            }
-                                        }}
-                                    />
-                                )}
-                            </Box>
-                        </Box>
-                        {/* Submit and Cancel buttons */}
-                        <Box
-                            aria-label={'submit_and_cancel'}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            gap={1}
-                            alignItems={'center'}
-                        >
-                            <Tooltip title={t('cancel')}>
-                                <IconButton
-                                    onClick={() => setCancelConfirmation(true)}
-                                    sx={{
-                                        backgroundColor: 'secondary.main',
-                                        borderRadius: 2,
-                                    }}
-                                >
-                                    <ClearIcon fontSize={'medium'} />
-                                </IconButton>
-                            </Tooltip>
-                            <Tooltip title={t('submit')}>
-                                <IconButton
-                                    id='submit'
-                                    type="submit"
-                                    aria-label={'submit'}
-                                    sx={{
-                                        backgroundColor: 'primary.main',
-                                        borderRadius: 2,
-                                        color: 'background.default',
-                                        '&:hover': {
-                                            backgroundColor: 'secondary.main',
-                                            color: 'text.primary',
-                                        },
-                                    }}
-                                >
-                                    <SaveIcon fontSize={'medium'} />
-                                </IconButton>
-                            </Tooltip>
-                        </Box>
-                    </Box>
-                </Stack>
+                                        <Box
+                                            aria-label={'visibility_and_groups'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={10}
+                                            alignItems={'center'}
+                                            padding={2}
+                                        >
+                                            <Box
+                                                aria-label={'main actions'}
+                                                display={'flex'}
+                                                flexDirection={'row'}
+                                                alignItems={'center'}
+                                            >
+                                                {visible ? (
+                                                    <IconButton
+                                                        // Allows the teacher to select whether
+                                                        // the assignment is visible to students or not.
+                                                        color={'info'}
+                                                        onClick={() =>
+                                                            setVisible(!visible)
+                                                        }
+                                                    >
+                                                        <VisibilityIcon
+                                                            fontSize={'medium'}
+                                                        />
+                                                    </IconButton>
+                                                ) : (
+                                                    <IconButton
+                                                        color={'info'}
+                                                        onClick={() =>
+                                                            setVisible(!visible)
+                                                        }
+                                                    >
+                                                        <VisibilityOffIcon
+                                                            fontSize={'medium'}
+                                                        />
+                                                    </IconButton>
+                                                )}
+                                                <Tooltip title={t('remove')}>
+                                                    <IconButton
+                                                        color={'warning'}
+                                                        onClick={
+                                                            openDeleteConfirmation
+                                                        }
+                                                    >
+                                                        <DeleteForeverIcon
+                                                            fontSize={'medium'}
+                                                        />
+                                                    </IconButton>
+                                                </Tooltip>
+                                            </Box>
+                                            {/* change group size allowed, no need for extra group switch*/}
+                                            {!assignmentId && (
+                                                <Box
+                                                    aria-label={'groupSize'}
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    gap={1}
+                                                    height={40}
+                                                    alignItems={'center'}
+                                                >
+                                                    <Typography
+                                                        fontWeight={'bold'}
+                                                        color={'text.primary'}
+                                                    >
+                                                        {t('n_of_members')}
+                                                    </Typography>
+                                                    {loading ? (
+                                                        <Skeleton
+                                                            variant={'text'}
+                                                            width={60}
+                                                            height={60}
+                                                        />
+                                                    ) : (
+                                                        <TextField
+                                                            sx={{ width: 80 }}
+                                                            label={'Group Size'}
+                                                            type={'number'}
+                                                            required
+                                                            value={groupSize}
+                                                            onChange={(event) =>
+                                                                setGroupSize(
+                                                                    parseInt(
+                                                                        event
+                                                                            .target
+                                                                            .value
+                                                                    )
+                                                                )
+                                                            }
+                                                        />
+                                                    )}
+                                                </Box>
+                                            )}
+                                            {/* This section allows the teacher to set the maximum score for the assignment.*/}
+                                            <Box
+                                                aria-label={'maxScore'}
+                                                display={'flex'}
+                                                flexDirection={'row'}
+                                                gap={1}
+                                                height={40}
+                                                alignItems={'center'}
+                                            >
+                                                <Typography
+                                                    fontWeight={'bold'}
+                                                    color={'text.primary'}
+                                                >
+                                                    Max Score
+                                                </Typography>
+                                                {loading ? (
+                                                    <Skeleton
+                                                        variant={'text'}
+                                                        width={60}
+                                                        height={60}
+                                                    />
+                                                ) : (
+                                                    <TextField
+                                                        sx={{ width: 80 }}
+                                                        required
+                                                        label={'Max Score'}
+                                                        type={'number'}
+                                                        value={maxScore}
+                                                        onChange={(event) => {
+                                                            if (
+                                                                event.target
+                                                                    .value !==
+                                                                ''
+                                                            ) {
+                                                                const newScore =
+                                                                    Math.max(
+                                                                        parseInt(
+                                                                            event
+                                                                                .target
+                                                                                .value
+                                                                        ),
+                                                                        0
+                                                                    )
+                                                                SetMaxScore
+                                                                    ? SetMaxScore(
+                                                                          newScore
+                                                                      )
+                                                                    : undefined
+                                                            } else {
+                                                                SetMaxScore
+                                                                    ? SetMaxScore(
+                                                                          parseInt(
+                                                                              event
+                                                                                  .target
+                                                                                  .value
+                                                                          )
+                                                                      )
+                                                                    : undefined
+                                                            }
+                                                        }}
+                                                    />
+                                                )}
+                                            </Box>
+                                        </Box>
+                                        {/* Submit and Cancel buttons */}
+                                        <Box
+                                            aria-label={'submit_and_cancel'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={1}
+                                            alignItems={'center'}
+                                        >
+                                            <Tooltip title={t('cancel')}>
+                                                <IconButton
+                                                    onClick={() =>
+                                                        setCancelConfirmation(
+                                                            true
+                                                        )
+                                                    }
+                                                    sx={{
+                                                        backgroundColor:
+                                                            'secondary.main',
+                                                        borderRadius: 2,
+                                                    }}
+                                                >
+                                                    <ClearIcon
+                                                        fontSize={'medium'}
+                                                    />
+                                                </IconButton>
+                                            </Tooltip>
+                                            <Tooltip title={t('submit')}>
+                                                <IconButton
+                                                    type="submit"
+                                                    aria-label={'submit'}
+                                                    sx={{
+                                                        backgroundColor:
+                                                            'primary.main',
+                                                        borderRadius: 2,
+                                                        color: 'background.default',
+                                                        '&:hover': {
+                                                            backgroundColor:
+                                                                'secondary.main',
+                                                            color: 'text.primary',
+                                                        },
+                                                    }}
+                                                >
+                                                    <SaveIcon
+                                                        fontSize={'medium'}
+                                                    />
+                                                </IconButton>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
+                                </Stack>
 
-                {/* Popup for adding restrictions */}
+                                {/* Popup for adding restrictions */}
 
-                {/* Confirmation popup for deleting project */}
+                                {/* Confirmation popup for deleting project */}
 
-                <WarningPopup
-                    title={t('remove') + ' Project?'}
-                    content={t('cant_be_undone')}
-                    buttonName={t('remove')}
-                    open={deleteConfirmation}
-                    handleClose={closeDeletion}
-                    doAction={handleRemove}
-                />
-                {/* Confirmation popup for saving project */}
-                <WarningPopup
-                    title={t('save_project_warning')}
-                    content={t('visible_for_everyone')}
-                    buttonName={t('confirm')}
-                    open={saveConfirmation}
-                    handleClose={closeSaveConfirmation}
-                    doAction={uploadAssignment}
-                />
-                {/* Confirmation popup for canceling changes*/}
-                <WarningPopup
-                    title={t('undo_changes_warning')}
-                    content={t('cant_be_undone')}
-                    buttonName={t('confirm')}
-                    open={cancelConfirmation}
-                    handleClose={closeCancel}
-                    doAction={handleCancel}
-                />
-            </Stack>
+                                <WarningPopup
+                                    title={t('remove') + ' Project?'}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('remove')}
+                                    open={deleteConfirmation}
+                                    handleClose={closeDeletion}
+                                    doAction={handleRemove}
+                                />
+                                {/* Confirmation popup for saving project */}
+                                <WarningPopup
+                                    title={t('save_project_warning')}
+                                    content={t('visible_for_everyone')}
+                                    buttonName={t('confirm')}
+                                    open={saveConfirmation}
+                                    handleClose={closeSaveConfirmation}
+                                    doAction={uploadAssignment}
+                                />
+                                {/* Confirmation popup for canceling changes*/}
+                                <WarningPopup
+                                    title={t('undo_changes_warning')}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('confirm')}
+                                    open={cancelConfirmation}
+                                    handleClose={closeCancel}
+                                    doAction={handleCancel}
+                                />
+                            </Stack>
+                        </>
+                    ) : (
+                        navigate('*')
+                    )}
+                </>
+            )}
         </>
     )
 }
