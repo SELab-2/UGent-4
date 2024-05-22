@@ -76,7 +76,6 @@ class GebruikerSerializerTest(APITestCase):
         self.assertTrue(serializer.is_valid())
         self.assertRaises(ValidationError, serializer.save, raise_exception=True)
 
-
     def test_validation_for_blank_items(self):
         serializer = GebruikerSerializer(data={"user": "", "is_lesgever": []})
         self.assertRaises(ValidationError, serializer.is_valid, raise_exception=True)
