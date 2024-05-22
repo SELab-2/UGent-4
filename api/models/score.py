@@ -14,7 +14,8 @@ class Score(models.Model):
         wordt ook de bijbehorende score verwijderd.
 
     Methods:
-        __str__(): Geeft een representatie van het model als een string terug, die de score-ID bevat.
+        __str__(): Geeft een representatie van het model als een string terug,
+        die de score-ID bevat.
     """
 
     score_id = models.AutoField(primary_key=True)

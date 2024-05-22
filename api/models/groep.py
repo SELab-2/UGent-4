@@ -10,6 +10,7 @@ class Groep(models.Model):
         de primaire sleutel voor de groep.
         studenten (ManyToManyField): Een Many-to-Many relatie met het 'Gebruiker' model,
         waarmee meerdere gebruikers aan een groep kunnen worden gekoppeld.
+        Dit veld is optioneel (mag leeg zijn).
         project (ForeignKey): Een ForeignKey relatie met het 'Project' model,
         waarmee wordt aangegeven tot welk project deze groep behoort.
         Als het bijbehorende project wordt verwijderd,

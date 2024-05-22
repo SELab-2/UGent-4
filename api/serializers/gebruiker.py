@@ -7,12 +7,12 @@ class GebruikerSerializer(serializers.ModelSerializer):
     """
     Serializer voor het serialiseren en deserialiseren van Gebruiker objecten.
 
-    Fields:
+    Velden:
         Meta.model (Gebruiker): Het model waarop de serializer is gebaseerd.
-        Meta.fields (tuple): De velden die moeten worden opgenomen in de serializer.
+        Meta.fields (list): De velden die moeten worden opgenomen in de serializer.
         Hier wordt '__all__' gebruikt om alle velden op te nemen.
 
-    Methods:
+    Methoden:
         create(self, validated_data): Maakt een nieuwe gebruiker aan en voegt deze toe aan de database.
         update(self, instance, validated_data): Werkt een bestaande gebruiker bij in de database.
     """
@@ -34,6 +34,8 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
+        Maakt een nieuwe gebruiker aan.
+
         Args:
             validated_data (dict): Gevalideerde gegevens over de gebruiker.
 
@@ -50,6 +52,8 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
+        Werkt een bestaande gebruiker bij.
+
         Args:
             instance (Gebruiker): De gebruiker die moet worden bijgewerkt.
             validated_data (dict): Gevalideerde gegevens over de gebruiker.
@@ -57,10 +61,9 @@ class GebruikerSerializer(serializers.ModelSerializer):
         Returns:
             Gebruiker: De bijgewerkte gebruiker.
         """
-        is_lesgever = validated_data.pop("is_lesgever", instance.is_lesgever)
-        if instance.is_lesgever != is_lesgever:
-            validate_lesgever_change(instance)
-        instance.is_lesgever = is_lesgever
+
+        validated_data.pop("user", None)
+        validated_data.pop("is_lesgever", None)
 
         gepinde_vakken = validated_data.pop(
             "gepinde_vakken", instance.gepinde_vakken.all()
@@ -70,28 +73,6 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-
-def validate_lesgever_change(instance):
-    """
-    Valideert of de lesgever wijziging geldig is.
-
-    Args:
-        instance (Gebruiker): De gebruiker waarvoor de wijziging wordt gecontroleerd.
-
-    Raises:
-        serializers.ValidationError: Als de lesgever eerst verwijderd moet worden uit zijn/haar huidige vakken.
-    """
-    if instance.is_lesgever and Vak.objects.filter(lesgevers=instance):
-        raise serializers.ValidationError(
-            f"De lesgever {instance} moet eerst verwijderd worden \
-            als lesgever in zijn huidige vakken"
-        )
-    elif not instance.is_lesgever and Vak.objects.filter(studenten=instance):
-        raise serializers.ValidationError(
-            f"De student {instance} moet eerst verwijderd worden \
-            als student in zijn huidige vakken"
-        )
 
 
 def validate_gepinde_vakken(instance, gepinde_vakken):

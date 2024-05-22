@@ -19,7 +19,10 @@ import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
 
 import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
-import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
+import {
+    Submission,
+    SubmissionStatus,
+} from '../pages/submissionPage/SubmissionPage.tsx'
 import { Group } from '../pages/groupsPage/GroupsPage.tsx'
 import axios from 'axios'
 /*
@@ -60,9 +63,8 @@ export function CourseCard({
         gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
-    const [groupsWithSubmissions, setGroupsWithSubmissions] = useState<Group[]>(
-        []
-    )
+    const [submissions, setSubmissions] = useState<Submission[]>([])
+    const [groups, setGroups] = useState<Group[]>([])
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
@@ -91,25 +93,18 @@ export function CourseCard({
                     const groups: Group[] = await instance
                         .get(`/groepen/?student=${userid}`)
                         .then((response) => response.data)
+
+                    setGroups(groups)
+
                     const submissionPromises = groups.map(async (group) => {
                         const response = await instance.get<Submission>(
-                            `/indieningen/?project=${group.project}`
+                            `/indieningen/?project=${group.project}&groep=${group.groep_id}`
                         )
                         return response.data
                     })
                     const submissions = await axios.all(submissionPromises)
 
-                    console.log(groups)
-                    const validGroups = groups.filter((group) =>
-                        submissions
-                            .flat(Infinity)
-                            .some(
-                                (submission) =>
-                                    submission.groep === group.groep_id
-                            )
-                    )
-
-                    setGroupsWithSubmissions(validGroups)
+                    setSubmissions(submissions)
                 }
 
                 if (courseResponse.data && courseResponse.data.lesgevers) {
@@ -150,6 +145,26 @@ export function CourseCard({
         pinEvent()
     }
 
+    function getmyStatus(assignment: project) {
+        const myGroup = groups.find(
+            (group) => group.project === assignment.project_id
+        )
+
+        if (!myGroup) {
+            return SubmissionStatus.FAIL
+        }
+
+        const mySubmission = submissions.find(
+            (submission) => submission.groep === myGroup.groep_id
+        )
+
+        if (!mySubmission) {
+            return SubmissionStatus.FAIL
+        }
+
+        return mySubmission.status
+    }
+
     return (
         <>
             {loading ? (
@@ -163,7 +178,7 @@ export function CourseCard({
                     sx={{
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
-                        maxWidth: 420,
+                        maxWidth: 460,
                         padding: 0,
                         margin: 1,
                     }}
@@ -290,7 +305,11 @@ export function CourseCard({
                                     <Typography id="project" width={30}>
                                         Project
                                     </Typography>
-                                    <Typography id="deadline" width={30}>
+                                    <Typography
+                                        id="deadline"
+                                        pl={20}
+                                        width={30}
+                                    >
                                         Deadline
                                     </Typography>
                                     <Typography id="status" width={30}>
@@ -318,7 +337,7 @@ export function CourseCard({
                                             </Typography>
                                             <Typography
                                                 id="deadline"
-                                                minWidth={50}
+                                                minWidth={80}
                                             >
                                                 Deadline
                                             </Typography>
@@ -341,7 +360,7 @@ export function CourseCard({
                                             </Typography>
                                             <Typography
                                                 id="deadline"
-                                                minWidth={50}
+                                                minWidth={90}
                                             >
                                                 Deadline
                                             </Typography>
@@ -357,10 +376,30 @@ export function CourseCard({
                                         sx={{
                                             width: '100%',
                                             height: 130,
-                                            overflow: 'auto',
+                                            overflowY: 'auto',
                                         }}
                                     >
-                                        <List disablePadding={true}>
+                                        <List
+                                            disablePadding={true}
+                                            sx={{
+                                                overflowY: 'auto',
+                                                maxHeight: 130,
+                                            }}
+                                        >
+                                            {assignments.length === 0 && (
+                                                <Box
+                                                    display={'flex'}
+                                                    alignItems={'center'}
+                                                    justifyContent={'center'}
+                                                    py={6}
+                                                    flexGrow={1}
+                                                    height={'100%'}
+                                                >
+                                                    <Typography>
+                                                        {t('no_projects')}
+                                                    </Typography>
+                                                </Box>
+                                            )}
                                             {assignments
                                                 .filter(
                                                     (assignment) =>
@@ -377,16 +416,14 @@ export function CourseCard({
                                                         dueDate={
                                                             assignment.deadline
                                                                 ? dayjs(
-                                                                    assignment.deadline
+                                                                      assignment.deadline
                                                                   ).format(
-                                                                    'DD/MM/YYYY HH:mm'
+                                                                      'DD/MM/YYYY HH:mm'
                                                                   )
                                                                 : undefined
                                                         }
-                                                        status={groupsWithSubmissions.some(
-                                                            (group) =>
-                                                                group.project ===
-                                                                assignment.project_id
+                                                        status={getmyStatus(
+                                                            assignment
                                                         )}
                                                         isStudent={isStudent}
                                                     />
@@ -403,7 +440,13 @@ export function CourseCard({
                                                     height: 130,
                                                 }}
                                             >
-                                                <List disablePadding={true}>
+                                                <List
+                                                    disablePadding={true}
+                                                    sx={{
+                                                        overflowY: 'auto',
+                                                        maxHeight: 130,
+                                                    }}
+                                                >
                                                     {assignments.map(
                                                         (assignment) => (
                                                             <AssignmentListItem
@@ -418,19 +461,15 @@ export function CourseCard({
                                                                 dueDate={
                                                                     assignment.deadline
                                                                         ? dayjs(
-                                                                            assignment.deadline
+                                                                              assignment.deadline
                                                                           ).format(
-                                                                            'DD/MM/YYYY HH:mm'
+                                                                              'DD/MM/YYYY HH:mm'
                                                                           )
                                                                         : undefined
                                                                 }
                                                                 status={
-                                                                    groupsWithSubmissions.some(
-                                                                        (
-                                                                            group
-                                                                        ) =>
-                                                                            group.project ===
-                                                                            assignment.project_id
+                                                                    getmyStatus(
+                                                                        assignment
                                                                     )
                                                                     //TODO: status has to check if there is already a submission
                                                                 }
@@ -473,10 +512,8 @@ export function CourseCard({
                                                                     ) ||
                                                                     undefined
                                                                 }
-                                                                status={groupsWithSubmissions.some(
-                                                                    (group) =>
-                                                                        group.project ===
-                                                                        assignment.project_id
+                                                                status={getmyStatus(
+                                                                    assignment
                                                                 )}
                                                                 isStudent={
                                                                     isStudent

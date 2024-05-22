@@ -1,7 +1,10 @@
 import { Header } from '../../components/Header.tsx'
 import FileUploadButton from '../../components/FileUploadButton.tsx'
 import { SubmissionListItemStudentPage } from '../../components/SubmissionListItemStudentPage.tsx'
-import { SubmissionListItemTeacherPage } from '../../components/SubmissionListItemTeacherPage.tsx'
+import {
+    Score,
+    SubmissionListItemTeacherPage,
+} from '../../components/SubmissionListItemTeacherPage.tsx'
 import {
     Button,
     Card,
@@ -12,6 +15,9 @@ import {
 import {
     Box,
     CircularProgress,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
     Grid,
     List,
     Skeleton,
@@ -33,6 +39,8 @@ import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
 import StudentPopUp from '../subjectsPage/StudentPopUp.tsx'
 import axios, { AxiosResponse } from 'axios'
 import { GroupAccessComponent } from '../../components/GroupAccessComponent.tsx'
+import Dialog from '@mui/material/Dialog'
+import DialogActions from '@mui/material/DialogActions'
 
 // group interface
 export interface Group {
@@ -72,6 +80,8 @@ export function AssignmentPage() {
     const [submissionFile, setSubmissionFile] = useState<File>()
     const [submit, setSubmit] = useState(false)
     const [students, setStudents] = useState<User[]>([])
+    const [lastSubmission, setLastSubmission] = useState<Submission>()
+    const [score, setScore] = useState<Score>()
 
     //state for loading the page
     const [loading, setLoading] = useState(true)
@@ -209,6 +219,25 @@ export function AssignmentPage() {
             )
         }
     }, [user, assignment, groups, assignmentId])
+
+    useEffect(() => {
+        async function fetchScore() {
+            if (submissions) {
+                setLastSubmission(submissions[submissions.length - 1])
+                if (lastSubmission) {
+                    const scoreResponse = await instance.get(
+                        `/scores/?indiening=${lastSubmission.indiening_id}`
+                    )
+                    setScore(scoreResponse.data[scoreResponse.data.length - 1])
+                    console.log('scoreresponse', scoreResponse.data)
+                    console.log('score', score?.score)
+                }
+            }
+        }
+        fetchScore().catch((error) =>
+            console.error('Error fetching score', error)
+        )
+    }, [submissions])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
@@ -372,7 +401,7 @@ export function AssignmentPage() {
                             <Stack
                                 marginTop={15}
                                 direction={'column'}
-                                spacing={4}
+                                spacing={3}
                                 sx={{
                                     width: '100%',
                                     height: '100%',
@@ -387,7 +416,7 @@ export function AssignmentPage() {
                                         display: 'flex',
                                         flexDirection: 'row',
                                         justifyContent: 'space-between',
-                                        width: '100%',
+                                        width: '98%',
                                     }}
                                 >
                                     <Box
@@ -413,15 +442,25 @@ export function AssignmentPage() {
                                             <Typography
                                                 variant="h6"
                                                 color={
-                                                    'text.primary'
+                                                    assignment &&
+                                                    assignment.deadline &&
+                                                    dayjs().isAfter(
+                                                        dayjs(
+                                                            assignment.deadline
+                                                        )
+                                                    ) &&
+                                                    !assignment.extra_deadline
+                                                        ? 'error.main'
+                                                        : 'text.primary'
                                                 }
                                             >
-                                                {assignment && assignment.deadline
+                                                {assignment &&
+                                                assignment.deadline
                                                     ? dayjs(
-                                                            assignment.deadline
-                                                        ).format(
-                                                            'DD/MM/YYYY HH:mm'
-                                                        )
+                                                          assignment.deadline
+                                                      ).format(
+                                                          'DD/MM/YYYY HH:mm'
+                                                      )
                                                     : t('no_deadline')}
                                             </Typography>
                                         )}
@@ -478,7 +517,23 @@ export function AssignmentPage() {
                                         ) : (
                                             <Typography
                                                 variant="h6"
-                                                color={'text.primary'}
+                                                color={
+                                                    assignment &&
+                                                    assignment.deadline &&
+                                                    dayjs().isAfter(
+                                                        dayjs(
+                                                            assignment.deadline
+                                                        )
+                                                    ) &&
+                                                    assignment.extra_deadline &&
+                                                    dayjs().isAfter(
+                                                        dayjs(
+                                                            assignment.extra_deadline
+                                                        )
+                                                    )
+                                                        ? 'error.main'
+                                                        : 'text.primary'
+                                                }
                                             >
                                                 {assignment
                                                     ? dayjs(
@@ -493,7 +548,7 @@ export function AssignmentPage() {
                                 )}
 
                                 {/* Assignment description */}
-                                <Card sx={{ padding: '20px' }}>
+                                <Card sx={{ padding: '20px', width: '95%' }}>
                                     <Stack direction={'column'}>
                                         <Typography
                                             sx={{
@@ -523,7 +578,7 @@ export function AssignmentPage() {
                         It shows metadata about the submissions and allows the teacher to download them.
                         The metadata includes group number, submission time, score, and status.
                         */}
-                                <Card>
+                                <Card sx={{ width: '95%' }}>
                                     <Box
                                         aria-label={'courseHeader'}
                                         sx={{
@@ -718,10 +773,10 @@ export function AssignmentPage() {
                                 alignContent={'center'}
                                 marginTop={15}
                                 direction={'column'}
-                                spacing={4}
+                                spacing={3}
                                 sx={{
-                                    width: '100%',
-                                    height: '100%',
+                                    width: '99%',
+                                    height: '99%',
                                     backgroundColor: 'background.default',
                                 }}
                             >
@@ -759,15 +814,25 @@ export function AssignmentPage() {
                                                 <Typography
                                                     variant="h6"
                                                     color={
-                                                        'text.primary'
+                                                        assignment &&
+                                                        assignment.deadline &&
+                                                        dayjs().isAfter(
+                                                            dayjs(
+                                                                assignment.deadline
+                                                            )
+                                                        ) &&
+                                                        !assignment.extra_deadline
+                                                            ? 'error.main'
+                                                            : 'text.primary'
                                                     }
                                                 >
-                                                    {assignment && assignment.deadline
+                                                    {assignment &&
+                                                    assignment.deadline
                                                         ? dayjs(
-                                                                assignment.deadline
-                                                            ).format(
-                                                                'DD/MM/YYYY HH:mm'
-                                                            )
+                                                              assignment.deadline
+                                                          ).format(
+                                                              'DD/MM/YYYY HH:mm'
+                                                          )
                                                         : t('no_deadline')}
                                                 </Typography>
                                             )}
@@ -829,7 +894,10 @@ export function AssignmentPage() {
                                                                             : students
                                                                     }
                                                                     text="group_members"
-                                                                    noGroup={students.length == 0}
+                                                                    noGroup={
+                                                                        students.length ==
+                                                                        0
+                                                                    }
                                                                 />
                                                             </>
                                                         )}
@@ -864,7 +932,23 @@ export function AssignmentPage() {
                                         ) : (
                                             <Typography
                                                 variant="h6"
-                                                color={'text.primary'}
+                                                color={
+                                                    assignment &&
+                                                    assignment.deadline &&
+                                                    dayjs().isAfter(
+                                                        dayjs(
+                                                            assignment.deadline
+                                                        )
+                                                    ) &&
+                                                    assignment.extra_deadline &&
+                                                    dayjs().isAfter(
+                                                        dayjs(
+                                                            assignment.extra_deadline
+                                                        )
+                                                    )
+                                                        ? 'error.main'
+                                                        : 'text.primary'
+                                                }
                                             >
                                                 {assignment
                                                     ? dayjs(
@@ -929,9 +1013,48 @@ export function AssignmentPage() {
                                         )}
                                     </Button>
                                 </Box>
+                                <Box
+                                    display={'flex'}
+                                    flexDirection={'row'}
+                                    alignItems={'center'}
+                                    gap={1}
+                                    sx={{
+                                        padding: 1,
+                                        display: 'flex',
+                                        flexDirection: 'row',
+                                        alignItems: 'center',
+                                        backgroundColor: 'background.default',
+                                        gap: 1,
+                                    }}
+                                >
+                                    <Typography
+                                        variant="h6"
+                                        color="text.primary"
+                                        fontWeight={'bold'}
+                                    >
+                                        Score:
+                                    </Typography>
+                                    {submissions.length > 0 ? (
+                                        <Typography
+                                            variant="h6"
+                                            color={'text.primary'}
+                                        >
+                                            {score
+                                                ? `${score.score}/${assignment?.max_score} (${(100 * score.score) / Number(assignment?.max_score)}%)`
+                                                : t('no_score_yet')}
+                                        </Typography>
+                                    ) : (
+                                        <Typography
+                                            variant="h6"
+                                            color={'text.primary'}
+                                        >
+                                            {t('no_score_yet')}
+                                        </Typography>
+                                    )}
+                                </Box>
 
                                 {/* Assignment */}
-                                <Card sx={{ padding: '20px' }}>
+                                <Card sx={{ padding: '20px', width: '95%' }}>
                                     <Stack direction={'column'}>
                                         <Typography
                                             sx={{
@@ -960,7 +1083,7 @@ export function AssignmentPage() {
                                 </Card>
 
                                 {/* Submissions */}
-                                <Card>
+                                <Card sx={{ width: '97%' }}>
                                     <Box
                                         aria-label={'courseHeader'}
                                         sx={{
@@ -1108,60 +1231,98 @@ export function AssignmentPage() {
 
                                 {/*Upload button, this is what the student will see. */}
                                 <Grid container spacing={2}>
-                                    <Grid>
-                                        <FileUploadButton
-                                            name={t('upload')}
-                                            path={
-                                                loading
-                                                    ? new File(
-                                                          [],
-                                                          t('loading') + '...'
-                                                      )
-                                                    : submissionFile
-                                            }
-                                            onFileChange={handleFileChange}
-                                            fileTypes={['.zip', '.pdf', '.txt']}
-                                            tooltip={t('uploadToolTip')}
-                                        />
-                                    </Grid>
-                                    <Grid>
-                                        <Box
-                                            sx={{
-                                                position: 'relative',
-                                                top: '8px',
-                                                ml: 2,
-                                            }}
-                                        >
-                                            <Tooltip title={t('upload')}>
-                                                <SecondaryButton
-                                                    onClick={uploadIndiening}
+                                    {loading ||
+                                    !assignment?.deadline ||
+                                    (!dayjs().isAfter(
+                                        dayjs(assignment.deadline)
+                                    ) &&
+                                        !assignment.extra_deadline) ||
+                                    (assignment.extra_deadline &&
+                                        !dayjs().isAfter(
+                                            dayjs(assignment.extra_deadline)
+                                        )) ? (
+                                        <>
+                                            <Grid item>
+                                                <FileUploadButton
+                                                    name={t('upload')}
+                                                    path={
+                                                        loading
+                                                            ? new File(
+                                                                  [],
+                                                                  t('loading') +
+                                                                      '...'
+                                                              )
+                                                            : submissionFile
+                                                    }
+                                                    onFileChange={
+                                                        handleFileChange
+                                                    }
+                                                    fileTypes={['*']}
+                                                    tooltip={t('uploadToolTip')}
+                                                />
+                                            </Grid>
+                                            <Grid item>
+                                                <Box
+                                                    sx={{
+                                                        position: 'relative',
+                                                        top: '8px',
+                                                        ml: 2,
+                                                    }}
                                                 >
-                                                    <Typography>
-                                                        {t('submit')}
-                                                    </Typography>
-                                                </SecondaryButton>
-                                            </Tooltip>
-                                        </Box>
-                                    </Grid>
+                                                    <Tooltip
+                                                        title={t('upload')}
+                                                    >
+                                                        <SecondaryButton
+                                                            onClick={
+                                                                uploadIndiening
+                                                            }
+                                                        >
+                                                            <Typography>
+                                                                {t('submit')}
+                                                            </Typography>
+                                                        </SecondaryButton>
+                                                    </Tooltip>
+                                                </Box>
+                                            </Grid>
+                                        </>
+                                    ) : null}
                                 </Grid>
                             </Stack>
-                            <WarningPopup
-                                title={t('error')}
-                                content={
-                                    t('noGroup') +
-                                    (assignment?.student_groep
-                                        ? t('chooseGroup')
-                                        : t('contactTeacher'))
-                                }
-                                buttonName={
-                                    assignment?.student_groep
-                                        ? t('join')
-                                        : t('ok')
-                                }
-                                open={openNoGroup}
-                                handleClose={() => setOpenNoGroup(false)}
-                                doAction={handleNoGroupError}
-                            />
+                            {assignment?.student_groep ? (
+                                <WarningPopup
+                                    title={t('error')}
+                                    content={t('noGroup')}
+                                    buttonName={t('join')}
+                                    open={openNoGroup}
+                                    handleClose={() => setOpenNoGroup(false)}
+                                    doAction={handleNoGroupError}
+                                />
+                            ) : (
+                                <Dialog
+                                    open={openNoGroup}
+                                    onClose={() => setOpenNoGroup(false)}
+                                >
+                                    <DialogTitle>{t('error')}</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText>
+                                            {t('noGroup') +
+                                                ' ' +
+                                                t('contactTeacher')}
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button
+                                            onClick={() =>
+                                                setOpenNoGroup(false)
+                                            }
+                                            color="primary"
+                                            autoFocus
+                                        >
+                                            {t('ok')}
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                            )}
                         </>
                     )}
                 </>

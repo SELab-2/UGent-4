@@ -11,20 +11,24 @@ import Toolbar from '@mui/material/Toolbar'
 import IconButton from '@mui/material/IconButton'
 import Typography from '@mui/material/Typography'
 import CloseIcon from '@mui/icons-material/Close'
+import CodeIcon from '@mui/icons-material/Code'
 import {
+    Alert,
     Box,
-    ButtonGroup,
+    Collapse,
     FormControl,
     MenuItem,
     Select,
+    Stack,
     TextField,
+    Tooltip,
 } from '@mui/material'
 import { t } from 'i18next'
 import { restriction } from './AddChangeAssignmentPage.tsx'
-import Switch from '@mui/material/Switch'
 import WarningPopup from '../../components/WarningPopup.tsx'
 import RestrictionsTemplateUI from './RestrictionTemplateUI.tsx'
 import instance from '../../axiosConfig.ts'
+import BorderColorIcon from '@mui/icons-material/BorderColor'
 
 interface RestrictionsDialogProps {
     userid: number
@@ -44,7 +48,7 @@ export interface Template {
     bestand: string
 }
 
-const code = `
+/*const code = `
 
 #@param
 # Schrijf in dit veld je voornaam.
@@ -65,7 +69,7 @@ bestanden=["main.py", "test.py"]
 # de constante pi, nodig voor wanneer we de omtrek berekenen van het object dat de student indient.
 pi=3.14159
 
-#code...`
+#code...`*/
 
 /**
  * Dialog component for managing restrictions related to file uploads.
@@ -81,7 +85,7 @@ export default function RestrictionsDialog({
 }: RestrictionsDialogProps) {
     const [openTextEditor, setOpenTextEditor] = useState(false)
     const [openTemplateInterface, setOpenTemplateInterface] = useState(false)
-    const [openTemplateInUI, setOpenTemplateInUI] = useState(false)
+    const [code, setCode] = useState('' /*code*/) // code is currently not used
     const [textFieldContent, setTextFieldContent] = useState('')
     const [restrictionName, setRestrictionName] = useState('')
     const [restrictionType, setRestrictionType] =
@@ -90,6 +94,8 @@ export default function RestrictionsDialog({
     const [popupOpen, setPopupOpen] = useState(false)
     const [myTemplates, setMyTemplates] = useState<Template[]>([])
 
+    const [saveAlert, setSaveAlert] = useState(false)
+    const [saveErrorAlert, setSaveErrorAlert] = useState(false)
     // function to handle the uploaded files and send them to the parent component
     const handleUploadedFiles = (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files
@@ -161,8 +167,18 @@ export default function RestrictionsDialog({
             formdata.append('user', userid.toString())
             formdata.append('bestand', file)
 
-            await instance.post(`/templates/`, formdata, config)
+            const result = await instance.post(`/templates/`, formdata, config)
+            if (result.status === 201) {
+                setSaveAlert(true) // Show the alert
+                setTimeout(() => {
+                    setSaveAlert(false) // Hide the alert after 5 seconds
+                }, 4000)
+            }
         } catch (error) {
+            setSaveErrorAlert(true)
+            setTimeout(() => {
+                setSaveErrorAlert(false)
+            }, 4000)
             console.error('Error updating data:', error)
         }
     }
@@ -256,42 +272,130 @@ export default function RestrictionsDialog({
                     }}
                 >
                     {/* This button groups shows the templates the teacher has made */}
-                    <ButtonGroup
-                        orientation="vertical"
-                        aria-label="My templates"
-                        variant={'outlined'}
-                        color={'primary'}
-                    >
+                    <Stack direction={'column'}>
                         {myTemplates.map((template) => (
-                            <Button
-                                key={template.template_id}
-                                onClick={async () => {
-                                    const response = await instance.get(
-                                        `/templates/${template.template_id}/template/?content=true`
-                                    )
-                                    setTextFieldContent(response.data.content)
-                                    if (openTemplateInUI) {
-                                        handleClickOpenTemplateInterface()
-                                    } else {
-                                        handleClickOpenTextEditor()
-                                    }
-                                }}
-                            >
-                                {template.bestand.replace(/^.*[\\/]/, '')}
-                            </Button>
+                            <Box marginY={0.5}>
+                                <Tooltip title={t('add_restriction')}>
+                                    <Button
+                                        sx={{ borderRadius: '10px 0 0 10px' }}
+                                        key={template.template_id}
+                                        onClick={async () => {
+                                            const response = await instance.get(
+                                                `/templates/${template.template_id}/template/?content=true`
+                                            )
+                                            // This textFieldContent will be used when a template is opened in textmode
+                                            setTextFieldContent(
+                                                response.data.content
+                                            )
+
+                                            // The code will be used when a template is opened in the UI
+                                            setCode(response.data.content)
+
+                                            const templatename =
+                                                template.bestand
+                                                    .replace(/^.*[\\/]/, '')
+                                                    .split('.')[0]
+                                            const templateextension =
+                                                '.' +
+                                                template.bestand.split('.')[1]
+                                            setRestrictionName(templatename)
+                                            setRestrictionType(
+                                                templateextension as restrictionExtension
+                                            )
+                                            handleSubmit()
+                                        }}
+                                    >
+                                        <Typography
+                                            width={150}
+                                            textOverflow={'ellipsis'}
+                                        >
+                                            {template.bestand.replace(
+                                                /^.*[\\/]/,
+                                                ''
+                                            )}
+                                        </Typography>
+                                    </Button>
+                                </Tooltip>
+                                <Tooltip title={t('openinUi')}>
+                                    <IconButton
+                                        sx={{
+                                            backgroundColor: 'secondary.main',
+                                            borderRadius: 0,
+                                            padding: 1,
+                                            margin: 0,
+                                        }}
+                                        aria-label={'openinUi'}
+                                        onClick={async () => {
+                                            const response = await instance.get(
+                                                `/templates/${template.template_id}/template/?content=true`
+                                            )
+                                            // This textFieldContent will be used when a template is opened in textmode
+                                            setTextFieldContent(
+                                                response.data.content
+                                            )
+
+                                            // The code will be used when a template is opened in the UI
+                                            setCode(response.data.content)
+
+                                            const templatename =
+                                                template.bestand
+                                                    .replace(/^.*[\\/]/, '')
+                                                    .split('.')[0]
+                                            const templateextension =
+                                                '.' +
+                                                template.bestand.split('.')[1]
+                                            setRestrictionName(templatename)
+                                            setRestrictionType(
+                                                templateextension as restrictionExtension
+                                            )
+                                            handleClickOpenTemplateInterface()
+                                        }}
+                                    >
+                                        <BorderColorIcon />
+                                    </IconButton>
+                                </Tooltip>
+                                <Tooltip title={t('openInEditor')}>
+                                    <IconButton
+                                        sx={{
+                                            backgroundColor: 'secondary.main',
+                                            borderRadius: '0 10px 10px 0',
+                                            padding: 1,
+                                            margin: 0,
+                                        }}
+                                        aria-label={'openinUi'}
+                                        onClick={async () => {
+                                            const response = await instance.get(
+                                                `/templates/${template.template_id}/template/?content=true`
+                                            )
+                                            // This textFieldContent will be used when a template is opened in textmode
+                                            setTextFieldContent(
+                                                response.data.content
+                                            )
+
+                                            // The code will be used when a template is opened in the UI
+                                            setCode(response.data.content)
+
+                                            const templatename =
+                                                template.bestand
+                                                    .replace(/^.*[\\/]/, '')
+                                                    .split('.')[0]
+                                            const templateextension =
+                                                '.' +
+                                                template.bestand.split('.')[1]
+                                            setRestrictionName(templatename)
+                                            setRestrictionType(
+                                                templateextension as restrictionExtension
+                                            )
+                                            handleClickOpenTextEditor()
+                                        }}
+                                    >
+                                        <CodeIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            </Box>
                         ))}
-                    </ButtonGroup>
+                    </Stack>
                 </Box>
-            </Box>
-            <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
-                {/* This box will contain the templates */}
-                <Typography variant={'body2'}>
-                    {t('open_with_ui') + ':'}
-                </Typography>
-                <Switch
-                    value={openTemplateInUI}
-                    onChange={() => setOpenTemplateInUI(!openTemplateInUI)}
-                />
             </Box>
             {/* This is the template interface. */}
             <Dialog
@@ -302,7 +406,7 @@ export default function RestrictionsDialog({
                 <RestrictionsTemplateUI
                     restrictionCode={code}
                     handleCloseTemplateInterface={handleCloseTemplateInterface}
-                    templateFileName="template_example.sh"
+                    templateFileName={restrictionName + restrictionType}
                     restrictions={restrictions}
                     setRestrictions={setRestrictions}
                 />
@@ -476,6 +580,43 @@ export default function RestrictionsDialog({
                             </Box>
                         </Card>
                     </Box>
+                </Box>
+                <Box
+                    display={'flex'}
+                    flexDirection={'row-reverse'}
+                    alignItems={'flex-end'}
+                    justifyContent={'flex-start'}
+                    flexGrow={1}
+                >
+                    {saveAlert && (
+                        <Collapse in={saveAlert} timeout={500}>
+                            <Alert
+                                variant={'outlined'}
+                                sx={{
+                                    width: 'fit-content',
+                                    margin: 1,
+                                }}
+                                severity="success"
+                            >
+                                {t('template_saved_successfully')}
+                            </Alert>
+                        </Collapse>
+                    )}
+
+                    {saveErrorAlert && (
+                        <Collapse in={saveErrorAlert} timeout={500}>
+                            <Alert
+                                variant={'outlined'}
+                                sx={{
+                                    width: 'fit-content',
+                                    margin: 1,
+                                }}
+                                severity="error"
+                            >
+                                {t('error') + ' ' + t('try_again')}
+                            </Alert>
+                        </Collapse>
+                    )}
                 </Box>
             </Dialog>
             <WarningPopup

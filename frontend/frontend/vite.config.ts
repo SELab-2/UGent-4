@@ -14,6 +14,7 @@ export default defineConfig({
             'chunk-OLZKTZWI.js?v=fff2b904',
             'chunk-6ZDRAOHK.js?v=fff2b904',
             'chunk-BWG3R63Q.js?v=fff2b904',
+            'chunk-DVKQGDAD.js?v=99d84b8c',
             '@mui/material/Grid', // Exclude other MUI components as needed
         ],
     },

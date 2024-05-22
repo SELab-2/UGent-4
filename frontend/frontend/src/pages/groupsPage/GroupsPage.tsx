@@ -65,6 +65,7 @@ export function GroupsPage() {
     const [projectName, setProjectName] = useState('')
     const [user, setUser] = useState<User>()
     const [max_group_size, setMaxGroupSize] = useState(0)
+    const [studentsCanChoose, setStudentsCanChoose] = useState(false)
 
     // confirmation dialog state
     const [confirmOpen, setConfirmOpen] = useState(false)
@@ -78,6 +79,10 @@ export function GroupsPage() {
 
     // handle confirmation dialog
     const confirmSave = async () => {
+        await instance.patch('/projecten/' + assignmentId + '/', {
+            student_groep: studentsCanChoose,
+        })
+
         if (newGroups[0].groep_id === undefined) {
             // delete the old groups and replace them with the new groups
             await instance
@@ -176,11 +181,12 @@ export function GroupsPage() {
                     console.error(error)
                 })
 
-            // Get the max group size and project name
+            // Get the max group size, project name and students can choose
             await instance
                 .get('/projecten/' + assignmentId)
                 .then((response) => {
                     setProjectName(response.data.titel)
+                    setStudentsCanChoose(response.data.student_groep)
 
                     setMaxGroupSize(response.data.max_groep_grootte)
                 })
@@ -470,7 +476,19 @@ export function GroupsPage() {
                                                             }}
                                                         />
                                                     ) : (
-                                                        <Switch />
+                                                        <Switch
+                                                            checked={
+                                                                studentsCanChoose
+                                                            }
+                                                            value={
+                                                                studentsCanChoose
+                                                            }
+                                                            onChange={() =>
+                                                                setStudentsCanChoose(
+                                                                    !studentsCanChoose
+                                                                )
+                                                            }
+                                                        />
                                                     )}
                                                 </Box>
                                             </Stack>
@@ -703,7 +721,7 @@ export function GroupsPage() {
                                                                         }}
                                                                     >
                                                                         {t(
-                                                                            'studenten'
+                                                                            'students'
                                                                         )}
                                                                     </Typography>
                                                                 </Grid>
@@ -948,29 +966,38 @@ export function GroupsPage() {
                                                     />
                                                 ) : (
                                                     <>
-                                                        <IconButton
-                                                            // The teacher can save the group changes by clicking on the save icon.type="submit"
-                                                            aria-label={
-                                                                'submit'
+                                                        <Tooltip
+                                                            title={
+                                                                t('save') +
+                                                                ' ' +
+                                                                t('groups')
                                                             }
-                                                            sx={{
-                                                                backgroundColor:
-                                                                    'primary.main',
-                                                                borderRadius: 2,
-                                                                color: 'background.default',
-                                                                '&:hover': {
-                                                                    backgroundColor:
-                                                                        'secondary.main',
-                                                                    color: 'text.primary',
-                                                                },
-                                                            }}
                                                         >
-                                                            <SaveIcon
-                                                                fontSize={
-                                                                    'medium'
+                                                            <IconButton
+                                                                // The teacher can save the group changes by clicking on the save icon.type="submit"
+                                                                aria-label={
+                                                                    'submit'
                                                                 }
-                                                            />
-                                                        </IconButton>
+                                                                type={'submit'}
+                                                                sx={{
+                                                                    backgroundColor:
+                                                                        'primary.main',
+                                                                    borderRadius: 2,
+                                                                    color: 'background.default',
+                                                                    '&:hover': {
+                                                                        backgroundColor:
+                                                                            'secondary.main',
+                                                                        color: 'text.primary',
+                                                                    },
+                                                                }}
+                                                            >
+                                                                <SaveIcon
+                                                                    fontSize={
+                                                                        'medium'
+                                                                    }
+                                                                />
+                                                            </IconButton>
+                                                        </Tooltip>
                                                     </>
                                                 )}
                                             </Tooltip>
