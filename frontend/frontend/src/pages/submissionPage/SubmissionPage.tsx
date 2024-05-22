@@ -29,7 +29,7 @@ import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
  */
 
 // Define an enum for submission status
-enum SubmissionStatus {
+export enum SubmissionStatus {
     FAIL = -1,
     PENDING = 0,
     PASSED = 1,
