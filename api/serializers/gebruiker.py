@@ -61,10 +61,9 @@ class GebruikerSerializer(serializers.ModelSerializer):
         Returns:
             Gebruiker: De bijgewerkte gebruiker.
         """
-        is_lesgever = validated_data.pop("is_lesgever", instance.is_lesgever)
-        if instance.is_lesgever != is_lesgever:
-            validate_lesgever_change(instance)
-        instance.is_lesgever = is_lesgever
+
+        validated_data.pop("user", None)
+        validated_data.pop("is_lesgever", None)
 
         gepinde_vakken = validated_data.pop(
             "gepinde_vakken", instance.gepinde_vakken.all()
@@ -74,28 +73,6 @@ class GebruikerSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-
-def validate_lesgever_change(instance):
-    """
-    Valideert of de lesgever wijziging geldig is.
-
-    Args:
-        instance (Gebruiker): De gebruiker waarvoor de wijziging wordt gecontroleerd.
-
-    Raises:
-        serializers.ValidationError: Als de lesgever eerst verwijderd moet worden uit zijn/haar huidige vakken.
-    """
-    if instance.is_lesgever and Vak.objects.filter(lesgevers=instance):
-        raise serializers.ValidationError(
-            f"De lesgever {instance} moet eerst verwijderd worden \
-            als lesgever in zijn huidige vakken"
-        )
-    elif not instance.is_lesgever and Vak.objects.filter(studenten=instance):
-        raise serializers.ValidationError(
-            f"De student {instance} moet eerst verwijderd worden \
-            als student in zijn huidige vakken"
-        )
 
 
 def validate_gepinde_vakken(instance, gepinde_vakken):

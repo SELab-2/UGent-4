@@ -25,10 +25,7 @@ def gebruiker_list(request):
         Response: Een lijst van gebruikers.
     """
 
-    if has_permissions(request.user):
-        gebruikers = Gebruiker.objects.all()
-    else:
-        gebruikers = Gebruiker.objects.filter(user=request.user.id)
+    gebruikers = Gebruiker.objects.all()
 
     if "is_lesgever" in request.GET and request.GET.get("is_lesgever").lower() in [
         "true",
@@ -64,16 +61,10 @@ def gebruiker_detail(request, id):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if (
-            has_permissions(request.user)
-            or int(id) == request.user.id
-            or gebruiker.is_lesgever
-        ):
-            serializer = GebruikerSerializer(gebruiker)
-            return Response(serializer.data)
-        return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = GebruikerSerializer(gebruiker)
+        return Response(serializer.data)
     elif request.method in ["PUT", "PATCH"]:
-        if request.user.is_superuser:
+        if has_permissions(request.user) or request.user.id == id:
             if request.method == "PUT":
                 serializer = GebruikerSerializer(gebruiker, data=request.data)
             else:
