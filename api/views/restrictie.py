@@ -22,7 +22,7 @@ def restrictie_list(request, format=None):
     Returns:
         Response: Een http-respons met de opgevraagde of gemaakte restricties.
     """
- 
+
     if request.method == "GET":
         restricties = Restrictie.objects.all()
 
@@ -33,9 +33,7 @@ def restrictie_list(request, format=None):
             except NameError:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        if "moet_slagen" in request.GET and request.GET.get(
-            "moet_slagen"
-        ).lower() in [
+        if "moet_slagen" in request.GET and request.GET.get("moet_slagen").lower() in [
             "true",
             "false",
         ]:
@@ -45,7 +43,7 @@ def restrictie_list(request, format=None):
 
         serializer = RestrictieSerializer(restricties, many=True)
         return Response(serializer.data)
-    
+
     if has_permissions(request.user):
         if request.method == "POST":
             serializer = RestrictieSerializer(data=request.data)
