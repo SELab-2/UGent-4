@@ -82,10 +82,12 @@ class Indiening(models.Model):
             )
             default_storage.save(new_path, ContentFile(old_file.read()))
             self.bestand.name = new_path
+            super(Indiening, self).save(*args, **kwargs)
+            old_file.storage.delete(old_file.name)
+        else:
+            super(Indiening, self).save(*args, **kwargs)
 
-        super(Indiening, self).save(*args, **kwargs)
-
-
+        
 def run_tests_async(instance):
     """
     Voert tests uit op een asynchrone manier en werkt de status en het resultaat van de indiening bij.
