@@ -1,4 +1,4 @@
-import { GroupsPage } from '../../../src/pages/groupsPage/GroupsPage'
+import { ChooseGroup } from '../../../src/pages/groupsPage/ChooseGroup'
 import { BrowserRouter } from 'react-router-dom'
 
 // This page fetches data from the backend.
@@ -6,11 +6,11 @@ import { BrowserRouter } from 'react-router-dom'
 // we can only show what shows up before the fetch.
 // This is why only the loading animation is checked.
 // The rest of the tests are in the integration tests.
-describe('GroupsPage', () => {
+describe('ChooseGroup', () => {
     it('renders', () => {
         cy.mount(
             <BrowserRouter>
-                <GroupsPage />
+                <ChooseGroup />
             </BrowserRouter>
         )
         cy.get('[data-cy=loadingAnimation]').should('exist')

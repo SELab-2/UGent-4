@@ -1,18 +1,18 @@
-import {AssignmentPage} from '../../../src/pages/assignmentPage/AssignmentPage'; // Check if the file path is correct and if the required module exists in the specified location.
-import {BrowserRouter} from 'react-router-dom';
-import fixtures from '../../fixtures/fixtures.json';
+import { AssignmentPage } from '../../../src/pages/assignmentPage/AssignmentPage'
+import { BrowserRouter } from 'react-router-dom'
 
+// This page fetches data from the backend.
+// So as far as the component test is concerned,
+// we can only show what shows up before the fetch.
+// This is why only the loading animation is checked.
+// The rest of the tests are in the integration tests.
 describe('AssignmentPage', () => {
-
     it('renders', () => {
-        cy.mount(<BrowserRouter><AssignmentPage/></BrowserRouter>);
-        // this renders for a student, teacher will be tested in e2e tests
-        cy.get('#logo').should('exist');
-        cy.get('#userMenu').should('exist');
-
-        cy.contains('Deadline: no deadline');
-        cy.contains('Status');
-        cy.contains('Confirm Upload');
-        cy.get('#uploadButton').should('exist');
-    });
-});
+        cy.mount(
+            <BrowserRouter>
+                <AssignmentPage />
+            </BrowserRouter>
+        )
+        cy.get('[data-cy=loadingAnimation]').should('exist')
+    })
+})

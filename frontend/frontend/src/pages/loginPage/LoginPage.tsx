@@ -92,6 +92,7 @@ export function LoginPage() {
                             }}
                         />
                         <Box
+                            data-cy="logoDuif"
                             component="img"
                             src={'/assets/logo_duif.png'}
                             alt="logo_app"
@@ -114,7 +115,9 @@ export function LoginPage() {
                         alignSelf={'stretch'}
                         ml={4}
                     >
-                        <Button onClick={handleLogin}>{t('login')}</Button>
+                        <Button onClick={handleLogin} data-cy="loginButton">
+                            {t('login')}
+                        </Button>
                     </Box>
                 </Box>
             </Box>

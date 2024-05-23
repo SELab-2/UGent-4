@@ -486,7 +486,10 @@ export function AddChangeAssignmentPage() {
                         height: '100vh',
                     }}
                 >
-                    <CircularProgress color={'primary'} data-cy="loadingAnimation" />
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
                     <Box></Box>
                 </Box>
             ) : (
