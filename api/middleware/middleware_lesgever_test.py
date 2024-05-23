@@ -24,7 +24,7 @@ class AuthenticationUserMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        
+
         mail = "lesgever@testing.com"
         try:
             user = User.objects.get(username=mail)
@@ -64,7 +64,6 @@ class AuthenticationUserMiddleware:
 
 
 class DisableCSRFMiddleware(object):
-
     def __init__(self, get_response):
         self.get_response = get_response
 

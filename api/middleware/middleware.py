@@ -84,8 +84,6 @@ class AuthenticationUserMiddleware:
         return self.get_response(request)
 
 
-
-
 class DisableCSRFMiddleware(object):
 
     def __init__(self, get_response):
