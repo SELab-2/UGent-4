@@ -6,7 +6,7 @@ describe('add students to groups or let them choose', () => {
     it('add', () => {
         cy.contains('test course').click()
         cy.contains('test project').click()
-        cy.get('#groups').click()
+        cy.get('#groupButton').click()
         cy.get('#randomGroups').click()
         cy.get('#confirm').click()
         cy.get('#saveGroups').click()
@@ -16,7 +16,7 @@ describe('add students to groups or let them choose', () => {
     it('choose', () => {
         cy.contains('test course').click()
         cy.contains('test project').click()
-        cy.get('#groups').click()
+        cy.get('#groupButton').click()
         cy.get('#studentsChoose').click()
         cy.get('#saveGroups').click()
         cy.get('#confirm').click()

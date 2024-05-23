@@ -20,6 +20,7 @@ export function LanguageSwitcher() {
             {/* Map through language options and render a MenuItem for each */}
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
                 <Button
+                    data-cy="en"
                     sx={{
                         color: 'background.default',
                         paddingTop: 1,
@@ -47,6 +48,7 @@ export function LanguageSwitcher() {
                     }}
                 />
                 <Button
+                    data-cy="nl"
                     sx={{
                         color: 'background.default',
                         paddingTop: 1,

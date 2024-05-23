@@ -35,7 +35,7 @@ export function GroupAccessComponent({
                 marginBottom={2}
             >
                 {/* Button to navigate to groups page */}
-                <Button id='groups' onClick={handleClick}>{t('groups')}</Button>
+                <Button data-cy="groupButton" onClick={handleClick}>{t('groups')}</Button>
             </Box>
         </>
     )

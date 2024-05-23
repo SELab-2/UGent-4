@@ -70,6 +70,7 @@ export function AssignmentListItem({
                     {/* Project Name */}
                     <ListItemText>
                         <Typography
+                            data-cy="projectName"
                             maxWidth={170}
                             noWrap
                             textOverflow={'ellipsis'}

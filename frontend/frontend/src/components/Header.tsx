@@ -125,6 +125,7 @@ export const Header = ({ variant, title }: Props) => {
                                 variant === 'editable') && (
                                 <Tooltip title={t('back')}>
                                     <IconButton
+                                        data-cy="backButton"
                                         onClick={handleBack}
                                         size="large"
                                         edge="start"
@@ -159,6 +160,7 @@ export const Header = ({ variant, title }: Props) => {
                                 />
                             )}
                             <Typography
+                                data-cy="title"
                                 minWidth={'50'}
                                 maxWidth={'88%'}
                                 variant="h5"
