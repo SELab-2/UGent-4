@@ -329,7 +329,8 @@ export function ProjectsView({
                                                     }
                                                     deleteEvent={() =>
                                                         deleteAssignment(
-                                                            project.index
+                                                            project.assignment
+                                                                .project_id
                                                         )
                                                     }
                                                     archiveEvent={() =>
