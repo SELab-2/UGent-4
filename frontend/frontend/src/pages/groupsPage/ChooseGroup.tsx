@@ -121,10 +121,14 @@ export function ChooseGroup() {
                         }
                     })
                 }
-                const groups = await instance.get(
+                const groups = await instance.get<Group[]>(
                     'groepen/?project=' + assignmentId
                 )
-                setGroups(groups.data)
+                const sortedGroups = groups.data.sort((a: Group, b: Group) => {
+                    return a.groep_id - b.groep_id
+                })
+
+                setGroups(sortedGroups)
             } catch (err) {
                 console.error(err)
             } finally {
