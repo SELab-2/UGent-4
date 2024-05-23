@@ -79,7 +79,9 @@ def groep_detail(request, id, format=None):
         return Response(serializer.data)
 
     if request.method in ["PUT", "PATCH"]:
-        if has_permissions(request.user) or validate_new_students(request.user, groep, request.data):
+        if has_permissions(request.user) or validate_new_students(
+            request.user, groep, request.data
+        ):
             if request.method == "PUT":
                 serializer = GroepSerializer(groep, data=request.data)
             else:
@@ -99,5 +101,5 @@ def groep_detail(request, id, format=None):
 
 def validate_new_students(user, current_groep, data):
     old = set(map(lambda student: student.user.id, current_groep.studenten.all()))
-    new = set(data.get('studenten'))
+    new = set(data.get("studenten"))
     return (old - new).union(new - old) == {user.id}
