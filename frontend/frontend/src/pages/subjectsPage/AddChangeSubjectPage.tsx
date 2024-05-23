@@ -720,6 +720,7 @@ export function AddChangeSubjectPage() {
 
                                             <Tooltip title={t('save')}>
                                                 <Button
+                                                    id='save'
                                                     /* This is the large save button on the top of the page */
                                                     onClick={handleSubmit}
                                                 >

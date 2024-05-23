@@ -71,6 +71,7 @@ export function CoursesView({
                             {/* Teachers get an extra button to add courses. */}
                             <Tooltip title={'Add course'} placement={'top'}>
                                 <IconButton
+                                    id='addCourse'
                                     color={'primary'}
                                     aria-label={'add-button'}
                                     onClick={() => navigate('/course/new')}

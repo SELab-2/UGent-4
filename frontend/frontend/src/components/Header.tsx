@@ -170,6 +170,7 @@ export const Header = ({ variant, title }: Props) => {
                             {variant === 'editable' && (
                                 <Tooltip title={t('edit')}>
                                     <IconButton
+                                        id='editButton'
                                         onClick={handleEdit}
                                         disableRipple={true}
                                         sx={{

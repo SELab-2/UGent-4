@@ -354,6 +354,7 @@ export function SubjectsPage() {
                                         placement={'top'}
                                     >
                                         <IconButton
+                                            id='addProject'
                                             onClick={addProject}
                                             color="primary"
                                             edge="end"

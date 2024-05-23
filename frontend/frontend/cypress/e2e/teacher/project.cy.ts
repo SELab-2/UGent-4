@@ -50,7 +50,7 @@ describe('add and change projects', () => {
       // confirm in popup
       cy.get('#confirm').click()
       // check if project was altered
-      cy.contains('test project').should('exist').click()
+      cy.contains('test project').should('exist')
       cy.contains('This is a test project set up by the e2e tests. This project has been altered.').should('exist')
       cy.contains('22/08/2024 23:59')
       cy.contains('27/08/2024 23:59')
