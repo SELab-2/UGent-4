@@ -159,7 +159,8 @@ export function CourseCard({
         }
 
         const mySubmission = submissions.find(
-            (submission) => submission.groep === myGroup.groep_id
+            (submission) =>
+                (submission ? submission.groep : 0) === myGroup.groep_id
         )
 
         if (!mySubmission) {
