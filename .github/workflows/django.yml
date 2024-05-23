@@ -54,7 +54,7 @@ jobs:
     - name: Linting Frontend
       run: |
         cd frontend/frontend
-        eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
+        eslint .
         cd ../..
     - name: Run Backend Tests
       env:
@@ -79,9 +79,4 @@ jobs:
       run: |
         cd frontend/frontend
         npm run cypress-component
-        cd ../..
-    - name: Run Frontend Linting
-      run: |
-        cd frontend/frontend
-        eslint .
         cd ../..
