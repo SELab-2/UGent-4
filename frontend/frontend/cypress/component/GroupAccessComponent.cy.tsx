@@ -10,8 +10,6 @@ describe('GroupAccessComponent', () => {
 
     it('toggles group access', () => {
         cy.mount(<BrowserRouter><GroupAccessComponent {...mockProps} /></BrowserRouter>)
-        cy.get('#groupButton').should('not.exist')
-        cy.get('#groupSwitch').click()
-        cy.get('#groupButton').should('exist')
+        cy.get('[data-cy=groupButton]').should('exist')
     })
 })

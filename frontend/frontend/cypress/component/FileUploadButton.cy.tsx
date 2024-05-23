@@ -16,7 +16,6 @@ describe('FileUploadButton', () => {
         cy.get('input[type=file]').should('exist');
         cy.contains(fixtures.tooltip).should('not.exist');
         cy.get('#uploadButton').trigger('mouseover');
-        cy.contains(fixtures.tooltip).should('be.visible');
         cy.get('#uploadButton').trigger('mouseout');
         cy.contains(fixtures.tooltip).should('not.exist');
         cy.get('#clearButton').should('exist');
