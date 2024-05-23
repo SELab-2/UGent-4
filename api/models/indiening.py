@@ -72,7 +72,9 @@ class Indiening(models.Model):
         return str(self.indiening_id)
 
     def save(self, *args, **kwargs):
-        # Update the bestand path if it's still using the temporary path
+        if "temp" not in self.bestand.name:
+            super(Indiening, self).save(*args, **kwargs)
+
         if "temp" in self.bestand.name:
             old_file = self.bestand
             new_path = self.bestand.name.replace(
@@ -95,7 +97,6 @@ def run_tests_async(instance):
     indiening_id = instance.indiening_id
     project_id = instance.groep.project.project_id
     result = run_tests_on(indiening_id, project_id)
-
     with transaction.atomic():
         instance.status = -1 if "FAIL" in result else 1
         instance.result = result
