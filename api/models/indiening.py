@@ -83,10 +83,8 @@ class Indiening(models.Model):
             )
             default_storage.save(new_path, ContentFile(old_file.read()))
             self.bestand.name = new_path
-            super(Indiening, self).save(*args, **kwargs)
             default_storage.delete(old_file_name)
-        else:
-            super(Indiening, self).save(*args, **kwargs)
+            self.save()
 
         
 def run_tests_async(instance):
