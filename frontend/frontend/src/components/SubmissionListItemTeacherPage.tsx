@@ -15,6 +15,7 @@ import { Submission } from '../pages/submissionPage/SubmissionPage.tsx'
 import { t } from 'i18next'
 import dayjs from 'dayjs'
 import { EvenlySpacedRow } from './CustomComponents.tsx'
+import { Project } from '../pages/scoresPage/ProjectScoresPage.tsx'
 
 interface SubmissionListItemTeacherPageProps {
     group_name: string
@@ -53,6 +54,7 @@ export function SubmissionListItemTeacherPage({
     // State for submitted data and score
     const [submitted, setSubmitted] = useState<Submission>()
     const [score, setScore] = useState<Score>()
+    const [assignment, setAssignment] = useState<Project>()
     useEffect(() => {
         async function fetchData() {
             try {
@@ -107,6 +109,11 @@ export function SubmissionListItemTeacherPage({
                     setScore(scoreResponse.data[scoreResponse.data.length - 1])
                     console.log(score?.score)
                 }
+
+                const assignmentResponse = await instance.get(
+                    `/projecten/${assignment_id}/`
+                )
+                setAssignment(assignmentResponse.data)
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
@@ -168,7 +175,11 @@ export function SubmissionListItemTeacherPage({
                             <ListItemText
                                 primary={
                                     score
-                                        ? `${Number(score.score)}` + '/20'
+                                        ? `${Number(score.score)}` +
+                                          '/' +
+                                          (assignment
+                                              ? assignment.max_score
+                                              : '20')
                                         : t('no_score_yet')
                                 }
                             />,

@@ -1039,7 +1039,7 @@ export function AssignmentPage() {
                                             color={'text.primary'}
                                         >
                                             {score
-                                                ? `${score.score}/${assignment?.max_score} (${(100 * score.score) / Number(assignment?.max_score)}%)`
+                                                ? `${score.score}/${assignment?.max_score} (${Math.round((100 * score.score) / Number(assignment?.max_score))}%)`
                                                 : t('no_score_yet')}
                                         </Typography>
                                     ) : (
@@ -1257,7 +1257,9 @@ export function AssignmentPage() {
                                                         handleFileChange
                                                     }
                                                     fileTypes={['*']}
-                                                    tooltip={t('uploadToolTip')}
+                                                    tooltip={t(
+                                                        'upload_project'
+                                                    )}
                                                 />
                                             </Grid>
                                             <Grid item>

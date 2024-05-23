@@ -139,6 +139,7 @@ const dutch = {
     add_course: 'Voeg vak toe',
     add_project: 'Voeg project toe',
     no_projects: 'Geen projecten',
+    upload_project: 'Upload je projectbestanden.',
     may_fail: 'Mag falen',
 }
 
