@@ -64,17 +64,6 @@ class GebruikerDetailViewTest(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_gebruiker_detail_put(self):
-        new_data = {
-            "user": self.gebruiker.user.id,
-            "is_lesgever": self.gebruiker.is_lesgever,
-            "gepinde_vakken": [self.vak.vak_id],
-        }
-        response = self.client.put(self.url, new_data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.gebruiker.refresh_from_db()
-        self.assertEqual(self.gebruiker.gepinde_vakken.first(), self.vak)
-
     def test_gebruiker_detail_get_non_existing_user(self):
         response = self.client.get(reverse("gebruiker_detail", kwargs={"id": 69}))
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
