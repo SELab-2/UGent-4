@@ -215,6 +215,7 @@ export default function RestrictionTemplateUI({
             <AppBar sx={{ position: 'relative' }}>
                 <Toolbar>
                     <IconButton
+                        data-cy="closeIcon"
                         edge="start"
                         color="inherit"
                         onClick={handleCloseTemplateInterface}
@@ -222,10 +223,15 @@ export default function RestrictionTemplateUI({
                     >
                         <CloseIcon />
                     </IconButton>
-                    <Typography variant="h6" sx={{ ml: 2, flex: 1 }}>
+                    <Typography
+                        variant="h6"
+                        sx={{ ml: 2, flex: 1 }}
+                        data-cy="templateName"
+                    >
                         {templateName}
                     </Typography>
                     <Button
+                        data-cy="saveButton"
                         autoFocus
                         color="inherit"
                         onClick={() =>
