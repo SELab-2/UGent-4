@@ -231,7 +231,7 @@ export default function RestrictionsDialog({
     }
 
     return (
-        <Box display={'flex'} flexDirection={'column'} maxWidth={'60%'}>
+        <React.Fragment>
             {/* File input for uploading files */}
             <input
                 type="file"
@@ -306,7 +306,7 @@ export default function RestrictionsDialog({
                                         }}
                                     >
                                         <Typography
-                                            width={150}
+                                            width={200}
                                             textOverflow={'ellipsis'}
                                         >
                                             {template.bestand.replace(
@@ -623,6 +623,6 @@ export default function RestrictionsDialog({
                 handleClose={() => setPopupOpen(false)}
                 doAction={handleSubmit}
             />
-        </Box>
+        </React.Fragment>
     )
 }
