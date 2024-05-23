@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
 from api.models.gebruiker import Gebruiker
 from api.serializers.gebruiker import GebruikerSerializer
-
+from api.serializers.template import TemplateSerializer
+from django.core.files import File
+import os
 
 
 class AuthenticationUserMiddleware:
@@ -39,6 +41,17 @@ class AuthenticationUserMiddleware:
         try:
             Gebruiker.objects.get(pk=request.user.id)
         except Gebruiker.DoesNotExist:
+            directory_path = "api/base_templates"
+            for filename in os.listdir(directory_path):
+                file_path = os.path.join(directory_path, filename)
+                with open(file_path, "rb") as f:
+                    django_file = File(f)
+                    template_data = {"user": request.user.id, "bestand": django_file}
+                    serializer = TemplateSerializer(data=template_data)
+                    if serializer.is_valid():
+                        serializer.save()
+
+
             gebruiker_post_data = {
                 "user": request.user.id,
                 "subjects": [],
