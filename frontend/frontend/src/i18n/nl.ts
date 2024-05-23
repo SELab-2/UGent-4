@@ -140,6 +140,7 @@ const dutch = {
     add_project: 'Voeg project toe',
     no_projects: 'Geen projecten',
     upload_project: 'Upload je projectbestanden.',
+    may_fail: 'Mag falen',
 }
 
 export default dutch

@@ -140,6 +140,7 @@ const english = {
     add_project: 'Add project',
     no_projects: 'No projects',
     upload_project: 'Upload your project files.',
+    may_fail: 'May fail',
 }
 
 export default english

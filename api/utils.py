@@ -127,8 +127,7 @@ def send_indiening_confirmation_mail(indiening):
     project = indiening.groep.project
 
     project_url = f"https://sel2-4.ugent.be/course/{project.vak.vak_id}/assignment/{project.project_id}"
-    indiening_url = f"https://sel2-4.ugent.be/course/{project.vak.vak_id}/assignment/ \
-        {project.project_id}/submission/{indiening.indiening_id}"
+    indiening_url = f"{project_url}/submission/{indiening.indiening_id}"
 
     for student in indiening.groep.studenten.all():
         subject = "Indieningsontvangst"
