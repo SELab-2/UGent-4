@@ -79,3 +79,9 @@ jobs:
         cd frontend/frontend
         npm run cypress-component
         cd ../..
+    - name: Run Frontend Linting
+      run: |
+        cd frontend/frontend
+        npm install -g eslint
+        npm run lint
+        cd ../..
