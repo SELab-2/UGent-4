@@ -105,7 +105,7 @@ export function AddChangeAssignmentPage() {
     const [assignmentFile, setAssignmentFile] = useState<File>()
     const [maxScore, SetMaxScore] = useState<number>(20)
     const [cleared, setCleared] = useState<boolean>(false)
-    const [filename, setFilename] = useState<string>('indiening.zip')
+    const [filename, setFilename] = useState<string>('')
     const [groupSize, setGroupSize] = useState<number>(1)
 
     const [user, setUser] = useState<User>()
@@ -191,7 +191,9 @@ export function AddChangeAssignmentPage() {
                     setDescription(assignment.beschrijving)
 
                     console.log('bestand' + assignment.opgave_bestand)
-                    setFilename(() => assignment.opgave_bestand)
+                    if (assignment.opgave_bestand !== null) {
+                        setFilename(() => assignment.opgave_bestand)
+                    }
                     SetMaxScore(assignment.max_score)
                     console.log('max score' + assignment.max_score)
 
@@ -245,23 +247,25 @@ export function AddChangeAssignmentPage() {
                 })
 
             //get the assignment file
-            await instance
-                .get(`/projecten/${assignmentId}/opgave_bestand/`, {
-                    responseType: 'blob',
-                })
-                .then((response) => {
-                    const blob = new Blob([response.data], {
-                        type: response.headers['content-type'],
+            if (filename !== '') {
+                await instance
+                    .get(`/projecten/${assignmentId}/opgave_bestand/`, {
+                        responseType: 'blob',
                     })
-                    const file: File = new File([blob], filename, {
-                        type: response.headers['content-type'],
-                    })
+                    .then((response) => {
+                        const blob = new Blob([response.data], {
+                            type: response.headers['content-type'],
+                        })
+                        const file: File = new File([blob], filename, {
+                            type: response.headers['content-type'],
+                        })
 
-                    setAssignmentFile(file)
-                })
-                .catch((error) => {
-                    console.error(error)
-                })
+                        setAssignmentFile(file)
+                    })
+                    .catch((error) => {
+                        console.error(error)
+                    })
+            }
 
             //end loading -> set loading to false
             setLoading(false)
@@ -307,7 +311,11 @@ export function AddChangeAssignmentPage() {
         if (dueDate === null && extraDueDate === null) {
             setDeadlineCheck(false)
         } else if (dueDate !== null && extraDueDate !== null) {
-            setDeadlineCheck(extraDueDate.diff(dueDate) < 0)
+            if (dayjs(extraDueDate).isSame(dayjs(dueDate))) {
+                setDeadlineCheck(true)
+            } else {
+                setDeadlineCheck(dayjs(extraDueDate).isBefore(dayjs(dueDate)))
+            }
         } else if (dueDate !== null && extraDueDate === null) {
             setDeadlineCheck(false)
         } else {
@@ -383,81 +391,87 @@ export function AddChangeAssignmentPage() {
         })
     }
 
-    // Upload the assignment to the API. patch if it is an edit, post if it is a new assignment.
+    // Upload the assignment to the API. put if it is an edit, post if it is a new assignment.
     const uploadAssignment = async () => {
-        let optionalFile: File | null = null
-        if (assignmentFile !== undefined) {
-            optionalFile = assignmentFile
-        }
-        const formData = new FormData()
-        formData.append('titel', title)
-        formData.append('beschrijving', description)
-        formData.append('vak', parseInt(courseId as string).toString())
-        if (optionalFile) {
-            formData.append('opgave_bestand', optionalFile)
-        }
-        formData.append('zichtbaar', visible.toString())
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            }
+            // editing an existing assignment: need to put
+            if (assignmentId) {
+                const formData = new FormData()
+                formData.append('project_id', assignmentId)
+                if (assignmentFile) {
+                    formData.append('opgave_bestand', assignmentFile)
+                }
 
-        // Add optional fields
-        if (maxScore !== 20) {
-            formData.append('max_score', maxScore.toString())
-        }
-        if (dueDate !== null) {
-            formData.append('deadline', dueDate.format())
-        }
-        if (extraDueDate !== null) {
-            formData.append('extra_deadline', extraDueDate.format())
-        }
-        formData.append('max_groep_grootte', groupSize.toString())
+                formData.append('titel', title)
+                formData.append('beschrijving', description)
+                if (courseId) {
+                    formData.append('vak', courseId)
+                }
+                if (maxScore !== 20) {
+                    formData.append('max_score', maxScore.toString())
+                }
+                if (dueDate) {
+                    formData.append('deadline', dueDate.format())
+                }
+                if (extraDueDate) {
+                    formData.append('extra_deadline', extraDueDate.format())
+                }
+                formData.append('zichtbaar', visible.toString())
+                formData.append('max_groep_grootte', groupSize.toString())
 
-        const config = {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        }
-        if (assignmentId !== undefined) {
-            formData.append('project_id', assignmentId)
-            await instance
-                .patch(
-                    '/projecten/' + parseInt(assignmentId) + '/',
+                // Send the data to the API
+                await instance.put(
+                    `/projecten/${assignmentId}/`,
                     formData,
                     config
                 )
-                .catch((error) => {
-                    console.error(error)
-                })
+                handleRestrictionUpload(assignmentId.toString())
+            } else {
+                // Creating a new assignment: need to post
+                const formData = new FormData()
+                if (assignmentFile) {
+                    formData.append('opgave_bestand', assignmentFile)
+                }
+                formData.append('titel', title)
+                formData.append('beschrijving', description)
+                if (courseId) {
+                    formData.append('vak', courseId)
+                }
+                if (maxScore !== 20) {
+                    formData.append('max_score', maxScore.toString())
+                }
+                if (dueDate) {
+                    formData.append('deadline', dueDate.format())
+                }
+                if (extraDueDate) {
+                    formData.append('extra_deadline', extraDueDate.format())
+                }
+                formData.append('zichtbaar', visible.toString())
+                formData.append('max_groep_grootte', groupSize.toString())
 
-            //upload the restrictions
-            handleRestrictionUpload(assignmentId.toString())
-        } else {
-            //if there is no assignmentId, it is a new assignment
-            let project_id: number = 0
+                // Send the data to the API
+                const project = await instance.post(
+                    '/projecten/',
+                    formData,
+                    config
+                )
+                handleRestrictionUpload(project.data.id)
+            }
 
-            await instance
-                .post('/projecten/', formData, config)
-                .then((response) => (project_id = response.data.project_id))
-                .catch((error) => {
-                    console.error(error)
-                })
-
-            //upload the restrictions
-            handleRestrictionUpload(project_id.toString())
-        }
-
-        console.info(
-            'Form submitted',
-            title,
-            description,
-            dueDate,
-            restrictions,
-            visible,
-            assignmentFile
-        )
-        setSaveConfirmation(false)
-        if (assignmentId !== undefined) {
-            navigate('/course/' + courseId + '/assignment/' + assignmentId)
-        } else {
-            navigate('/course/' + courseId)
+            if (assignmentId !== undefined) {
+                navigate('/course/' + courseId + '/assignment/' + assignmentId)
+            } else {
+                navigate('/course/' + courseId)
+            }
+        } catch (error) {
+            console.error(error)
+        } finally {
+            setSaveConfirmation(false)
         }
     }
 
@@ -1009,7 +1023,7 @@ export function AddChangeAssignmentPage() {
                                                         title={t('remove')}
                                                     >
                                                         <IconButton
-                                                            color={'warning'}
+                                                            color={'error'}
                                                             onClick={
                                                                 openDeleteConfirmation
                                                             }

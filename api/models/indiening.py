@@ -72,18 +72,18 @@ class Indiening(models.Model):
         return str(self.indiening_id)
 
     def save(self, *args, **kwargs):
+        # TODO: probleem zit hier :sob:
         if "temp" not in self.bestand.name:
             super(Indiening, self).save(*args, **kwargs)
 
         if "temp" in self.bestand.name:
             old_file = self.bestand
-            new_path = self.bestand.name.replace(
-                "temp", f"indiening_{self.indiening_id}"
-            )
+            old_file_name = old_file.name
+            new_path = old_file.name.replace("temp", f"indiening_{self.indiening_id}")
             default_storage.save(new_path, ContentFile(old_file.read()))
             self.bestand.name = new_path
-
-        super(Indiening, self).save(*args, **kwargs)
+            default_storage.delete(old_file_name)
+            self.save()
 
 
 def run_tests_async(instance):
