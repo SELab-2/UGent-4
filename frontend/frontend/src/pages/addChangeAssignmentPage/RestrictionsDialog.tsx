@@ -234,6 +234,7 @@ export default function RestrictionsDialog({
         <React.Fragment>
             {/* File input for uploading files */}
             <input
+                data-cy="uploadInput"
                 type="file"
                 style={{ display: 'none' }}
                 onChange={(e) => {
@@ -242,7 +243,11 @@ export default function RestrictionsDialog({
                 multiple
             />
             {/* Vertical button group */}
-            <Typography variant={'h6'} color={'secondary.contrastText'}>
+            <Typography
+                variant={'h6'}
+                color={'secondary.contrastText'}
+                data-cy="new_scripts_section"
+            >
                 {t('make_new_script') + ':'}
             </Typography>
 
@@ -255,7 +260,11 @@ export default function RestrictionsDialog({
                 {buttons}
             </Box>
             <Box padding="20px" />
-            <Typography variant={'h6'} color={'secondary.contrastText'}>
+            <Typography
+                variant={'h6'}
+                color={'secondary.contrastText'}
+                data-cy="existing_scripts_section"
+            >
                 {t('choose_existing') + ':'}
             </Typography>
             <Box
@@ -434,6 +443,7 @@ export default function RestrictionsDialog({
                                     justifyContent={'flex-start'}
                                 >
                                     <IconButton
+                                        data-cy="closeIcon"
                                         edge="start"
                                         color="inherit"
                                         onClick={handleCloseTextEditor}
