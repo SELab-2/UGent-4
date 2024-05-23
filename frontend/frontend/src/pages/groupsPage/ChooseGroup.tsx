@@ -51,7 +51,7 @@ function joinLeaveButton(
     if (isin) {
         return (
             <>
-                <Button size={'small'} onClick={handleLeave}>
+                <Button id='leaveGroup' size={'small'} onClick={handleLeave}>
                     <Typography>{t('leave')}</Typography>
                 </Button>
             </>
@@ -66,7 +66,7 @@ function joinLeaveButton(
     }
     return (
         <>
-            <Button size={'small'} onClick={handleJoin}>
+            <Button id= 'joinGroup' size={'small'} onClick={handleJoin}>
                 <Typography>{t('join_group')}</Typography>
             </Button>
         </>

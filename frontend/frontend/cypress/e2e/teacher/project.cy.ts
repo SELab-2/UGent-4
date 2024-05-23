@@ -12,6 +12,7 @@ describe('add and change projects', () => {
         cy.get('.MuiInputBase-input').eq(1).type('220820242359')
         cy.get('.MuiInputBase-input').eq(2).type('290820242359')
         cy.get('#description').type('This is a test project set up by the e2e tests.')
+        cy.get('#setInVisible').click()
         cy.get('#setVisible').click()
         cy.get('#groupSize').clear().type('2')
         cy.get('#maxScore').clear().type('30')

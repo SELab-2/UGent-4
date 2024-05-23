@@ -855,6 +855,7 @@ export function AssignmentPage() {
                                             <>
                                                 {assignment?.student_groep ? (
                                                     <Button
+                                                        id='group'
                                                         sx={{
                                                             bgcolor:
                                                                 'secondary.main',

@@ -972,7 +972,7 @@ export function AddChangeAssignmentPage() {
                                                         <IconButton
                                                             // Allows the teacher to select whether
                                                             // the assignment is visible to students or not.
-                                                            id='setVisible'
+                                                            id='setInVisible'
                                                             color={'info'}
                                                             onClick={() =>
                                                                 setVisible(
@@ -988,7 +988,7 @@ export function AddChangeAssignmentPage() {
                                                         </IconButton>
                                                     ) : (
                                                         <IconButton
-                                                            id='setInvisible'
+                                                            id='setVisible'
                                                             color={'info'}
                                                             onClick={() =>
                                                                 setVisible(
