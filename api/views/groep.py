@@ -79,17 +79,25 @@ def groep_detail(request, id, format=None):
         return Response(serializer.data)
 
     if request.method in ["PUT", "PATCH"]:
-        if request.method == "PUT":
-            serializer = GroepSerializer(groep, data=request.data)
-        else:
-            serializer = GroepSerializer(groep, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        if has_permissions(request.user) or validate_new_students(request.user, groep, request.data):
+            if request.method == "PUT":
+                serializer = GroepSerializer(groep, data=request.data)
+            else:
+                serializer = GroepSerializer(groep, data=request.data, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
     if has_permissions(request.user):
         if request.method == "DELETE":
             groep.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+def validate_new_students(user, current_groep, data):
+    old = set(map(lambda student: student.user.id, current_groep.studenten.all()))
+    new = set(data.get('studenten'))
+    return (old - new).union(new - old) == {user.id}
