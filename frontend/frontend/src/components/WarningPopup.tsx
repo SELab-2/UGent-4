@@ -52,11 +52,11 @@ export default function WarningPopup({
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: 'center' }}>
-                    <SecondaryButton onClick={handleClose}>
+                    <SecondaryButton id="cancelButton" onClick={handleClose}>
                         {t('cancel')}
                     </SecondaryButton>
                     {/* Action button */}
-                    <Button id='confirm' onClick={hanldeAction} autoFocus>
+                    <Button id="confirm" onClick={hanldeAction} autoFocus>
                         {buttonName}
                     </Button>
                 </DialogActions>

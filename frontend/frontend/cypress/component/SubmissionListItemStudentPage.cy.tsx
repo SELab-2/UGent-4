@@ -3,7 +3,8 @@ import { BrowserRouter } from 'react-router-dom';
 
 describe('SubmissionListItemStudentPage', () => {
     const mockProps = {
-        id: 1,
+        realId: "1",
+        visualId: "Logisch programmeren - Opdracht 1",
         timestamp: new Date().toLocaleString(),
         status: true,
         assignment_id: 1,
@@ -12,10 +13,9 @@ describe('SubmissionListItemStudentPage', () => {
 
     it('renders correct submission', () => {
         cy.mount(<BrowserRouter><SubmissionListItemStudentPage {...mockProps} /></BrowserRouter>);
-        cy.get('#submission' + mockProps.id).should('exist');
         cy.get('.MuiListItemButton-root').should('exist');
-        cy.get('#submissionId').should('exist').should('have.text', mockProps.id);
-        cy.get('#submissionTimestamp').should('exist').should('have.text', mockProps.timestamp);
+        cy.get('[data-cy=visualId]').should('exist').should('have.text', mockProps.visualId);
+        cy.get('[data-cy=submissionTimestamp]').should('exist').should('have.text', mockProps.timestamp);
         cy.get('#check').should('exist');
         cy.get('#cross').should('not.exist');
     });
@@ -23,10 +23,9 @@ describe('SubmissionListItemStudentPage', () => {
     it('renders incorrect submission', () => {
         mockProps.status = false;
         cy.mount(<BrowserRouter><SubmissionListItemStudentPage {...mockProps} /></BrowserRouter>);
-        cy.get('#submission' + mockProps.id).should('exist');
         cy.get('.MuiListItemButton-root').should('exist');
-        cy.get('#submissionId').should('exist').should('have.text', mockProps.id);
-        cy.get('#submissionTimestamp').should('exist').should('have.text', mockProps.timestamp);
+        cy.get('[data-cy=visualId]').should('exist').should('have.text', mockProps.visualId);
+        cy.get('[data-cy=submissionTimestamp]').should('exist').should('have.text', mockProps.timestamp);
         cy.get('#check').should('not.exist');
         cy.get('#cross').should('exist');
     });

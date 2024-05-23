@@ -17,7 +17,7 @@ describe('WarningPopup', () => {
         cy.get('#popUpTitle').should('exist').should('have.text', fixtures.title);
         cy.get('#popUpText').should('exist').should('have.text', fixtures.warning);
         cy.get('#cancelButton').should('exist');
-        cy.get('#actionButton').should('exist').should('have.text', fixtures.button);
+        cy.get('#confirm').should('exist').should('have.text', fixtures.button);
     });
 
     it('renders closed', () => {
