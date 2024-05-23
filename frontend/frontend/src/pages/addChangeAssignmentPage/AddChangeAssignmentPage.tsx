@@ -406,6 +406,7 @@ export function AddChangeAssignmentPage() {
                 if (assignmentFile) {
                     formData.append('opgave_bestand', assignmentFile)
                 }
+
                 formData.append('titel', title)
                 formData.append('beschrijving', description)
                 if (courseId) {
