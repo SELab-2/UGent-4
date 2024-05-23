@@ -29,6 +29,7 @@ import { User } from '../subjectsPage/AddChangeSubjectPage.tsx'
  */
 
 // Define an enum for submission status
+// eslint-disable-next-line react-refresh/only-export-components
 export enum SubmissionStatus {
     FAIL = -1,
     PENDING = 0,
