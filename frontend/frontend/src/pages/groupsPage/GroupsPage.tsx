@@ -220,15 +220,13 @@ export function GroupsPage() {
     }, [assignmentId, courseId])
 
     useEffect(() => {
-        setAvailableStudents(() =>
-            Array.from(studentNames.keys()).filter(
-                (student) =>
-                    !newGroups.some((group) =>
-                        group.studenten.includes(student)
-                    )
-            )
+        const filteredStudents = Array.from(studentNames.keys()).filter(
+            (student) =>
+                !newGroups.some((group) => group.studenten.includes(student))
         )
-        setFilteredStudents(availableStudents)
+
+        setAvailableStudents(filteredStudents)
+        setFilteredStudents(filteredStudents)
     }, [newGroups, studentNames])
 
     //Handle current group change

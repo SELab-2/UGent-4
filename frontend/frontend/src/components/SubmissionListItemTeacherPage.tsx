@@ -59,10 +59,13 @@ export function SubmissionListItemTeacherPage({
                 const submissionsResponse = await instance.get(
                     `/indieningen/?groep=${group_id}`
                 )
-                const lastSubmission =
-                    submissionsResponse.data[
-                        submissionsResponse.data.length - 1
-                    ]
+                const lastSubmission = submissionsResponse.data.sort(
+                    (a: Submission, b: Submission) => {
+                        return dayjs(a.tijdstip).isBefore(dayjs(b.tijdstip))
+                            ? -1
+                            : 1
+                    }
+                )[submissionsResponse.data.length - 1]
                 if (lastSubmission) {
                     const lastSubmissionResponse = await instance.get(
                         `indieningen/${lastSubmission.indiening_id}/`
@@ -77,7 +80,7 @@ export function SubmissionListItemTeacherPage({
                         )
                     newSubmission.bestand = await instance
                         .get(
-                            `/indieningen/${lastSubmission.indiening_id}/indiening_bestand`,
+                            `/indieningen/${lastSubmission.indiening_id}/indiening_bestand/`,
                             {
                                 responseType: 'blob',
                             }
@@ -179,13 +182,16 @@ export function SubmissionListItemTeacherPage({
                                             data-cy="cross"
                                             sx={{ color: 'error.main' }}
                                         />
+                                    ) : submitted.status > 0 ? (
+                                        <CheckCircleOutlineIcon
+                                            data-cy="check"
+                                            sx={{ color: 'success.main' }}
+                                        />
                                     ) : (
-                                        submitted !== undefined && (
-                                            <CheckCircleOutlineIcon
-                                                data-cy="check"
-                                                sx={{ color: 'success.main' }}
-                                            />
-                                        )
+                                        <HighlightOffIcon
+                                            data-cy="check"
+                                            sx={{ color: 'error.main' }}
+                                        />
                                     )}
                                 </ListItemIcon>
                             </Box>,

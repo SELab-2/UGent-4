@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.models.groep import Groep
 from api.serializers.groep import GroepSerializer
-from api.utils import has_permissions, contains
+from api.utils import has_permissions
 
 
 @api_view(["GET", "POST"])
@@ -28,10 +28,7 @@ def groep_list(request, format=None):
         Response: Een lijst van groepen of een nieuw aangemaakte groep.
     """
     if request.method == "GET":
-        if has_permissions(request.user):
-            groepen = Groep.objects.all()
-        else:
-            groepen = Groep.objects.filter(studenten=request.user.id)
+        groepen = Groep.objects.all()
 
         if "project" in request.GET:
             try:
@@ -78,13 +75,11 @@ def groep_detail(request, id, format=None):
     except Groep.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == "GET":
-        if has_permissions(request.user) or contains(groep.studenten, request.user):
-            serializer = GroepSerializer(groep)
-            return Response(serializer.data)
-        return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = GroepSerializer(groep)
+        return Response(serializer.data)
 
-    if has_permissions(request.user):
-        if request.method in ["PUT", "PATCH"]:
+    if request.method in ["PUT", "PATCH"]:
+        if has_permissions(request.user) or validate_new_students(request.user, groep, request.data):
             if request.method == "PUT":
                 serializer = GroepSerializer(groep, data=request.data)
             else:
@@ -93,8 +88,16 @@ def groep_detail(request, id, format=None):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
-        elif request.method == "DELETE":
+    if has_permissions(request.user):
+        if request.method == "DELETE":
             groep.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+def validate_new_students(user, current_groep, data):
+    old = set(map(lambda student: student.user.id, current_groep.studenten.all()))
+    new = set(data.get('studenten'))
+    return (old - new).union(new - old) == {user.id}
