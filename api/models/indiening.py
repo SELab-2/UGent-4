@@ -72,6 +72,7 @@ class Indiening(models.Model):
         return str(self.indiening_id)
 
     def save(self, *args, **kwargs):
+        # TODO: probleem zit hier :sob:
         if "temp" not in self.bestand.name:
             super(Indiening, self).save(*args, **kwargs)
 
