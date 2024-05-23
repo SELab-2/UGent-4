@@ -83,5 +83,5 @@ jobs:
     - name: Run Frontend Linting
       run: |
         cd frontend/frontend
-        npm run lint
+        eslint .
         cd ../..
