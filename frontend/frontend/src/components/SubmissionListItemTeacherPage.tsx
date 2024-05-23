@@ -77,7 +77,7 @@ export function SubmissionListItemTeacherPage({
                         )
                     newSubmission.bestand = await instance
                         .get(
-                            `/indieningen/${lastSubmission.indiening_id}/indiening_bestand`,
+                            `/indieningen/${lastSubmission.indiening_id}/indiening_bestand/`,
                             {
                                 responseType: 'blob',
                             }

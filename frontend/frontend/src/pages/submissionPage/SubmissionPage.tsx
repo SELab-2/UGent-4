@@ -135,20 +135,20 @@ export function SubmissionPage() {
                 //Get the submission file
                 const newSubmission: Submission = submissionResponse.data
 
-                if (newSubmission.result !== 'No tests: OK') {
+                if (
+                    newSubmission.status !== SubmissionStatus.PENDING &&
+                    newSubmission.result !== 'No tests: OK'
+                ) {
                     const regex = /Testing (.*)$/
                     const matches = newSubmission.result.match(regex)
                     if (matches !== null) {
-                        matches.map((match) => {
-                            match.replace(':', '\n')
-                            return match
-                        })
+                        newSubmission.result = matches[0]
                     }
                 }
                 newSubmission.filename =
                     submissionResponse.data.bestand.replace(/^.*[\\/]/, '')
                 newSubmission.bestand = await instance
-                    .get(`/indieningen/${submissionId}/indiening_bestand`, {
+                    .get(`/indieningen/${submissionId}/indiening_bestand/`, {
                         responseType: 'blob',
                     })
                     .then((res) => {
@@ -225,9 +225,11 @@ export function SubmissionPage() {
         }
 
         // Fetch students
-        fetchStudents().catch((error) =>
-            console.error('Error fetching students data:', error)
-        )
+        if (submission) {
+            fetchStudents().catch((error) =>
+                console.error('Error fetching students data:', error)
+            )
+        }
     }, [submission])
 
     if (fetchError) {
