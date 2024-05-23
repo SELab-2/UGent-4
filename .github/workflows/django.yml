@@ -54,7 +54,8 @@ jobs:
     - name: Linting Frontend
       run: |
         cd frontend/frontend
-        eslint .
+        npm install -g eslint
+        npm run lint
         cd ../..
     - name: Run Backend Tests
       env:
