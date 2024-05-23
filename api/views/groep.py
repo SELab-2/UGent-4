@@ -28,10 +28,7 @@ def groep_list(request, format=None):
         Response: Een lijst van groepen of een nieuw aangemaakte groep.
     """
     if request.method == "GET":
-        if has_permissions(request.user):
-            groepen = Groep.objects.all()
-        else:
-            groepen = Groep.objects.filter(studenten=request.user.id)
+        groepen = Groep.objects.all()
 
         if "project" in request.GET:
             try:
@@ -78,12 +75,10 @@ def groep_detail(request, id, format=None):
     except Groep.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
     if request.method == "GET":
-        if has_permissions(request.user) or contains(groep.studenten, request.user):
-            serializer = GroepSerializer(groep)
-            return Response(serializer.data)
-        return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = GroepSerializer(groep)
+        return Response(serializer.data)
 
-    if has_permissions(request.user):
+    if has_permissions(request.user) or contains(groep.studenten, request.user):
         if request.method in ["PUT", "PATCH"]:
             if request.method == "PUT":
                 serializer = GroepSerializer(groep, data=request.data)
@@ -93,8 +88,9 @@ def groep_detail(request, id, format=None):
                 serializer.save()
                 return Response(serializer.data)
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-        elif request.method == "DELETE":
+    
+    if has_permissions(request.user):
+        if request.method == "DELETE":
             groep.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(status=status.HTTP_403_FORBIDDEN)
