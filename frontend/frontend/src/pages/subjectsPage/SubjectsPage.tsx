@@ -164,19 +164,20 @@ export function SubjectsPage() {
     }
 
     const [openDeletePopup, setOpenDeletePopup] = useState(false)
-    const [deleteIndex, setDeleteIndex] = useState(0)
+    const [deleteId, setDeleteId] = useState(0)
     const [openArchivePopup, setOpenArchivePopup] = useState(false)
     const [archiveIndex, setArchiveIndex] = useState(0)
 
-    const deleteAssignment = (index: number) => {
-        setDeleteIndex(index)
+    const deleteAssignment = (id: number) => {
+        setDeleteId(id)
         setOpenDeletePopup(true)
     }
     const doDelete = async () => {
-        setAssignments(assignments.filter((_, i) => i !== deleteIndex))
+        setAssignments(
+            assignments.filter((project) => project.project_id !== deleteId)
+        )
         try {
-            const deletedAssignment = assignments[deleteIndex]
-            await instance.delete(`/projecten/${deletedAssignment.project_id}/`)
+            await instance.delete(`/projecten/${deleteId}/`)
         } catch (error) {
             console.error('Error deleting data:', error)
         }
