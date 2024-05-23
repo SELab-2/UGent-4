@@ -306,7 +306,7 @@ export default function RestrictionsDialog({
                                         }}
                                     >
                                         <Typography
-                                            width={150}
+                                            width={200}
                                             textOverflow={'ellipsis'}
                                         >
                                             {template.bestand.replace(

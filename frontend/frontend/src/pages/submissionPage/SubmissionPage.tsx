@@ -191,6 +191,39 @@ export function SubmissionPage() {
                     console.log('Data:', response.data)
                 } else {
                     console.log('Status is not 0, stopping requests.')
+                    const submission = response.data
+                    if (
+                        submission.status !== SubmissionStatus.PENDING &&
+                        submission.result !== 'No tests: OK'
+                    ) {
+                        const match = submission.result.match(/Testing.*/)
+                        submission.result = match ? match[0] : submission.result
+                    }
+                    submission.filename = submission.bestand.replace(
+                        /^.*[\\/]/,
+                        ''
+                    )
+                    submission.bestand = await instance
+                        .get(
+                            `/indieningen/${submissionId}/indiening_bestand/`,
+                            {
+                                responseType: 'blob',
+                            }
+                        )
+                        .then((res) => {
+                            let filename = 'indiening.zip'
+                            if (submission.filename) {
+                                filename = submission.filename
+                            }
+                            const blob = new Blob([res.data], {
+                                type: res.headers['content-type'],
+                            })
+                            const file: File = new File([blob], filename, {
+                                type: res.headers['content-type'],
+                            })
+                            return file
+                        })
+                    setSubmission(submission)
                     clearInterval(intervalId)
                 }
             } catch (err) {
@@ -360,6 +393,7 @@ export function SubmissionPage() {
                             {t('filename')}
                         </Typography>
                         <Button
+                            disabled={loading || submission?.status === 0}
                             id="downloadButton"
                             startIcon={<DownloadIcon />}
                             onClick={downloadSubmission}
@@ -442,8 +476,12 @@ export function SubmissionPage() {
                                                                     }
                                                                 >
                                                                     {restriction.moet_slagen
-                                                                        ? t('must_pass')
-                                                                        : t('may_fail')}
+                                                                        ? t(
+                                                                              'must_pass'
+                                                                          )
+                                                                        : t(
+                                                                              'may_fail'
+                                                                          )}
                                                                 </Typography>
                                                                 {restriction.artifact && (
                                                                     <Button
