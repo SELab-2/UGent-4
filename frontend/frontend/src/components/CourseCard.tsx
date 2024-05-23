@@ -97,10 +97,14 @@ export function CourseCard({
                     setGroups(groups)
 
                     const submissionPromises = groups.map(async (group) => {
-                        const response = await instance.get<Submission>(
+                        const response = await instance.get<Submission[]>(
                             `/indieningen/?project=${group.project}&groep=${group.groep_id}`
                         )
-                        return response.data
+                        return response.data.sort(
+                            (a: Submission, b: Submission) => {
+                                return dayjs(b.tijdstip).diff(dayjs(a.tijdstip))
+                            }
+                        )[0]
                     })
                     const submissions = await axios.all(submissionPromises)
 
