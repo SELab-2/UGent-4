@@ -20,7 +20,11 @@ interface StudentPopUpProps {
     noGroup: boolean
 }
 
-export default function StudentPopUp({ students, text, noGroup }: StudentPopUpProps) {
+export default function StudentPopUp({
+    students,
+    text,
+    noGroup,
+}: StudentPopUpProps) {
     const [open, setOpen] = React.useState(false)
 
     const handleClose = () => {
@@ -34,6 +38,7 @@ export default function StudentPopUp({ students, text, noGroup }: StudentPopUpPr
                 onClick={() => {
                     setOpen(true)
                 }}
+                data-cy="secondaryButton"
             >
                 {t(text)}
             </SecondaryButton>
@@ -60,16 +65,19 @@ export default function StudentPopUp({ students, text, noGroup }: StudentPopUpPr
                     </IconButton>
                 </DialogTitle>
                 <DialogContent dividers>
-                    {noGroup ?
+                    {noGroup ? (
                         <>
-                            <Typography variant="body1">
+                            <Typography variant="body1" data-cy="noGroup">
                                 {t('noGroup')}
                             </Typography>
-                            <Typography variant="body1">
+                            <Typography
+                                variant="body1"
+                                data-cy="contactTeacher"
+                            >
                                 {t('contactTeacher')}
                             </Typography>
                         </>
-                    :
+                    ) : (
                         <>
                             {/* List of Students */}
                             {students.length > 0 ? (
@@ -88,7 +96,7 @@ export default function StudentPopUp({ students, text, noGroup }: StudentPopUpPr
                                 </Typography>
                             )}
                         </>
-                    }
+                    )}
                 </DialogContent>
             </Dialog>
         </>

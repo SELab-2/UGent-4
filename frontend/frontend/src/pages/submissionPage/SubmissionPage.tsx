@@ -243,6 +243,7 @@ export function SubmissionPage() {
                     title={
                         loading ? '' : project?.titel + ': ' + t('submission')
                     }
+                    data-cy="header"
                 />
                 <Box
                     sx={{
@@ -271,10 +272,14 @@ export function SubmissionPage() {
                                 sx={{
                                     fontWeight: 'bold',
                                 }}
+                                data-cy="assignmentTitle"
                             >
                                 {t('assignment')}
                             </Typography>
-                            <Typography color={'text.primary'}>
+                            <Typography
+                                color={'text.primary'}
+                                data-cy="projectBeschrijving"
+                            >
                                 {project?.beschrijving}
                             </Typography>
                         </Stack>
@@ -355,6 +360,7 @@ export function SubmissionPage() {
                             fontWeight={'bold'}
                             aria-label={'title'}
                             margin={0}
+                            data-cy="filename"
                         >
                             {t('filename')}
                         </Typography>
@@ -362,6 +368,7 @@ export function SubmissionPage() {
                             id="downloadButton"
                             startIcon={<DownloadIcon />}
                             onClick={downloadSubmission}
+                            data-cy="downloadSubmissionButton"
                         >
                             {loading ? (
                                 <Skeleton
@@ -385,7 +392,11 @@ export function SubmissionPage() {
                             height: '20vh',
                         }}
                     >
-                        <Typography variant={'h5'} fontWeight={'bold'}>
+                        <Typography
+                            variant={'h5'}
+                            fontWeight={'bold'}
+                            data-cy="restrictionsTitle"
+                        >
                             {t('restrictions')}
                         </Typography>
                         <Box sx={{ padding: 1 }}>
@@ -502,7 +513,11 @@ export function SubmissionPage() {
                                 gap: 2,
                             }}
                         >
-                            <Typography variant={'h5'} fontWeight={'bold'}>
+                            <Typography
+                                variant={'h5'}
+                                fontWeight={'bold'}
+                                data-cy="statusTitle"
+                            >
                                 {t('status') + ':'}
                             </Typography>
                             {loading ? (
@@ -541,7 +556,11 @@ export function SubmissionPage() {
                                 maxHeight: '15vh',
                             }}
                         >
-                            <Typography variant={'h5'} fontWeight={'bold'}>
+                            <Typography
+                                variant={'h5'}
+                                fontWeight={'bold'}
+                                data-cy="resultTitle"
+                            >
                                 {t('result')}
                             </Typography>
                             <Box sx={{ padding: 1 }}>

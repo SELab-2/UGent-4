@@ -1,4 +1,4 @@
-import { SubjectsPage } from '../../../src/pages/subjectsPage/SubjectsPage'
+import { AddChangeSubjectPage } from '../../../src/pages/subjectsPage/AddChangeSubjectPage'
 import { BrowserRouter } from 'react-router-dom'
 
 // This page fetches data from the backend.
@@ -6,15 +6,13 @@ import { BrowserRouter } from 'react-router-dom'
 // we can only show what shows up before the fetch.
 // This is why only the loading animation is checked.
 // The rest of the tests are in the integration tests.
-describe('SubjectsPage', () => {
-    it('renders the SubjectsPage', () => {
-        // Mount the SubjectsPage component within a BrowserRouter
+describe('AddChangeSubjectsPage', () => {
+    it('renders', () => {
         cy.mount(
             <BrowserRouter>
-                <SubjectsPage />
+                <AddChangeSubjectPage />
             </BrowserRouter>
         )
-
         cy.get('[data-cy=loadingAnimation]').should('exist')
     })
 })

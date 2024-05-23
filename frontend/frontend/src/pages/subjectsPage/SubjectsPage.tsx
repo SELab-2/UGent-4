@@ -233,7 +233,10 @@ export function SubjectsPage() {
                     justifyContent={'center'}
                     sx={{ width: '100vw', height: '100vh' }}
                 >
-                    <CircularProgress color={'primary'} />
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
                 </Grid>
             ) : (
                 <>
@@ -354,7 +357,7 @@ export function SubjectsPage() {
                                         placement={'top'}
                                     >
                                         <IconButton
-                                            id='addProject'
+                                            id="addProject"
                                             onClick={addProject}
                                             color="primary"
                                             edge="end"

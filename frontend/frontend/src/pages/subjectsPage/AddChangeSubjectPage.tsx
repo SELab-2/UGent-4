@@ -620,7 +620,10 @@ export function AddChangeSubjectPage() {
                         height: '100vh',
                     }}
                 >
-                    <CircularProgress color={'primary'} />
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
                     <Box></Box>
                 </Box>
             ) : (
