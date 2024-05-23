@@ -231,7 +231,7 @@ export default function RestrictionsDialog({
     }
 
     return (
-        <React.Fragment>
+        <Box display={'flex'} flexDirection={'column'} maxWidth={'60%'}>
             {/* File input for uploading files */}
             <input
                 type="file"
@@ -267,7 +267,6 @@ export default function RestrictionsDialog({
             >
                 <Box
                     sx={{
-                        maxWidth: '40%',
                         maxHeight: 150,
                         overflowY: 'auto',
                     }}
@@ -624,6 +623,6 @@ export default function RestrictionsDialog({
                 handleClose={() => setPopupOpen(false)}
                 doAction={handleSubmit}
             />
-        </React.Fragment>
+        </Box>
     )
 }
