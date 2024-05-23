@@ -139,11 +139,10 @@ export function SubmissionPage() {
                     newSubmission.status !== SubmissionStatus.PENDING &&
                     newSubmission.result !== 'No tests: OK'
                 ) {
-                    const regex = /Testing (.*)$/
-                    const matches = newSubmission.result.match(regex)
-                    if (matches !== null) {
-                        newSubmission.result = matches[0]
-                    }
+                    const match = newSubmission.result.match(/Testing.*/)
+                    newSubmission.result = match
+                        ? match[0]
+                        : newSubmission.result
                 }
                 newSubmission.filename =
                     submissionResponse.data.bestand.replace(/^.*[\\/]/, '')
@@ -423,9 +422,10 @@ export function SubmissionPage() {
                                                                         'bold'
                                                                     }
                                                                 >
-                                                                    {
-                                                                        restriction.script
-                                                                    }
+                                                                    {restriction.script.replace(
+                                                                        /^.*[\\/]/,
+                                                                        ''
+                                                                    )}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant={
