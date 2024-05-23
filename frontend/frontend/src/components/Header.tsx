@@ -81,6 +81,7 @@ export const Header = ({ variant, title }: Props) => {
     return (
         <>
             <AppBar
+                data-cy="header"
                 elevation={0}
                 position="absolute"
                 sx={{

@@ -244,7 +244,6 @@ export function SubmissionPage() {
                     title={
                         loading ? '' : project?.titel + ': ' + t('submission')
                     }
-                    data-cy="header"
                 />
                 <Box
                     sx={{
@@ -267,13 +266,13 @@ export function SubmissionPage() {
                     >
                         <Stack direction={'column'}>
                             <Typography
+                                data-cy="assignmentTitle"
                                 variant={'h5'}
                                 color={'text.primary'}
                                 aria-label={'title'}
                                 sx={{
                                     fontWeight: 'bold',
                                 }}
-                                data-cy="assignmentTitle"
                             >
                                 {t('assignment')}
                             </Typography>
