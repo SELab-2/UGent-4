@@ -55,6 +55,7 @@ class GebruikerDetailViewTest(APITestCase):
         self.vak = VakFactory.create()
         self.vak.studenten.add(self.gebruiker)
         self.vak.save()
+        self.vak.refresh_from_db()
         self.client = APIClient()
         self.client.force_login(self.gebruiker.user)
         self.url = reverse("gebruiker_detail", kwargs={"id": self.gebruiker.user.id})
