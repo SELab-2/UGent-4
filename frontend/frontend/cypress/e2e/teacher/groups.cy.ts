@@ -1,4 +1,4 @@
-escribe('add students to groups or let them choose', () => {
+describe('add students to groups or let them choose', () => {
     beforeEach(() => {
       cy.visit('http://localhost:5173')
     })
@@ -6,17 +6,20 @@ escribe('add students to groups or let them choose', () => {
     it('add', () => {
         cy.contains('test course').click()
         cy.contains('test project').click()
-
-
-        // TODO add students to group
+        cy.get('#groups').click()
+        cy.get('#randomGroups').click()
+        cy.get('#confirm').click()
+        cy.get('#saveGroups').click()
+        cy.get('#confirm').click()
     })
 
     it('choose', () => {
         cy.contains('test course').click()
         cy.contains('test project').click()
-  
-  
-        // TODO let students choose a group
+        cy.get('#groups').click()
+        cy.get('#studentsChoose').click()
+        cy.get('#saveGroups').click()
+        cy.get('#confirm').click()
     })
 
 

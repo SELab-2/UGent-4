@@ -440,6 +440,7 @@ export function GroupsPage() {
                                                     <Button
                                                         // If a teacher doesn't want to create groups manually,
                                                         // they can randomize the groups with a single click.variant={'contained'}
+                                                        id='randomGroups'
                                                         onClick={() =>
                                                             setRandomOpen(true)
                                                         }
@@ -477,6 +478,7 @@ export function GroupsPage() {
                                                         />
                                                     ) : (
                                                         <Switch
+                                                            id='studentsChoose'
                                                             checked={
                                                                 studentsCanChoose
                                                             }
@@ -975,6 +977,7 @@ export function GroupsPage() {
                                                         >
                                                             <IconButton
                                                                 // The teacher can save the group changes by clicking on the save icon.type="submit"
+                                                                id='saveGroups'
                                                                 aria-label={
                                                                     'submit'
                                                                 }
