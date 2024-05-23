@@ -1,11 +1,12 @@
 import {
     Box,
+    CircularProgress,
+    Dialog,
     ListItem,
     ListItemText,
+    Skeleton,
     Stack,
     Typography,
-    Dialog,
-    CircularProgress,
 } from '@mui/material'
 import List from '@mui/material/List'
 import { useEffect, useState } from 'react'
@@ -57,7 +58,7 @@ function joinLeaveButton(
             </>
         )
     }
-    if (disabled){
+    if (disabled) {
         return (
             <>
                 <Typography>{t('group_full')}</Typography>
@@ -87,90 +88,51 @@ export function ChooseGroup() {
     const [userLoading, setUserLoading] = useState(true)
 
     const assignmentId = params.assignmentId
+    const courseid = params.courseId
 
     const handleClose = () => {
         setOpen(false)
     }
 
     useEffect(() => {
-        setUserLoading(true)
-        setLoading(true)
-        instance
-            .get('/gebruikers/me/')
-            .then((res) => {
-                setUser(res.data)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        setUserLoading(false)
-        instance
-            .get('/projecten/' + assignmentId + '/')
-            .then((res) => {
-                setAssignment(res.data)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        instance
-            .get('projecten/' + assignmentId)
-            .then((res) => {
-                instance
-                    .get('vakken/' + res.data.vak)
-                    .then((res) => {
-                        //setStudenten(res.data.studenten)
-                        for (let i = 0; i < res.data.studenten.length; i++) {
-                            const studentid = res.data.studenten[i]
-                            instance
-                                .get('gebruikers/' + studentid)
-                                .then((res) => {
-                                    setStudenten((oldstudenten) => {
-                                        return {
-                                            ...oldstudenten,
-                                            [res.data.user]: res.data,
-                                        }
-                                    })
-                                })
-                                .catch((err) => {
-                                    console.log(err)
-                                })
-                        }
-                    })
-                    .catch((err) => {
-                        console.log(err)
-                    })
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        async function fetchData() {
+            setLoading(true)
+            setUserLoading(true)
+            try {
+                const user = await instance.get('/gebruikers/me/')
+                setUser(user.data)
+                setUserLoading(false)
 
-        instance
-            .get('groepen/?project=' + assignmentId)
-            .then((res) => {
-                for (let i = 0; i < res.data.length; i++) {
-                    setGroups((oldGroups) => {
-                        let found = false
-                        const id = res.data[i].groep_id
-                        for (const group of oldGroups) {
-                            if (group.groep_id == id) {
-                                found = true
-                            }
-                        }
-                        if (found) {
-                            return oldGroups
-                        } else {
-                            return [...oldGroups, res.data[i]].sort((a, b) => {
-                                return a.groep_id - b.groep_id
-                            })
+                const assignment = await instance.get(
+                    '/projecten/' + assignmentId + '/'
+                )
+                setAssignment(assignment.data)
+
+                const course = await instance.get('vakken/' + courseid)
+                for (let i = 0; i < course.data.studenten.length; i++) {
+                    const studentid = course.data.studenten[i]
+                    const student = await instance.get(
+                        'gebruikers/' + studentid
+                    )
+                    setStudenten((oldstudenten) => {
+                        return {
+                            ...oldstudenten,
+                            [student.data.user]: student.data,
                         }
                     })
                 }
-            })
-            .catch((err) => {
-                console.log(err)
-            })
-        setLoading(false)
-    }, [])
+                const groups = await instance.get(
+                    'groepen/?project=' + assignmentId
+                )
+                setGroups(groups.data)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchData().catch((err) => console.error(err))
+    }, [assignmentId, courseid])
 
     return (
         <>
@@ -253,436 +215,471 @@ export function ChooseGroup() {
                                                 },
                                             }}
                                         >
-                                            {groups.map((group: Group) => {
-                                                //const group=getGroup(id)
+                                            {loading ? (
+                                                [...Array(3)].map(() => (
+                                                    <Skeleton
+                                                        variant={'text'}
+                                                        height={30}
+                                                        width={'100%'}
+                                                    />
+                                                ))
+                                            ) : (
+                                                <>
+                                                    {groups.map(
+                                                        (group: Group) => {
+                                                            //const group=getGroup(id)
 
-                                                const handleJoin = () => {
-                                                    setGroups(
-                                                        (
-                                                            oldGroups
-                                                        ): Group[] => {
-                                                            if (
-                                                                user ==
-                                                                undefined
-                                                            ) {
-                                                                return oldGroups
-                                                            }
-                                                            if (
-                                                                assignment ==
-                                                                undefined
-                                                            ) {
-                                                                return oldGroups
-                                                            }
+                                                            const handleJoin =
+                                                                () => {
+                                                                    setGroups(
+                                                                        (
+                                                                            oldGroups
+                                                                        ): Group[] => {
+                                                                            if (
+                                                                                user ==
+                                                                                undefined
+                                                                            ) {
+                                                                                return oldGroups
+                                                                            }
+                                                                            if (
+                                                                                assignment ==
+                                                                                undefined
+                                                                            ) {
+                                                                                return oldGroups
+                                                                            }
 
-                                                            let j = 0
+                                                                            let j = 0
 
-                                                            let edittedgroup =
-                                                                undefined
+                                                                            let edittedgroup =
+                                                                                undefined
 
-                                                            for (
-                                                                let i = 0;
-                                                                i <
-                                                                oldGroups.length;
-                                                                i++
-                                                            ) {
-                                                                if (
-                                                                    oldGroups[
-                                                                        i
-                                                                    ].studenten.includes(
-                                                                        user.user
-                                                                    )
-                                                                ) {
-                                                                    const newgroup1 =
-                                                                        {
-                                                                            groep_id:
-                                                                                oldGroups[
-                                                                                    i
-                                                                                ]
-                                                                                    .groep_id,
-                                                                            project:
-                                                                                oldGroups[
-                                                                                    i
-                                                                                ]
-                                                                                    .project,
-                                                                            studenten:
-                                                                                oldGroups[
-                                                                                    i
-                                                                                ].studenten.filter(
-                                                                                    (
-                                                                                        student
-                                                                                    ) =>
-                                                                                        student !=
-                                                                                        user.user
-                                                                                ),
-                                                                        }
-
-                                                                    instance
-                                                                        .patch(
-                                                                            'groepen/' +
-                                                                                oldGroups[
-                                                                                    i
-                                                                                ]
-                                                                                    .groep_id +
-                                                                                '/',
-                                                                            {
-                                                                                studenten:
+                                                                            for (
+                                                                                let i = 0;
+                                                                                i <
+                                                                                oldGroups.length;
+                                                                                i++
+                                                                            ) {
+                                                                                if (
                                                                                     oldGroups[
                                                                                         i
-                                                                                    ].studenten.filter(
-                                                                                        (
-                                                                                            student
-                                                                                        ) =>
-                                                                                            student !=
-                                                                                            user.user
-                                                                                    ),
-                                                                            }
-                                                                        )
-                                                                        .catch(
-                                                                            (
-                                                                                err
-                                                                            ) => {
-                                                                                console.log(
-                                                                                    err
-                                                                                )
-                                                                            }
-                                                                        )
-                                                                    j = i
-                                                                    edittedgroup =
-                                                                        newgroup1
-                                                                }
-                                                            }
-
-                                                            for (
-                                                                let i = 0;
-                                                                i <
-                                                                oldGroups.length;
-                                                                i++
-                                                            ) {
-                                                                if (
-                                                                    oldGroups[i]
-                                                                        .groep_id ==
-                                                                    group.groep_id
-                                                                ) {
-                                                                    if (
-                                                                        group
-                                                                            .studenten
-                                                                            .length >=
-                                                                        assignment.max_groep_grootte
-                                                                    ) {
-                                                                        return oldGroups
-                                                                    }
-                                                                    const newgroup =
-                                                                        {
-                                                                            groep_id:
-                                                                                group.groep_id,
-                                                                            project:
-                                                                                group.project,
-                                                                            studenten:
-                                                                                [
-                                                                                    ...group.studenten,
-                                                                                    user.user,
-                                                                                ],
-                                                                        }
-                                                                    instance
-                                                                        .patch(
-                                                                            'groepen/' +
-                                                                                group.groep_id +
-                                                                                '/',
-                                                                            {
-                                                                                studenten:
-                                                                                    [
-                                                                                        ...group.studenten,
-                                                                                        user.user,
-                                                                                    ],
-                                                                            }
-                                                                        )
-                                                                        .catch(
-                                                                            (
-                                                                                err
-                                                                            ) => {
-                                                                                console.log(
-                                                                                    err
-                                                                                )
-                                                                            }
-                                                                        )
-
-                                                                    if (
-                                                                        edittedgroup !=
-                                                                        undefined
-                                                                    ) {
-                                                                        if (
-                                                                            i <
-                                                                            j
-                                                                        ) {
-                                                                            return [
-                                                                                ...oldGroups.slice(
-                                                                                    0,
-                                                                                    i
-                                                                                ),
-                                                                                newgroup,
-                                                                                ...oldGroups.slice(
-                                                                                    i +
-                                                                                        1,
-                                                                                    j
-                                                                                ),
-                                                                                edittedgroup,
-                                                                                ...oldGroups.slice(
-                                                                                    j +
-                                                                                        1
-                                                                                ),
-                                                                            ].sort(
-                                                                                (
-                                                                                    a,
-                                                                                    b
-                                                                                ) => {
-                                                                                    return (
-                                                                                        a.groep_id -
-                                                                                        b.groep_id
-                                                                                    )
-                                                                                }
-                                                                            )
-                                                                        }
-                                                                        return [
-                                                                            ...oldGroups.slice(
-                                                                                0,
-                                                                                j
-                                                                            ),
-                                                                            edittedgroup,
-                                                                            ...oldGroups.slice(
-                                                                                j +
-                                                                                    1,
-                                                                                i
-                                                                            ),
-                                                                            newgroup,
-                                                                            ...oldGroups.slice(
-                                                                                i +
-                                                                                    1
-                                                                            ),
-                                                                        ].sort(
-                                                                            (
-                                                                                a,
-                                                                                b
-                                                                            ) => {
-                                                                                return (
-                                                                                    a.groep_id -
-                                                                                    b.groep_id
-                                                                                )
-                                                                            }
-                                                                        )
-                                                                    }
-
-                                                                    return [
-                                                                        ...oldGroups.slice(
-                                                                            0,
-                                                                            i
-                                                                        ),
-                                                                        newgroup,
-                                                                        ...oldGroups.slice(
-                                                                            i +
-                                                                                1
-                                                                        ),
-                                                                    ].sort(
-                                                                        (
-                                                                            a,
-                                                                            b
-                                                                        ) => {
-                                                                            return (
-                                                                                a.groep_id -
-                                                                                b.groep_id
-                                                                            )
-                                                                        }
-                                                                    )
-                                                                }
-                                                            }
-                                                            return oldGroups
-                                                        }
-                                                    )
-                                                }
-
-                                                const handleLeave = () => {
-                                                    setGroups((oldGroups) => {
-                                                        if (user == undefined) {
-                                                            return oldGroups
-                                                        }
-                                                        for (
-                                                            let i = 0;
-                                                            i <
-                                                            oldGroups.length;
-                                                            i++
-                                                        ) {
-                                                            if (
-                                                                oldGroups[i]
-                                                                    .groep_id ==
-                                                                group.groep_id
-                                                            ) {
-                                                                const newgroup =
-                                                                    {
-                                                                        groep_id:
-                                                                            group.groep_id,
-                                                                        project:
-                                                                            group.project,
-                                                                        studenten:
-                                                                            group.studenten.filter(
-                                                                                (
-                                                                                    student
-                                                                                ) =>
-                                                                                    student !=
-                                                                                    user.user
-                                                                            ),
-                                                                    }
-                                                                instance
-                                                                    .patch(
-                                                                        'groepen/' +
-                                                                            group.groep_id +
-                                                                            '/',
-                                                                        {
-                                                                            studenten:
-                                                                                group.studenten.filter(
-                                                                                    (
-                                                                                        student
-                                                                                    ) =>
-                                                                                        student !=
+                                                                                    ].studenten.includes(
                                                                                         user.user
-                                                                                ),
-                                                                        }
-                                                                    )
-                                                                    .catch(
-                                                                        (
-                                                                            err
-                                                                        ) => {
-                                                                            console.log(
-                                                                                err
-                                                                            )
-                                                                        }
-                                                                    )
-
-                                                                return [
-                                                                    ...oldGroups.slice(
-                                                                        0,
-                                                                        i
-                                                                    ),
-                                                                    newgroup,
-                                                                    ...oldGroups.slice(
-                                                                        i + 1
-                                                                    ),
-                                                                ].sort(
-                                                                    (a, b) => {
-                                                                        return (
-                                                                            a.groep_id -
-                                                                            b.groep_id
-                                                                        )
-                                                                    }
-                                                                )
-                                                            }
-                                                        }
-                                                        return oldGroups
-                                                    })
-                                                }
-
-                                                return (
-                                                    <>
-                                                        <Divider />
-                                                        <ListItem
-                                                            sx={{
-                                                                width: '100%',
-                                                                minheight: 30,
-                                                            }}
-                                                        >
-                                                            <EvenlySpacedRow
-                                                                items={[
-                                                                    <ListItemText
-                                                                        primary={
-                                                                            groups.indexOf(
-                                                                                group
-                                                                            ) +
-                                                                            1
-                                                                        }
-                                                                    />,
-                                                                    <Box
-                                                                        display={
-                                                                            'flex'
-                                                                        }
-                                                                        flexDirection={
-                                                                            'column'
-                                                                        }
-                                                                    >
-                                                                        {loading ? (
-                                                                            <Typography>
-                                                                                {t(
-                                                                                    'members_loading'
-                                                                                )}
-                                                                            </Typography>
-                                                                        ) : (
-                                                                            <>
-                                                                                {group
-                                                                                    .studenten
-                                                                                    .length >
-                                                                                0 ? (
-                                                                                    group.studenten.map(
-                                                                                        (
-                                                                                            studentid
-                                                                                        ) => {
-                                                                                            const student =
-                                                                                                studenten[
-                                                                                                    studentid
+                                                                                    )
+                                                                                ) {
+                                                                                    const newgroup1 =
+                                                                                        {
+                                                                                            groep_id:
+                                                                                                oldGroups[
+                                                                                                    i
                                                                                                 ]
-                                                                                            if (
-                                                                                                student
-                                                                                            ) {
+                                                                                                    .groep_id,
+                                                                                            project:
+                                                                                                oldGroups[
+                                                                                                    i
+                                                                                                ]
+                                                                                                    .project,
+                                                                                            studenten:
+                                                                                                oldGroups[
+                                                                                                    i
+                                                                                                ].studenten.filter(
+                                                                                                    (
+                                                                                                        student
+                                                                                                    ) =>
+                                                                                                        student !=
+                                                                                                        user.user
+                                                                                                ),
+                                                                                        }
+
+                                                                                    instance
+                                                                                        .patch(
+                                                                                            'groepen/' +
+                                                                                                oldGroups[
+                                                                                                    i
+                                                                                                ]
+                                                                                                    .groep_id +
+                                                                                                '/',
+                                                                                            {
+                                                                                                studenten:
+                                                                                                    oldGroups[
+                                                                                                        i
+                                                                                                    ].studenten.filter(
+                                                                                                        (
+                                                                                                            student
+                                                                                                        ) =>
+                                                                                                            student !=
+                                                                                                            user.user
+                                                                                                    ),
+                                                                                            }
+                                                                                        )
+                                                                                        .catch(
+                                                                                            (
+                                                                                                err
+                                                                                            ) => {
                                                                                                 console.log(
-                                                                                                    'Student:',
-                                                                                                    student
-                                                                                                )
-                                                                                                return (
-                                                                                                    <Typography
-                                                                                                        key={
-                                                                                                            studentid
-                                                                                                        }
-                                                                                                    >
-                                                                                                        {student.first_name +
-                                                                                                            ' ' +
-                                                                                                            student.last_name}
-                                                                                                    </Typography>
+                                                                                                    err
                                                                                                 )
                                                                                             }
-                                                                                            return null
+                                                                                        )
+                                                                                    j =
+                                                                                        i
+                                                                                    edittedgroup =
+                                                                                        newgroup1
+                                                                                }
+                                                                            }
+
+                                                                            for (
+                                                                                let i = 0;
+                                                                                i <
+                                                                                oldGroups.length;
+                                                                                i++
+                                                                            ) {
+                                                                                if (
+                                                                                    oldGroups[
+                                                                                        i
+                                                                                    ]
+                                                                                        .groep_id ==
+                                                                                    group.groep_id
+                                                                                ) {
+                                                                                    if (
+                                                                                        group
+                                                                                            .studenten
+                                                                                            .length >=
+                                                                                        assignment.max_groep_grootte
+                                                                                    ) {
+                                                                                        return oldGroups
+                                                                                    }
+                                                                                    const newgroup =
+                                                                                        {
+                                                                                            groep_id:
+                                                                                                group.groep_id,
+                                                                                            project:
+                                                                                                group.project,
+                                                                                            studenten:
+                                                                                                [
+                                                                                                    ...group.studenten,
+                                                                                                    user.user,
+                                                                                                ],
+                                                                                        }
+                                                                                    instance
+                                                                                        .patch(
+                                                                                            'groepen/' +
+                                                                                                group.groep_id +
+                                                                                                '/',
+                                                                                            {
+                                                                                                studenten:
+                                                                                                    [
+                                                                                                        ...group.studenten,
+                                                                                                        user.user,
+                                                                                                    ],
+                                                                                            }
+                                                                                        )
+                                                                                        .catch(
+                                                                                            (
+                                                                                                err
+                                                                                            ) => {
+                                                                                                console.log(
+                                                                                                    err
+                                                                                                )
+                                                                                            }
+                                                                                        )
+
+                                                                                    if (
+                                                                                        edittedgroup !=
+                                                                                        undefined
+                                                                                    ) {
+                                                                                        if (
+                                                                                            i <
+                                                                                            j
+                                                                                        ) {
+                                                                                            return [
+                                                                                                ...oldGroups.slice(
+                                                                                                    0,
+                                                                                                    i
+                                                                                                ),
+                                                                                                newgroup,
+                                                                                                ...oldGroups.slice(
+                                                                                                    i +
+                                                                                                        1,
+                                                                                                    j
+                                                                                                ),
+                                                                                                edittedgroup,
+                                                                                                ...oldGroups.slice(
+                                                                                                    j +
+                                                                                                        1
+                                                                                                ),
+                                                                                            ].sort(
+                                                                                                (
+                                                                                                    a,
+                                                                                                    b
+                                                                                                ) => {
+                                                                                                    return (
+                                                                                                        a.groep_id -
+                                                                                                        b.groep_id
+                                                                                                    )
+                                                                                                }
+                                                                                            )
+                                                                                        }
+                                                                                        return [
+                                                                                            ...oldGroups.slice(
+                                                                                                0,
+                                                                                                j
+                                                                                            ),
+                                                                                            edittedgroup,
+                                                                                            ...oldGroups.slice(
+                                                                                                j +
+                                                                                                    1,
+                                                                                                i
+                                                                                            ),
+                                                                                            newgroup,
+                                                                                            ...oldGroups.slice(
+                                                                                                i +
+                                                                                                    1
+                                                                                            ),
+                                                                                        ].sort(
+                                                                                            (
+                                                                                                a,
+                                                                                                b
+                                                                                            ) => {
+                                                                                                return (
+                                                                                                    a.groep_id -
+                                                                                                    b.groep_id
+                                                                                                )
+                                                                                            }
+                                                                                        )
+                                                                                    }
+
+                                                                                    return [
+                                                                                        ...oldGroups.slice(
+                                                                                            0,
+                                                                                            i
+                                                                                        ),
+                                                                                        newgroup,
+                                                                                        ...oldGroups.slice(
+                                                                                            i +
+                                                                                                1
+                                                                                        ),
+                                                                                    ].sort(
+                                                                                        (
+                                                                                            a,
+                                                                                            b
+                                                                                        ) => {
+                                                                                            return (
+                                                                                                a.groep_id -
+                                                                                                b.groep_id
+                                                                                            )
                                                                                         }
                                                                                     )
-                                                                                ) : (
-                                                                                    <Typography>
-                                                                                        {t(
-                                                                                            'no_members_yet'
-                                                                                        )}
-                                                                                    </Typography>
-                                                                                )}
-                                                                            </>
-                                                                        )}
-                                                                    </Box>,
-                                                                    <>
-                                                                        {joinLeaveButton(
-                                                                            user !=
+                                                                                }
+                                                                            }
+                                                                            return oldGroups
+                                                                        }
+                                                                    )
+                                                                }
+
+                                                            const handleLeave =
+                                                                () => {
+                                                                    setGroups(
+                                                                        (
+                                                                            oldGroups
+                                                                        ) => {
+                                                                            if (
+                                                                                user ==
                                                                                 undefined
-                                                                                ? group.studenten.includes(
-                                                                                      user.user
-                                                                                  )
-                                                                                : false,
-                                                                                group.studenten.length === assignment?.max_groep_grootte
-                                                                                && !(user !=
-                                                                                undefined
-                                                                                ? group.studenten.includes(
-                                                                                      user.user
-                                                                                  )
-                                                                                : false),
-                                                                            handleJoin,
-                                                                            handleLeave
-                                                                        )}
-                                                                    </>,
-                                                                ]}
-                                                            />
-                                                        </ListItem>
-                                                    </>
-                                                )
-                                            })}
+                                                                            ) {
+                                                                                return oldGroups
+                                                                            }
+                                                                            for (
+                                                                                let i = 0;
+                                                                                i <
+                                                                                oldGroups.length;
+                                                                                i++
+                                                                            ) {
+                                                                                if (
+                                                                                    oldGroups[
+                                                                                        i
+                                                                                    ]
+                                                                                        .groep_id ==
+                                                                                    group.groep_id
+                                                                                ) {
+                                                                                    const newgroup =
+                                                                                        {
+                                                                                            groep_id:
+                                                                                                group.groep_id,
+                                                                                            project:
+                                                                                                group.project,
+                                                                                            studenten:
+                                                                                                group.studenten.filter(
+                                                                                                    (
+                                                                                                        student
+                                                                                                    ) =>
+                                                                                                        student !=
+                                                                                                        user.user
+                                                                                                ),
+                                                                                        }
+                                                                                    instance
+                                                                                        .patch(
+                                                                                            'groepen/' +
+                                                                                                group.groep_id +
+                                                                                                '/',
+                                                                                            {
+                                                                                                studenten:
+                                                                                                    group.studenten.filter(
+                                                                                                        (
+                                                                                                            student
+                                                                                                        ) =>
+                                                                                                            student !=
+                                                                                                            user.user
+                                                                                                    ),
+                                                                                            }
+                                                                                        )
+                                                                                        .catch(
+                                                                                            (
+                                                                                                err
+                                                                                            ) => {
+                                                                                                console.log(
+                                                                                                    err
+                                                                                                )
+                                                                                            }
+                                                                                        )
+
+                                                                                    return [
+                                                                                        ...oldGroups.slice(
+                                                                                            0,
+                                                                                            i
+                                                                                        ),
+                                                                                        newgroup,
+                                                                                        ...oldGroups.slice(
+                                                                                            i +
+                                                                                                1
+                                                                                        ),
+                                                                                    ].sort(
+                                                                                        (
+                                                                                            a,
+                                                                                            b
+                                                                                        ) => {
+                                                                                            return (
+                                                                                                a.groep_id -
+                                                                                                b.groep_id
+                                                                                            )
+                                                                                        }
+                                                                                    )
+                                                                                }
+                                                                            }
+                                                                            return oldGroups
+                                                                        }
+                                                                    )
+                                                                }
+
+                                                            return (
+                                                                <>
+                                                                    <Divider />
+                                                                    <ListItem
+                                                                        sx={{
+                                                                            width: '100%',
+                                                                            minheight: 30,
+                                                                        }}
+                                                                    >
+                                                                        <EvenlySpacedRow
+                                                                            items={[
+                                                                                <ListItemText
+                                                                                    primary={
+                                                                                        groups.indexOf(
+                                                                                            group
+                                                                                        ) +
+                                                                                        1
+                                                                                    }
+                                                                                />,
+                                                                                <Box
+                                                                                    display={
+                                                                                        'flex'
+                                                                                    }
+                                                                                    flexDirection={
+                                                                                        'column'
+                                                                                    }
+                                                                                >
+                                                                                    {loading ? (
+                                                                                        <Typography>
+                                                                                            {t(
+                                                                                                'members_loading'
+                                                                                            )}
+                                                                                        </Typography>
+                                                                                    ) : (
+                                                                                        <>
+                                                                                            {group
+                                                                                                .studenten
+                                                                                                .length >
+                                                                                            0 ? (
+                                                                                                group.studenten.map(
+                                                                                                    (
+                                                                                                        studentid
+                                                                                                    ) => {
+                                                                                                        const student =
+                                                                                                            studenten[
+                                                                                                                studentid
+                                                                                                            ]
+                                                                                                        if (
+                                                                                                            student
+                                                                                                        ) {
+                                                                                                            console.log(
+                                                                                                                'Student:',
+                                                                                                                student
+                                                                                                            )
+                                                                                                            return (
+                                                                                                                <Typography
+                                                                                                                    key={
+                                                                                                                        studentid
+                                                                                                                    }
+                                                                                                                >
+                                                                                                                    {student.first_name +
+                                                                                                                        ' ' +
+                                                                                                                        student.last_name}
+                                                                                                                </Typography>
+                                                                                                            )
+                                                                                                        }
+                                                                                                        return null
+                                                                                                    }
+                                                                                                )
+                                                                                            ) : (
+                                                                                                <Typography>
+                                                                                                    {t(
+                                                                                                        'no_members_yet'
+                                                                                                    )}
+                                                                                                </Typography>
+                                                                                            )}
+                                                                                        </>
+                                                                                    )}
+                                                                                </Box>,
+                                                                                <>
+                                                                                    {joinLeaveButton(
+                                                                                        user !=
+                                                                                            undefined
+                                                                                            ? group.studenten.includes(
+                                                                                                  user.user
+                                                                                              )
+                                                                                            : false,
+                                                                                        group
+                                                                                            .studenten
+                                                                                            .length ===
+                                                                                            assignment?.max_groep_grootte &&
+                                                                                            !(user !=
+                                                                                            undefined
+                                                                                                ? group.studenten.includes(
+                                                                                                      user.user
+                                                                                                  )
+                                                                                                : false),
+                                                                                        handleJoin,
+                                                                                        handleLeave
+                                                                                    )}
+                                                                                </>,
+                                                                            ]}
+                                                                        />
+                                                                    </ListItem>
+                                                                </>
+                                                            )
+                                                        }
+                                                    )}
+                                                </>
+                                            )}
                                         </List>
 
                                         <Dialog
