@@ -79,5 +79,6 @@ jobs:
     - name: Run Frontend Tests
       run: |
         cd frontend/frontend
+        npm install --save-dev cypress
         npm run cypress-component
         cd ../..
