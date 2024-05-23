@@ -1277,6 +1277,7 @@ export function AssignmentPage() {
                                                         title={t('upload')}
                                                     >
                                                         <SecondaryButton
+                                                            id='submit'
                                                             onClick={
                                                                 uploadIndiening
                                                             }

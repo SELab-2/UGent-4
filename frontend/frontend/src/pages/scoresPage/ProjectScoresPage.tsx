@@ -420,6 +420,7 @@ export function ProjectScoresPage() {
                                                     title={t('save_scores')}
                                                 >
                                                     <IconButton
+                                                        id='saveScores'
                                                         onClick={() =>
                                                             setOpenSaveScoresPopup(
                                                                 true

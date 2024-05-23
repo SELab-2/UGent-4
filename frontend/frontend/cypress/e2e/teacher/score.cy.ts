@@ -7,7 +7,10 @@ describe('assign scores to submissions', () => {
         cy.contains('test course').click()
         cy.contains('test project').click()
         cy.get('#adjustScores').click()
-
-        // TODO adjust the scores
+        cy.get('#score').type('10')
+        cy.get('#saveScores').click()
+        cy.get('#confirm').click()
+        // check if the score is assigned
+        cy.contains('10/30').should('exist')
     }) 
 })

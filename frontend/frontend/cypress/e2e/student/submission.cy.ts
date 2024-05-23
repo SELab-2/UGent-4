@@ -6,7 +6,8 @@ describe('submit files for an assignment', () => {
     it('submit', () => {
         cy.contains('test course').click()
         cy.contains('test project').click()
-
-        // TODO submit files
+        cy.get('#uploadButton').selectFile('cypress/fixtures/test.pdf')
+        cy.contains('test.pdf')
+        cy.get('#submit').click()
     }) 
 })

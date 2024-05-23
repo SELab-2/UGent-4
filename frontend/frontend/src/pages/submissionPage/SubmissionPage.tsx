@@ -135,20 +135,19 @@ export function SubmissionPage() {
                 //Get the submission file
                 const newSubmission: Submission = submissionResponse.data
 
-                if (newSubmission.result !== 'No tests: OK') {
-                    const regex = /Testing (.*)$/
-                    const matches = newSubmission.result.match(regex)
-                    if (matches !== null) {
-                        matches.map((match) => {
-                            match.replace(':', '\n')
-                            return match
-                        })
-                    }
+                if (
+                    newSubmission.status !== SubmissionStatus.PENDING &&
+                    newSubmission.result !== 'No tests: OK'
+                ) {
+                    const match = newSubmission.result.match(/Testing.*/)
+                    newSubmission.result = match
+                        ? match[0]
+                        : newSubmission.result
                 }
                 newSubmission.filename =
                     submissionResponse.data.bestand.replace(/^.*[\\/]/, '')
                 newSubmission.bestand = await instance
-                    .get(`/indieningen/${submissionId}/indiening_bestand`, {
+                    .get(`/indieningen/${submissionId}/indiening_bestand/`, {
                         responseType: 'blob',
                     })
                     .then((res) => {
@@ -225,9 +224,11 @@ export function SubmissionPage() {
         }
 
         // Fetch students
-        fetchStudents().catch((error) =>
-            console.error('Error fetching students data:', error)
-        )
+        if (submission) {
+            fetchStudents().catch((error) =>
+                console.error('Error fetching students data:', error)
+            )
+        }
     }, [submission])
 
     if (fetchError) {
@@ -432,9 +433,10 @@ export function SubmissionPage() {
                                                                         'bold'
                                                                     }
                                                                 >
-                                                                    {
-                                                                        restriction.script
-                                                                    }
+                                                                    {restriction.script.replace(
+                                                                        /^.*[\\/]/,
+                                                                        ''
+                                                                    )}
                                                                 </Typography>
                                                                 <Typography
                                                                     variant={
@@ -451,8 +453,8 @@ export function SubmissionPage() {
                                                                     }
                                                                 >
                                                                     {restriction.moet_slagen
-                                                                        ? 'Moet slagen'
-                                                                        : 'Mag falen'}
+                                                                        ? t('must_pass')
+                                                                        : t('may_fail')}
                                                                 </Typography>
                                                                 {restriction.artifact && (
                                                                     <Button
