@@ -386,10 +386,14 @@ export function AddChangeAssignmentPage() {
     // Upload the assignment to the API. patch if it is an edit, post if it is a new assignment.
     const uploadAssignment = async () => {
         let optionalFile: File | null = null
+        const formData = new FormData()
+
         if (assignmentFile !== undefined) {
             optionalFile = assignmentFile
+        } else {
+            formData.append('opgave_bestand', '')
         }
-        const formData = new FormData()
+
         formData.append('titel', title)
         formData.append('beschrijving', description)
         formData.append('vak', parseInt(courseId as string).toString())
