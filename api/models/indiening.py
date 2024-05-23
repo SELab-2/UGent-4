@@ -81,7 +81,6 @@ class Indiening(models.Model):
                 "temp", f"indiening_{self.indiening_id}"
             )
             default_storage.save(new_path, ContentFile(old_file.read()))
-            old_file.storage.delete(old_file.name)
             self.bestand.name = new_path
 
         super(Indiening, self).save(*args, **kwargs)
