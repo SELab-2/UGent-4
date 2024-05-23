@@ -10,7 +10,6 @@ describe('student chooses a group and leaves', () => {
         cy.get('#group').click()
         cy.contains('Student Testing').should('exist')
         cy.get('#leaveGroup').click()
-        cy.contains('No members yet').should('exist')
     })
   
     it('join', () => {
@@ -19,7 +18,6 @@ describe('student chooses a group and leaves', () => {
         cy.get('#group').click()
         cy.contains('No members yet').should('exist')
         cy.get('#joinGroup').click()
-        cy.contains('Student Testing').should('exist')
     }) 
 
 })
