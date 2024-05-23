@@ -442,8 +442,8 @@ export function SubmissionPage() {
                                                                     }
                                                                 >
                                                                     {restriction.moet_slagen
-                                                                        ? 'Moet slagen'
-                                                                        : 'Mag falen'}
+                                                                        ? t('may_fail')
+                                                                        : t('must_pass')}
                                                                 </Typography>
                                                                 {restriction.artifact && (
                                                                     <Button
