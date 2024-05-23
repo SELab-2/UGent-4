@@ -267,6 +267,7 @@ export default function RestrictionsDialog({
             >
                 <Box
                     sx={{
+                        maxWidth: '40%',
                         maxHeight: 150,
                         overflowY: 'auto',
                     }}

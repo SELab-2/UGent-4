@@ -56,7 +56,6 @@ export default function AddRestrictionButton({
                 open={open}
                 onClose={handleClose}
                 scroll={scroll}
-                sx={{ maxWidth: '40%', minWidth: '60%' }}
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >
