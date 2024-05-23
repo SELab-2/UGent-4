@@ -4,7 +4,7 @@ from rest_framework import status
 
 from api.models.groep import Groep
 from api.serializers.groep import GroepSerializer
-from api.utils import has_permissions, contains
+from api.utils import has_permissions
 
 
 @api_view(["GET", "POST"])
@@ -78,17 +78,16 @@ def groep_detail(request, id, format=None):
         serializer = GroepSerializer(groep)
         return Response(serializer.data)
 
-    if has_permissions(request.user) or contains(groep.studenten, request.user):
-        if request.method in ["PUT", "PATCH"]:
-            if request.method == "PUT":
-                serializer = GroepSerializer(groep, data=request.data)
-            else:
-                serializer = GroepSerializer(groep, data=request.data, partial=True)
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+    if request.method in ["PUT", "PATCH"]:
+        if request.method == "PUT":
+            serializer = GroepSerializer(groep, data=request.data)
+        else:
+            serializer = GroepSerializer(groep, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     if has_permissions(request.user):
         if request.method == "DELETE":
             groep.delete()
