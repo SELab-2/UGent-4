@@ -121,10 +121,12 @@ class GroepSerializerTest(APITestCase):
     def test_update_invalid_project(self):
         project = ProjectFactory.create(vak=self.groep.project.vak)
         data = self.serializer.data
+        current = data["project"]
         data["project"] = project.project_id
         serializer = GroepSerializer(instance=self.groep, data=data, partial=True)
         self.assertTrue(serializer.is_valid())
-        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
+        serializer.save()
+        self.assertEqual(self.groep.project.project_id, current)
 
     def test_update_invalid_user_already_in_this_group(self):
         data = self.serializer.data

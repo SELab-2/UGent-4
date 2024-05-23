@@ -1,28 +1,35 @@
 import {
-    Box,
+    Button,
+    Card,
     Divider,
+    EvenlySpacedRow,
+    SecondaryButton,
+} from '../../components/CustomComponents.tsx'
+
+import {
+    Box,
+    CircularProgress,
     IconButton,
-    ListItemButton,
+    ListItem,
     ListItemText,
+    Skeleton,
     Stack,
     TextField,
+    Tooltip,
     Typography,
 } from '@mui/material'
-import Button from '@mui/material/Button'
-import { Header } from '../../components/Header.tsx'
-import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { Header } from '../../components/Header'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import List from '@mui/material/List'
 import { t } from 'i18next'
 import 'dayjs/locale/nl'
 import FileUploadButton from '../../components/FileUploadButton'
 import ClearIcon from '@mui/icons-material/Clear'
-
 import Dialog from '@mui/material/Dialog'
-
 import instance from '../../axiosConfig.ts'
-
-import Papa from 'papaparse'
+import Papa, { ParseResult } from 'papaparse'
+import WarningPopup from '../../components/WarningPopup.tsx'
 
 export interface User {
     user: number
@@ -32,67 +39,271 @@ export interface User {
     email: string
 }
 
+interface errorChecks {
+    title: boolean
+}
+
+// This function takes a list of users and will render it.
+// It can be used for both the teachers and the students.
+function UserList(
+    loading: boolean,
+    users: User[],
+    setSelected: React.Dispatch<React.SetStateAction<number>>,
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>,
+    handleRemove: () => void
+) {
+    return (
+        <Box marginTop={3}>
+            <List
+                disablePadding={true}
+                sx={{
+                    minHeight: '30vh',
+                    maxHeight: '30vh',
+                    overflowY: 'auto',
+                }}
+            >
+                {loading ? (
+                    [...Array(5)].map((_, index) => (
+                        <ListItem key={index} sx={{ padding: 0, margin: 0 }}>
+                            <Skeleton
+                                variant={'text'}
+                                width={'100%'}
+                                height={60}
+                            />
+                        </ListItem>
+                    ))
+                ) : (
+                    <>
+                        {users.map((user) => {
+                            const handleClickOpen = () => {
+                                setSelected(user.user)
+
+                                if (user.is_lesgever) {
+                                    setOpen(true)
+                                } else {
+                                    handleRemove()
+                                }
+                            }
+                            {
+                                /* The list of users is mapped onto buttons
+                    This makes it possible to click through on a person. */
+                            }
+                            return (
+                                <>
+                                    <Divider />
+                                    <ListItem
+                                        disabled={
+                                            users.length == 1 &&
+                                            users[0].is_lesgever
+                                        }
+                                    >
+                                        <EvenlySpacedRow
+                                            items={[
+                                                <ListItemText
+                                                    primary={
+                                                        user.first_name +
+                                                        ' ' +
+                                                        user.last_name
+                                                    }
+                                                />,
+                                                <Box
+                                                    display={'flex'}
+                                                    flexDirection={'row'}
+                                                    gap={1}
+                                                    alignItems={'center'}
+                                                >
+                                                    <ListItemText
+                                                        sx={{
+                                                            textOverflow:
+                                                                'ellipsis',
+                                                        }}
+                                                        primary={user.email}
+                                                    />
+                                                    <IconButton
+                                                        disabled={
+                                                            users.length == 1 &&
+                                                            users[0].is_lesgever
+                                                        }
+                                                        aria-label={
+                                                            'delete_file'
+                                                        }
+                                                        size={'small'}
+                                                        onClick={
+                                                            handleClickOpen
+                                                        }
+                                                        sx={{
+                                                            '&:disabled': {
+                                                                color: 'text.primary',
+                                                            },
+                                                            color: 'error.main',
+                                                        }}
+                                                    >
+                                                        <ClearIcon />
+                                                    </IconButton>
+                                                </Box>,
+                                            ]}
+                                        />
+                                    </ListItem>
+                                </>
+                            )
+                        })}
+                    </>
+                )}
+            </List>
+        </Box>
+    )
+}
+
+// This function will render the UI for adding extra students or teachers.
+// It can either be done by uploading a file or by typing in the email.
+function UploadPart(
+    file: File | undefined,
+    handleFileChange: (e: ChangeEvent<HTMLInputElement>) => void,
+    setEmail: React.Dispatch<React.SetStateAction<string>>,
+    handleAdd: () => void,
+    str: string,
+    textFieldRef: React.RefObject<HTMLInputElement>
+) {
+    return (
+        <>
+            <Box display={'flex'} flexDirection={'column'} padding={'10px'}>
+                <Stack direction={'column'} spacing={2}>
+                    <Stack direction={'row'} spacing={2} alignItems="center">
+                        <Box>
+                            {/* This box allows you to add extra people by their email. */}
+                            <TextField
+                                id='email'
+                                type="text"
+                                placeholder={t('email')}
+                                onChange={(event) =>
+                                    setEmail(event.target.value)
+                                }
+                                inputRef={textFieldRef}
+                            />
+                        </Box>
+                        <Box>
+                            <SecondaryButton id='add' size={'small'} onClick={handleAdd}>
+                                {t('add')}
+                            </SecondaryButton>
+                        </Box>
+                    </Stack>
+                    <FileUploadButton
+                        name={str}
+                        fileTypes={['.csv']}
+                        tooltip={t('uploadToolTip')}
+                        onFileChange={handleFileChange}
+                        path={file != null ? file : undefined}
+                    />
+                </Stack>
+            </Box>
+        </>
+    )
+}
+
+// When you try to delete someone from the list, a pop-up will appear.
+// This pop-up will ask you if you are sure you want to delete the person.
+// This function will render the pop-up.
+function DialogWindow(
+    handleClose: () => void,
+    open: boolean,
+    handleRemove: () => void,
+    str: string
+) {
+    return (
+        <>
+            <Dialog onClose={handleClose} open={open}>
+                <Box padding={2} alignItems={'center'} gap={1}>
+                    <Typography> {str + '?'} </Typography>
+                    <Box display={'flex'} flexDirection={'row'}>
+                        <SecondaryButton size={'small'} onClick={handleClose}>
+                            {t('cancel')}
+                        </SecondaryButton>
+                        <Box padding={'7px'} />
+                        <Button size={'small'} onClick={handleRemove}>
+                            {t('delete')}
+                        </Button>
+                    </Box>
+                </Box>
+            </Dialog>
+        </>
+    )
+}
+
 export function AddChangeSubjectPage() {
     const params = useParams()
+    const navigate = useNavigate()
+
     // State for the different fields of the subject
-    const [title, setTitle] = useState('')
-    const [emailStudent, setEmailStudent] = useState('')
-    const [emailTeacher, setEmailTeacher] = useState('')
+    const [title, setTitle] = useState<string>('')
+    const [emailStudent, setEmailStudent] = useState<string>('')
+    const [emailTeacher, setEmailTeacher] = useState<string>('')
     const [students, setStudents] = useState<User[]>([])
     const [teachers, setTeachers] = useState<User[]>([])
-    const [selectedStudent, setSelectedStudent] = useState(0)
-    const [openStudent, setOpenStudent] = useState(false)
-    const [selectedTeacher, setSelectedTeacher] = useState(0)
-    const [openTeacher, setOpenTeacher] = useState(false)
-    const [studentFile, setStudentFile] = useState<File | undefined>()
-    const [teacherFile, setTeacherFile] = useState<File | undefined>()
-    const vakID = params.courseId
+    const [selectedStudent, setSelectedStudent] = useState<number>(0)
+    const [openStudent, setOpenStudent] = useState<boolean>(false)
+    const [selectedTeacher, setSelectedTeacher] = useState<number>(0)
+    const [openTeacher, setOpenTeacher] = useState<boolean>(false)
+    const [studentFile, setStudentFile] = useState<File>()
+    const [teacherFile, setTeacherFile] = useState<File>()
+    const [user, setUser] = useState<User>()
+    const studentRef = useRef<HTMLInputElement>(null)
+    const teacherRef = useRef<HTMLInputElement>(null)
 
-    const handleCloseStudent = () => {
-        setOpenStudent(false)
-    }
+    const [vakID, setVakID] = useState(params.courseId)
 
-    const handleRemoveStudent = () => {
-        setStudents((oldstudents) => {
-            for (let i = 0; i < oldstudents.length; i++) {
-                if (oldstudents[i].user == selectedStudent) {
-                    oldstudents.splice(i, 1)
-                    return oldstudents
-                }
-            }
-            return oldstudents
+    // state for spinners
+    const [loading, setLoading] = useState(false)
+    const [userLoading, setUserLoading] = useState(true)
+
+    const [saveConfirmation, setSaveConfirmation] = useState(false)
+    const [cancelConfirmation, setCancelConfirmation] = useState(false)
+
+    const [assignmentErrors, setAssignmentErrors] = useState<errorChecks>({
+        title: false,
+    })
+
+    const handleSubmit = () => {
+        setAssignmentErrors({
+            title: title === '',
         })
+        if (title === '') {
+            return
+        }
+        setSaveConfirmation(true)
+    }
+
+    const closeSaveConfirmation = () => {
+        setSaveConfirmation(false)
+    }
+
+    const closeCancel = () => {
+        setCancelConfirmation(false)
+    }
+
+    const handleCloseStudent = (): void => {
         setOpenStudent(false)
     }
 
-    const handleAddStudent = () => {
+    const handleRemoveStudent = (): void => {
+        const newstudents = students.filter(
+            (student) => student.user != selectedStudent
+        )
+
+        setStudents(newstudents)
+
+        setOpenStudent(false)
+    }
+
+    const handleAddStudent = (): void => {
         instance
             .get('gebruikers/?email=' + emailStudent)
             .then((res) => {
                 setStudents((oldstudents) => {
                     if (res.data.length == 0) {
+                        alert(t('this_user_doesnt_exist'))
                         return oldstudents
                     }
-
-                    //This is like this to prevent the same user being in the list twice
-                    let found = false
-
-                    const data = res.data[0]
-
-                    const id = data.user
-                    if (data.is_lesgever) {
-                        return oldstudents
-                    }
-                    for (const student of oldstudents) {
-                        if (student.user == id) {
-                            found = true
-                        }
-                    }
-                    if (found) {
-                        return oldstudents
-                    } else {
-                        return [...oldstudents, data]
-                    }
+                    return addUser(false, res.data[0], oldstudents)
                 })
             })
             .catch((err) => {
@@ -100,10 +311,19 @@ export function AddChangeSubjectPage() {
             })
 
         handleUploadStudent()
+
+        if (studentRef.current) {
+            studentRef.current.value = ''
+            setEmailStudent('')
+        }
     }
 
-    const handleStudentFileChange = (e) => {
-        if (e.target.files.length) {
+    const handleStudentFileChange = (
+        e: ChangeEvent<HTMLInputElement>
+    ): void => {
+        if (e.target.files == null) {
+            setStudentFile(undefined)
+        } else if (e.target.files.length) {
             const inputFile = e.target.files[0]
             setStudentFile(inputFile)
         } else {
@@ -112,14 +332,20 @@ export function AddChangeSubjectPage() {
         }
     }
 
-    const handleUploadStudent = () => {
+    const handleUploadStudent = (): void => {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            const csv = Papa.parse(target.result, {
+            if (target == null) {
+                return
+            }
+            if (typeof target.result != 'string') {
+                return
+            }
+            const csv: ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
-
+            // This will loop through the csv file and add the students to the list.
             for (let i = 0; i < csv.data.length; i++) {
                 if (csv.data[i].email != '') {
                     instance
@@ -130,25 +356,7 @@ export function AddChangeSubjectPage() {
                                     return oldstudents
                                 }
 
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-
-                                const data = res.data[0]
-
-                                const id = data.user
-                                if (data.is_lesgever) {
-                                    return oldstudents
-                                }
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
-                                    }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, data]
-                                }
+                                return addUser(false, res.data[0], oldstudents)
                             })
                         })
                         .catch((err) => {
@@ -157,65 +365,57 @@ export function AddChangeSubjectPage() {
                 }
             }
         }
-
-        reader.readAsText(studentFile)
+        if (studentFile != undefined) {
+            reader.readAsText(studentFile)
+        }
     }
 
-    const handleCloseTeacher = () => {
+    const handleCloseTeacher = (): void => {
         setOpenTeacher(false)
     }
 
+    // This function will remove a teacher from the list.
+    // It does so by looping through the list and removing the teacher with the correct ID.
     const handleRemoveTeacher = () => {
-        setTeachers((oldteacher) => {
-            for (let i = 0; i < oldteacher.length; i++) {
-                if (oldteacher[i].user == selectedTeacher) {
-                    oldteacher.splice(i, 1)
-                    return oldteacher
-                }
-            }
-            return oldteacher
-        })
+        const newTeachers = teachers.filter(
+            (teacher) => teacher.user != selectedTeacher
+        )
+        setTeachers(newTeachers)
         setOpenTeacher(false)
     }
 
-    const handleAddTeacher = () => {
+    const handleAddTeacher = (): void => {
         instance
             .get('gebruikers/?email=' + emailTeacher)
             .then((res) => {
-                setTeachers((oldteacher) => {
+                setTeachers((oldteachers) => {
                     //This is like this to prevent the same user being in the list twice
 
                     if (res.data.length == 0) {
-                        return oldteacher
+                        alert(t('this_user_doesnt_exist'))
+                        return oldteachers
                     }
 
-                    const data = res.data[0]
-
-                    let found = false
-                    const id = data.user
-                    if (!data.is_lesgever) {
-                        return oldteacher
-                    }
-                    for (const teacher of oldteacher) {
-                        if (teacher.user == id) {
-                            found = true
-                        }
-                    }
-                    if (found) {
-                        return oldteacher
-                    } else {
-                        return [...oldteacher, data]
-                    }
+                    return addUser(true, res.data[0], oldteachers)
                 })
             })
             .catch((err) => {
                 console.log(err)
             })
         handleUploadTeacher()
+
+        if (teacherRef.current) {
+            teacherRef.current.value = ''
+            setEmailTeacher('')
+        }
     }
 
-    const handleTeacherFileChange = (e) => {
-        if (e.target.files.length) {
+    const handleTeacherFileChange = (
+        e: ChangeEvent<HTMLInputElement>
+    ): void => {
+        if (e.target.files == null) {
+            setTeacherFile(undefined)
+        } else if (e.target.files.length) {
             const inputFile = e.target.files[0]
             setTeacherFile(inputFile)
         } else {
@@ -224,14 +424,22 @@ export function AddChangeSubjectPage() {
         }
     }
 
-    const handleUploadTeacher = () => {
+    // This function will upload a file with teachers.
+    const handleUploadTeacher = (): void => {
         const reader = new FileReader()
 
         reader.onload = async ({ target }) => {
-            const csv = Papa.parse(target.result, {
+            if (target == null) {
+                return
+            }
+            if (typeof target.result != 'string') {
+                return
+            }
+            const csv: ParseResult<User> = Papa.parse(target.result, {
                 header: true,
             })
             for (let i = 0; i < csv.data.length; i++) {
+                // This will loop through the csv file and add the teachers to the list.
                 if (csv.data[i].email != '') {
                     instance
                         .get('gebruikers/?email=' + csv.data[i].email)
@@ -241,25 +449,7 @@ export function AddChangeSubjectPage() {
                                     return oldteachers
                                 }
 
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-
-                                const data = res.data[0]
-
-                                const id = data.user
-                                if (!data.is_lesgever) {
-                                    return oldteachers
-                                }
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
-                                    }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, data]
-                                }
+                                return addUser(true, res.data[0], oldteachers)
                             })
                         })
                         .catch((err) => {
@@ -268,385 +458,410 @@ export function AddChangeSubjectPage() {
                 }
             }
         }
-
-        reader.readAsText(teacherFile)
+        if (teacherFile != undefined) {
+            reader.readAsText(teacherFile)
+        }
     }
 
-    const handleSave = () => {
+    const addUser = (
+        isLesgever: boolean,
+        userData: User,
+        olduser: User[]
+    ): User[] => {
+        //This is like this to prevent the same user being in the list twice
+        let found = false
+        const id = userData.user
+        if (userData.is_lesgever != isLesgever) {
+            if (userData.is_lesgever) {
+                alert(t('cant_add_teachers_to_student_list'))
+            } else {
+                alert(t('cant_add_students_to_teacher_list'))
+            }
+            return olduser
+        }
+        for (const teacher of olduser) {
+            if (teacher.user == id) {
+                found = true
+            }
+        }
+        if (found) {
+            alert(t('cant_add_users_twice'))
+            return olduser
+        } else {
+            return [...olduser, userData]
+        }
+    }
+
+    const handleSave = (): void => {
         const studentIDs = students.map((student) => student.user)
         const teacherIDs = teachers.map((teacher) => teacher.user)
-        instance
-            .put('vakken/' + vakID + '/', {
-                naam: title,
-                studenten: studentIDs,
-                lesgevers: teacherIDs,
-            })
-            .catch((err) => {
-                console.log(err)
-            })
+        if (vakID == undefined) {
+            instance
+                .post('vakken/', {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                })
+                .then((res) => {
+                    setVakID(res.data.vak_id)
+                    navigate(`/course/${res.data.vak_id}`)
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+        } else {
+            instance
+                .put('vakken/' + vakID + '/', {
+                    naam: title,
+                    studenten: studentIDs,
+                    lesgevers: teacherIDs,
+                })
+                .catch((err) => {
+                    console.log(err)
+                    alert(err.response.data)
+                })
+            navigate(`/course/${vakID}`)
+        }
+    }
+
+    const handleCancel = (): void => {
+        navigate('/')
     }
 
     useEffect(() => {
-        instance
-            .get('vakken/' + vakID)
-            .then((res) => {
-                setTitle(res.data.naam)
-                for (const id of res.data.studenten) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setStudents((oldstudents) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const student of oldstudents) {
-                                    if (student.user == id) {
-                                        found = true
+        async function fetchUser() {
+            setUserLoading(true)
+            const userResponse = await instance.get('/gebruikers/me/')
+            if (vakID == undefined) {
+                setTeachers([userResponse.data])
+            }
+            setUser(userResponse.data)
+            setUserLoading(false)
+        }
+        async function fetchData() {
+            setLoading(true)
+            await instance
+                .get('vakken/' + vakID)
+                .then(async (res) => {
+                    setTitle(res.data.naam)
+                    for (const id of res.data.studenten) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setStudents((oldstudents) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const student of oldstudents) {
+                                        if (student.user == id) {
+                                            found = true
+                                        }
                                     }
-                                }
-                                if (found) {
-                                    return oldstudents
-                                } else {
-                                    return [...oldstudents, res.data]
-                                }
-                            })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-                for (const id of res.data.lesgevers) {
-                    instance
-                        .get('gebruikers/' + id)
-                        .then((res) => {
-                            setTeachers((oldteachers) => {
-                                //This is like this to prevent the same user being in the list twice
-                                let found = false
-                                const id = res.data.user
-                                for (const teacher of oldteachers) {
-                                    if (teacher.user == id) {
-                                        found = true
+                                    if (found) {
+                                        return oldstudents
+                                    } else {
+                                        return [...oldstudents, res.data]
                                     }
-                                }
-                                if (found) {
-                                    return oldteachers
-                                } else {
-                                    return [...oldteachers, res.data]
-                                }
+                                })
                             })
-                        })
-                        .catch((err) => {
-                            console.log(err)
-                        })
-                }
-            })
-            .catch((err) => {
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                    for (const id of res.data.lesgevers) {
+                        await instance
+                            .get('gebruikers/' + id)
+                            .then((res) => {
+                                setTeachers((oldteachers) => {
+                                    //This is like this to prevent the same user being in the list twice
+                                    let found = false
+                                    const id = res.data.user
+                                    for (const teacher of oldteachers) {
+                                        if (teacher.user == id) {
+                                            found = true
+                                        }
+                                    }
+                                    if (found) {
+                                        return oldteachers
+                                    } else {
+                                        return [...oldteachers, res.data]
+                                    }
+                                })
+                            })
+                            .catch((err) => {
+                                console.log(err)
+                            })
+                    }
+                })
+                .catch((err) => {
+                    console.log(err)
+                })
+            setLoading(false)
+        }
+        fetchUser().catch((err) => {
+            console.log(err)
+        })
+        if (vakID != undefined) {
+            fetchData().catch((err) => {
                 console.log(err)
             })
+        }
     }, [vakID])
 
     return (
         <>
-            <Stack direction={'column'}>
-                <Header variant={'default'} title={title} />
-                <Stack
-                    direction={'column'}
-                    spacing={1}
-                    marginTop={11}
+            {/* Rendering different UI based on user role */}
+            {userLoading ? (
+                <Box
                     sx={{
-                        width: '100%',
-                        height: '70 %',
-                        backgroundColor: 'background.default',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        height: '100vh',
                     }}
                 >
-                    <Button
-                        variant={'contained'}
-                        color={'secondary'}
-                        size={'small'}
-                        disableElevation
-                        onClick={handleSave}
-                    >
-                        {t('save')}
-                    </Button>
-
-                    <Box
-                        aria-label={'title'}
-                        display={'flex'}
-                        flexDirection={'row'}
-                        gap={2}
-                        alignItems={'center'}
-                    >
-                        <Typography
-                            variant={'h6'}
-                            color={'text.primary'}
-                            fontWeight={'bold'}
-                        >
-                            {t('subject_name') + ':'}
-                        </Typography>
-                        <TextField
-                            type="text"
-                            placeholder={t('title')}
-                            onChange={(event) => setTitle(event.target.value)}
-                        />
-                    </Box>
-
-                    <Box display={'flex'} flexDirection={'column'} padding={2}>
-                        <Typography>{t('students') + ':'}</Typography>
-                        <Box
-                            padding={2}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            alignItems={'center'}
-                            gap={1}
-                        >
-                            <List
-                                disablePadding={true}
-                                sx={{
-                                    '& > :not(style)': {
-                                        marginBottom: '8px',
-                                        width: '75vw',
-                                    },
-                                }}
-                            >
-                                {students.map((student) => {
-                                    const handleClickOpen = () => {
-                                        setSelectedStudent(student.user)
-                                        setOpenStudent(true)
-                                    }
-
-                                    return (
-                                        <>
-                                            <ListItemButton
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 30,
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    justifyContent:
-                                                        'space-between',
-                                                    paddingX: 1,
-                                                    paddingY: 3,
-                                                    borderRadius: 2,
-                                                }}
-                                            >
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.first_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.last_name}
-                                                />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={student.email}
-                                                />
-                                                <IconButton
-                                                    aria-label={'delete_file'}
-                                                    size={'small'}
-                                                    onClick={handleClickOpen}
-                                                    sx={{ marginBottom: 1 }}
-                                                >
-                                                    <ClearIcon
-                                                        color={'error'}
-                                                    />
-                                                </IconButton>
-                                            </ListItemButton>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                        </>
-                                    )
-                                })}
-                            </List>
-                            <Box display={'flex'} flexDirection={'column'}>
-                                <FileUploadButton
-                                    name={t('upload_students')}
-                                    fileTypes={['.csv']}
-                                    tooltip={t('uploadToolTip')}
-                                    onFileChange={handleStudentFileChange}
-                                    path={studentFile}
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
+                    <Box></Box>
+                </Box>
+            ) : (
+                <>
+                    {user?.is_lesgever ? (
+                        // Rendering UI for teacher
+                        <>
+                            <Stack direction={'column'}>
+                                <Header
+                                    variant={'default'}
+                                    title={loading ? '' : title}
                                 />
-                                <Box display={'flex'} flexDirection={'row'}>
-                                    <TextField
-                                        type="text"
-                                        placeholder={t('studentnumber')}
-                                        onChange={(event) =>
-                                            setEmailStudent(event.target.value)
-                                        }
-                                    />
-                                    <Button
-                                        variant={'contained'}
-                                        color={'secondary'}
-                                        size={'small'}
-                                        disableElevation
-                                        onClick={handleAddStudent}
+                                <Stack
+                                    direction={'column'}
+                                    spacing={5}
+                                    marginTop={11}
+                                    sx={{
+                                        width: '100%',
+                                        backgroundColor: 'background.default',
+                                    }}
+                                >
+                                    <Box
+                                        sx={{
+                                            backgroundColor:
+                                                'background.default',
+                                            display: 'flex',
+                                            flexDirection: 'row',
+                                            justifyContent: 'space-between',
+                                            width: '100%',
+                                        }}
                                     >
-                                        {t('add')}
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Box>
-
-                    <Dialog onClose={handleCloseStudent} open={openStudent}>
-                        <Box padding={2} alignItems={'center'} gap={1}>
-                            <Typography>
-                                {' '}
-                                {t('delete_student') + '?'}{' '}
-                            </Typography>
-                            <Box display={'flex'} flexDirection={'row'}>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleCloseStudent}
-                                >
-                                    {t('cancel')}
-                                </Button>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleRemoveStudent}
-                                >
-                                    {t('delete')}
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Dialog>
-
-                    <Box display={'flex'} flexDirection={'column'} padding={2}>
-                        <Typography>{t('teachers') + ':'}</Typography>
-                        <Box
-                            padding={2}
-                            display={'flex'}
-                            flexDirection={'row'}
-                            alignItems={'center'}
-                            gap={1}
-                        >
-                            <List
-                                disablePadding={true}
-                                sx={{
-                                    '& > :not(style)': {
-                                        marginBottom: '8px',
-                                        width: '75vw',
-                                    },
-                                }}
-                            >
-                                {teachers.map((teacher) => {
-                                    const handleClickOpen = () => {
-                                        setSelectedTeacher(teacher.user)
-                                        setOpenTeacher(true)
-                                    }
-
-                                    return (
-                                        <>
-                                            <ListItemButton
-                                                sx={{
-                                                    width: '100%',
-                                                    height: 30,
-                                                    display: 'flex',
-                                                    flexDirection: 'row',
-                                                    justifyContent:
-                                                        'space-between',
-                                                    paddingX: 1,
-                                                    paddingY: 3,
-                                                    borderRadius: 2,
-                                                }}
+                                        <Box
+                                            // This box contains the title of the subject.
+                                            // This title can be changed if necessary.
+                                            aria-label={'title'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                            alignItems={'center'}
+                                        >
+                                            <Typography
+                                                variant={'h5'}
+                                                color={'text.primary'}
+                                                fontWeight={'bold'}
                                             >
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.first_name}
+                                                {t('subject_name') + ':'}
+                                            </Typography>
+                                            {loading ? (
+                                                <Skeleton
+                                                    variant={'text'}
+                                                    width={200}
+                                                    height={60}
                                                 />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.last_name}
+                                            ) : (
+                                                <TextField
+                                                    id='courseName'
+                                                    type="text"
+                                                    value={title}
+                                                    error={
+                                                        assignmentErrors.title
+                                                    }
+                                                    placeholder={t('name')}
+                                                    helperText={
+                                                        assignmentErrors.title
+                                                            ? t('name') +
+                                                              ' ' +
+                                                              t('is_required')
+                                                            : ''
+                                                    }
+                                                    onChange={(event) =>
+                                                        setTitle(
+                                                            event.target.value
+                                                        )
+                                                    }
+                                                    sx={{ height: 60 }}
                                                 />
-                                                <ListItemText
-                                                    sx={{ maxWidth: 100 }}
-                                                    primary={teacher.email}
-                                                />
-                                                <IconButton
-                                                    aria-label={'delete_file'}
-                                                    size={'small'}
-                                                    onClick={handleClickOpen}
-                                                    sx={{ marginBottom: 1 }}
+                                            )}
+                                        </Box>
+                                        <Box
+                                            padding={'20px'}
+                                            display={'flex'}
+                                            flexDirection={'row'}
+                                            gap={2}
+                                        >
+                                            <Tooltip title={t('cancel')}>
+                                                <SecondaryButton
+                                                    /* This is the cancel button on the top of the page */
+                                                    onClick={() =>
+                                                        setCancelConfirmation(
+                                                            true
+                                                        )
+                                                    }
                                                 >
-                                                    <ClearIcon
-                                                        color={'error'}
-                                                    />
-                                                </IconButton>
-                                            </ListItemButton>
-                                            <Divider
-                                                color={'text.main'}
-                                            ></Divider>
-                                        </>
-                                    )
-                                })}
-                            </List>
-                            <Box display={'flex'} flexDirection={'column'}>
-                                <FileUploadButton
-                                    name={t('upload_teachers')}
-                                    fileTypes={['.csv']}
-                                    tooltip={t('uploadToolTip')}
-                                    onFileChange={handleTeacherFileChange}
-                                    path={teacherFile}
-                                />
-                                <Box display={'flex'} flexDirection={'row'}>
-                                    <TextField
-                                        type="text"
-                                        placeholder={t('teacher')}
-                                        onChange={(event) =>
-                                            setEmailTeacher(event.target.value)
-                                        }
-                                    />
-                                    <Button
-                                        variant={'contained'}
-                                        color={'secondary'}
-                                        size={'small'}
-                                        disableElevation
-                                        onClick={handleAddTeacher}
-                                    >
-                                        {t('add')}
-                                    </Button>
-                                </Box>
-                            </Box>
-                        </Box>
-                    </Box>
+                                                    {t('cancel')}
+                                                </SecondaryButton>
+                                            </Tooltip>
 
-                    <Dialog onClose={handleCloseStudent} open={openTeacher}>
-                        <Box padding={2} alignItems={'center'} gap={1}>
-                            <Typography>
-                                {' '}
-                                {t('delete_teacher') + '?'}{' '}
-                            </Typography>
-                            <Box display={'flex'} flexDirection={'row'}>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleCloseTeacher}
-                                >
-                                    {t('cancel')}
-                                </Button>
-                                <Button
-                                    variant={'contained'}
-                                    color={'secondary'}
-                                    size={'small'}
-                                    disableElevation
-                                    onClick={handleRemoveTeacher}
-                                >
-                                    {t('delete')}
-                                </Button>
-                            </Box>
-                        </Box>
-                    </Dialog>
-                </Stack>
-            </Stack>
+                                            <Tooltip title={t('save')}>
+                                                <Button
+                                                    id='save'
+                                                    /* This is the large save button on the top of the page */
+                                                    onClick={handleSubmit}
+                                                >
+                                                    {t('save')}
+                                                </Button>
+                                            </Tooltip>
+                                        </Box>
+                                    </Box>
+                                    <Stack direction={'row'} gap={10}>
+                                        <Box width={'50%'}>
+                                            <Stack direction={'column'}>
+                                                <Card>
+                                                    <Box
+                                                        bgcolor={
+                                                            'primary.light'
+                                                        }
+                                                        padding={'20px'}
+                                                    >
+                                                        <Typography
+                                                            variant="h5"
+                                                            sx={{
+                                                                fontWeight:
+                                                                    'bold',
+                                                            }}
+                                                        >
+                                                            {t('students')}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Box
+                                                        sx={{
+                                                            marginTop: -3.1,
+                                                        }}
+                                                    >
+                                                        {UserList(
+                                                            loading,
+                                                            students,
+                                                            setSelectedStudent,
+                                                            setOpenStudent,
+                                                            handleRemoveStudent
+                                                        )}
+                                                    </Box>
+                                                </Card>
+                                                <Box id='uploadStudent' marginTop={2}>
+                                                    {UploadPart(
+                                                        studentFile,
+                                                        handleStudentFileChange,
+                                                        setEmailStudent,
+                                                        handleAddStudent,
+                                                        t('upload_students'),
+                                                        studentRef
+                                                    )}
+                                                </Box>
+                                                {DialogWindow(
+                                                    handleCloseStudent,
+                                                    openStudent,
+                                                    handleRemoveStudent,
+                                                    t('delete_student')
+                                                )}
+                                            </Stack>
+                                        </Box>
+                                        <Box width={'50%'}>
+                                            <Stack direction={'column'}>
+                                                <Card>
+                                                    <Box
+                                                        bgcolor={
+                                                            'primary.light'
+                                                        }
+                                                        padding={'20px'}
+                                                    >
+                                                        <Typography
+                                                            variant="h5"
+                                                            sx={{
+                                                                fontWeight:
+                                                                    'bold',
+                                                            }}
+                                                        >
+                                                            {t('teachers')}
+                                                        </Typography>
+                                                    </Box>
+                                                    <Box
+                                                        sx={{
+                                                            marginTop: -3.1,
+                                                        }}
+                                                    >
+                                                        {UserList(
+                                                            loading,
+                                                            teachers,
+                                                            setSelectedTeacher,
+                                                            setOpenTeacher,
+                                                            handleRemoveTeacher
+                                                        )}
+                                                    </Box>
+                                                </Card>
+                                                <Box marginTop={1}>
+                                                    {UploadPart(
+                                                        teacherFile,
+                                                        handleTeacherFileChange,
+                                                        setEmailTeacher,
+                                                        handleAddTeacher,
+                                                        t('upload_teachers'),
+                                                        teacherRef
+                                                    )}
+                                                </Box>
+                                                {DialogWindow(
+                                                    handleCloseTeacher,
+                                                    openTeacher,
+                                                    handleRemoveTeacher,
+                                                    t('delete_teacher')
+                                                )}
+                                            </Stack>
+                                        </Box>
+                                    </Stack>
+                                </Stack>
+                                {/* Confirmation popup for saving course */}
+                                <WarningPopup
+                                    title={t('save_course_warning')}
+                                    content={t('visible_for_everyone')}
+                                    buttonName={t('confirm')}
+                                    open={saveConfirmation}
+                                    handleClose={closeSaveConfirmation}
+                                    doAction={handleSave}
+                                />
+                                {/* Confirmation popup for canceling changes*/}
+                                <WarningPopup
+                                    title={t('undo_changes_warning')}
+                                    content={t('cant_be_undone')}
+                                    buttonName={t('confirm')}
+                                    open={cancelConfirmation}
+                                    handleClose={closeCancel}
+                                    doAction={handleCancel}
+                                />
+                            </Stack>
+                        </>
+                    ) : (
+                        navigate('*')
+                    )}
+                </>
+            )}
         </>
     )
 }

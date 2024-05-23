@@ -1,47 +1,63 @@
-import { IconButton, Stack } from '@mui/material'
+import { IconButton, Stack, Tooltip } from '@mui/material'
 import { CourseCard } from '../../components/CourseCard.tsx'
 import AddIcon from '@mui/icons-material/Add'
 import { useNavigate } from 'react-router-dom'
 import { Course } from './MainPage.tsx'
 
 interface CourseCardProps {
+    userid: number
     isStudent: boolean
     activecourses: Course[]
+    pinnedCourses: number[]
+    archiveCourse: (courseId: number) => void
+    pinCourse: (courseId: number) => void
 }
 
-export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
+export function CoursesView({
+    userid,
+    isStudent,
+    activecourses,
+    pinnedCourses,
+    archiveCourse,
+    pinCourse,
+}: CourseCardProps) {
     const navigate = useNavigate()
 
     return (
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '60svw', lg: '69svw' }}
+                width={'100%'}
             >
                 <Stack
                     direction={'column'}
-                    spacing={1}
                     width={'100%'}
-                    alignItems={'center'}
+                    alignItems={'flex-start'}
                 >
                     <Stack
                         flexDirection={'row'}
                         flexWrap={'wrap'}
-                        width={'90%'}
+                        width={'95%'}
                         sx={{
-                            gap: 2,
-                            overflowY: { md: 'auto' },
+                            gap: 1,
+                            overflowY: 'auto',
                             maxHeight: '72svh',
                         }}
                     >
-                        {/* Map the list of the cirrent courses to CourseCards.
+                        {/* Map the list of the current courses to CourseCards.
                         A CourseCard displays brief information about the course such as the title, deadlines, ...*/}
                         {activecourses.map((course: Course) => (
                             <CourseCard
+                                userid={userid}
                                 key={course.naam}
                                 courseId={course.vak_id.toString()}
                                 archived={false}
                                 isStudent={isStudent}
+                                archiveEvent={() =>
+                                    archiveCourse(course.vak_id)
+                                }
+                                pinned={pinnedCourses.includes(course.vak_id)}
+                                pinEvent={() => pinCourse(course.vak_id)}
                             />
                         ))}
                     </Stack>
@@ -53,13 +69,16 @@ export function CoursesView({ isStudent, activecourses }: CourseCardProps) {
                             padding={0}
                         >
                             {/* Teachers get an extra button to add courses. */}
-                            <IconButton
-                                color={'primary'}
-                                aria-label={'add-button'}
-                                onClick={() => navigate('/course/edit')}
-                            >
-                                <AddIcon fontSize={'large'} />
-                            </IconButton>
+                            <Tooltip title={'Add course'} placement={'top'}>
+                                <IconButton
+                                    id='addCourse'
+                                    color={'primary'}
+                                    aria-label={'add-button'}
+                                    onClick={() => navigate('/course/new')}
+                                >
+                                    <AddIcon fontSize={'large'} />
+                                </IconButton>
+                            </Tooltip>
                         </Stack>
                     )}
                 </Stack>

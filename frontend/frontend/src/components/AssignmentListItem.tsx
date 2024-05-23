@@ -3,18 +3,21 @@ import {
     ListItemButton,
     ListItemIcon,
     ListItemText,
+    Typography,
 } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
+import { SubmissionStatus } from '../pages/submissionPage/SubmissionPage.tsx'
 
 interface AssignmentListItemProps {
     id: string
     courseId: string
     projectName: string
-    dueDate?: Date
-    status: boolean
+    dueDate?: string
+    status: SubmissionStatus
     isStudent: boolean
 }
 
@@ -46,6 +49,7 @@ export function AssignmentListItem({
     return (
         <>
             <ListItem
+                id={`project${id}`}
                 key={projectName}
                 sx={{ margin: 0 }}
                 disablePadding={true}
@@ -64,29 +68,39 @@ export function AssignmentListItem({
                     }}
                 >
                     {/* Project Name */}
-                    <ListItemText
-                        sx={{ maxWidth: 100 }}
-                        primary={projectName}
-                    />
+                    <ListItemText>
+                        <Typography
+                            data-cy="projectName"
+                            maxWidth={170}
+                            noWrap
+                            textOverflow={'ellipsis'}
+                        >
+                            {projectName}
+                        </Typography>
+                    </ListItemText>
                     {/* Due Date */}
                     <ListItemText
-                        sx={{ maxWidth: 110 }}
-                        primary={
-                            dueDate instanceof Date && dueDate
-                                ? dueDate.toLocaleDateString()
-                                : t('no_deadline')
-                        }
+                        id="dueDate"
+                        sx={{ maxWidth: 150 }}
+                        primary={dueDate ? dueDate : t('no_deadline')}
                     />
                     {/* Status Icon (for students only) */}
                     {isStudent && (
                         <ListItemIcon sx={{ minWidth: 35 }}>
-                            {status ? (
+                            {status === SubmissionStatus.PASSED ? (
                                 <CheckCircleOutlineIcon
+                                    id="check"
                                     sx={{ color: 'success.main' }}
                                 />
-                            ) : (
+                            ) : status === SubmissionStatus.FAIL ? (
                                 <HighlightOffIcon
+                                    id="cross"
                                     sx={{ color: 'error.main' }}
+                                />
+                            ) : (
+                                <AccessAlarmIcon
+                                    id="clock"
+                                    sx={{ color: 'warning.main' }}
                                 />
                             )}
                         </ListItemIcon>

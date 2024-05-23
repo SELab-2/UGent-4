@@ -6,7 +6,7 @@ from api.models.score import Score
 from api.models.groep import Groep
 from api.models.indiening import Indiening
 from api.serializers.score import ScoreSerializer
-from api.utils import is_lesgever, contains
+from api.utils import has_permissions, contains
 
 
 @api_view(["GET", "POST"])
@@ -30,7 +30,7 @@ def score_list(request, format=None):
         Response: Een lijst van scores of een nieuwe aangemaakte score.
     """
     if request.method == "GET":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             scores = Score.objects.all()
         else:
             groepen = Groep.objects.filter(studenten=request.user.id)
@@ -48,7 +48,7 @@ def score_list(request, format=None):
         return Response(serializer.data)
 
     elif request.method == "POST":
-        if is_lesgever(request.user):
+        if has_permissions(request.user):
             serializer = ScoreSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
@@ -76,14 +76,14 @@ def score_detail(request, id, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == "GET":
-        if is_lesgever(request.user) or contains(
+        if has_permissions(request.user) or contains(
             score.indiening.groep.studenten, request.user
         ):
             serializer = ScoreSerializer(score)
             return Response(serializer.data)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-    if is_lesgever(request.user):
+    if has_permissions(request.user):
         if request.method in ["PUT", "PATCH"]:
             if request.method == "PUT":
                 serializer = ScoreSerializer(score, data=request.data)

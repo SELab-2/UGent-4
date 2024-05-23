@@ -54,43 +54,22 @@ class GebruikerSerializerTest(APITestCase):
         self.assertEqual(gebruiker.is_lesgever, data["is_lesgever"])
 
     def test_update(self):
+        vak = VakFactory.create()
+        vak.studenten.add(self.gebruiker)
         data = self.serializer.data
-        self.assertFalse(data["is_lesgever"])
-        data["is_lesgever"] = True
+        data["gepinde_vakken"] = [vak.vak_id]
         serializer = GebruikerSerializer(
             instance=self.gebruiker, data=data, partial=True
         )
         self.assertTrue(serializer.is_valid())
         self.gebruiker = serializer.save()
-        self.assertTrue(self.gebruiker.is_lesgever)
+        self.assertEqual(self.gebruiker.gepinde_vakken.first(), vak)
 
-    def test_update_invalid_teacher(self):
-        vak = VakFactory.create()
-        vak.studenten.add(self.gebruiker)
-        data = self.serializer.data
-        self.assertFalse(data["is_lesgever"])
-        data["is_lesgever"] = True
-        serializer = GebruikerSerializer(
-            instance=self.gebruiker, data=data, partial=True
-        )
-        self.assertTrue(serializer.is_valid())
-        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-
-    def test_update_invalid_student(self):
+    def test_update_invalid(self):
         self.gebruiker.is_lesgever = True
         vak = VakFactory.create()
-        vak.lesgevers.add(self.gebruiker)
         data = self.serializer.data
-        data["is_lesgever"] = False
-        serializer = GebruikerSerializer(
-            instance=self.gebruiker, data=data, partial=True
-        )
-        self.assertTrue(serializer.is_valid())
-        self.assertRaises(ValidationError, serializer.save, raise_exception=True)
-
-    def test_update_invalid_gepinde_vak(self):
-        data = self.serializer.data
-        data["gepinde_vakken"].append(VakFactory.create().vak_id)
+        data["gepinde_vakken"] = [vak.vak_id]
         serializer = GebruikerSerializer(
             instance=self.gebruiker, data=data, partial=True
         )

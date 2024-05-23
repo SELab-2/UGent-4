@@ -3,6 +3,8 @@ from rest_framework.exceptions import ValidationError
 from api.serializers.vak import VakSerializer
 from api.tests.factories.vak import VakFactory
 from api.tests.factories.gebruiker import GebruikerFactory
+from api.tests.factories.project import ProjectFactory
+from api.tests.factories.groep import GroepFactory
 
 
 class VakSerializerTest(APITestCase):
@@ -12,7 +14,10 @@ class VakSerializerTest(APITestCase):
 
     def test_contains_expected_fields(self):
         data = self.serializer.data
-        self.assertCountEqual(data.keys(), ["vak_id", "naam", "studenten", "lesgevers"])
+        self.assertCountEqual(
+            data.keys(),
+            ["vak_id", "naam", "jaartal", "gearchiveerd", "studenten", "lesgevers"],
+        )
 
     def test_vak_id_field_content(self):
         data = self.serializer.data
@@ -128,3 +133,74 @@ class VakSerializerTest(APITestCase):
             set([teacher.user.id for teacher in vak.lesgevers.all()]),
         )
         self.assertEqual(vak.naam, "nieuw vak")
+
+    def test_add_students_to_groep(self):
+        students_data = [
+            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+        ]
+        teachers_data = [
+            GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+        ]
+        data = {
+            "naam": "test vak",
+            "studenten": students_data,
+            "lesgevers": teachers_data,
+        }
+        serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+        project = ProjectFactory.create(
+            student_groep=True, max_groep_grootte=1, vak=vak
+        )
+        serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+        self.assertEqual(project.vak, vak)
+
+    def test_add_invalid_students_to_group(self):
+        students_data = [
+            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+        ]
+        teachers_data = [
+            GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+        ]
+        data = {
+            "naam": "test vak",
+            "studenten": students_data,
+            "lesgevers": teachers_data,
+        }
+        serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+        project = ProjectFactory.create(
+            student_groep=True, max_groep_grootte=1, vak=vak
+        )
+        # voeg een student toe aan een groep
+        GroepFactory.create(project=project, studenten=[vak.studenten.all()[0]])
+        # nu zal de serializer alle studenten aan een groep toevoegen, maar eentje zit dus al in een groep
+        serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+
+    def test_add_students_to_group_with_max_groep_grootte(self):
+        students_data = [
+            GebruikerFactory.create(is_lesgever=False).user.id for _ in range(3)
+        ]
+        teachers_data = [
+            GebruikerFactory.create(is_lesgever=True).user.id for _ in range(3)
+        ]
+        data = {
+            "naam": "test vak",
+            "studenten": students_data,
+            "lesgevers": teachers_data,
+        }
+        serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+        project = ProjectFactory.create(
+            student_groep=False, max_groep_grootte=2, vak=vak
+        )
+        serializer = VakSerializer(instance=self.vak_data, data=data, partial=True)
+        self.assertTrue(serializer.is_valid())
+        vak = serializer.save()
+        self.assertEqual(project.vak, vak)

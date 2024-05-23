@@ -2,8 +2,6 @@ import {
     AppBar,
     Box,
     IconButton,
-    Menu,
-    MenuItem,
     Toolbar,
     Tooltip,
     Typography,
@@ -11,12 +9,11 @@ import {
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import EditIcon from '@mui/icons-material/Edit'
-import React from 'react'
-import { AccountCircle } from '@mui/icons-material'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { LanguageSwitcher } from './LanguageSwitcher.tsx'
 import { useMsal } from '@azure/msal-react'
 import axios from 'axios'
+import Button from '@mui/material/Button'
 
 /**
  * Header component
@@ -31,7 +28,7 @@ import axios from 'axios'
  * Interface for Header props
  */
 interface Props {
-    variant: 'not_main' | 'editable' | 'default'
+    variant: 'not_main' | 'editable' | 'default' | 'main'
     title: string
 }
 
@@ -41,15 +38,7 @@ interface Props {
  */
 export const Header = ({ variant, title }: Props) => {
     const { t } = useTranslation()
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
     const { instance } = useMsal()
-    /**
-     * Function to handle menu opening
-     * @param {React.MouseEvent<HTMLElement>} event - The event object
-     */
-    const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget)
-    }
 
     /**
      * Function to handle edit action
@@ -69,13 +58,6 @@ export const Header = ({ variant, title }: Props) => {
         path = path.slice(0, path.lastIndexOf('/'))
         //navigate to the new path or main page if there is no path
         navigate(path || '/')
-    }
-
-    /**
-     * Function to handle menu closing
-     */
-    const handleClose = () => {
-        setAnchorEl(null)
     }
 
     const navigate = useNavigate()
@@ -99,6 +81,8 @@ export const Header = ({ variant, title }: Props) => {
     return (
         <>
             <AppBar
+                data-cy="header"
+                elevation={0}
                 position="absolute"
                 sx={{
                     margin: 'auto',
@@ -108,96 +92,123 @@ export const Header = ({ variant, title }: Props) => {
                 }}
             >
                 <Toolbar>
-                    {/* Logo and Home Button */}
-                    <Box>
-                        <Tooltip title={t('home')}>
-                            <IconButton
-                                onClick={() => navigate('/')}
-                                sx={{ padding: 0, borderRadius: 5 }}
-                            >
-                                <Box
-                                    component="img"
-                                    src={t('logo')}
-                                    alt="logo"
-                                    sx={{
-                                        height: 80,
-                                        width: 80,
-                                        display: 'block',
-                                        padding: 0,
-                                        margin: 0,
-                                    }}
-                                />
-                            </IconButton>
-                        </Tooltip>
-                        {/* Back Button (if variant is not default) */}
-                        {variant !== 'default' && (
-                            <Tooltip title={t('back')}>
+                    <Box
+                        flexGrow={1}
+                        display={'flex'}
+                        flexDirection={'row'}
+                        alignItems={'space-between'}
+                        justifyContent={'center'}
+                    >
+                        {/* Logo and Home Button */}
+                        <Box>
+                            <Tooltip title={t('home')}>
                                 <IconButton
-                                    onClick={handleBack}
-                                    size="large"
-                                    edge="start"
-                                    color="inherit"
-                                    aria-label="back"
-                                    sx={{ mr: 2 }}
+                                    id='logo'
+                                    onClick={() => navigate('/')}
+                                    sx={{ padding: 0, borderRadius: 5 }}
                                 >
-                                    <ArrowBackIcon />
+                                    <Box
+                                        component="img"
+                                        src={t('logo')}
+                                        alt="logo"
+                                        sx={{
+                                            height: 80,
+                                            width: 80,
+                                            display: 'block',
+                                            padding: 0,
+                                            margin: 0,
+                                        }}
+                                    />
                                 </IconButton>
                             </Tooltip>
-                        )}
-                    </Box>
-                    {/* Title */}
-                    <Typography
-                        maxWidth={'88%'}
-                        variant="h5"
-                        component="div"
-                        overflow={'auto'}
-                        sx={{ margin: 'auto', textAlign: 'center' }}
-                    >
-                        {title}
-                        {variant === 'editable' && (
-                            <IconButton
-                                onClick={handleEdit}
-                                disableRipple={true}
-                                sx={{
-                                    marginBottom: 1,
-                                    color: 'text.secondary',
-                                }}
-                            >
-                                <EditIcon />
-                            </IconButton>
-                        )}
-                    </Typography>
-                    {/* User Menu */}
-                    <div>
-                        <IconButton
-                            size="medium"
-                            aria-label="account of current user"
-                            aria-controls="menu-appbar"
-                            aria-haspopup="true"
-                            onClick={handleMenu}
-                            color="secondary"
+                            {/* Back Button (if variant is not default) */}
+                            {(variant === 'not_main' ||
+                                variant === 'editable') && (
+                                <Tooltip title={t('back')}>
+                                    <IconButton
+                                        data-cy="backButton"
+                                        onClick={handleBack}
+                                        size="large"
+                                        edge="start"
+                                        color="inherit"
+                                        aria-label="back"
+                                        sx={{ mr: 2 }}
+                                    >
+                                        <ArrowBackIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </Box>
+                        {/* Title */}
+                        <Box
+                            flexGrow={1}
+                            display={'flex'}
+                            flexDirection={'row'}
+                            alignItems={'center'}
+                            justifyContent={'center'}
+                            gap={1}
                         >
-                            <AccountCircle fontSize={'large'} />
-                        </IconButton>
-                        <Menu
-                            id="menu-appbar"
-                            anchorEl={anchorEl}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
+                            {variant === 'main' && (
+                                <Box
+                                    id="logo"
+                                    component="img"
+                                    src={'assets/logo_duif_top_wit.png'}
+                                    alt="logo_app"
+                                    sx={{
+                                        height: 50,
+                                        width: 50,
+                                    }}
+                                />
+                            )}
+                            <Typography
+                                data-cy="title"
+                                minWidth={'50'}
+                                maxWidth={'88%'}
+                                variant="h5"
+                                component="div"
+                                overflow={'auto'}
+                            >
+                                {title}
+                            </Typography>
+                            {variant === 'editable' && (
+                                <Tooltip title={t('edit')}>
+                                    <IconButton
+                                        id='editButton'
+                                        onClick={handleEdit}
+                                        disableRipple={true}
+                                        sx={{
+                                            marginBottom: 1,
+                                            color: 'background.default',
+                                        }}
+                                    >
+                                        <EditIcon />
+                                    </IconButton>
+                                </Tooltip>
+                            )}
+                        </Box>
+
+                        {/* User Menu */}
+                        <Box
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
                             }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            open={Boolean(anchorEl)}
-                            onClose={handleClose}
                         >
                             <LanguageSwitcher />
-                            <MenuItem onClick={logout}>Logout</MenuItem>
-                        </Menu>
-                    </div>
+                            <Button
+                                variant={'text'}
+                                onClick={logout}
+                                sx={{
+                                    color: 'background.default',
+                                    paddingTop: 1,
+                                    textTransform: 'none',
+                                }}
+                            >
+                                Logout
+                            </Button>
+                        </Box>
+                    </Box>
                 </Toolbar>
             </AppBar>
         </>
