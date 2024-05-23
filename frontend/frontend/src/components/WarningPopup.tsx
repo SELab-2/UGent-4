@@ -1,5 +1,5 @@
+import { Button, SecondaryButton } from './CustomComponents'
 import {
-    Button,
     DialogActions,
     DialogContent,
     DialogContentText,
@@ -43,27 +43,20 @@ export default function WarningPopup({
         <>
             {/* Warning popup dialog */}
             <Dialog open={open} onClose={handleClose}>
-                <DialogTitle id='popUpTitle' sx={{ textAlign: 'center' }}>{title}</DialogTitle>
+                <DialogTitle id="popUpTitle" sx={{ textAlign: 'center' }}>
+                    {title}
+                </DialogTitle>
                 <DialogContent>
-                    <DialogContentText id='popUpText'>{content}</DialogContentText>
+                    <DialogContentText id="popUpText">
+                        {content}
+                    </DialogContentText>
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: 'center' }}>
-                    <Button 
-                        id='cancelButton'
-                        variant="contained"
-                        color="secondary"
-                        onClick={handleClose}
-                    >
+                    <SecondaryButton onClick={handleClose}>
                         {t('cancel')}
-                    </Button>
+                    </SecondaryButton>
                     {/* Action button */}
-                    <Button
-                        id='actionButton'
-                        variant="contained"
-                        color="primary"
-                        onClick={hanldeAction}
-                        autoFocus
-                    >
+                    <Button onClick={hanldeAction} autoFocus>
                         {buttonName}
                     </Button>
                 </DialogActions>

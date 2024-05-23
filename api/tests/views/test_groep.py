@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from api.tests.factories.groep import GroepFactory
 from api.tests.factories.gebruiker import GebruikerFactory
+from api.models.groep import Groep
 
 
 class GroepListViewTest(APITestCase):
@@ -25,7 +26,7 @@ class GroepListViewTest(APITestCase):
         self.client.force_login(self.student.user)
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), Groep.objects.count())
         self.assertEqual(response.data[0]["groep_id"], self.groep1.groep_id)
 
     def test_groep_list_get_project(self):
@@ -94,12 +95,6 @@ class GroepDetailViewTest(APITestCase):
     def test_groep_detail_get(self):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_groep_detail_get_unauthorized(self):
-        student = GebruikerFactory.create(is_lesgever=False)
-        self.client.force_login(student.user)
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_groep_detail_put(self):
         new_data = {

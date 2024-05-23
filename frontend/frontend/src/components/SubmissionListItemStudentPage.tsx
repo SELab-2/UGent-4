@@ -1,8 +1,10 @@
+import { EvenlySpacedRow } from './CustomComponents.tsx'
 import {
     ListItem,
+    ListItemButton,
     ListItemIcon,
     ListItemText,
-    ListItemButton,
+    Box,
 } from '@mui/material'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline'
 import HighlightOffIcon from '@mui/icons-material/HighlightOff'
@@ -10,7 +12,8 @@ import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
 
 interface SubmissionListItemStudentPageProps {
-    id: string
+    realId: string
+    visualId: string
     timestamp?: string
     status: boolean
     assignment_id: string
@@ -27,7 +30,8 @@ interface SubmissionListItemStudentPageProps {
  */
 
 export function SubmissionListItemStudentPage({
-    id,
+    realId,
+    visualId,
     timestamp,
     status,
     assignment_id,
@@ -38,57 +42,49 @@ export function SubmissionListItemStudentPage({
     // Function to handle submission click event
     const handleSubmissionClick = () => {
         console.log('Submission clicked')
-        if (id) {
+        if (realId) {
             navigate(
-                `/course/${course_id}/assignment/${assignment_id}/submission/${id}`
+                `/course/${course_id}/assignment/${assignment_id}/submission/${realId}`
             )
         }
     }
 
     return (
         <>
-            <ListItem id={`submission${id}`} key={id} sx={{ margin: 0 }} disablePadding={true}>
+            <ListItem key={realId} sx={{ maxHeight: '40px' }} disablePadding>
                 <ListItemButton
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 1,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
+                    sx={{ maxHeight: '40px' }}
                     onClick={handleSubmissionClick}
                 >
-                    {/* Display submission id */}
-                    <ListItemText
-                        id='submissionId'
-                        sx={{
-                            maxWidth: 110,
-                            color: 'primary.main',
-                            '&:hover': {
-                                color: 'primary.light',
-                            },
-                        }}
-                        primary={id}
+                    <EvenlySpacedRow
+                        items={[
+                            <ListItemText
+                                sx={{
+                                    color: 'primary.main',
+                                    '&:hover': {
+                                        color: 'primary.light',
+                                    },
+                                }}
+                                primary={visualId}
+                            />,
+                            <ListItemText
+                                primary={timestamp ? timestamp : t('time')}
+                            />,
+                            <Box sx={{ maxWidth: '24px' }}>
+                                <ListItemIcon sx={{ minWidth: 35 }}>
+                                    {status ? (
+                                        <CheckCircleOutlineIcon
+                                            sx={{ color: 'success.main' }}
+                                        />
+                                    ) : (
+                                        <HighlightOffIcon
+                                            sx={{ color: 'error.main' }}
+                                        />
+                                    )}
+                                </ListItemIcon>
+                            </Box>,
+                        ]}
                     />
-                    {/* Display submission timestamp */}
-                    <ListItemText
-                        id='submissionTimestamp'
-                        sx={{ maxWidth: 150 }}
-                        primary={timestamp ? timestamp : t('time')}
-                    />
-                    {/* Display submission status icon */}
-                    <ListItemIcon sx={{ minWidth: 35 }}>
-                        {status ? (
-                            <CheckCircleOutlineIcon id='check'
-                                sx={{ color: 'success.main' }}
-                            />
-                        ) : (
-                            <HighlightOffIcon id='cross' sx={{ color: 'error.main' }} />
-                        )}
-                    </ListItemIcon>
                 </ListItemButton>
             </ListItem>
         </>

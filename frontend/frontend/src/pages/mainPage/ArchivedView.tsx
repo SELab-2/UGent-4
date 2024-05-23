@@ -3,6 +3,7 @@ import { CourseCard } from '../../components/CourseCard.tsx'
 import { Course } from './MainPage.tsx'
 
 interface CourseCardProps {
+    userid: number
     isStudent: boolean
     archivedCourses: Course[]
     pinnedCourses: number[]
@@ -10,6 +11,7 @@ interface CourseCardProps {
 }
 
 export function ArchivedView({
+    userid,
     isStudent,
     archivedCourses,
     pinnedCourses,
@@ -19,20 +21,19 @@ export function ArchivedView({
         <>
             <Stack
                 flexDirection={{ xs: 'column-reverse', md: 'row' }}
-                minWidth={{ md: '60svw', lg: '69svw' }}
+                width={'100%'}
             >
                 <Stack
                     direction={'column'}
-                    spacing={1}
                     width={'100%'}
                     alignItems={'center'}
                 >
                     <Stack
                         flexDirection={'row'}
                         flexWrap={'wrap'}
-                        width={{ xs: '100%', md: '90%' }}
+                        width={'95%'}
                         sx={{
-                            gap: 2,
+                            gap: 1,
                             overflowY: { sm: 'auto' },
                             maxHeight: '78svh',
                         }}
@@ -41,6 +42,7 @@ export function ArchivedView({
                         {archivedCourses.map((course) => {
                             return (
                                 <CourseCard
+                                    userid={userid}
                                     courseId={course.vak_id.toString()}
                                     archived={true}
                                     isStudent={isStudent}

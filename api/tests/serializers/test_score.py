@@ -3,10 +3,12 @@ from django.test import TestCase
 from api.serializers.score import ScoreSerializer
 from api.tests.factories.score import ScoreFactory
 from api.tests.factories.indiening import IndieningFactory
+from unittest.mock import patch
 
 
 class ScoreSerializerTest(TestCase):
-    def setUp(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def setUp(self, mock_send_mail):
         self.score = ScoreFactory.create()
         self.score.score = self.score.indiening.groep.project.max_score
         self.score.save()
@@ -28,7 +30,8 @@ class ScoreSerializerTest(TestCase):
         data = self.serializer.data
         self.assertEqual(data["score"], self.score.score)
 
-    def test_score_serializer_create(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def test_score_serializer_create(self, mock_send_mail):
         indiening = IndieningFactory.create()
         max_score = indiening.groep.project.max_score
         data = {"indiening": indiening.indiening_id, "score": max_score}
@@ -38,7 +41,8 @@ class ScoreSerializerTest(TestCase):
         self.assertEqual(score.indiening, indiening)
         self.assertEqual(score.score, data["score"])
 
-    def test_score_serializer_create_invalid(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def test_score_serializer_create_invalid(self, mock_send_mail):
         indiening = IndieningFactory.create()
         max_score = indiening.groep.project.max_score
         data = {"indiening": indiening.indiening_id, "score": max_score}
@@ -50,7 +54,8 @@ class ScoreSerializerTest(TestCase):
         self.assertTrue(new_serializer.is_valid())
         self.assertRaises(ValidationError, new_serializer.save, raise_exception=True)
 
-    def test_score_serializer_create_invalid_high_score(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def test_score_serializer_create_invalid_high_score(self, mock_send_mail):
         indiening = IndieningFactory.create()
         max_score = indiening.groep.project.max_score
         data = {"indiening": indiening.indiening_id, "score": max_score + 1}
@@ -70,7 +75,8 @@ class ScoreSerializerTest(TestCase):
         score = serializer.save()
         self.assertEqual(score.score, new_data["score"])
 
-    def test_score_serializer_update_invalid(self):
+    @patch("api.models.indiening.send_indiening_confirmation_mail")
+    def test_score_serializer_update_invalid(self, mock_send_mail):
         indiening = IndieningFactory.create()
         new_data = {
             "score": indiening.groep.project.max_score,

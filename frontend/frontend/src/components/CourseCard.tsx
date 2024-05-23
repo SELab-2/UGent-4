@@ -1,11 +1,9 @@
+import { Card, Divider } from './CustomComponents.tsx'
 import {
     Box,
-    Card,
     CardActionArea,
     CardContent,
-    Divider,
     IconButton,
-    Skeleton,
     Typography,
 } from '@mui/material'
 import { t } from 'i18next'
@@ -20,6 +18,13 @@ import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined'
 import { Course, project } from '../pages/mainPage/MainPage.tsx'
 import dayjs from 'dayjs'
 
+import { CourseCardSkeleton } from './CourseCardSkeleton.tsx'
+import {
+    Submission,
+    SubmissionStatus,
+} from '../pages/submissionPage/SubmissionPage.tsx'
+import { Group } from '../pages/groupsPage/GroupsPage.tsx'
+import axios from 'axios'
 /*
  * CourseCard component displays a card with course information and a list of assignments
  * @param courseId: string, the id of the course
@@ -30,6 +35,7 @@ import dayjs from 'dayjs'
 //TODO: fix archived with state so that the card moves to ArchivedView when archived
 
 interface CourseCardProps {
+    userid: number
     courseId: string
     archived: boolean
     isStudent: boolean
@@ -39,6 +45,7 @@ interface CourseCardProps {
 }
 
 export function CourseCard({
+    userid,
     courseId,
     archived,
     isStudent,
@@ -50,19 +57,26 @@ export function CourseCard({
     const [course, setCourse] = useState<Course>({
         vak_id: 0,
         naam: '',
+        jaartal: 0,
         studenten: [],
         lesgevers: [],
         gearchiveerd: false,
     })
     const [assignments, setAssignments] = useState<project[]>([])
+    const [submissions, setSubmissions] = useState<Submission[]>([])
+    const [groups, setGroups] = useState<Group[]>([])
     const [teachers, setTeachers] = useState<
         { first_name: string; last_name: string }[]
     >([])
+    const [loading, setLoading] = useState<boolean>(true)
+
     const navigate = useNavigate()
 
     // Get all necessary data from backend
     useEffect(() => {
         async function fetchData() {
+            // Set loading to true every time the data is requested
+            setLoading(true)
             try {
                 const courseResponse = await instance.get<Course>(
                     `/vakken/${courseId}/`
@@ -73,6 +87,29 @@ export function CourseCard({
 
                 setCourse(courseResponse.data)
                 setAssignments(assignmentsResponse.data)
+
+                //fetch submissions as well if user is student
+                if (isStudent) {
+                    const groups: Group[] = await instance
+                        .get(`/groepen/?student=${userid}`)
+                        .then((response) => response.data)
+
+                    setGroups(groups)
+
+                    const submissionPromises = groups.map(async (group) => {
+                        const response = await instance.get<Submission[]>(
+                            `/indieningen/?project=${group.project}&groep=${group.groep_id}`
+                        )
+                        return response.data.sort(
+                            (a: Submission, b: Submission) => {
+                                return dayjs(b.tijdstip).diff(dayjs(a.tijdstip))
+                            }
+                        )[0]
+                    })
+                    const submissions = await axios.all(submissionPromises)
+
+                    setSubmissions(submissions)
+                }
 
                 if (courseResponse.data && courseResponse.data.lesgevers) {
                     const lesgevers = []
@@ -91,6 +128,8 @@ export function CourseCard({
             } catch (error) {
                 console.error('Error fetching data:', error)
             }
+            // Set loading to false after data is fetched
+            setLoading(false)
         }
 
         fetchData().catch((error) =>
@@ -110,22 +149,32 @@ export function CourseCard({
         pinEvent()
     }
 
+    function getmyStatus(assignment: project) {
+        const myGroup = groups.find(
+            (group) => group.project === assignment.project_id
+        )
+
+        if (!myGroup) {
+            return SubmissionStatus.FAIL
+        }
+
+        const mySubmission = submissions.find(
+            (submission) =>
+                (submission ? submission.groep : 0) === myGroup.groep_id
+        )
+
+        if (!mySubmission) {
+            return SubmissionStatus.FAIL
+        }
+        console.log('myStatus', mySubmission.status)
+        return mySubmission.status
+    }
+
     return (
         <>
-            {!course ? (
+            {loading ? (
                 // If course is not available, show a skeleton loading component
-                <Skeleton
-                    variant={'rectangular'}
-                    sx={{
-                        width: { xs: '100%', md: '60%' },
-                        minWidth: 350,
-                        maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
-                        padding: 0,
-                        margin: 1,
-                    }}
-                />
+                <CourseCardSkeleton />
             ) : (
                 // If course is available, show course details inside a card component
                 <Card
@@ -134,9 +183,7 @@ export function CourseCard({
                     sx={{
                         width: { xs: '100%', md: '60%' },
                         minWidth: 350,
-                        maxWidth: 420,
-                        backgroundColor: 'background.default',
-                        borderRadius: 5,
+                        maxWidth: 460,
                         padding: 0,
                         margin: 1,
                     }}
@@ -145,7 +192,7 @@ export function CourseCard({
                         {/* Clickable area for the card */}
                         <CardActionArea onClick={handleCardClick}>
                             <Box
-                                id='courseInfo'
+                                id="courseInfo"
                                 aria-label={'courseHeader'}
                                 sx={{
                                     backgroundColor: 'secondary.main',
@@ -159,7 +206,6 @@ export function CourseCard({
                             >
                                 {/* Course name and teachers */}
                                 <Box
-                                
                                     width={'70%'}
                                     height={'100%'}
                                     display={'flex'}
@@ -207,10 +253,6 @@ export function CourseCard({
                                 </Box>
                                 {/* Number of students enrolled */}
                                 <Box>
-                                    <Typography variant={'subtitle1'}>
-                                        {t('students') + ': '}
-                                        {course.studenten.length || 0}
-                                    </Typography>
                                     <Box
                                         display={'flex'}
                                         flexDirection={'column'}
@@ -236,6 +278,10 @@ export function CourseCard({
                                             )}
                                         </IconButton>
                                     </Box>
+                                    <Typography variant={'subtitle1'}>
+                                        {t('students') + ': '}
+                                        {course.studenten.length || 0}
+                                    </Typography>
                                 </Box>
                             </Box>
                         </CardActionArea>
@@ -243,7 +289,6 @@ export function CourseCard({
                         <Box
                             aria-label={'assignmentList'}
                             sx={{
-                                backgroundColor: 'background.default',
                                 height: 150,
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -255,23 +300,33 @@ export function CourseCard({
                             {isStudent ? (
                                 // Display assignments for students
                                 <Box
-                                    id='student'
+                                    id="student"
                                     display={'flex'}
                                     flexDirection={'row'}
                                     justifyContent={'space-between'}
                                     pl={3}
                                     pr={3}
                                 >
-                                    <Typography id='project' width={30}>Project</Typography>
-                                    <Typography id='deadline' width={30}>Deadline</Typography>
-                                    <Typography id='status' width={30}>Status</Typography>
+                                    <Typography id="project" width={30}>
+                                        Project
+                                    </Typography>
+                                    <Typography
+                                        id="deadline"
+                                        pl={20}
+                                        width={30}
+                                    >
+                                        Deadline
+                                    </Typography>
+                                    <Typography id="status" width={30}>
+                                        Status
+                                    </Typography>
                                 </Box>
                             ) : (
                                 // Display assignments for teachers
                                 <>
                                     {archived ? (
                                         <Box
-                                            id='teacherArchived'
+                                            id="teacherArchived"
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -279,16 +334,22 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '81%', sm: '85%' }}
                                         >
-                                            <Typography id='project' maxWidth={100}>
+                                            <Typography
+                                                id="project"
+                                                maxWidth={100}
+                                            >
                                                 Project
                                             </Typography>
-                                            <Typography id='deadline' minWidth={50}>
+                                            <Typography
+                                                id="deadline"
+                                                minWidth={80}
+                                            >
                                                 Deadline
                                             </Typography>
                                         </Box>
                                     ) : (
                                         <Box
-                                            id='teacherNonArchived'
+                                            id="teacherNonArchived"
                                             display={'flex'}
                                             flexDirection={'row'}
                                             justifyContent={'space-between'}
@@ -296,17 +357,23 @@ export function CourseCard({
                                             pr={3}
                                             width={{ xs: '71%', sm: '75%' }}
                                         >
-                                            <Typography id='project' maxWidth={100}>
+                                            <Typography
+                                                id="project"
+                                                maxWidth={100}
+                                            >
                                                 Project
                                             </Typography>
-                                            <Typography id='deadline' minWidth={50}>
+                                            <Typography
+                                                id="deadline"
+                                                minWidth={90}
+                                            >
                                                 Deadline
                                             </Typography>
                                         </Box>
                                     )}
                                 </>
                             )}
-                            <Divider color={'text.main'}></Divider>
+                            <Divider></Divider>
                             <Box display={'flex'} flexDirection={'row'}>
                                 {isStudent ? (
                                     // Render assignment list for students
@@ -314,10 +381,30 @@ export function CourseCard({
                                         sx={{
                                             width: '100%',
                                             height: 130,
-                                            overflow: 'auto',
+                                            overflowY: 'auto',
                                         }}
                                     >
-                                        <List disablePadding={true}>
+                                        <List
+                                            disablePadding={true}
+                                            sx={{
+                                                overflowY: 'auto',
+                                                maxHeight: 130,
+                                            }}
+                                        >
+                                            {assignments.length === 0 && (
+                                                <Box
+                                                    display={'flex'}
+                                                    alignItems={'center'}
+                                                    justifyContent={'center'}
+                                                    py={6}
+                                                    flexGrow={1}
+                                                    height={'100%'}
+                                                >
+                                                    <Typography>
+                                                        {t('no_projects')}
+                                                    </Typography>
+                                                </Box>
+                                            )}
                                             {assignments
                                                 .filter(
                                                     (assignment) =>
@@ -325,25 +412,24 @@ export function CourseCard({
                                                 )
                                                 .map((assignment) => (
                                                     <AssignmentListItem
-                                                        key={
-                                                            assignment.project_id
-                                                        }
-                                                        id={`project${assignment.project_id}`}
+                                                        key={`project${assignment.project_id}`}
+                                                        id={assignment.project_id.toString()}
                                                         courseId={courseId}
                                                         projectName={
                                                             assignment.titel
                                                         }
                                                         dueDate={
-                                                            dayjs(
-                                                                assignment.deadline
-                                                            ).format(
-                                                                'DD/MM/YYYY HH:mm'
-                                                            ) || undefined
+                                                            assignment.deadline
+                                                                ? dayjs(
+                                                                      assignment.deadline
+                                                                  ).format(
+                                                                      'DD/MM/YYYY HH:mm'
+                                                                  )
+                                                                : undefined
                                                         }
-                                                        status={
-                                                            assignment.project_id ===
-                                                            1
-                                                        } //TODO dit moet nog aangepast worden
+                                                        status={getmyStatus(
+                                                            assignment
+                                                        )}
                                                         isStudent={isStudent}
                                                     />
                                                 ))}
@@ -359,14 +445,18 @@ export function CourseCard({
                                                     height: 130,
                                                 }}
                                             >
-                                                <List disablePadding={true}>
+                                                <List
+                                                    disablePadding={true}
+                                                    sx={{
+                                                        overflowY: 'auto',
+                                                        maxHeight: 130,
+                                                    }}
+                                                >
                                                     {assignments.map(
                                                         (assignment) => (
                                                             <AssignmentListItem
-                                                                key={
-                                                                    assignment.project_id
-                                                                }
-                                                                id={`project${assignment.project_id}`}
+                                                                key={`project${assignment.project_id}`}
+                                                                id={assignment.project_id.toString()}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -374,16 +464,18 @@ export function CourseCard({
                                                                     assignment.titel
                                                                 }
                                                                 dueDate={
-                                                                    dayjs(
-                                                                        assignment.deadline
-                                                                    ).format(
-                                                                        'DD/MM/YYYY HH:mm'
-                                                                    ) ||
-                                                                    undefined
+                                                                    assignment.deadline
+                                                                        ? dayjs(
+                                                                              assignment.deadline
+                                                                          ).format(
+                                                                              'DD/MM/YYYY HH:mm'
+                                                                          )
+                                                                        : undefined
                                                                 }
                                                                 status={
-                                                                    assignment.project_id ===
-                                                                    1
+                                                                    getmyStatus(
+                                                                        assignment
+                                                                    )
                                                                     //TODO: status has to check if there is already a submission
                                                                 }
                                                                 isStudent={
@@ -409,10 +501,8 @@ export function CourseCard({
                                                         )
                                                         .map((assignment) => (
                                                             <AssignmentListItem
-                                                                key={
-                                                                    assignment.project_id
-                                                                }
-                                                                id={`project${assignment.project_id}`}
+                                                                key={`project${assignment.project_id}`}
+                                                                id={assignment.project_id.toString()}
                                                                 courseId={
                                                                     courseId
                                                                 }
@@ -427,10 +517,9 @@ export function CourseCard({
                                                                     ) ||
                                                                     undefined
                                                                 }
-                                                                status={
-                                                                    assignment.project_id ===
-                                                                    1
-                                                                }
+                                                                status={getmyStatus(
+                                                                    assignment
+                                                                )}
                                                                 isStudent={
                                                                     isStudent
                                                                 }
@@ -451,7 +540,7 @@ export function CourseCard({
                                                 }}
                                             >
                                                 <IconButton
-                                                    id='archiveButton'
+                                                    id="archiveButton"
                                                     onClick={archiveEvent}
                                                     sx={{
                                                         backgroundColor:

@@ -4,7 +4,7 @@ from rest_framework import status
 
 from django.shortcuts import redirect
 from api.models.vak import Vak
-from api.serializers.vak import VakSerializer
+from api.serializers.vak import VakSerializer, add_students_to_group
 from api.utils import has_permissions, is_lesgever, get_gebruiker
 
 
@@ -115,5 +115,7 @@ def vak_detail_accept_invite(request, id, format=None):
     else:
         vak.studenten.add(gebruiker)
     vak.save()
+
+    add_students_to_group(vak)
 
     return redirect("vak_detail", id=vak.vak_id)

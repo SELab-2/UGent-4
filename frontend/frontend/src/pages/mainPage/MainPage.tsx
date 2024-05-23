@@ -1,5 +1,6 @@
 import { Header } from '../../components/Header.tsx'
-import { Box, Button, Stack } from '@mui/material'
+import { Button } from '../../components/CustomComponents.tsx'
+import { Box, Stack } from '@mui/material'
 import TabSwitcher from '../../components/TabSwitcher.tsx'
 import { ArchivedView } from './ArchivedView.tsx'
 import { CoursesView } from './CoursesView.tsx'
@@ -10,11 +11,13 @@ import { useEffect, useState } from 'react'
 import instance from '../../axiosConfig.ts'
 import { AxiosError, AxiosResponse } from 'axios'
 import { useNavigate } from 'react-router-dom'
+import { CourseCardSkeleton } from '../../components/CourseCardSkeleton.tsx'
 import WarningPopup from '../../components/WarningPopup.tsx'
 
 export interface Course {
     vak_id: number
     naam: string
+    jaartal: number
     studenten: number[]
     lesgevers: number[]
     gearchiveerd: boolean
@@ -25,7 +28,7 @@ export interface project {
     titel: string
     beschrijving: string
     opgave_bestand: File | null
-    vak_id: number
+    vak: number
     deadline: string
     extra_deadline: string | null
     max_score: number
@@ -42,54 +45,67 @@ export interface project {
 export default function MainPage() {
     // State for role
     const [user, setUser] = useState<number>(0)
-    const [role, setRole] = useState<string>('')
+    const [role, setRole] = useState<string>('student')
     const [courses, setCourses] = useState<Course[]>([])
     const [pinnedCourses, setPinnedCourses] = useState<number[]>([])
     const [courseOrder, setCourseOrder] = useState<number[]>([])
     const [deadlines, setDeadlines] = useState<Dayjs[]>([])
+    const [loading, setLoading] = useState<boolean>(true)
+    const [selectedYear, setSelectedYear] = useState<number>(dayjs().year())
+
+    //navigator for routing
+    const [assignments, setAssignments] = useState<project[]>([])
     const navigator = useNavigate()
 
     useEffect(() => {
-        // Get the role of the person that has logged in
-        console.log('requesting api')
-        instance
-            .get('/gebruikers/me/')
-            .then((response: AxiosResponse) => {
-                console.log(response.data)
-                setUser(response.data.user)
-                setRole(response.data.is_lesgever ? 'teacher' : 'student')
-                setPinnedCourses(response.data.gepinde_vakken)
-            })
-            .catch((e: AxiosError) => {
-                console.error(e)
-            })
-
-        // Get the courses, their projects, and their respective deadlines
+        // Get the courses, their projects, and their respective deadlines + the role of the user
         async function fetchData() {
+            //set loading to true every time the data is requested
+            setLoading(true)
+            await instance
+                .get('/gebruikers/me/')
+                .then((response: AxiosResponse) => {
+                    console.log(response.data)
+                    setUser(response.data.user)
+                    setRole(response.data.is_lesgever ? 'teacher' : 'student')
+                    setPinnedCourses(response.data.gepinde_vakken)
+                })
+                .catch((e: AxiosError) => {
+                    console.error(e)
+                })
+
+            let courses: Course[] = []
             try {
-                const response = await instance.get<Course[]>('/vakken/')
+                const response =
+                    await instance.get<Course[]>('/vakken/?in=true')
+                courses = response.data
                 setCourses(response.data)
             } catch (error) {
                 console.error('Error fetching courses:', error)
             }
 
-            instance
-                .get('/projecten/')
-                .then((response: AxiosResponse) => {
-                    const deadlines: Dayjs[] = []
-                    response.data.forEach((project: project) => {
-                        if (project.zichtbaar && !project.gearchiveerd) {
-                            deadlines.push(
-                                dayjs(project.deadline, 'YYYY-MM-DD-HH:mm:ss')
-                            )
-                        }
+            const deadlines: Dayjs[] = []
+            const assignments: project[] = []
+            for (const course of courses) {
+                await instance
+                    .get(`/projecten/?vak=${course.vak_id}`)
+                    .then((response: AxiosResponse) => {
+                        response.data.forEach((project: project) => {
+                            if (project.zichtbaar && !project.gearchiveerd) {
+                                deadlines.push(dayjs(project.deadline))
+                                assignments.push(project)
+                            }
+                        })
                     })
-                    console.log(deadlines)
-                    setDeadlines(deadlines)
-                })
-                .catch((e: AxiosError) => {
-                    console.error(e)
-                })
+                    .catch((e: AxiosError) => {
+                        console.error(e)
+                    })
+            }
+            console.log(deadlines)
+            setDeadlines(deadlines)
+            setAssignments(assignments)
+
+            setLoading(false)
         }
 
         fetchData().catch((e) => {
@@ -121,6 +137,12 @@ export default function MainPage() {
     }
     const doArchive = async () => {
         console.log('Archive clicked')
+        const newCourses = courses.map((course) =>
+            course.vak_id == archiveCourseId
+                ? archiveSingleCourse(course)
+                : course
+        )
+        setCourses(newCourses)
         try {
             await instance.patch(`/vakken/${archiveCourseId}/`, {
                 gearchiveerd: true,
@@ -131,7 +153,7 @@ export default function MainPage() {
     }
 
     const pinCourse = async (courseId: number) => {
-        let newPinnedCourses = []
+        let newPinnedCourses: number[]
         if (pinnedCourses.includes(courseId)) {
             newPinnedCourses = pinnedCourses.filter(
                 (pinnedId) => pinnedId !== courseId
@@ -161,7 +183,7 @@ export default function MainPage() {
                     paddingTop: 5,
                 }}
             >
-                <Header variant={'default'} title={'Pigeonhole'} />
+                <Header variant={'main'} title={'Pigeonhole'} />
                 <Box
                     sx={{
                         width: '100%',
@@ -169,84 +191,158 @@ export default function MainPage() {
                         marginTop: 10,
                         display: 'flex',
                         flexDirection: { md: 'row', xs: 'column-reverse' },
-                        gap: 3,
+                        gap: 2,
                     }}
                 >
                     {/* Two tabs to select either the current or archived courses,
                     CoursesView is a scroll-box with the current courses, 
                     ArchivedView is the same but for the archived courses.  */}
-                    <TabSwitcher
-                        titles={['current_courses', 'archived']}
-                        nodes={[
-                            <CoursesView
-                                isStudent={role == 'student'}
-                                activecourses={courses
-                                    .filter((course) => !course.gearchiveerd)
-                                    .sort((a: Course, b: Course) => {
-                                        if (courseOrder.includes(a.vak_id)) {
-                                            if (
-                                                courseOrder.includes(b.vak_id)
-                                            ) {
-                                                return (
-                                                    courseOrder.indexOf(
-                                                        a.vak_id
-                                                    ) -
-                                                    courseOrder.indexOf(
-                                                        b.vak_id
-                                                    )
-                                                )
-                                            } else {
-                                                return -1
-                                            }
-                                        } else {
-                                            if (
-                                                courseOrder.includes(b.vak_id)
-                                            ) {
-                                                return 1
-                                            } else {
-                                                return 0
-                                            }
-                                        }
-                                    })}
-                                pinnedCourses={pinnedCourses}
-                                archiveCourse={archiveCourse}
-                                pinCourse={pinCourse}
-                            />,
-                            <ArchivedView
-                                isStudent={role == 'student'}
-                                archivedCourses={courses
-                                    .filter((course) => course.gearchiveerd)
-                                    .sort((a: Course, b: Course) => {
-                                        if (courseOrder.includes(a.vak_id)) {
-                                            if (
-                                                courseOrder.includes(b.vak_id)
-                                            ) {
-                                                return (
-                                                    courseOrder.indexOf(
-                                                        a.vak_id
-                                                    ) -
-                                                    courseOrder.indexOf(
-                                                        b.vak_id
-                                                    )
-                                                )
-                                            } else {
-                                                return -1
-                                            }
-                                        } else {
-                                            if (
-                                                courseOrder.includes(b.vak_id)
-                                            ) {
-                                                return 1
-                                            } else {
-                                                return 0
-                                            }
-                                        }
-                                    })}
-                                pinnedCourses={pinnedCourses}
-                                pinCourse={pinCourse}
-                            />,
-                        ]}
-                    />
+                    <Box display={'flex'} flexDirection={'column'} flexGrow={1}>
+                        <TabSwitcher
+                            selectedYear={selectedYear}
+                            setSelectedYear={setSelectedYear}
+                            titles={['current_courses', 'archived']}
+                            nodes={
+                                loading
+                                    ? [
+                                          <Stack
+                                              flexDirection={{
+                                                  xs: 'column-reverse',
+                                                  md: 'row',
+                                              }}
+                                              width={'95%'}
+                                          >
+                                              {[...Array(3)].map((_, index) => (
+                                                  <CourseCardSkeleton
+                                                      key={index}
+                                                  />
+                                              ))}
+                                          </Stack>,
+                                          <Stack
+                                              flexDirection={{
+                                                  xs: 'column-reverse',
+                                                  md: 'row',
+                                              }}
+                                              width={'95%'}
+                                          >
+                                              {[...Array(3)].map((_, index) => (
+                                                  <CourseCardSkeleton
+                                                      key={index}
+                                                  />
+                                              ))}
+                                          </Stack>,
+                                      ]
+                                    : [
+                                          <CoursesView
+                                              userid={user}
+                                              isStudent={role == 'student'}
+                                              activecourses={courses
+                                                  .filter(
+                                                      (course) =>
+                                                          !course.gearchiveerd &&
+                                                          course.jaartal ===
+                                                              selectedYear
+                                                  )
+                                                  .sort(
+                                                      (
+                                                          a: Course,
+                                                          b: Course
+                                                      ) => {
+                                                          if (
+                                                              courseOrder.includes(
+                                                                  a.vak_id
+                                                              )
+                                                          ) {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return (
+                                                                      courseOrder.indexOf(
+                                                                          a.vak_id
+                                                                      ) -
+                                                                      courseOrder.indexOf(
+                                                                          b.vak_id
+                                                                      )
+                                                                  )
+                                                              } else {
+                                                                  return -1
+                                                              }
+                                                          } else {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return 1
+                                                              } else {
+                                                                  return 0
+                                                              }
+                                                          }
+                                                      }
+                                                  )}
+                                              pinnedCourses={pinnedCourses}
+                                              archiveCourse={archiveCourse}
+                                              pinCourse={pinCourse}
+                                          />,
+                                          <ArchivedView
+                                              userid={user}
+                                              isStudent={role == 'student'}
+                                              archivedCourses={courses
+                                                  .filter(
+                                                      (course) =>
+                                                          course.gearchiveerd &&
+                                                          course.jaartal ===
+                                                              selectedYear
+                                                  )
+                                                  .sort(
+                                                      (
+                                                          a: Course,
+                                                          b: Course
+                                                      ) => {
+                                                          if (
+                                                              courseOrder.includes(
+                                                                  a.vak_id
+                                                              )
+                                                          ) {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return (
+                                                                      courseOrder.indexOf(
+                                                                          a.vak_id
+                                                                      ) -
+                                                                      courseOrder.indexOf(
+                                                                          b.vak_id
+                                                                      )
+                                                                  )
+                                                              } else {
+                                                                  return -1
+                                                              }
+                                                          } else {
+                                                              if (
+                                                                  courseOrder.includes(
+                                                                      b.vak_id
+                                                                  )
+                                                              ) {
+                                                                  return 1
+                                                              } else {
+                                                                  return 0
+                                                              }
+                                                          }
+                                                      }
+                                                  )}
+                                              pinnedCourses={pinnedCourses}
+                                              pinCourse={pinCourse}
+                                          />,
+                                      ]
+                            }
+                        />
+                    </Box>
+
                     {/* Add a calendar to the right of the mainpage. */}
                     <Box
                         aria-label={'calendarView'}
@@ -254,8 +350,12 @@ export default function MainPage() {
                         flexDirection={'row'}
                         alignContent={'center'}
                         height={'50%'}
+                        width={'fit-content'}
                     >
-                        <DeadlineCalendar deadlines={deadlines} />
+                        <DeadlineCalendar
+                            deadlines={deadlines}
+                            assignments={assignments}
+                        />
                     </Box>
                 </Box>
                 {role === 'admin' && (
@@ -269,8 +369,6 @@ export default function MainPage() {
                         }}
                     >
                         <Button
-                            variant={'contained'}
-                            color={'secondary'}
                             on-click={() => navigator('/addTeacher')}
                             aria-label={'admin-button'}
                             sx={{ margin: 5 }}
@@ -290,4 +388,11 @@ export default function MainPage() {
             </Stack>
         </>
     )
+}
+
+function archiveSingleCourse(course: Course): Course {
+    return {
+        ...course,
+        gearchiveerd: true,
+    }
 }

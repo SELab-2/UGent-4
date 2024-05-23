@@ -1,9 +1,10 @@
 import {
-    Divider,
     IconButton,
     ListItem,
     ListItemButton,
     ListItemText,
+    Tooltip,
+    Typography,
 } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { t } from 'i18next'
@@ -14,12 +15,15 @@ import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined'
 import React, { useState } from 'react'
 import dayjs, { Dayjs } from 'dayjs'
 import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
+import { EvenlySpacedRow } from '../../components/CustomComponents.tsx'
+import { Submission } from '../submissionPage/SubmissionPage.tsx'
 
 /**
  * This component is used to display a single assignment in the list of assignments.
  * @param projectName: string - the name of the project
  * @param dueDate: Date - the due date of the project
  * @param submissions: number - number of submissions for the project
+ * @param lastSubmission: Submission - last submission for the project
  * @param score: number - assigned score on the project
  * @param isStudent: boolean - wether the user is a student or a teacher
  * @param archived: boolean - wether the assignment is archived
@@ -31,9 +35,10 @@ import { Score } from '../../components/SubmissionListItemTeacherPage.tsx'
 
 interface AssignmentListItemSubjectsPageProps {
     projectName: string
-    dueDate: Dayjs
+    dueDate: Dayjs | undefined
     submissions: number
-    score: Score
+    lastSubmission?: Submission
+    score: Score | undefined
     maxScore: number
     isStudent: boolean
     archived: boolean
@@ -49,6 +54,7 @@ export function AssignmentListItemSubjectsPage({
     projectName,
     dueDate,
     submissions,
+    lastSubmission,
     score,
     maxScore,
     isStudent,
@@ -75,104 +81,112 @@ export function AssignmentListItemSubjectsPage({
             <ListItem
                 id={projectName.replace(/\s/g, '')}
                 key={projectName}
-                sx={{ margin: 0 }}
-                disablePadding={true}
+                disablePadding
+                sx={{ maxHeight: '40px' }}
             >
                 <ListItemButton
+                    sx={{ maxHeight: '40px' }}
                     onClick={handleProjectClick}
-                    sx={{
-                        width: '100%',
-                        height: 30,
-                        display: 'flex',
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                        paddingX: 1,
-                        paddingY: 3,
-                        borderRadius: 2,
-                    }}
                 >
                     {isStudent ? (
-                        <>
-                            <ListItemText
-                                id="projectName"
-                                sx={{ maxWidth: 100 }}
-                                primary={projectName}
-                            />
-                            <ListItemText
-                                id='deadline'
-                                sx={{ maxWidth: 150 }}
-                                primary={
-                                    dueDate
-                                        ? dayjs(dueDate).format(
-                                              'DD/MM/YYYY HH:mm'
-                                          )
-                                        : t('no_deadline')
-                                }
-                            />
-                            <ListItemText
-                                id='submissions'
-                                sx={{ maxWidth: 150 }}
-                                primary={
-                                    submissions > 0
-                                        ? submissions > 1
-                                            ? submissions +
-                                              ' ' +
-                                              t('submissions')
-                                            : submissions +
-                                              ' ' +
-                                              t('submission')
-                                        : t('no_submissions')
-                                }
-                            />
-                            {submissions > 0 ? (
+                        <EvenlySpacedRow
+                            items={[
+                                <ListItemText primary={projectName} />,
+                                <ListItemText>
+                                    <Typography
+                                        color={
+                                            dueDate
+                                                ? dayjs(dueDate).isBefore(
+                                                      dayjs()
+                                                  )
+                                                    ? lastSubmission
+                                                        ? dayjs(
+                                                              lastSubmission.tijdstip
+                                                          ).isBefore(
+                                                              dayjs(dueDate)
+                                                          )
+                                                            ? 'success.main'
+                                                            : 'error.main'
+                                                        : 'error.main'
+                                                    : 'text.primary'
+                                                : 'text.primary'
+                                        }
+                                    >
+                                        {dueDate
+                                            ? dayjs(dueDate).format(
+                                                  'DD/MM/YYYY HH:mm'
+                                              )
+                                            : t('no_deadline')}
+                                    </Typography>
+                                </ListItemText>,
                                 <ListItemText
-                                    id='score'
-                                    sx={{ maxWidth: 100 }}
                                     primary={
-                                        score
-                                            ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
-                                            : t('no_score_yet')
+                                        submissions > 0
+                                            ? submissions > 1
+                                                ? submissions +
+                                                  ' ' +
+                                                  t('submissions')
+                                                : submissions +
+                                                  ' ' +
+                                                  t('submission')
+                                            : t('no_submissions')
                                     }
-                                />
-                            ) : (
-                                <ListItemText
-                                    id='noSubmissions'
-                                    sx={{ maxWidth: 100 }}
-                                    primary={`0/${maxScore} (0%)`}
-                                />
-                            )}
-                        </>
+                                />,
+                                <>
+                                    {submissions > 0 ? (
+                                        <ListItemText
+                                            primary={
+                                                score
+                                                    ? `${score.score}/${maxScore} (${Math.round((100 * score.score) / maxScore)}%)`
+                                                    : t('no_score_yet')
+                                            }
+                                        />
+                                    ) : (
+                                        <ListItemText
+                                            primary={t('no_score_yet')}
+                                        />
+                                    )}
+                                </>,
+                            ]}
+                        />
                     ) : (
                         <>
                             {/* In case of the user being the teacher: */}
-                            <ListItemText
-                                id="projectName"
-                                sx={{ maxWidth: 100 }}
-                                primary={projectName}
-                            />
-                            <ListItemText
-                                id='deadline'
-                                sx={{ maxWidth: 150 }}
-                                primary={
-                                    dueDate
-                                        ? dayjs(dueDate).format(
-                                              'DD/MM/YYYY HH:mm'
-                                          )
-                                        : t('no_deadline')
-                                }
-                            />
-                            <ButtonActions
-                                archived={archived}
-                                startVisible={visible}
-                                deleteEvent={deleteEvent}
-                                archiveEvent={archiveEvent}
-                                visibilityEvent={visibilityEvent}
+                            <EvenlySpacedRow
+                                items={[
+                                    <ListItemText primary={projectName} />,
+                                    <ListItemText>
+                                        <Typography
+                                            color={
+                                                dueDate
+                                                    ? dayjs(dueDate).isBefore(
+                                                          dayjs()
+                                                      )
+                                                        ? 'error'
+                                                        : 'text.primary'
+                                                    : 'text.primary'
+                                            }
+                                        >
+                                            {dueDate
+                                                ? dayjs(dueDate).format(
+                                                      'DD/MM/YYYY HH:mm'
+                                                  )
+                                                : t('no_deadline')}
+                                        </Typography>
+                                    </ListItemText>,
+                                    <ButtonActions
+                                        archived={archived}
+                                        startVisible={visible}
+                                        deleteEvent={deleteEvent}
+                                        archiveEvent={archiveEvent}
+                                        visibilityEvent={visibilityEvent}
+                                    />,
+                                ]}
                             />
                         </>
                     )}
                 </ListItemButton>
             </ListItem>
-            <Divider color={'text.main'}></Divider>
         </>
     )
 }
@@ -218,43 +232,50 @@ function ButtonActions({
 
     return (
         <ListItem sx={{ maxWidth: 110 }}>
-            {visible ? (
-                <IconButton
-                    id='visible'
-                    onClick={(e) => handleIconClick(e, 'visible')}
-                    edge="end"
-                    aria-label="visible"
-                >
-                    <VisibilityOutlinedIcon />
-                </IconButton>
-            ) : (
-                <IconButton
-                    id='notVisible'
-                    onClick={(e) => handleIconClick(e, 'visible')}
-                    edge="end"
-                    aria-label="not-visible"
-                >
-                    <VisibilityOffOutlinedIcon />
-                </IconButton>
-            )}
+            <Tooltip title={t('visibility')}>
+                {visible ? (
+                    <IconButton
+                        id="visible"
+                        onClick={(e) => handleIconClick(e, 'visible')}
+                        edge="end"
+                        aria-label="visible"
+                    >
+                        <VisibilityOutlinedIcon />
+                    </IconButton>
+                ) : (
+                    <IconButton
+                        id="notVisible"
+                        onClick={(e) => handleIconClick(e, 'visible')}
+                        edge="end"
+                        aria-label="not-visible"
+                    >
+                        <VisibilityOffOutlinedIcon />
+                    </IconButton>
+                )}
+            </Tooltip>
+
             {!archived && (
-                <IconButton
-                    id='archive'
-                    onClick={(e) => handleIconClick(e, 'archive')}
-                    edge="end"
-                    aria-label="archive"
-                >
-                    <ArchiveOutlinedIcon />
-                </IconButton>
+                <Tooltip title={t('archive')}>
+                    <IconButton
+                        id="archive"
+                        onClick={(e) => handleIconClick(e, 'archive')}
+                        edge="end"
+                        aria-label="archive"
+                    >
+                        <ArchiveOutlinedIcon />
+                    </IconButton>
+                </Tooltip>
             )}
-            <IconButton
-                id='delete'
-                onClick={(e) => handleIconClick(e, 'delete')}
-                edge="end"
-                aria-label="delete"
-            >
-                <DeleteOutlinedIcon />
-            </IconButton>
+            <Tooltip title={t('delete')}>
+                <IconButton
+                    id="delete"
+                    onClick={(e) => handleIconClick(e, 'delete')}
+                    edge="end"
+                    aria-label="delete"
+                >
+                    <DeleteOutlinedIcon />
+                </IconButton>
+            </Tooltip>
         </ListItem>
     )
 }

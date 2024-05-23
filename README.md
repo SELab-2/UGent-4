@@ -2,7 +2,11 @@
 
 # Wiki
 
-- Raadpleeg de wiki voor uitgebreidere informatie, waaronder Use-Cases en API-Documentatie en Website-documentatie.
+- Raadpleeg de wiki voor uitgebreidere informatie, waaronder Use-Cases, API-Documentatie en Website-documentatie.
+
+# Deployment diagram
+![image](https://github.com/SELab-2/UGent-4/assets/49711425/805e37c4-fd67-4e68-8b8a-1310efce7864)
+
 
 # Frontend
 
@@ -24,7 +28,7 @@ Er kan niet gepushed worden als er nog linting errors aanwezig zijn.
 
 ### Testen:
 
-Je kan visueel in de browser de testen volgen door het commando `npm run cypress-open` te runnen. Je zal dan ook de keuze krijgen om te kiezen tussen E2E testen of component testen te volgen.
+Je kan visueel in de browser de testen volgen door het commando `npm run cypress-open` te runnen. Je zal dan ook de keuze krijgen om te kiezen tussen E2E testen of om component testen te volgen.
 
 `npm run cypress-e2e` en `cypress-component` zullen de e2e testen en de component testen runnen en in de terminal tonen of ze slagen.
 
