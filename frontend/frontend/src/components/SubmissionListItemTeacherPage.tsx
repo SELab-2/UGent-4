@@ -155,6 +155,7 @@ export function SubmissionListItemTeacherPage({
                     <EvenlySpacedRow
                         items={[
                             <ListItemText
+                                data-cy="groupName"
                                 sx={{
                                     color: 'primary.main',
                                     '&:hover': {
@@ -164,6 +165,7 @@ export function SubmissionListItemTeacherPage({
                                 primary={group_name}
                             />,
                             <ListItemText
+                                data-cy="submissionTimestamp"
                                 primary={
                                     submitted
                                         ? dayjs(submitted.tijdstip).format(
@@ -173,6 +175,7 @@ export function SubmissionListItemTeacherPage({
                                 }
                             />,
                             <ListItemText
+                                data-cy="submissionScore"
                                 primary={
                                     score
                                         ? `${Number(score.score)}` +
@@ -184,17 +187,20 @@ export function SubmissionListItemTeacherPage({
                                 }
                             />,
                             <Box sx={{ maxWidth: '24px' }}>
-                                <ListItemIcon>
+                                <ListItemIcon data-cy="statusIcon">
                                     {!submitted?.status ? (
                                         <HighlightOffIcon
+                                            data-cy="cross"
                                             sx={{ color: 'error.main' }}
                                         />
                                     ) : submitted.status > 0 ? (
                                         <CheckCircleOutlineIcon
+                                            data-cy="check"
                                             sx={{ color: 'success.main' }}
                                         />
                                     ) : (
                                         <HighlightOffIcon
+                                            data-cy="check"
                                             sx={{ color: 'error.main' }}
                                         />
                                     )}
@@ -205,6 +211,7 @@ export function SubmissionListItemTeacherPage({
                                     <div onClick={handleDownloadClick}>
                                         {submitted ? (
                                             <DownloadIcon
+                                                data-cy="downloadIconColor"
                                                 sx={{
                                                     color: 'primary.main',
                                                     '&:hover': {
@@ -214,6 +221,7 @@ export function SubmissionListItemTeacherPage({
                                             />
                                         ) : (
                                             <DownloadIcon
+                                                data-cy="downloadIconGray"
                                                 sx={{ color: 'gray' }}
                                             />
                                         )}

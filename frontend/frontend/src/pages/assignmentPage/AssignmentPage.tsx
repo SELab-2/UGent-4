@@ -381,7 +381,10 @@ export function AssignmentPage() {
                         height: '100vh',
                     }}
                 >
-                    <CircularProgress color={'primary'} />
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
                 </Box>
             ) : (
                 <>
@@ -746,6 +749,7 @@ export function AssignmentPage() {
                                             />
                                         ) : (
                                             <SecondaryButton
+                                                id='adjustScores'
                                                 onClick={adjustScores}
                                             >
                                                 {t('adjust_scores')}
@@ -851,6 +855,7 @@ export function AssignmentPage() {
                                             <>
                                                 {assignment?.student_groep ? (
                                                     <Button
+                                                        id='group'
                                                         sx={{
                                                             bgcolor:
                                                                 'secondary.main',
@@ -1274,6 +1279,7 @@ export function AssignmentPage() {
                                                         title={t('upload')}
                                                     >
                                                         <SecondaryButton
+                                                            id='submit'
                                                             onClick={
                                                                 uploadIndiening
                                                             }

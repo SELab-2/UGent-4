@@ -101,7 +101,11 @@ export function StudentScoreListItem({
                     {/* Content section */}
                     <>
                         {loading ? (
-                            <CircularProgress size={20} color={'primary'} />
+                            <CircularProgress
+                                size={20}
+                                color={'primary'}
+                                data-cy="loadingAnimation"
+                            />
                         ) : (
                             <EvenlySpacedRow
                                 items={[
@@ -128,6 +132,7 @@ export function StudentScoreListItem({
                                                     height={'25px'}
                                                 >
                                                     <TextField
+                                                        id='score'
                                                         hiddenLabel
                                                         defaultValue={score}
                                                         onChange={(event) =>

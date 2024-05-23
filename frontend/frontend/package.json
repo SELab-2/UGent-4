@@ -9,7 +9,10 @@
         "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview",
         "format": "prettier --write .",
-        "prepare": "cd ../.. && husky frontend/frontend/.husky"
+        "prepare": "cd ../.. && husky frontend/frontend/.husky",
+        "cypress-open": "node_modules/.bin/cypress open",
+        "cypress-e2e": "node_modules/.bin/cypress run",
+        "cypress-component": "node_modules/.bin/cypress run --component"
     },
     "dependencies": {
         "@azure/msal-browser": "^3.11.0",
@@ -45,6 +48,7 @@
         "@typescript-eslint/eslint-plugin": "^7.0.2",
         "@typescript-eslint/parser": "^7.0.2",
         "@vitejs/plugin-react": "^4.2.1",
+        "cypress": "^13.9.0",
         "eslint": "^8.56.0",
         "eslint-config-prettier": "^9.1.0",
         "eslint-plugin-prettier": "^5.1.3",

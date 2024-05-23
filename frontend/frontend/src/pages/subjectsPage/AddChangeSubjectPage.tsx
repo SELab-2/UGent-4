@@ -172,6 +172,7 @@ function UploadPart(
                         <Box>
                             {/* This box allows you to add extra people by their email. */}
                             <TextField
+                                id='email'
                                 type="text"
                                 placeholder={t('email')}
                                 onChange={(event) =>
@@ -181,7 +182,7 @@ function UploadPart(
                             />
                         </Box>
                         <Box>
-                            <SecondaryButton size={'small'} onClick={handleAdd}>
+                            <SecondaryButton id='add' size={'small'} onClick={handleAdd}>
                                 {t('add')}
                             </SecondaryButton>
                         </Box>
@@ -619,7 +620,10 @@ export function AddChangeSubjectPage() {
                         height: '100vh',
                     }}
                 >
-                    <CircularProgress color={'primary'} />
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
                     <Box></Box>
                 </Box>
             ) : (
@@ -675,6 +679,7 @@ export function AddChangeSubjectPage() {
                                                 />
                                             ) : (
                                                 <TextField
+                                                    id='courseName'
                                                     type="text"
                                                     value={title}
                                                     error={
@@ -718,6 +723,7 @@ export function AddChangeSubjectPage() {
 
                                             <Tooltip title={t('save')}>
                                                 <Button
+                                                    id='save'
                                                     /* This is the large save button on the top of the page */
                                                     onClick={handleSubmit}
                                                 >
@@ -760,7 +766,7 @@ export function AddChangeSubjectPage() {
                                                         )}
                                                     </Box>
                                                 </Card>
-                                                <Box marginTop={2}>
+                                                <Box id='uploadStudent' marginTop={2}>
                                                     {UploadPart(
                                                         studentFile,
                                                         handleStudentFileChange,

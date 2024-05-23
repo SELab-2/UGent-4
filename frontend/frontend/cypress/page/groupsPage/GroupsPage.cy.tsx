@@ -1,12 +1,18 @@
-import { GroupsPage } from "../../../src/pages/groupsPage/GroupsPage";
-import { BrowserRouter } from "react-router-dom";
-import fixtures from "../../fixtures/fixtures.json";
+import { GroupsPage } from '../../../src/pages/groupsPage/GroupsPage'
+import { BrowserRouter } from 'react-router-dom'
 
-describe("GroupsPage", () => {
-  it("renders", () => {
-    cy.mount(<BrowserRouter><GroupsPage/></BrowserRouter>);
-    cy.get("#logo").should("exist");
-    cy.get("#userMenu").should("exist");
-    cy.contains("Project 1: groepen");
-  });
-});
+// This page fetches data from the backend.
+// So as far as the component test is concerned,
+// we can only show what shows up before the fetch.
+// This is why only the loading animation is checked.
+// The rest of the tests are in the integration tests.
+describe('GroupsPage', () => {
+    it('renders', () => {
+        cy.mount(
+            <BrowserRouter>
+                <GroupsPage />
+            </BrowserRouter>
+        )
+        cy.get('[data-cy=loadingAnimation]').should('exist')
+    })
+})

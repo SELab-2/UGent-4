@@ -500,7 +500,10 @@ export function AddChangeAssignmentPage() {
                         height: '100vh',
                     }}
                 >
-                    <CircularProgress color={'primary'} />
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
                     <Box></Box>
                 </Box>
             ) : (
@@ -556,6 +559,7 @@ export function AddChangeAssignmentPage() {
                                                 />
                                             ) : (
                                                 <TextField
+                                                    id='projectName'
                                                     type="text"
                                                     placeholder={t('name')}
                                                     error={
@@ -784,6 +788,7 @@ export function AddChangeAssignmentPage() {
                                                 />
                                             ) : (
                                                 <TextField
+                                                    id='description'
                                                     type="text"
                                                     placeholder={'Description'}
                                                     variant={'standard'}
@@ -981,6 +986,7 @@ export function AddChangeAssignmentPage() {
                                                         <IconButton
                                                             // Allows the teacher to select whether
                                                             // the assignment is visible to students or not.
+                                                            id='setInVisible'
                                                             color={'info'}
                                                             onClick={() =>
                                                                 setVisible(
@@ -996,6 +1002,7 @@ export function AddChangeAssignmentPage() {
                                                         </IconButton>
                                                     ) : (
                                                         <IconButton
+                                                            id='setVisible'
                                                             color={'info'}
                                                             onClick={() =>
                                                                 setVisible(
@@ -1054,6 +1061,7 @@ export function AddChangeAssignmentPage() {
                                                         />
                                                     ) : (
                                                         <TextField
+                                                            id='groupSize'
                                                             sx={{ width: 80 }}
                                                             label={'Group Size'}
                                                             type={'number'}
@@ -1095,6 +1103,7 @@ export function AddChangeAssignmentPage() {
                                                     />
                                                 ) : (
                                                     <TextField
+                                                        id='maxScore'
                                                         sx={{ width: 80 }}
                                                         required
                                                         label={'Max Score'}
@@ -1164,6 +1173,7 @@ export function AddChangeAssignmentPage() {
                                             </Tooltip>
                                             <Tooltip title={t('submit')}>
                                                 <IconButton
+                                                    id='save'
                                                     type="submit"
                                                     aria-label={'submit'}
                                                     sx={{

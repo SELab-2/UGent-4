@@ -66,4 +66,15 @@ Run het commando `flake8 .`. De output vertelt je waar de codestijl fout is. Om 
 
 
 ### Testing:
+## Backend testing:
 Run het commando `./manage.py test` in de ***UGENT-4*** directory.
+Om de coverage te raadplegen kan het commando `coverage run manage.py test -v 2 && coverage report && coverage html` gebruikt worden. Dit runt alle testen en toont per bestand de coverage. Ook wordt er voor elk bestand een html gemaakt waar je per lijn kan zien of die door de testen gecovered wordt.
+## Frontend testing:
+Door het commando `npm run cypress-component` uit te voeren, worden de component testen gerund.
+Voor de end-to-end testen verloopt het een beetje anders:
+- Eerst en vooral zorg je ervoor dat je een lokale backend en frontend hebt lopen. In axios.config verander je de baseURL naar `baseURL: 'http://localhost:8000/api/'`, dit zorgt ervoor dat de lokale backend wordt aangesproken. De e2e testen vereisen een lege databank.
+- Met het commando `npm run cypress-component` open je een interactieve cypress browser. Hierin selecteer je e2e (je kan hier ook de component testen interactief runnen).
+- Vervolgens open je een nieuwe terminal en run je het commando `sudo bash switch_test.sh true`. Hiermee zet je de test environment op voor een lesgever. Nu voer je de testen 'course', 'project' en 'groups' (in deze volgorde) uit.
+- Hierna switchen we naar de test environment voor een student door 2 maal `sudo bash switch_test.sh` te runnen.
+- In cypress voer je nu de 'group' en 'submission' testen uit (opnieuw in deze volgorde). Ten slotte zet je weer de test environment op voor een lesgever door 2 maal het commando `sudo bash switch_test.sh true` uit te voeren. Nu kan je in cypress de testen 'score' en 'archive' (in deze volgorde) uitvoeren.
+- Alle e2e testen uitgevoerd en kan je de lokale backend en frontend stopzetten, de baseURL terug veranderen naar `baseURL: 'https://sel2-4.ugent.be/api/'` en de test omgeving verlaten met `sudo bash switch_test.sh`.

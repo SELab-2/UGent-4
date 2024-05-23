@@ -299,7 +299,10 @@ export function ProjectScoresPage() {
                         height: '100vh',
                     }}
                 >
-                    <CircularProgress color={'primary'} />
+                    <CircularProgress
+                        color={'primary'}
+                        data-cy="loadingAnimation"
+                    />
                     <Box></Box>
                 </Box>
             ) : (
@@ -417,6 +420,7 @@ export function ProjectScoresPage() {
                                                     title={t('save_scores')}
                                                 >
                                                     <IconButton
+                                                        id='saveScores'
                                                         onClick={() =>
                                                             setOpenSaveScoresPopup(
                                                                 true

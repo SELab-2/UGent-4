@@ -81,6 +81,7 @@ export const Header = ({ variant, title }: Props) => {
     return (
         <>
             <AppBar
+                data-cy="header"
                 elevation={0}
                 position="absolute"
                 sx={{
@@ -102,6 +103,7 @@ export const Header = ({ variant, title }: Props) => {
                         <Box>
                             <Tooltip title={t('home')}>
                                 <IconButton
+                                    id='logo'
                                     onClick={() => navigate('/')}
                                     sx={{ padding: 0, borderRadius: 5 }}
                                 >
@@ -124,6 +126,7 @@ export const Header = ({ variant, title }: Props) => {
                                 variant === 'editable') && (
                                 <Tooltip title={t('back')}>
                                     <IconButton
+                                        data-cy="backButton"
                                         onClick={handleBack}
                                         size="large"
                                         edge="start"
@@ -158,6 +161,7 @@ export const Header = ({ variant, title }: Props) => {
                                 />
                             )}
                             <Typography
+                                data-cy="title"
                                 minWidth={'50'}
                                 maxWidth={'88%'}
                                 variant="h5"
@@ -169,6 +173,7 @@ export const Header = ({ variant, title }: Props) => {
                             {variant === 'editable' && (
                                 <Tooltip title={t('edit')}>
                                     <IconButton
+                                        id='editButton'
                                         onClick={handleEdit}
                                         disableRipple={true}
                                         sx={{

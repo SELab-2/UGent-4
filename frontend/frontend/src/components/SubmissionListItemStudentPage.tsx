@@ -59,6 +59,7 @@ export function SubmissionListItemStudentPage({
                     <EvenlySpacedRow
                         items={[
                             <ListItemText
+                                data-cy="visualId"
                                 sx={{
                                     color: 'primary.main',
                                     '&:hover': {
@@ -68,16 +69,19 @@ export function SubmissionListItemStudentPage({
                                 primary={visualId}
                             />,
                             <ListItemText
+                                data-cy="submissionTimestamp"
                                 primary={timestamp ? timestamp : t('time')}
                             />,
                             <Box sx={{ maxWidth: '24px' }}>
                                 <ListItemIcon sx={{ minWidth: 35 }}>
                                     {status ? (
                                         <CheckCircleOutlineIcon
+                                            id="check"
                                             sx={{ color: 'success.main' }}
                                         />
                                     ) : (
                                         <HighlightOffIcon
+                                            id="cross"
                                             sx={{ color: 'error.main' }}
                                         />
                                     )}

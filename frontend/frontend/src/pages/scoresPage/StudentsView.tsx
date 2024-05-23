@@ -123,16 +123,32 @@ export function StudentsView({
             >
                 <EvenlySpacedRow
                     items={[
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        <Typography
+                            variant="h5"
+                            sx={{ fontWeight: 'bold' }}
+                            data-cy="groupHeader"
+                        >
                             {t('group')}
                         </Typography>,
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        <Typography
+                            variant="h5"
+                            sx={{ fontWeight: 'bold' }}
+                            data-cy="timeHeader"
+                        >
                             {t('time')}
                         </Typography>,
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        <Typography
+                            variant="h5"
+                            sx={{ fontWeight: 'bold' }}
+                            data-cy="scoreHeader"
+                        >
                             Score
                         </Typography>,
-                        <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                        <Typography
+                            variant="h5"
+                            sx={{ fontWeight: 'bold' }}
+                            data-cy="downloadHeader"
+                        >
                             Download
                         </Typography>,
                     ]}

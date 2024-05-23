@@ -111,6 +111,7 @@ export function AssignmentListItemSubjectsPage({
                                                     : 'text.primary'
                                                 : 'text.primary'
                                         }
+                                        data-cy="deadline"
                                     >
                                         {dueDate
                                             ? dayjs(dueDate).format(
@@ -131,6 +132,7 @@ export function AssignmentListItemSubjectsPage({
                                                   t('submission')
                                             : t('no_submissions')
                                     }
+                                    data-cy="submissions"
                                 />,
                                 <>
                                     {submissions > 0 ? (
@@ -140,6 +142,7 @@ export function AssignmentListItemSubjectsPage({
                                                     ? `${score.score}/${maxScore} (${Math.round((100 * score.score) / maxScore)}%)`
                                                     : t('no_score_yet')
                                             }
+                                            data-cy="score"
                                         />
                                     ) : (
                                         <ListItemText
@@ -154,7 +157,10 @@ export function AssignmentListItemSubjectsPage({
                             {/* In case of the user being the teacher: */}
                             <EvenlySpacedRow
                                 items={[
-                                    <ListItemText primary={projectName} />,
+                                    <ListItemText
+                                        primary={projectName}
+                                        data-cy="teacherProjectName"
+                                    />,
                                     <ListItemText>
                                         <Typography
                                             color={
@@ -166,6 +172,7 @@ export function AssignmentListItemSubjectsPage({
                                                         : 'text.primary'
                                                     : 'text.primary'
                                             }
+                                            data-cy="teacherDeadline"
                                         >
                                             {dueDate
                                                 ? dayjs(dueDate).format(

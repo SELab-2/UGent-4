@@ -26,3 +26,4 @@ package-lock.json
 *.sw?
 ./src/authConfig/authSecrets.ts
 ./package-lock.json
+package-lock.json

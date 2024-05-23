@@ -2,7 +2,7 @@ from django.test import TestCase, RequestFactory
 from django.contrib.auth.models import User
 from unittest.mock import patch
 from api.models.gebruiker import Gebruiker
-from api.middleware import AuthenticationUserMiddleware
+from api.middleware.middleware import AuthenticationUserMiddleware
 from django.contrib.auth.models import AnonymousUser
 import jwt
 
