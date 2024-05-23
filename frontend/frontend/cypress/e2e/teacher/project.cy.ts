@@ -1,3 +1,5 @@
+import { cyan } from "@mui/material/colors"
+
 describe('add and change projects', () => {
     beforeEach(() => {
       cy.visit('http://localhost:5173')
@@ -16,6 +18,9 @@ describe('add and change projects', () => {
         cy.get('#setVisible').click()
         cy.get('#groupSize').clear().type('2')
         cy.get('#maxScore').clear().type('30')
+        // add an assignment
+        cy.get('#uploadButton').selectFile('cypress/fixtures/test.pdf')
+        cy.contains('test.pdf').should('exist')
         // add a restriction script
         cy.get('#addRestrictionButton').click()
         // create a new script

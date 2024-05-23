@@ -13,6 +13,7 @@ describe('student chooses a group and leaves', () => {
     })
   
     it('join', () => {
+        // student should able to choose a group because of the teacher groups test
         cy.contains('test course').click()
         cy.contains('test project').click()
         cy.get('#group').click()

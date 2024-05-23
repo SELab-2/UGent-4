@@ -3,7 +3,6 @@ from api.models.gebruiker import Gebruiker
 from api.serializers.gebruiker import GebruikerSerializer
 from api.serializers.template import TemplateSerializer
 from django.core.files import File
-import requests
 import os
 
 

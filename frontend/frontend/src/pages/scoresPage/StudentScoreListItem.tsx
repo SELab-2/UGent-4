@@ -132,6 +132,7 @@ export function StudentScoreListItem({
                                                     height={'25px'}
                                                 >
                                                     <TextField
+                                                        id='score'
                                                         hiddenLabel
                                                         defaultValue={score}
                                                         onChange={(event) =>
