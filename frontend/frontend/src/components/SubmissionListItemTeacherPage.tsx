@@ -119,7 +119,7 @@ export function SubmissionListItemTeacherPage({
             }
         }
         fetchData().catch((err) => console.error(err))
-    }, [group_id, score?.score])
+    }, [group_id, score?.score, assignment_id])
 
     // Function to download the submission
     const downloadSubmission = () => {

@@ -135,7 +135,7 @@ export function CourseCard({
         fetchData().catch((error) =>
             console.error('Error fetching data:', error)
         )
-    }, [courseId])
+    }, [courseId, isStudent, userid])
 
     // Function to handle card click event.
     const handleCardClick = () => {

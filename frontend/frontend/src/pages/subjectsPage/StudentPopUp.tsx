@@ -20,7 +20,11 @@ interface StudentPopUpProps {
     noGroup: boolean
 }
 
-export default function StudentPopUp({ students, text, noGroup }: StudentPopUpProps) {
+export default function StudentPopUp({
+    students,
+    text,
+    noGroup,
+}: StudentPopUpProps) {
     const [open, setOpen] = React.useState(false)
 
     const handleClose = () => {
@@ -60,7 +64,7 @@ export default function StudentPopUp({ students, text, noGroup }: StudentPopUpPr
                     </IconButton>
                 </DialogTitle>
                 <DialogContent dividers>
-                    {noGroup ?
+                    {noGroup ? (
                         <>
                             <Typography variant="body1">
                                 {t('noGroup')}
@@ -69,7 +73,7 @@ export default function StudentPopUp({ students, text, noGroup }: StudentPopUpPr
                                 {t('contactTeacher')}
                             </Typography>
                         </>
-                    :
+                    ) : (
                         <>
                             {/* List of Students */}
                             {students.length > 0 ? (
@@ -88,7 +92,7 @@ export default function StudentPopUp({ students, text, noGroup }: StudentPopUpPr
                                 </Typography>
                             )}
                         </>
-                    }
+                    )}
                 </DialogContent>
             </Dialog>
         </>

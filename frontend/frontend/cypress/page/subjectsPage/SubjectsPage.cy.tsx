@@ -1,6 +1,3 @@
-import { SubjectsPage } from '../../../src/pages/subjectsPage/SubjectsPage'
-import { BrowserRouter } from 'react-router-dom'
-
 describe('SubjectsPage', () => {
     it('renders the SubjectsPage', () => {
         // Mount the SubjectsPage component within a BrowserRouter
