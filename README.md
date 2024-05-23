@@ -2,7 +2,7 @@
 
 # Wiki
 
-- Raadpleeg de wiki voor uitgebreidere informatie, waaronder Use-Cases, API-Documentatie en Website-documentatie.
+- Raadpleeg de [Wiki](https://github.com/SELab-2/UGent-4/wiki) voor uitgebreidere informatie, waaronder Use-Cases, API-Documentatie en Website-documentatie.
 
 # Deployment diagram
 ![image](https://github.com/SELab-2/UGent-4/assets/49711425/805e37c4-fd67-4e68-8b8a-1310efce7864)
