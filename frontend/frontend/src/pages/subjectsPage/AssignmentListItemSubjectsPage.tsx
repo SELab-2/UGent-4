@@ -137,7 +137,7 @@ export function AssignmentListItemSubjectsPage({
                                         <ListItemText
                                             primary={
                                                 score
-                                                    ? `${score.score}/${maxScore} (${(100 * score.score) / maxScore}%)`
+                                                    ? `${score.score}/${maxScore} (${Math.round((100 * score.score) / maxScore)}%)`
                                                     : t('no_score_yet')
                                             }
                                         />
