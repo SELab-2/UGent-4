@@ -85,7 +85,7 @@ export default function FourOFourPage() {
                                     maxHeight: '50%',
                                 }}
                             >
-                                {"404"}
+                                {'404'}
                             </Typography>
                             <Typography
                                 variant={'h5'}
@@ -95,7 +95,7 @@ export default function FourOFourPage() {
                                     maxHeight: '50%',
                                 }}
                             >
-                                {"Error: Page not found"}
+                                {'Error: Page not found'}
                             </Typography>
                         </Box>
                     </Box>

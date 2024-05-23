@@ -65,15 +65,16 @@ function ServerDay(
             key={props.day.toString()}
             overlap="circular"
             badgeContent={
-                isSelected
-                    ? props.day.isBefore(dayjs())
-                        ?   (
-                                <AssignmentIcon color={'secondary'} fontSize={'small'} />
-                            )
-                        :   (
-                                <AssignmentIcon color={'primary'} fontSize={'small'} />
-                            )
-                    : undefined
+                isSelected ? (
+                    props.day.isBefore(dayjs()) ? (
+                        <AssignmentIcon
+                            color={'secondary'}
+                            fontSize={'small'}
+                        />
+                    ) : (
+                        <AssignmentIcon color={'primary'} fontSize={'small'} />
+                    )
+                ) : undefined
             }
         >
             <PickersDay

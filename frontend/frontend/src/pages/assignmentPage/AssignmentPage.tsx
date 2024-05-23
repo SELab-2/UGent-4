@@ -189,7 +189,7 @@ export function AssignmentPage() {
             }
             await fetchData() // Use await here to ensure fetchData waits for fetchUser to complete
         })()
-    }, [assignmentId, courseId, user.is_lesgever, submit, user])
+    }, [assignmentId, courseId, user.is_lesgever, submit, user, navigate])
 
     useEffect(() => {
         async function fetchStudents() {
@@ -237,7 +237,7 @@ export function AssignmentPage() {
         fetchScore().catch((error) =>
             console.error('Error fetching score', error)
         )
-    }, [submissions])
+    }, [submissions, lastSubmission, score?.score])
 
     // Function to download all submissions as a zip file
     const downloadAllSubmissions = () => {
