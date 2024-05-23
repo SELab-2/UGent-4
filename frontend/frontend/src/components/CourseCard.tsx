@@ -161,7 +161,7 @@ export function CourseCard({
         if (!mySubmission) {
             return SubmissionStatus.FAIL
         }
-
+        console.log('myStatus', mySubmission.status)
         return mySubmission.status
     }
 
