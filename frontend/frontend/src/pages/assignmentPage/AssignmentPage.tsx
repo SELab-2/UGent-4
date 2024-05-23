@@ -1257,7 +1257,9 @@ export function AssignmentPage() {
                                                         handleFileChange
                                                     }
                                                     fileTypes={['*']}
-                                                    tooltip={t('uploadToolTip')}
+                                                    tooltip={t(
+                                                        'upload_project'
+                                                    )}
                                                 />
                                             </Grid>
                                             <Grid item>

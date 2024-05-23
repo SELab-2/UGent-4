@@ -385,20 +385,23 @@ export function AddChangeAssignmentPage() {
 
     // Upload the assignment to the API. patch if it is an edit, post if it is a new assignment.
     const uploadAssignment = async () => {
-        let optionalFile: File | null = null
+        let optionalFile: File | null
         const formData = new FormData()
 
         if (assignmentFile !== undefined) {
             optionalFile = assignmentFile
         } else {
-            formData.append('opgave_bestand', '')
+            optionalFile = null
         }
 
         formData.append('titel', title)
         formData.append('beschrijving', description)
         formData.append('vak', parseInt(courseId as string).toString())
         if (optionalFile) {
+            console.log('optional file' + optionalFile.name)
             formData.append('opgave_bestand', optionalFile)
+        } else {
+            formData.append('opgave_bestand', '')
         }
         formData.append('zichtbaar', visible.toString())
 
@@ -421,6 +424,7 @@ export function AddChangeAssignmentPage() {
         }
         if (assignmentId !== undefined) {
             formData.append('project_id', assignmentId)
+            console.log('file', formData.get('opgave_bestand'))
             await instance
                 .patch(
                     '/projecten/' + parseInt(assignmentId) + '/',
@@ -1006,7 +1010,7 @@ export function AddChangeAssignmentPage() {
                                                         title={t('remove')}
                                                     >
                                                         <IconButton
-                                                            color={'warning'}
+                                                            color={'error'}
                                                             onClick={
                                                                 openDeleteConfirmation
                                                             }
